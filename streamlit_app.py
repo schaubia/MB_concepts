@@ -871,6 +871,484 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# MEIOSIS_GENERAL  (source: meiosis.html)
+# ---------------------------------------------------------------------------
+MEIOSIS_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of meiosis showing homolog pairing, crossing over, two rounds of division, and four haploid daughter cells.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #pair1, #pair2 { transition: transform 1s ease; }
+  .anaphase1 #pair1 { transform: translateX(-60px); }
+  .anaphase1 #pair2 { transform: translateX(60px); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 360" role="img">
+<title>Meiosis, general view</title>
+<desc>A diploid cell with paired homologous chromosomes undergoes crossing over, aligns as tetrads, separates homologs in meiosis I, then separates sister chromatids in meiosis II, producing four genetically distinct haploid cells.</desc>
+
+<ellipse cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="340" y="28" text-anchor="middle" id="stageLabel">Diploid cell, homologs unpaired</text>
+
+<g id="pair1">
+<path d="M300 150 L320 170 M320 150 L300 170" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
+<path id="homolog1b" d="M300 190 L320 210 M320 190 L300 210" stroke="#85B7EB" stroke-width="4" stroke-linecap="round" opacity="0"/>
+</g>
+<g id="pair2">
+<path d="M360 150 L380 170 M380 150 L360 170" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
+<path id="homolog2b" d="M360 190 L380 210 M380 190 L360 210" stroke="#F0997B" stroke-width="4" stroke-linecap="round" opacity="0"/>
+</g>
+
+<g id="chiasma" class="stg">
+<circle cx="330" cy="180" r="4" fill="#EF9F27"/>
+<text class="ts" x="330" y="230" text-anchor="middle">Crossing over (chiasma)</text>
+</g>
+
+<g id="spindle" class="stg">
+<circle cx="140" cy="170" r="6" class="c-amber"/>
+<circle cx="540" cy="170" r="6" class="c-amber"/>
+</g>
+
+<g id="fourCells" class="stg">
+<ellipse cx="180" cy="290" rx="55" ry="38" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="280" cy="290" rx="55" ry="38" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="400" cy="290" rx="55" ry="38" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="500" cy="290" rx="55" ry="38" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" x="340" y="345" text-anchor="middle">Four haploid cells, each genetically distinct</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Diploid cell, homologs unpaired",
+  "Prophase I — homologs pair (synapsis) and cross over",
+  "Metaphase I — homolog pairs (tetrads) align at the equator",
+  "Anaphase I — homologs separate to opposite poles (chromatids stay joined)",
+  "Meiosis II — sister chromatids finally separate, like mitosis",
+  "Result — four haploid cells, each genetically distinct"
+];
+function render() {
+  document.getElementById('stageLabel').textContent = labels[step];
+  document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 5';
+  document.getElementById('homolog1b').setAttribute('opacity', step >= 1 ? '1' : '0');
+  document.getElementById('homolog2b').setAttribute('opacity', step >= 1 ? '1' : '0');
+  document.getElementById('chiasma').classList.toggle('on', step === 1);
+  document.getElementById('spindle').classList.toggle('on', step >= 2 && step <= 3);
+  document.querySelector('svg').classList.toggle('anaphase1', step === 3);
+  document.getElementById('fourCells').classList.toggle('on', step >= 4);
+  const opac = step >= 4 ? '0.15' : '1';
+  document.getElementById('pair1').style.opacity = opac;
+  document.getElementById('pair2').style.opacity = opac;
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# APOPTOSIS_GENERAL  (source: apoptosis.html)
+# ---------------------------------------------------------------------------
+APOPTOSIS_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of apoptosis: a death ligand triggers a caspase cascade that dismantles the cell into apoptotic bodies, which are cleared by a phagocyte.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #cellBody { transition: d 0.8s ease, opacity .6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Apoptosis, general view</title>
+<desc>A death ligand binds a receptor on the cell surface, activating an initiator caspase that in turn activates executioner caspases, which fragment DNA and break down the cytoskeleton, causing the cell to bleb into apoptotic bodies that are engulfed by a phagocyte.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<ellipse id="cellBody" cx="200" cy="170" rx="90" ry="80" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<circle cx="200" cy="170" r="28" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="ts" x="200" y="270" text-anchor="middle">Nucleus intact</text>
+
+<g id="ligand" class="stg">
+<circle cx="200" cy="60" r="8" fill="#E24B4A"/>
+<text class="ts" x="200" y="42" text-anchor="middle">Death ligand</text>
+<line x1="200" y1="70" x2="200" y2="90" stroke="#E24B4A" stroke-width="1.5" marker-end="url(#arrow)"/>
+</g>
+
+<g id="caspase8" class="stg">
+<circle cx="200" cy="105" r="14" class="c-amber"/>
+<text class="ts" x="200" y="105" text-anchor="middle" dominant-baseline="central">C8</text>
+</g>
+
+<g id="caspase3" class="stg">
+<circle cx="260" cy="140" r="14" class="c-red"/>
+<text class="ts" x="260" y="140" text-anchor="middle" dominant-baseline="central">C3</text>
+<text class="ts" x="290" y="140" text-anchor="middle">Executioner</text>
+</g>
+
+<g id="damage" class="stg">
+<path d="M170 165 L185 175 M185 165 L170 175" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<path d="M215 165 L230 175 M230 165 L215 175" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<text class="ts" x="200" y="200" text-anchor="middle">DNA fragmentation</text>
+</g>
+
+<g id="bodies" class="stg">
+<circle cx="440" cy="140" r="20" fill="none" stroke="var(--t)" stroke-width="1"/>
+<circle cx="480" cy="180" r="16" fill="none" stroke="var(--t)" stroke-width="1"/>
+<circle cx="430" cy="195" r="14" fill="none" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="450" y="230" text-anchor="middle">Apoptotic bodies</text>
+</g>
+
+<g id="phagocyte" class="stg">
+<ellipse cx="580" cy="170" rx="45" ry="35" class="c-teal"/>
+<text class="ts" x="580" y="170" text-anchor="middle" dominant-baseline="central">Phagocyte</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 — healthy cell, no death signal",
+  "Step 1 — death ligand binds receptor, initiator caspase-8 activates",
+  "Step 2 — caspase-8 activates executioner caspase-3",
+  "Step 3 — caspase-3 fragments DNA, breaks down the cytoskeleton, cell blebs into apoptotic bodies",
+  "Step 4 — apoptotic bodies engulfed by a phagocyte, no inflammation"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('ligand').classList.toggle('on', step >= 1);
+  document.getElementById('caspase8').classList.toggle('on', step >= 1);
+  document.getElementById('caspase8').classList.toggle('pulse', step === 1);
+  document.getElementById('caspase3').classList.toggle('on', step >= 2);
+  document.getElementById('caspase3').classList.toggle('pulse', step === 2);
+  document.getElementById('damage').classList.toggle('on', step >= 3);
+  document.getElementById('cellBody').style.opacity = step >= 3 ? '0.15' : '1';
+  document.getElementById('bodies').classList.toggle('on', step >= 3);
+  document.getElementById('phagocyte').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# ENDO_EXOCYTOSIS_GENERAL  (source: endo_exocytosis.html)
+# ---------------------------------------------------------------------------
+ENDO_EXOCYTOSIS_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of endocytosis and exocytosis: a switchable view of vesicle formation from the membrane, or vesicle docking and fusion to release cargo.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #vesicleGroup { transition: transform 1s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnEndo" onclick="setMode('endo')">Endocytosis</button>
+  <button id="btnExo" onclick="setMode('exo')">Exocytosis</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Endocytosis and exocytosis</title>
+<desc>Endocytosis: the membrane invaginates around extracellular cargo, coated by clathrin, then pinches off into an intracellular vesicle. Exocytosis: an intracellular vesicle moves to the membrane, docks via SNARE proteins, and fuses to release its cargo outside the cell.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<line x1="30" y1="150" x2="650" y2="150" stroke="var(--border-strong)" stroke-width="2"/>
+<text class="ts" x="340" y="135" text-anchor="middle">Plasma membrane</text>
+<text class="ts" x="340" y="270" text-anchor="middle">Inside the cell</text>
+<text class="ts" x="340" y="40" text-anchor="middle">Outside the cell</text>
+
+<g id="cargoOutside" class="stg">
+<circle cx="200" cy="80" r="10" fill="#EF9F27"/>
+<text class="ts" x="200" y="62" text-anchor="middle">Cargo</text>
+</g>
+
+<path id="membraneDip" d="M150 150 Q200 150 200 150 Q200 150 250 150" stroke="var(--t)" stroke-width="2" fill="none"/>
+<g id="coat" class="stg">
+<circle cx="170" cy="145" r="4" class="c-purple"/>
+<circle cx="230" cy="145" r="4" class="c-purple"/>
+<circle cx="200" cy="130" r="4" class="c-purple"/>
+<text class="ts" x="200" y="115" text-anchor="middle">Clathrin coat</text>
+</g>
+
+<g id="vesicleGroup">
+<circle id="vesicle" cx="200" cy="150" r="0" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<circle id="vcargo" cx="200" cy="150" r="0" fill="#EF9F27"/>
+</g>
+
+<g id="snare" class="stg">
+<rect x="185" y="140" width="30" height="14" rx="4" class="c-teal"/>
+<text class="ts" x="200" y="127" text-anchor="middle">SNARE docking</text>
+</g>
+
+<g id="released" class="stg">
+<circle cx="200" cy="90" r="9" fill="#EF9F27"/>
+<text class="ts" x="200" y="72" text-anchor="middle">Cargo released</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'endo';
+const labelsEndo = [
+  "Step 0 — cargo outside, membrane flat",
+  "Step 1 — clathrin coats the membrane, it begins to invaginate",
+  "Step 2 — vesicle pinches off, enclosing the cargo",
+  "Step 3 — vesicle moves into the cytoplasm and uncoats"
+];
+const labelsExo = [
+  "Step 0 — vesicle with cargo inside the cytoplasm",
+  "Step 1 — vesicle moves to the membrane and docks via SNARE proteins",
+  "Step 2 — vesicle membrane fuses with the plasma membrane",
+  "Step 3 — cargo released outside the cell"
+];
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnEndo').classList.toggle('active', m === 'endo');
+  document.getElementById('btnExo').classList.toggle('active', m === 'exo');
+  render();
+}
+function render() {
+  const labels = mode === 'endo' ? labelsEndo : labelsExo;
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('cargoOutside').classList.toggle('on', mode === 'endo' ? step <= 1 : step === 3);
+  document.getElementById('coat').classList.toggle('on', mode === 'endo' && step >= 1 && step <= 2);
+  document.getElementById('snare').classList.toggle('on', mode === 'exo' && step === 1);
+  document.getElementById('released').classList.toggle('on', mode === 'exo' && step >= 2);
+
+  const v = document.getElementById('vesicle');
+  const vc = document.getElementById('vcargo');
+  let r = 0, cy = 150, cr = 0;
+  if (mode === 'endo') {
+    if (step === 1) { r = 18; cy = 150; cr = 8; }
+    else if (step === 2) { r = 18; cy = 150; cr = 8; }
+    else if (step === 3) { r = 18; cy = 220; cr = 8; }
+  } else {
+    if (step === 0) { r = 18; cy = 220; cr = 8; }
+    else if (step === 1) { r = 18; cy = 150; cr = 8; }
+    else if (step === 2) { r = 18; cy = 150; cr = 8; }
+    else { r = 0; cr = 0; }
+  }
+  v.setAttribute('r', r); v.setAttribute('cy', cy);
+  vc.setAttribute('r', cr); vc.setAttribute('cy', cy);
+}
+setMode('endo');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# ENZYME_KINETICS_GENERAL  (source: enzyme_kinetics.html)
+# ---------------------------------------------------------------------------
+ENZYME_KINETICS_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of enzyme catalysis and allosteric inhibition: substrate binds the active site via induced fit, is converted to product, and an allosteric inhibitor can distort the active site to block binding.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #substrateGroup { transition: transform 1s ease, opacity .5s ease; }
+  .bound #substrateGroup { transform: translate(15px, 5px); }
+  #enzymeBody { transition: d 0.6s ease; }
+  .inhibited #enzymeBody { fill: var(--surface-1); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Enzyme catalysis and allosteric inhibition</title>
+<desc>A substrate approaches an enzyme's active site, binds via induced fit, is converted into product and released. Separately, an allosteric inhibitor can bind a distinct regulatory site, distorting the active site so the substrate no longer fits, providing feedback inhibition.</desc>
+
+<path id="enzymeBody" d="M180 150 Q210 90 280 110 Q340 100 360 150 Q340 200 280 190 Q210 210 180 150 Z" class="c-teal" stroke-width="0.5"/>
+<circle id="activeSite" cx="270" cy="150" r="16" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="3 3"/>
+<text class="ts" x="270" y="230" text-anchor="middle">Enzyme</text>
+
+<g id="substrateGroup">
+<rect x="100" y="140" width="26" height="20" rx="4" fill="#EF9F27"/>
+<text class="ts" x="113" y="122" text-anchor="middle" id="substrateLabel">Substrate</text>
+</g>
+
+<g id="product" class="stg">
+<circle cx="420" cy="140" r="8" fill="#1D9E75"/>
+<circle cx="440" cy="155" r="8" fill="#1D9E75"/>
+<text class="ts" x="430" y="185" text-anchor="middle">Product</text>
+</g>
+
+<g id="allostericSite" class="stg">
+<circle cx="200" cy="180" r="10" fill="none" stroke="#E24B4A" stroke-width="1.5" stroke-dasharray="2 2"/>
+<text class="ts" x="200" y="205" text-anchor="middle">Allosteric site</text>
+</g>
+<g id="inhibitor" class="stg">
+<circle cx="200" cy="180" r="9" fill="#E24B4A"/>
+<text class="ts" x="200" y="255" text-anchor="middle">Inhibitor bound — active site distorted, substrate blocked</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <button onclick="toggleInhibitor()">Toggle allosteric inhibitor</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let inhibited = false;
+const labels = [
+  "Step 0 — substrate approaches the active site",
+  "Step 1 — induced fit: substrate binds, enzyme-substrate complex forms",
+  "Step 2 — reaction catalyzed, product formed",
+  "Step 3 — product released, enzyme resets for another cycle"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = inhibited ? "Allosteric inhibitor bound — substrate can't bind" : labels[step];
+  const svg = document.querySelector('svg');
+  svg.classList.toggle('bound', step >= 1 && step < 3 && !inhibited);
+  document.getElementById('substrateLabel').textContent = step >= 1 ? 'Bound substrate' : 'Substrate';
+  document.getElementById('substrateGroup').style.opacity = (step >= 3 || inhibited) ? '0' : '1';
+  document.getElementById('activeSite').classList.toggle('pulse', step === 1 && !inhibited);
+  document.getElementById('product').classList.toggle('on', step >= 2 && !inhibited);
+}
+function stepFwd() { if (step < 3 && !inhibited) step++; render(); }
+function reset() { step = 0; render(); }
+function toggleInhibitor() {
+  inhibited = !inhibited;
+  step = 0;
+  document.getElementById('allostericSite').classList.toggle('on', true);
+  document.getElementById('inhibitor').classList.toggle('on', inhibited);
+  document.querySelector('svg').classList.toggle('inhibited', inhibited);
+  render();
+}
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# MEMBRANE_TRANSPORT_GENERAL  (source: membrane_transport.html)
+# ---------------------------------------------------------------------------
+MEMBRANE_TRANSPORT_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of membrane transport modes: simple diffusion, facilitated diffusion through a channel, and active transport by a pump using ATP.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.8s ease-in-out infinite; }
+  @keyframes drift { 0%{transform:translateY(0)} 100%{transform:translateY(70px)} }
+  .drift-up { animation: driftup 1.8s ease-in-out infinite; }
+  @keyframes driftup { 0%{transform:translateY(0)} 100%{transform:translateY(-70px)} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSimple" onclick="setMode('simple')">Simple diffusion</button>
+  <button id="btnFacil" onclick="setMode('facil')">Facilitated diffusion</button>
+  <button id="btnActive" onclick="setMode('active')">Active transport</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Modes of membrane transport</title>
+<desc>Simple diffusion: small nonpolar molecules pass directly through the lipid bilayer down their concentration gradient. Facilitated diffusion: molecules pass through a channel protein, still down the gradient, no energy required. Active transport: a pump uses ATP to move molecules against their concentration gradient.</desc>
+
+<rect x="40" y="120" width="600" height="60" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="52" y="115">Plasma membrane</text>
+<text class="ts" x="60" y="100" id="outsideLabel">Outside — high concentration</text>
+<text class="ts" x="60" y="205" id="insideLabel">Inside — low concentration</text>
+
+<g id="simpleMol" class="stg">
+<circle class="drift" cx="200" cy="90" r="6" fill="#1D9E75"/>
+<circle class="drift" cx="220" cy="95" r="6" fill="#1D9E75" style="animation-delay:.3s"/>
+<circle class="drift" cx="240" cy="88" r="6" fill="#1D9E75" style="animation-delay:.6s"/>
+<text class="ts" x="220" y="75" text-anchor="middle">Small nonpolar molecules pass directly through</text>
+</g>
+
+<g id="channelProt" class="stg">
+<rect x="330" y="115" width="40" height="70" rx="14" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="350" y="200" text-anchor="middle">Channel protein</text>
+<circle class="drift" cx="350" cy="95" r="6" fill="#378ADD"/>
+<circle class="drift" cx="350" cy="95" r="6" fill="#378ADD" style="animation-delay:.5s"/>
+</g>
+
+<g id="pump" class="stg">
+<rect x="450" y="110" width="50" height="80" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="475" y="205" text-anchor="middle">Pump</text>
+<circle class="drift-up" cx="475" cy="185" r="6" fill="#D85A30"/>
+<circle class="drift-up" cx="475" cy="185" r="6" fill="#D85A30" style="animation-delay:.5s"/>
+<text class="ts" x="475" y="95" text-anchor="middle" id="pumpLabel">Moves against the gradient</text>
+<circle id="atp" cx="520" cy="150" r="10" class="c-amber pulse"/>
+<text class="ts" x="520" y="150" text-anchor="middle" dominant-baseline="central">ATP</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <span id="stepLabel"></span>
+</div>
+
+<script>
+let mode = 'simple';
+function setMode(m) {
+  mode = m;
+  document.getElementById('btnSimple').classList.toggle('active', m === 'simple');
+  document.getElementById('btnFacil').classList.toggle('active', m === 'facil');
+  document.getElementById('btnActive').classList.toggle('active', m === 'active');
+  document.getElementById('simpleMol').classList.toggle('on', m === 'simple');
+  document.getElementById('channelProt').classList.toggle('on', m === 'facil');
+  document.getElementById('pump').classList.toggle('on', m === 'active');
+  document.getElementById('insideLabel').textContent = m === 'active' ? 'Inside — becomes higher concentration' : 'Inside — low concentration';
+  const labels = {
+    simple: 'No protein needed — small nonpolar molecules (O2, CO2) cross directly, passive, down the gradient',
+    facil: 'A channel protein provides a path — still passive, still down the gradient, no ATP required',
+    active: 'A pump uses ATP to move molecules against their gradient — the only mode that requires energy'
+  };
+  document.getElementById('stepLabel').textContent = labels[m];
+}
+setMode('simple');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -958,6 +1436,60 @@ REGISTRY = {
         # "Technical": not built yet — add a TRANSLATION_TECHNICAL = '''...'''
         # fragment (wobble base pairing, EF-Tu/EF-G, ribosomal frameshifting,
         # signal peptides for ER targeting) to extend.
+    },
+    "Meiosis": {
+        "General": {
+            "fragment": MEIOSIS_GENERAL,
+            "height": 500,
+            "blurb": (
+                "Homologous chromosomes pair and cross over, then separate "
+                "in meiosis I, and sister chromatids separate in meiosis "
+                "II, producing four genetically distinct haploid cells."
+            ),
+        },
+    },
+    "Apoptosis": {
+        "General": {
+            "fragment": APOPTOSIS_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Extrinsic pathway: a death ligand activates initiator "
+                "caspase-8, which activates executioner caspase-3, "
+                "dismantling the cell into apoptotic bodies for clearance."
+            ),
+        },
+    },
+    "Endocytosis / exocytosis": {
+        "General": {
+            "fragment": ENDO_EXOCYTOSIS_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Switch between the two directions: endocytosis pinches a "
+                "clathrin-coated vesicle in from the membrane; exocytosis "
+                "docks and fuses a vesicle to release cargo outward."
+            ),
+        },
+    },
+    "Enzyme kinetics & allosteric regulation": {
+        "General": {
+            "fragment": ENZYME_KINETICS_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Substrate binds the active site by induced fit and is "
+                "converted to product; a separate allosteric inhibitor "
+                "can distort the active site to block binding entirely."
+            ),
+        },
+    },
+    "Membrane transport": {
+        "General": {
+            "fragment": MEMBRANE_TRANSPORT_GENERAL,
+            "height": 440,
+            "blurb": (
+                "Compare simple diffusion, facilitated diffusion through a "
+                "channel, and active transport by an ATP-powered pump."
+            ),
+        },
     },
 }
 
