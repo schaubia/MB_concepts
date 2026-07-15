@@ -1509,7 +1509,14 @@ entry = REGISTRY[topic][level]
 st.subheader(f"{topic} — {level}")
 st.write(entry["blurb"])
 
-st.components.v1.html(COMMON_STYLE + entry["fragment"], height=entry["height"], scrolling=False)
+wrapped_fragment = (
+    '<div style="max-width:680px;margin:0 auto;">' + entry["fragment"] + "</div>"
+)
+st.components.v1.html(
+    COMMON_STYLE + wrapped_fragment,
+    height=entry["height"] + 60,
+    scrolling=True,
+)
 
 st.divider()
 st.caption(
