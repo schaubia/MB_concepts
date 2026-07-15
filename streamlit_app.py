@@ -1349,6 +1349,358 @@ setMode('simple');
 
 
 # ---------------------------------------------------------------------------
+# HUMORAL_IMMUNE_GENERAL  (source: humoral.html)
+# ---------------------------------------------------------------------------
+HUMORAL_IMMUNE_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the humoral immune response: a B cell binds antigen, presents it to a helper T cell, then proliferates into antibody-secreting plasma cells and memory B cells.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 2s ease-in-out infinite; }
+  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 360" role="img">
+<title>Humoral immune response</title>
+<desc>A B cell's receptor binds a matching antigen, internalizes and presents it on MHC-II, a helper T cell recognizes the complex and delivers cytokine signals, and the B cell proliferates into antibody-secreting plasma cells and memory B cells.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<circle cx="180" cy="180" r="60" class="c-teal"/>
+<text class="th" x="180" y="180" text-anchor="middle" dominant-baseline="central">B cell</text>
+<path id="bcr" d="M180 120 L165 100 M180 120 L195 100" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"/>
+
+<g id="antigen" class="stg">
+<circle class="drift" cx="180" cy="70" r="9" fill="#EF9F27"/>
+<text class="ts" x="180" y="52" text-anchor="middle">Antigen</text>
+</g>
+
+<g id="mhcPresent" class="stg">
+<rect x="165" y="150" width="30" height="12" rx="3" fill="#EF9F27"/>
+<text class="ts" x="180" y="140" text-anchor="middle">MHC-II presenting</text>
+</g>
+
+<g id="helperT" class="stg">
+<circle cx="340" cy="150" r="45" class="c-purple"/>
+<text class="th" x="340" y="150" text-anchor="middle" dominant-baseline="central">Helper T</text>
+<line id="cytokine" x1="285" y1="160" x2="245" y2="170" stroke="#7F77DD" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+<text class="ts" x="340" y="205" text-anchor="middle">Cytokine signal</text>
+</g>
+
+<g id="plasmaCells" class="stg">
+<circle cx="480" cy="120" r="30" class="c-coral"/>
+<text class="ts" x="480" y="120" text-anchor="middle" dominant-baseline="central">Plasma cell</text>
+<circle cx="480" cy="230" r="30" class="c-coral"/>
+<text class="ts" x="480" y="230" text-anchor="middle" dominant-baseline="central">Plasma cell</text>
+</g>
+
+<g id="memoryCells" class="stg">
+<circle cx="580" cy="175" r="24" class="c-gray"/>
+<text class="ts" x="580" y="175" text-anchor="middle" dominant-baseline="central">Memory B</text>
+</g>
+
+<g id="antibodies" class="stg">
+<path class="drift" d="M540 100 l-6 -6 M540 100 l6 -6 M540 100 l0 8" stroke="#B91C1C" stroke-width="1.5" fill="none"/>
+<path class="drift" d="M560 260 l-6 -6 M560 260 l6 -6 M560 260 l0 8" stroke="#B91C1C" stroke-width="1.5" fill="none" style="animation-delay:.4s"/>
+<path class="drift" d="M600 90 l-6 -6 M600 90 l6 -6 M600 90 l0 8" stroke="#B91C1C" stroke-width="1.5" fill="none" style="animation-delay:.7s"/>
+<text class="ts" x="580" y="290" text-anchor="middle">Antibodies neutralize antigen</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 — B cell receptor unbound, antigen free",
+  "Step 1 — antigen binds BCR, internalized and presented on MHC-II",
+  "Step 2 — helper T cell recognizes the complex, delivers cytokine signal",
+  "Step 3 — B cell proliferates into plasma cells and memory B cells",
+  "Step 4 — plasma cells secrete antibodies that neutralize the antigen"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('antigen').classList.toggle('on', step <= 1);
+  document.getElementById('mhcPresent').classList.toggle('on', step >= 1 && step <= 2);
+  document.getElementById('helperT').classList.toggle('on', step >= 2);
+  document.getElementById('plasmaCells').classList.toggle('on', step >= 3);
+  document.getElementById('memoryCells').classList.toggle('on', step >= 3);
+  document.getElementById('antibodies').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# TCELL_ACTIVATION_GENERAL  (source: tcell.html)
+# ---------------------------------------------------------------------------
+TCELL_ACTIVATION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of T cell activation: an antigen-presenting cell displays a processed antigen on MHC-II, a naive T cell's receptor binds it, and a costimulatory signal is required before full activation.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #tcellGroup { transition: transform 1s ease; }
+  .docked #tcellGroup { transform: translateX(-40px); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>T cell activation, general view</title>
+<desc>An antigen-presenting cell engulfs and processes a pathogen, displaying a fragment on MHC-II. A naive T cell's receptor binds the MHC-antigen complex as signal one, and a costimulatory CD28-B7 interaction provides signal two, together fully activating the T cell.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<path d="M120 160 Q80 100 150 70 Q220 40 260 100 Q290 150 240 200 Q180 240 120 160 Z" class="c-amber" stroke-width="0.5"/>
+<text class="th" x="180" y="150" text-anchor="middle">APC</text>
+
+<g id="pathogen" class="stg">
+<circle cx="180" cy="60" r="9" fill="#E24B4A"/>
+<text class="ts" x="180" y="42" text-anchor="middle">Pathogen</text>
+</g>
+
+<g id="mhcII" class="stg">
+<rect x="230" y="150" width="26" height="12" rx="3" fill="#EF9F27"/>
+<text class="ts" x="243" y="135" text-anchor="middle">MHC-II + antigen</text>
+</g>
+
+<g id="tcellGroup">
+<circle cx="440" cy="160" r="55" class="c-purple"/>
+<text class="th" x="440" y="160" text-anchor="middle" dominant-baseline="central">Naive T cell</text>
+</g>
+
+<g id="signal1" class="stg">
+<line x1="380" y1="160" x2="258" y2="158" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="320" y="145" text-anchor="middle">Signal 1 — TCR / MHC</text>
+</g>
+
+<g id="signal2" class="stg">
+<line x1="400" y1="200" x2="270" y2="195" stroke="#639922" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+<text class="ts" x="335" y="215" text-anchor="middle">Signal 2 — CD28 / B7 (costimulation)</text>
+</g>
+
+<g id="activated" class="stg">
+<circle cx="440" cy="160" r="60" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="th" x="440" y="240" text-anchor="middle">Activated — proliferates into helper T cells</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 — APC engulfs the pathogen",
+  "Step 1 — pathogen processed, fragment presented on MHC-II",
+  "Step 2 — signal 1: naive T cell's receptor binds the MHC-antigen complex",
+  "Step 3 — signal 2: costimulatory CD28-B7 interaction confirms the signal is genuine",
+  "Step 4 — T cell fully activated, proliferates into helper T cells"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('pathogen').classList.toggle('on', step === 0);
+  document.getElementById('mhcII').classList.toggle('on', step >= 1);
+  document.querySelector('svg').classList.toggle('docked', step >= 2);
+  document.getElementById('signal1').classList.toggle('on', step >= 2);
+  document.getElementById('signal2').classList.toggle('on', step >= 3);
+  document.getElementById('activated').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# FERTILIZATION_GENERAL  (source: fertilization.html)
+# ---------------------------------------------------------------------------
+FERTILIZATION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of fertilization: sperm penetrates the egg's outer layers, membranes fuse, cortical granules block additional sperm, and pronuclei fuse into a zygote.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #spermGroup { transition: transform 1s ease; }
+  .fused #spermGroup { transform: translateX(70px); opacity: 0; }
+  #zonaLayer { transition: stroke 0.6s ease, stroke-width 0.6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Fertilization, general view</title>
+<desc>A sperm cell approaches the egg, undergoes the acrosomal reaction to penetrate the zona pellucida, fuses its membrane with the egg, triggers cortical granule release that hardens the zona pellucida to block additional sperm, and the two pronuclei fuse into a zygote.</desc>
+
+<circle cx="380" cy="150" r="90" class="c-amber"/>
+<circle id="zonaLayer" cx="380" cy="150" r="90" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<text class="th" x="380" y="150" text-anchor="middle" dominant-baseline="central">Egg</text>
+<text class="ts" x="380" y="255" text-anchor="middle">Zona pellucida</text>
+
+<g id="spermGroup">
+<path d="M150 150 L200 150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<circle cx="145" cy="150" r="10" fill="#378ADD"/>
+<text class="ts" x="145" y="130" text-anchor="middle">Sperm</text>
+</g>
+
+<g id="acrosome" class="stg">
+<circle cx="200" cy="150" r="5" fill="#EF9F27"/>
+<text class="ts" x="200" y="185" text-anchor="middle">Acrosomal enzymes penetrate zona</text>
+</g>
+
+<g id="corticalReaction" class="stg">
+<circle cx="330" cy="100" r="4" fill="#B91C1C"/>
+<circle cx="350" cy="200" r="4" fill="#B91C1C"/>
+<circle cx="410" cy="90" r="4" fill="#B91C1C"/>
+<text class="ts" x="380" y="60" text-anchor="middle">Cortical granules released — zona hardens</text>
+</g>
+
+<g id="pronuclei" class="stg">
+<circle cx="370" cy="150" r="14" fill="none" stroke="#378ADD" stroke-width="1.5"/>
+<circle cx="395" cy="150" r="14" fill="none" stroke="#D85A30" stroke-width="1.5"/>
+<text class="ts" x="380" y="200" text-anchor="middle" id="pronucleiLabel">Two pronuclei approach</text>
+</g>
+
+<g id="zygote" class="stg">
+<circle cx="382" cy="150" r="16" class="c-green"/>
+<text class="ts" x="382" y="150" text-anchor="middle" dominant-baseline="central">Zygote</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 — sperm approaches the egg",
+  "Step 1 — acrosomal reaction: enzymes digest a path through the zona pellucida",
+  "Step 2 — sperm and egg plasma membranes fuse",
+  "Step 3 — cortical reaction: granules release, zona hardens to block other sperm",
+  "Step 4 — pronuclei fuse, forming a diploid zygote"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('acrosome').classList.toggle('on', step === 1);
+  document.querySelector('svg').classList.toggle('fused', step >= 2);
+  document.getElementById('corticalReaction').classList.toggle('on', step === 3);
+  document.getElementById('zonaLayer').setAttribute('stroke-width', step >= 3 ? '4' : '1.5');
+  document.getElementById('pronuclei').classList.toggle('on', step >= 2 && step < 4);
+  document.getElementById('zygote').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# GASTRULATION_GENERAL  (source: gastrulation.html)
+# ---------------------------------------------------------------------------
+GASTRULATION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of gastrulation: a hollow blastula invaginates at the blastopore, forming an archenteron and establishing three germ layers — ectoderm, mesoderm, and endoderm.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  #innerFold { transition: d 1s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Gastrulation, general view</title>
+<desc>A hollow ball of cells, the blastula, begins invaginating at the blastopore. Cells migrate inward to form the archenteron, a primitive gut, establishing the three germ layers: outer ectoderm, middle mesoderm, and inner endoderm.</desc>
+
+<circle cx="340" cy="160" r="110" fill="none" stroke="#378ADD" stroke-width="3"/>
+<text class="ts" x="340" y="40" text-anchor="middle" id="stageLabel">Blastula — hollow ball of cells</text>
+
+<g id="blastopore" class="stg">
+<circle cx="340" cy="270" r="8" fill="#D85A30"/>
+<text class="ts" x="340" y="295" text-anchor="middle">Blastopore</text>
+</g>
+
+<path id="innerFold" d="M340 270 Q340 270 340 270" fill="none" stroke="#D85A30" stroke-width="3" class="stg"/>
+
+<g id="archenteron" class="stg">
+<ellipse cx="340" cy="190" rx="45" ry="60" fill="none" stroke="#D85A30" stroke-width="2"/>
+<text class="ts" x="340" y="190" text-anchor="middle" dominant-baseline="central">Archenteron</text>
+</g>
+
+<g id="layers" class="stg">
+<text class="ts" x="490" y="90" text-anchor="middle">Ectoderm (outer)</text>
+<circle cx="450" cy="90" r="5" fill="#378ADD"/>
+<text class="ts" x="490" y="160" text-anchor="middle">Mesoderm (middle)</text>
+<circle cx="450" cy="160" r="5" fill="#7F77DD"/>
+<text class="ts" x="490" y="230" text-anchor="middle">Endoderm (inner)</text>
+<circle cx="450" cy="230" r="5" fill="#D85A30"/>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Blastula — hollow ball of cells surrounding a fluid-filled cavity",
+  "Invagination begins at the blastopore",
+  "Cells migrate inward, forming the archenteron (primitive gut)",
+  "Three germ layers established: ectoderm, mesoderm, endoderm"
+];
+const folds = [
+  "M340 270 Q340 270 340 270",
+  "M340 270 Q340 240 340 220",
+  "M340 270 Q300 220 320 180 Q340 150 340 190",
+  "M340 270 Q300 220 320 180 Q340 150 340 190"
+];
+function render() {
+  document.getElementById('stageLabel').textContent = labels[step];
+  document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 3';
+  document.getElementById('blastopore').classList.toggle('on', step >= 1);
+  document.getElementById('innerFold').classList.toggle('on', step >= 1);
+  document.getElementById('innerFold').setAttribute('d', folds[step]);
+  document.getElementById('archenteron').classList.toggle('on', step >= 2);
+  document.getElementById('layers').classList.toggle('on', step >= 3);
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -1488,6 +1840,50 @@ REGISTRY = {
             "blurb": (
                 "Compare simple diffusion, facilitated diffusion through a "
                 "channel, and active transport by an ATP-powered pump."
+            ),
+        },
+    },
+    "Humoral immune response": {
+        "General": {
+            "fragment": HUMORAL_IMMUNE_GENERAL,
+            "height": 500,
+            "blurb": (
+                "A B cell binds antigen, presents it to a helper T cell for "
+                "a cytokine signal, then proliferates into antibody-"
+                "secreting plasma cells and long-lived memory B cells."
+            ),
+        },
+    },
+    "T cell activation": {
+        "General": {
+            "fragment": TCELL_ACTIVATION_GENERAL,
+            "height": 460,
+            "blurb": (
+                "An antigen-presenting cell displays antigen on MHC-II; "
+                "full T cell activation needs both TCR/MHC binding "
+                "(signal 1) and CD28/B7 costimulation (signal 2)."
+            ),
+        },
+    },
+    "Fertilization": {
+        "General": {
+            "fragment": FERTILIZATION_GENERAL,
+            "height": 440,
+            "blurb": (
+                "Sperm penetrates the zona pellucida, membranes fuse, "
+                "cortical granules harden the zona to block polyspermy, "
+                "and the pronuclei fuse into a diploid zygote."
+            ),
+        },
+    },
+    "Gastrulation": {
+        "General": {
+            "fragment": GASTRULATION_GENERAL,
+            "height": 460,
+            "blurb": (
+                "The hollow blastula invaginates at the blastopore, "
+                "forming the archenteron and establishing the three germ "
+                "layers: ectoderm, mesoderm, and endoderm."
             ),
         },
     },
