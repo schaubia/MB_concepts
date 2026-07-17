@@ -280,9 +280,9 @@ GPCR_TECHNICAL = '''
 <script>
 let step = 0;
 let path = 'Gs';
-const labelsGs = ["Step 0 — resting","Step 1 — ligand docks, Ga-GTP forms","Step 2 — AC activated, cAMP rises","Step 3 — PKA holoenzyme splits","Step 4 — target phosphorylated"];
-const labelsGi = ["Step 0 — resting","Step 1 — ligand docks, Ga-GTP forms","Step 2 — AC inhibited, cAMP falls"];
-const labelsGq = ["Step 0 — resting","Step 1 — ligand docks, Ga-GTP forms","Step 2 — PLC activated, IP3 + DAG produced"];
+const labelsGs = ["Step 0 of 4 — resting","Step 1 of 4 — ligand docks, Ga-GTP forms","Step 2 of 4 — AC activated, cAMP rises","Step 3 of 4 — PKA holoenzyme splits","Step 4 of 4 — target phosphorylated"];
+const labelsGi = ["Step 0 of 2 — resting","Step 1 of 2 — ligand docks, Ga-GTP forms","Step 2 of 2 — AC inhibited, cAMP falls"];
+const labelsGq = ["Step 0 of 2 — resting","Step 1 of 2 — ligand docks, Ga-GTP forms","Step 2 of 2 — PLC activated, IP3 + DAG produced"];
 function maxStep() { return path==='Gs' ? 4 : 2; }
 function setPath(p) {
   path = p; step = 0;
@@ -396,10 +396,10 @@ DNA_REPLICATION_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — intact double helix",
-  "Step 1 — helicase unwinds the strands",
-  "Step 2 — polymerase synthesizes new strands",
-  "Step 3 — two daughter helices formed"
+  "Step 0 of 3 — intact double helix",
+  "Step 1 of 3 — helicase unwinds the strands",
+  "Step 2 of 3 — polymerase synthesizes new strands",
+  "Step 3 of 3 — two daughter helices formed"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -511,12 +511,12 @@ DNA_REPLICATION_TECHNICAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — intact helix ahead of the fork",
-  "Step 1 — topoisomerase relieves supercoiling",
-  "Step 2 — helicase unwinds, SSB proteins coat strands",
-  "Step 3 — primase lays RNA primers",
-  "Step 4 — Pol III extends leading (continuous) and lagging (fragments) strands",
-  "Step 5 — primers removed, ligase seals the nicks"
+  "Step 0 of 5 — intact helix ahead of the fork",
+  "Step 1 of 5 — topoisomerase relieves supercoiling",
+  "Step 2 of 5 — helicase unwinds, SSB proteins coat strands",
+  "Step 3 of 5 — primase lays RNA primers",
+  "Step 4 of 5 — Pol III extends leading (continuous) and lagging (fragments) strands",
+  "Step 5 of 5 — primers removed, ligase seals the nicks"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -743,11 +743,11 @@ TRANSCRIPTION_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — intact DNA, promoter unbound",
-  "Step 1 — RNA polymerase binds the promoter",
-  "Step 2 — DNA unwinds, mRNA synthesis begins",
-  "Step 3 — polymerase elongates the mRNA along the gene",
-  "Step 4 — termination: mRNA released, DNA reanneals"
+  "Step 0 of 4 — intact DNA, promoter unbound",
+  "Step 1 of 4 — RNA polymerase binds the promoter",
+  "Step 2 of 4 — DNA unwinds, mRNA synthesis begins",
+  "Step 3 of 4 — polymerase elongates the mRNA along the gene",
+  "Step 4 of 4 — termination: mRNA released, DNA reanneals"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -839,12 +839,12 @@ TRANSLATION_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — mRNA alone, start codon marked",
-  "Step 1 — small subunit binds, initiator tRNA pairs with start codon",
-  "Step 2 — large subunit joins, forming the complete ribosome",
-  "Step 3 — tRNA delivers next amino acid into the A site, peptide bond forms",
-  "Step 4 — translocation: ribosome shifts one codon, chain grows",
-  "Step 5 — stop codon reached, release factor binds, polypeptide released"
+  "Step 0 of 5 — mRNA alone, start codon marked",
+  "Step 1 of 5 — small subunit binds, initiator tRNA pairs with start codon",
+  "Step 2 of 5 — large subunit joins, forming the complete ribosome",
+  "Step 3 of 5 — tRNA delivers next amino acid into the A site, peptide bond forms",
+  "Step 4 of 5 — translocation: ribosome shifts one codon, chain grows",
+  "Step 5 of 5 — stop codon reached, release factor binds, polypeptide released"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -1030,11 +1030,11 @@ APOPTOSIS_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — healthy cell, no death signal",
-  "Step 1 — death ligand binds receptor, initiator caspase-8 activates",
-  "Step 2 — caspase-8 activates executioner caspase-3",
-  "Step 3 — caspase-3 fragments DNA, breaks down the cytoskeleton, cell blebs into apoptotic bodies",
-  "Step 4 — apoptotic bodies engulfed by a phagocyte, no inflammation"
+  "Step 0 of 4 — healthy cell, no death signal",
+  "Step 1 of 4 — death ligand binds receptor, initiator caspase-8 activates",
+  "Step 2 of 4 — caspase-8 activates executioner caspase-3",
+  "Step 3 of 4 — caspase-3 fragments DNA, breaks down the cytoskeleton, cell blebs into apoptotic bodies",
+  "Step 4 of 4 — apoptotic bodies engulfed by a phagocyte, no inflammation"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -1129,16 +1129,16 @@ ENDO_EXOCYTOSIS_GENERAL = '''
 let step = 0;
 let mode = 'endo';
 const labelsEndo = [
-  "Step 0 — cargo outside, membrane flat",
-  "Step 1 — clathrin coats the membrane, it begins to invaginate",
-  "Step 2 — vesicle pinches off, enclosing the cargo",
-  "Step 3 — vesicle moves into the cytoplasm and uncoats"
+  "Step 0 of 3 — cargo outside, membrane flat",
+  "Step 1 of 3 — clathrin coats the membrane, it begins to invaginate",
+  "Step 2 of 3 — vesicle pinches off, enclosing the cargo",
+  "Step 3 of 3 — vesicle moves into the cytoplasm and uncoats"
 ];
 const labelsExo = [
-  "Step 0 — vesicle with cargo inside the cytoplasm",
-  "Step 1 — vesicle moves to the membrane and docks via SNARE proteins",
-  "Step 2 — vesicle membrane fuses with the plasma membrane",
-  "Step 3 — cargo released outside the cell"
+  "Step 0 of 3 — vesicle with cargo inside the cytoplasm",
+  "Step 1 of 3 — vesicle moves to the membrane and docks via SNARE proteins",
+  "Step 2 of 3 — vesicle membrane fuses with the plasma membrane",
+  "Step 3 of 3 — cargo released outside the cell"
 ];
 function setMode(m) {
   mode = m; step = 0;
@@ -1234,10 +1234,10 @@ ENZYME_KINETICS_GENERAL = '''
 let step = 0;
 let inhibited = false;
 const labels = [
-  "Step 0 — substrate approaches the active site",
-  "Step 1 — induced fit: substrate binds, enzyme-substrate complex forms",
-  "Step 2 — reaction catalyzed, product formed",
-  "Step 3 — product released, enzyme resets for another cycle"
+  "Step 0 of 3 — substrate approaches the active site",
+  "Step 1 of 3 — induced fit: substrate binds, enzyme-substrate complex forms",
+  "Step 2 of 3 — reaction catalyzed, product formed",
+  "Step 3 of 3 — product released, enzyme resets for another cycle"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = inhibited ? "Allosteric inhibitor bound — substrate can't bind" : labels[step];
@@ -1267,16 +1267,13 @@ render();
 # MEMBRANE_TRANSPORT_GENERAL  (source: membrane_transport.html)
 # ---------------------------------------------------------------------------
 MEMBRANE_TRANSPORT_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of membrane transport modes: simple diffusion, facilitated diffusion through a channel, and active transport by a pump using ATP.</h2>
+<h2 class="sr-only">Interactive diagram of membrane transport modes, each shown as an actual step-through: simple diffusion, facilitated diffusion through a channel, and active transport by an ATP-powered pump.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .drift { animation: drift 1.8s ease-in-out infinite; }
-  @keyframes drift { 0%{transform:translateY(0)} 100%{transform:translateY(70px)} }
-  .drift-up { animation: driftup 1.8s ease-in-out infinite; }
-  @keyframes driftup { 0%{transform:translateY(0)} 100%{transform:translateY(-70px)} }
+  #molecule { transition: transform 1s ease, opacity .4s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -1290,61 +1287,91 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 </div>
 
 <svg width="100%" viewBox="0 0 680 300" role="img">
-<title>Modes of membrane transport</title>
-<desc>Simple diffusion: small nonpolar molecules pass directly through the lipid bilayer down their concentration gradient. Facilitated diffusion: molecules pass through a channel protein, still down the gradient, no energy required. Active transport: a pump uses ATP to move molecules against their concentration gradient.</desc>
+<title>Modes of membrane transport, stepped</title>
+<desc>Each transport mode is shown as a sequence: a molecule approaches the membrane, crosses it by a different mechanism depending on the mode, and arrives on the other side. Simple diffusion passes directly through the lipid bilayer. Facilitated diffusion passes through a channel protein. Active transport is pumped through against its gradient, consuming ATP.</desc>
 
-<rect x="40" y="120" width="600" height="60" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="52" y="115">Plasma membrane</text>
-<text class="ts" x="60" y="100" id="outsideLabel">Outside — high concentration</text>
-<text class="ts" x="60" y="205" id="insideLabel">Inside — low concentration</text>
-
-<g id="simpleMol" class="stg">
-<circle class="drift" cx="200" cy="90" r="6" fill="#1D9E75"/>
-<circle class="drift" cx="220" cy="95" r="6" fill="#1D9E75" style="animation-delay:.3s"/>
-<circle class="drift" cx="240" cy="88" r="6" fill="#1D9E75" style="animation-delay:.6s"/>
-<text class="ts" x="220" y="75" text-anchor="middle">Small nonpolar molecules pass directly through</text>
-</g>
+<rect x="280" y="40" width="120" height="220" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="340" y="30">Membrane</text>
+<text class="ts" x="80" y="30" id="outsideLabel">Outside — high concentration</text>
+<text class="ts" x="500" y="30" id="insideLabel">Inside — low concentration</text>
 
 <g id="channelProt" class="stg">
-<rect x="330" y="115" width="40" height="70" rx="14" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="350" y="200" text-anchor="middle">Channel protein</text>
-<circle class="drift" cx="350" cy="95" r="6" fill="#378ADD"/>
-<circle class="drift" cx="350" cy="95" r="6" fill="#378ADD" style="animation-delay:.5s"/>
+<rect x="320" y="60" width="40" height="180" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="340" y="255" text-anchor="middle">Channel protein</text>
 </g>
 
 <g id="pump" class="stg">
-<rect x="450" y="110" width="50" height="80" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="475" y="205" text-anchor="middle">Pump</text>
-<circle class="drift-up" cx="475" cy="185" r="6" fill="#D85A30"/>
-<circle class="drift-up" cx="475" cy="185" r="6" fill="#D85A30" style="animation-delay:.5s"/>
-<text class="ts" x="475" y="95" text-anchor="middle" id="pumpLabel">Moves against the gradient</text>
-<circle id="atp" cx="520" cy="150" r="10" class="c-amber pulse"/>
-<text class="ts" x="520" y="150" text-anchor="middle" dominant-baseline="central">ATP</text>
+<rect x="310" y="60" width="60" height="180" rx="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="340" y="255" text-anchor="middle">Pump</text>
+<circle id="atp" cx="420" cy="150" r="12" class="c-amber" opacity="0"/>
+<text class="ts" x="420" y="150" text-anchor="middle" dominant-baseline="central" id="atpLabel" opacity="0">ATP</text>
 </g>
+
+<circle id="molecule" cx="120" cy="150" r="10" fill="#1D9E75"/>
 </svg>
 
 <div class="btnrow">
-  <span id="stepLabel"></span>
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
 </div>
 
 <script>
+let step = 0;
 let mode = 'simple';
+const configs = {
+  simple: {
+    labels: [
+      "Step 0 of 3 — small nonpolar molecule approaches the bilayer",
+      "Step 1 of 3 — dissolves directly into the lipid bilayer, no protein needed",
+      "Step 2 of 3 — passes through the hydrophobic core",
+      "Step 3 of 3 — exits into the cytoplasm, moving down its gradient"
+    ]
+  },
+  facil: {
+    labels: [
+      "Step 0 of 3 — molecule approaches the channel protein",
+      "Step 1 of 3 — enters the channel's pore",
+      "Step 2 of 3 — passes through the channel, still no energy required",
+      "Step 3 of 3 — exits into the cytoplasm, still down its gradient"
+    ]
+  },
+  active: {
+    labels: [
+      "Step 0 of 4 — molecule binds the pump on the low-concentration side",
+      "Step 1 of 4 — ATP binds the pump",
+      "Step 2 of 4 — ATP hydrolyzed, pump changes shape, molecule moves across",
+      "Step 3 of 4 — ADP + Pi released, pump resets",
+      "Step 4 of 4 — molecule released on the other side, against its gradient"
+    ]
+  }
+};
+function maxStep() { return mode === 'active' ? 4 : 3; }
 function setMode(m) {
-  mode = m;
+  mode = m; step = 0;
   document.getElementById('btnSimple').classList.toggle('active', m === 'simple');
   document.getElementById('btnFacil').classList.toggle('active', m === 'facil');
   document.getElementById('btnActive').classList.toggle('active', m === 'active');
-  document.getElementById('simpleMol').classList.toggle('on', m === 'simple');
   document.getElementById('channelProt').classList.toggle('on', m === 'facil');
   document.getElementById('pump').classList.toggle('on', m === 'active');
   document.getElementById('insideLabel').textContent = m === 'active' ? 'Inside — becomes higher concentration' : 'Inside — low concentration';
-  const labels = {
-    simple: 'No protein needed — small nonpolar molecules (O2, CO2) cross directly, passive, down the gradient',
-    facil: 'A channel protein provides a path — still passive, still down the gradient, no ATP required',
-    active: 'A pump uses ATP to move molecules against their gradient — the only mode that requires energy'
-  };
-  document.getElementById('stepLabel').textContent = labels[m];
+  render();
 }
+function render() {
+  const cfg = configs[mode];
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  let x;
+  if (mode === 'active') {
+    x = step === 0 ? 120 : step === 1 ? 320 : step === 2 ? 340 : step === 3 ? 340 : 560;
+    document.getElementById('atp').setAttribute('opacity', step === 1 ? '1' : '0');
+    document.getElementById('atpLabel').setAttribute('opacity', step === 1 ? '1' : '0');
+  } else {
+    x = step === 0 ? 120 : step === 1 ? 300 : step === 2 ? 340 : 560;
+  }
+  document.getElementById('molecule').style.transform = `translateX(${x - 120}px)`;
+}
+function stepFwd() { if (step < maxStep()) step++; render(); }
+function reset() { step = 0; render(); }
 setMode('simple');
 </script>
 '''
@@ -1423,11 +1450,11 @@ HUMORAL_IMMUNE_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — B cell receptor unbound, antigen free",
-  "Step 1 — antigen binds BCR, internalized and presented on MHC-II",
-  "Step 2 — helper T cell recognizes the complex, delivers cytokine signal",
-  "Step 3 — B cell proliferates into plasma cells and memory B cells",
-  "Step 4 — plasma cells secrete antibodies that neutralize the antigen"
+  "Step 0 of 4 — B cell receptor unbound, antigen free",
+  "Step 1 of 4 — antigen binds BCR, internalized and presented on MHC-II",
+  "Step 2 of 4 — helper T cell recognizes the complex, delivers cytokine signal",
+  "Step 3 of 4 — B cell proliferates into plasma cells and memory B cells",
+  "Step 4 of 4 — plasma cells secrete antibodies that neutralize the antigen"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -1512,11 +1539,11 @@ TCELL_ACTIVATION_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — APC engulfs the pathogen",
-  "Step 1 — pathogen processed, fragment presented on MHC-II",
-  "Step 2 — signal 1: naive T cell's receptor binds the MHC-antigen complex",
-  "Step 3 — signal 2: costimulatory CD28-B7 interaction confirms the signal is genuine",
-  "Step 4 — T cell fully activated, proliferates into helper T cells"
+  "Step 0 of 4 — APC engulfs the pathogen",
+  "Step 1 of 4 — pathogen processed, fragment presented on MHC-II",
+  "Step 2 of 4 — signal 1: naive T cell's receptor binds the MHC-antigen complex",
+  "Step 3 of 4 — signal 2: costimulatory CD28-B7 interaction confirms the signal is genuine",
+  "Step 4 of 4 — T cell fully activated, proliferates into helper T cells"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -1600,11 +1627,11 @@ FERTILIZATION_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — sperm approaches the egg",
-  "Step 1 — acrosomal reaction: enzymes digest a path through the zona pellucida",
-  "Step 2 — sperm and egg plasma membranes fuse",
-  "Step 3 — cortical reaction: granules release, zona hardens to block other sperm",
-  "Step 4 — pronuclei fuse, forming a diploid zygote"
+  "Step 0 of 4 — sperm approaches the egg",
+  "Step 1 of 4 — acrosomal reaction: enzymes digest a path through the zona pellucida",
+  "Step 2 of 4 — sperm and egg plasma membranes fuse",
+  "Step 3 of 4 — cortical reaction: granules release, zona hardens to block other sperm",
+  "Step 4 of 4 — pronuclei fuse, forming a diploid zygote"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -1755,11 +1782,11 @@ ACTION_POTENTIAL_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — resting potential, Na/K pump maintains -70 mV",
-  "Step 1 — threshold reached, Na+ channels open, rapid depolarization",
-  "Step 2 — peak (~+30 mV), Na+ channels inactivate, K+ channels open",
-  "Step 3 — repolarization as K+ exits, brief undershoot",
-  "Step 4 — wave propagates down the axon to the next segment"
+  "Step 0 of 4 — resting potential, Na/K pump maintains -70 mV",
+  "Step 1 of 4 — threshold reached, Na+ channels open, rapid depolarization",
+  "Step 2 of 4 — peak (~+30 mV), Na+ channels inactivate, K+ channels open",
+  "Step 3 of 4 — repolarization as K+ exits, brief undershoot",
+  "Step 4 of 4 — wave propagates down the axon to the next segment"
 ];
 const traces = [
   "M30 200 L650 200",
@@ -1850,10 +1877,10 @@ MUSCLE_CONTRACTION_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — relaxed: tropomyosin blocks the myosin-binding sites on actin",
-  "Step 1 — Ca2+ released, binds troponin, tropomyosin shifts to expose binding sites",
-  "Step 2 — myosin heads form cross-bridges and pull actin inward (power stroke)",
-  "Step 3 — sarcomere shortens, Z-lines drawn closer together"
+  "Step 0 of 3 — relaxed: tropomyosin blocks the myosin-binding sites on actin",
+  "Step 1 of 3 — Ca2+ released, binds troponin, tropomyosin shifts to expose binding sites",
+  "Step 2 of 3 — myosin heads form cross-bridges and pull actin inward (power stroke)",
+  "Step 3 of 3 — sarcomere shortens, Z-lines drawn closer together"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -1922,11 +1949,11 @@ CARDIAC_CONDUCTION_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — SA node (pacemaker) fires spontaneously",
-  "Step 1 — signal spreads across the atria, triggering atrial contraction",
-  "Step 2 — signal reaches the AV node, briefly delayed",
-  "Step 3 — signal races through the Bundle of His and Purkinje fibers",
-  "Step 4 — ventricles depolarize and contract, ejecting blood"
+  "Step 0 of 4 — SA node (pacemaker) fires spontaneously",
+  "Step 1 of 4 — signal spreads across the atria, triggering atrial contraction",
+  "Step 2 of 4 — signal reaches the AV node, briefly delayed",
+  "Step 3 of 4 — signal races through the Bundle of His and Purkinje fibers",
+  "Step 4 of 4 — ventricles depolarize and contract, ejecting blood"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -2004,10 +2031,10 @@ GAS_EXCHANGE_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — deoxygenated blood arrives, fresh air fills the alveolus",
-  "Step 1 — O2 diffuses down its gradient from alveolus into blood",
-  "Step 2 — CO2 diffuses the opposite direction, from blood into alveolus",
-  "Step 3 — O2 binds hemoglobin, oxygenated blood leaves via the pulmonary vein"
+  "Step 0 of 3 — deoxygenated blood arrives, fresh air fills the alveolus",
+  "Step 1 of 3 — O2 diffuses down its gradient from alveolus into blood",
+  "Step 2 of 3 — CO2 diffuses the opposite direction, from blood into alveolus",
+  "Step 3 of 3 — O2 binds hemoglobin, oxygenated blood leaves via the pulmonary vein"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -2093,11 +2120,11 @@ SYNAPTIC_TRANSMISSION_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — action potential arrives at the axon terminal",
-  "Step 1 — voltage-gated Ca2+ channels open, calcium flows in",
-  "Step 2 — vesicle fuses with the membrane, neurotransmitter released",
-  "Step 3 — neurotransmitter diffuses across the synaptic cleft",
-  "Step 4 — neurotransmitter binds receptors, postsynaptic response triggered"
+  "Step 0 of 4 — action potential arrives at the axon terminal",
+  "Step 1 of 4 — voltage-gated Ca2+ channels open, calcium flows in",
+  "Step 2 of 4 — vesicle fuses with the membrane, neurotransmitter released",
+  "Step 3 of 4 — neurotransmitter diffuses across the synaptic cleft",
+  "Step 4 of 4 — neurotransmitter binds receptors, postsynaptic response triggered"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -2187,11 +2214,11 @@ ELECTRON_TRANSPORT_CHAIN_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — electrons enter Complex I from NADH",
-  "Step 1 — electrons pass through I → III → IV, pumping H+ across the membrane",
-  "Step 2 — oxygen accepts electrons at Complex IV, forming water",
-  "Step 3 — protons flow back down their gradient through ATP synthase",
-  "Step 4 — ATP synthase spins, catalyzing ADP + Pi → ATP"
+  "Step 0 of 4 — electrons enter Complex I from NADH",
+  "Step 1 of 4 — electrons pass through I → III → IV, pumping H+ across the membrane",
+  "Step 2 of 4 — oxygen accepts electrons at Complex IV, forming water",
+  "Step 3 of 4 — protons flow back down their gradient through ATP synthase",
+  "Step 4 of 4 — ATP synthase spins, catalyzing ADP + Pi → ATP"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -2264,11 +2291,11 @@ BLOOD_CLOTTING_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Step 0 — vessel injury exposes collagen",
-  "Step 1 — platelets adhere and aggregate, forming a temporary plug",
-  "Step 2 — coagulation cascade activates, converging on thrombin",
-  "Step 3 — thrombin converts fibrinogen into fibrin strands",
-  "Step 4 — fibrin mesh reinforces the platelet plug into a stable clot"
+  "Step 0 of 4 — vessel injury exposes collagen",
+  "Step 1 of 4 — platelets adhere and aggregate, forming a temporary plug",
+  "Step 2 of 4 — coagulation cascade activates, converging on thrombin",
+  "Step 3 of 4 — thrombin converts fibrinogen into fibrin strands",
+  "Step 4 of 4 — fibrin mesh reinforces the platelet plug into a stable clot"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -2393,6 +2420,291 @@ setMode('high');
 
 
 # ---------------------------------------------------------------------------
+# MITOSIS_TECHNICAL  (source: mitosis_technical.html)
+# ---------------------------------------------------------------------------
+MITOSIS_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of mitosis: cohesin holds sister chromatids together, the spindle assembly checkpoint blocks anaphase until every kinetochore is bi-oriented, separase cleaves cohesin to trigger separation, and an actomyosin ring drives cytokinesis.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #chromLeft, #chromRight { transition: transform 1s ease; }
+  .separated #chromLeft { transform: translateX(-70px); }
+  .separated #chromRight { transform: translateX(70px); }
+  #furrow { transition: transform 1s ease; }
+  .constricted #furrow { transform: scaleY(0.3); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Mitosis, technical view</title>
+<desc>Cohesin rings hold sister chromatids together. Kinetochores attach to spindle microtubules from both poles; the spindle assembly checkpoint blocks progression until every chromosome is bi-oriented and under tension. Once satisfied, the anaphase-promoting complex triggers separase to cleave cohesin, sister chromatids separate, and an actomyosin contractile ring pinches the cell in two during cytokinesis.</desc>
+
+<ellipse cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+
+<g id="chromLeft">
+<path d="M320 150 L340 170 M340 150 L320 170" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
+<circle id="cohesinL" cx="330" cy="160" r="3" fill="#EF9F27"/>
+</g>
+<g id="chromRight">
+<path d="M340 150 L360 170 M360 150 L340 170" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
+<circle id="cohesinR" cx="350" cy="160" r="3" fill="#EF9F27"/>
+</g>
+<line id="cohesinLink" x1="330" y1="160" x2="350" y2="160" stroke="#EF9F27" stroke-width="2"/>
+
+<g id="kinetochores" class="stg">
+<circle cx="330" cy="145" r="4" class="c-purple"/>
+<circle cx="350" cy="145" r="4" class="c-purple"/>
+<text class="ts" x="340" y="128" text-anchor="middle">Kinetochores</text>
+</g>
+
+<g id="spindleSearching" class="stg">
+<line x1="140" y1="170" x2="325" y2="150" stroke="var(--t)" stroke-width="0.75" stroke-dasharray="3 3" opacity="0.5"/>
+<line x1="540" y1="170" x2="355" y2="150" stroke="var(--t)" stroke-width="0.75" stroke-dasharray="3 3" opacity="0.5"/>
+<text class="ts" x="340" y="90" text-anchor="middle" id="sacLabel">SAC active — anaphase blocked</text>
+</g>
+
+<g id="spindleAttached" class="stg">
+<line x1="140" y1="170" x2="325" y2="150" stroke="var(--t)" stroke-width="1"/>
+<line x1="540" y1="170" x2="355" y2="150" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="340" y="90" text-anchor="middle">Bi-oriented, under tension — SAC satisfied</text>
+</g>
+
+<g id="separaseNote" class="stg">
+<text class="th" x="340" y="200" text-anchor="middle">Separase cleaves cohesin</text>
+</g>
+
+<g id="furrowGroup" class="stg">
+<rect id="furrow" x="330" y="60" width="20" height="220" fill="var(--border-strong)" opacity="0.5"/>
+<text class="ts" x="340" y="310" text-anchor="middle">Actomyosin ring constricts</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 5 — cohesin holds sister chromatids together",
+  "Step 1 of 5 — kinetochores assemble at each centromere",
+  "Step 2 of 5 — spindle fibers probe for attachment; SAC blocks anaphase until bi-oriented",
+  "Step 3 of 5 — bi-orientation achieved, tension detected, SAC satisfied — APC/C activates",
+  "Step 4 of 5 — separase cleaves cohesin, sister chromatids pulled apart",
+  "Step 5 of 5 — actomyosin contractile ring constricts, completing cytokinesis"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('kinetochores').classList.toggle('on', step >= 1);
+  document.getElementById('spindleSearching').classList.toggle('on', step === 2);
+  document.getElementById('spindleAttached').classList.toggle('on', step >= 3 && step < 4);
+  document.getElementById('separaseNote').classList.toggle('on', step === 4);
+  document.getElementById('cohesinLink').style.opacity = step >= 4 ? '0' : '1';
+  document.querySelector('svg').classList.toggle('separated', step >= 4);
+  document.getElementById('furrowGroup').classList.toggle('on', step >= 5);
+  document.querySelector('svg').classList.toggle('constricted', step >= 5);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# TRANSCRIPTION_TECHNICAL  (source: transcription_technical.html)
+# ---------------------------------------------------------------------------
+TRANSCRIPTION_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of transcription initiation: TFIID binds the TATA box, general transcription factors assemble the pre-initiation complex, TFIIH unwinds the DNA, and the 5' end of the mRNA is capped co-transcriptionally.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #rnapGroup { transition: transform 1.2s ease; }
+  .elongating #rnapGroup { transform: translateX(160px); }
+  #mrnaTail { transition: stroke-dasharray 1s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Transcription initiation, technical view</title>
+<desc>TFIID recognizes and binds the TATA box, other general transcription factors assemble into the pre-initiation complex, TFIIH's helicase activity opens the DNA to form the transcription bubble, RNA polymerase II begins synthesizing mRNA, and the 5' end is capped with a modified guanine nucleotide co-transcriptionally.</desc>
+
+<line x1="30" y1="180" x2="630" y2="180" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="30" y1="200" x2="630" y2="200" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+
+<rect id="tataBox" x="90" y="170" width="40" height="40" fill="none" stroke="#EF9F27" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text class="ts" x="110" y="162" text-anchor="middle">TATA box</text>
+
+<g id="tfiid" class="stg">
+<circle cx="110" cy="150" r="14" class="c-purple"/>
+<text class="ts" x="110" y="150" text-anchor="middle" dominant-baseline="central">TFIID</text>
+</g>
+
+<g id="pic" class="stg">
+<circle cx="85" cy="130" r="10" class="c-teal"/>
+<text class="ts" x="85" y="115" text-anchor="middle">TFIIB</text>
+<circle cx="140" cy="125" r="10" class="c-teal"/>
+<text class="ts" x="140" y="110" text-anchor="middle">TFIIF</text>
+<circle cx="165" cy="145" r="10" class="c-amber"/>
+<text class="ts" x="175" y="130" text-anchor="middle">TFIIH</text>
+<text class="ts" x="115" y="95" text-anchor="middle">Pre-initiation complex</text>
+</g>
+
+<g id="bubble" class="stg">
+<path d="M110 180 Q150 160 190 180" stroke="#378ADD" stroke-width="3" fill="none"/>
+<path d="M110 200 Q150 220 190 200" stroke="#D85A30" stroke-width="3" fill="none"/>
+<text class="ts" x="150" y="240" text-anchor="middle">TFIIH unwinds DNA — transcription bubble</text>
+</g>
+
+<g id="rnapGroup">
+<circle cx="150" cy="190" r="18" class="c-purple"/>
+<text class="ts" x="150" y="190" text-anchor="middle" dominant-baseline="central">Pol II</text>
+</g>
+
+<g id="mrna" class="stg">
+<path id="mrnaTail" d="M150 158 Q200 140 350 135" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<circle id="capG" cx="150" cy="158" r="6" fill="#B91C1C" opacity="0"/>
+<text class="ts" x="150" y="140" text-anchor="middle" id="capLabel" opacity="0">5' cap</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — TFIID (via TBP) recognizes and binds the TATA box",
+  "Step 1 of 4 — TFIIB, TFIIF, TFIIH and RNA Pol II assemble into the pre-initiation complex",
+  "Step 2 of 4 — TFIIH's helicase activity unwinds the DNA, forming the transcription bubble",
+  "Step 3 of 4 — Pol II begins elongating; the 5' end is capped co-transcriptionally",
+  "Step 4 of 4 — elongation continues down the gene, capped mRNA growing"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('tfiid').classList.toggle('on', step >= 0);
+  document.getElementById('tfiid').classList.toggle('pulse', step === 0);
+  document.getElementById('pic').classList.toggle('on', step >= 1);
+  document.getElementById('bubble').classList.toggle('on', step >= 2);
+  document.getElementById('mrna').classList.toggle('on', step >= 3);
+  document.getElementById('capG').setAttribute('opacity', step >= 3 ? '1' : '0');
+  document.getElementById('capLabel').setAttribute('opacity', step >= 3 ? '1' : '0');
+  document.querySelector('svg').classList.toggle('elongating', step === 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# TRANSLATION_TECHNICAL  (source: translation_technical.html)
+# ---------------------------------------------------------------------------
+TRANSLATION_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of translation elongation: EF-Tu delivers aminoacyl-tRNA with wobble base pairing at the third codon position, peptide bond formation, EF-G-driven translocation, and SRP-mediated targeting to the ER for secreted proteins.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #ribosomeGroup { transition: transform 1s ease; }
+  .translocated #ribosomeGroup { transform: translateX(40px); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Translation elongation, technical view</title>
+<desc>EF-Tu bound to GTP delivers aminoacyl-tRNA to the ribosome's A site, where codon-anticodon pairing is checked, including wobble pairing at the third codon position. After GTP hydrolysis and accommodation, the ribozyme peptidyl transferase forms a peptide bond, and EF-G bound to GTP drives translocation, ratcheting the ribosome one codon forward. If a signal sequence emerges, the signal recognition particle targets the whole complex to the ER membrane.</desc>
+
+<line x1="30" y1="240" x2="650" y2="240" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+
+<g id="ribosomeGroup">
+<ellipse cx="200" cy="230" rx="55" ry="20" class="c-gray"/>
+<ellipse cx="200" cy="200" rx="55" ry="26" class="c-purple"/>
+<rect x="185" y="222" width="18" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5"/>
+<rect x="215" y="222" width="18" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5"/>
+<text class="ts" x="200" y="185" text-anchor="middle">Ribosome</text>
+</g>
+
+<g id="efTu" class="stg">
+<circle cx="260" cy="150" r="12" class="c-amber"/>
+<text class="ts" x="260" y="150" text-anchor="middle" dominant-baseline="central">EF-Tu</text>
+<text class="ts" x="260" y="130" text-anchor="middle" id="wobbleLabel">Checking codon-anticodon (wobble at position 3)</text>
+</g>
+
+<g id="peptideBond" class="stg">
+<circle cx="185" cy="175" r="6" class="c-coral"/>
+<circle cx="200" cy="165" r="6" class="c-coral"/>
+<text class="ts" x="192" y="150" text-anchor="middle">Peptidyl transferase (rRNA ribozyme)</text>
+</g>
+
+<g id="efG" class="stg">
+<circle cx="230" cy="230" r="12" class="c-teal"/>
+<text class="ts" x="230" y="230" text-anchor="middle" dominant-baseline="central">EF-G</text>
+<text class="ts" x="230" y="255" text-anchor="middle">Drives translocation (ratchet)</text>
+</g>
+
+<g id="srp" class="stg">
+<path d="M280 130 L300 110 L320 130" stroke="#B91C1C" stroke-width="2" fill="none"/>
+<text class="ts" x="300" y="95" text-anchor="middle">SRP recognizes signal sequence</text>
+</g>
+
+<g id="erMembrane" class="stg">
+<rect x="450" y="60" width="20" height="280" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="460" y="50" text-anchor="middle">ER membrane</text>
+<circle cx="460" cy="200" r="10" fill="none" stroke="#B91C1C" stroke-width="1.5"/>
+<text class="ts" x="460" y="225" text-anchor="middle">Translocon</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — EF-Tu-GTP delivers aminoacyl-tRNA to the A site; wobble pairing checked at codon position 3",
+  "Step 1 of 4 — GTP hydrolyzed, EF-Tu released, tRNA fully accommodates",
+  "Step 2 of 4 — peptidyl transferase (a ribozyme) forms the peptide bond",
+  "Step 3 of 4 — EF-G-GTP drives translocation, ratcheting the ribosome one codon forward",
+  "Step 4 of 4 — if a signal sequence emerges, SRP targets the complex to the ER translocon"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('efTu').classList.toggle('on', step === 0);
+  document.getElementById('peptideBond').classList.toggle('on', step >= 1 && step <= 2);
+  document.getElementById('efG').classList.toggle('on', step === 3);
+  document.querySelector('svg').classList.toggle('translocated', step >= 3);
+  document.getElementById('srp').classList.toggle('on', step >= 4);
+  document.getElementById('erMembrane').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -2449,9 +2761,16 @@ REGISTRY = {
                 "prometaphase, metaphase, anaphase, telophase, cytokinesis."
             ),
         },
-        # "Technical": not built yet — add a MITOSIS_TECHNICAL = '''...'''
-        # fragment above and an entry here (checkpoints, cohesin/separase,
-        # kinetochores, the actomyosin contractile ring) to extend.
+        "Technical": {
+            "fragment": MITOSIS_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "Cohesin holds sister chromatids together until separase "
+                "cleaves it; the spindle assembly checkpoint blocks "
+                "anaphase until every kinetochore is bi-oriented; an "
+                "actomyosin ring drives cytokinesis."
+            ),
+        },
     },
     "Transcription": {
         "General": {
@@ -2463,9 +2782,15 @@ REGISTRY = {
                 "along the gene, then releases it at a terminator."
             ),
         },
-        # "Technical": not built yet — add a TRANSCRIPTION_TECHNICAL = '''...'''
-        # fragment (sigma factor / general transcription factors, TATA box,
-        # transcription bubble mechanics, 5' capping) to extend.
+        "Technical": {
+            "fragment": TRANSCRIPTION_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "TFIID binds the TATA box, general transcription factors "
+                "assemble the pre-initiation complex, TFIIH unwinds the "
+                "DNA, and the mRNA's 5' end is capped co-transcriptionally."
+            ),
+        },
     },
     "Translation": {
         "General": {
@@ -2477,9 +2802,15 @@ REGISTRY = {
                 "into a growing chain, and a stop codon triggers release."
             ),
         },
-        # "Technical": not built yet — add a TRANSLATION_TECHNICAL = '''...'''
-        # fragment (wobble base pairing, EF-Tu/EF-G, ribosomal frameshifting,
-        # signal peptides for ER targeting) to extend.
+        "Technical": {
+            "fragment": TRANSLATION_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "EF-Tu delivers tRNA with wobble pairing checked at codon "
+                "position 3, EF-G drives translocation, and — for "
+                "secreted proteins — SRP targets the ribosome to the ER."
+            ),
+        },
     },
     "Meiosis": {
         "General": {
@@ -2530,8 +2861,9 @@ REGISTRY = {
             "fragment": MEMBRANE_TRANSPORT_GENERAL,
             "height": 440,
             "blurb": (
-                "Compare simple diffusion, facilitated diffusion through a "
-                "channel, and active transport by an ATP-powered pump."
+                "Step through a molecule crossing the membrane under each "
+                "mode: straight through the bilayer (simple), through a "
+                "channel (facilitated), or pumped uphill with ATP (active)."
             ),
         },
     },
