@@ -2023,6 +2023,374 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# SYNAPTIC_TRANSMISSION_GENERAL  (source: synaptic.html)
+# ---------------------------------------------------------------------------
+SYNAPTIC_TRANSMISSION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of synaptic transmission: an action potential triggers calcium influx, vesicle fusion, neurotransmitter release, and receptor binding on the postsynaptic neuron.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.6s ease-in-out infinite; }
+  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(90px)} }
+  #vesicle { transition: transform 0.8s ease, opacity 0.5s ease; }
+  .released #vesicle { transform: translateY(20px); opacity: 0; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Synaptic transmission, general view</title>
+<desc>An action potential arrives at the axon terminal, opening voltage-gated calcium channels. Calcium influx triggers a synaptic vesicle to fuse with the presynaptic membrane, releasing neurotransmitter into the synaptic cleft, which diffuses across and binds receptors on the postsynaptic membrane.</desc>
+
+<rect x="40" y="80" width="140" height="140" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="110" y="70" text-anchor="middle">Axon terminal</text>
+
+<rect x="500" y="80" width="140" height="140" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="570" y="70" text-anchor="middle">Postsynaptic neuron</text>
+<text class="ts" x="340" y="255" text-anchor="middle">Synaptic cleft</text>
+
+<g id="apArrow" class="stg">
+<text class="ts" x="60" y="100" text-anchor="middle">AP →</text>
+</g>
+
+<g id="caChannel" class="stg">
+<rect x="170" y="140" width="14" height="30" fill="#639922"/>
+<text class="ts" x="177" y="185" text-anchor="middle">Ca2+ in</text>
+</g>
+
+<circle id="vesicle" cx="140" cy="150" r="22" fill="none" stroke="#7F77DD" stroke-width="2"/>
+<circle cx="132" cy="145" r="3" fill="#7F77DD"/>
+<circle cx="148" cy="150" r="3" fill="#7F77DD"/>
+<circle cx="138" cy="158" r="3" fill="#7F77DD"/>
+
+<g id="neurotransmitter" class="stg">
+<circle class="drift" cx="185" cy="150" r="5" fill="#7F77DD"/>
+<circle class="drift" cx="185" cy="165" r="5" fill="#7F77DD" style="animation-delay:.2s"/>
+<circle class="drift" cx="185" cy="135" r="5" fill="#7F77DD" style="animation-delay:.4s"/>
+</g>
+
+<g id="receptor" class="stg">
+<rect x="495" y="135" width="16" height="30" rx="4" fill="var(--surface-1)" stroke="#EF9F27" stroke-width="2"/>
+<text class="ts" x="503" y="120" text-anchor="middle">Receptor</text>
+</g>
+
+<g id="response" class="stg">
+<circle cx="503" cy="150" r="20" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="3 3"/>
+<text class="ts" x="570" y="195" text-anchor="middle">Postsynaptic response (ion channel opens)</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 — action potential arrives at the axon terminal",
+  "Step 1 — voltage-gated Ca2+ channels open, calcium flows in",
+  "Step 2 — vesicle fuses with the membrane, neurotransmitter released",
+  "Step 3 — neurotransmitter diffuses across the synaptic cleft",
+  "Step 4 — neurotransmitter binds receptors, postsynaptic response triggered"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('apArrow').classList.toggle('on', step === 0);
+  document.getElementById('caChannel').classList.toggle('on', step >= 1);
+  document.querySelector('svg').classList.toggle('released', step >= 2);
+  document.getElementById('neurotransmitter').classList.toggle('on', step >= 2 && step < 4);
+  document.getElementById('receptor').classList.toggle('on', step >= 3);
+  document.getElementById('response').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# ELECTRON_TRANSPORT_CHAIN_GENERAL  (source: etc.html)
+# ---------------------------------------------------------------------------
+ELECTRON_TRANSPORT_CHAIN_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the electron transport chain and ATP synthase: electrons pass through membrane complexes pumping protons, building a gradient that powers ATP synthase.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .spin { animation: spin 1.2s linear infinite; transform-origin: 560px 150px; }
+  @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+  .drift-up { animation: driftup 1.5s ease-in-out infinite; }
+  @keyframes driftup { 0%{transform:translateY(0)} 100%{transform:translateY(-60px)} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Electron transport chain and ATP synthase</title>
+<desc>Electrons from NADH pass through membrane protein complexes, which pump protons into the intermembrane space, building an electrochemical gradient. Oxygen accepts electrons at the final complex, forming water. Protons flow back through ATP synthase, spinning it to catalyze ATP formation from ADP and phosphate.</desc>
+
+<rect x="30" y="120" width="600" height="50" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="42" y="115">Inner mitochondrial membrane</text>
+<text class="ts" x="42" y="100" id="imsLabel">Intermembrane space</text>
+<text class="ts" x="42" y="190" id="matrixLabel">Matrix</text>
+
+<rect x="120" y="110" width="30" height="70" rx="8" class="c-purple"/>
+<text class="ts" x="135" y="200" text-anchor="middle">I</text>
+<rect x="220" y="110" width="30" height="70" rx="8" class="c-teal"/>
+<text class="ts" x="235" y="200" text-anchor="middle">III</text>
+<rect x="320" y="110" width="30" height="70" rx="8" class="c-coral"/>
+<text class="ts" x="335" y="200" text-anchor="middle">IV</text>
+
+<g id="electron" class="stg">
+<circle cx="100" cy="145" r="6" fill="#EF9F27"/>
+<text class="ts" x="100" y="128" text-anchor="middle">e- from NADH</text>
+</g>
+
+<g id="protons" class="stg">
+<circle class="drift-up" cx="135" cy="115" r="4" fill="#B91C1C"/>
+<circle class="drift-up" cx="235" cy="115" r="4" fill="#B91C1C" style="animation-delay:.3s"/>
+<circle class="drift-up" cx="335" cy="115" r="4" fill="#B91C1C" style="animation-delay:.6s"/>
+<text class="ts" x="235" y="70" text-anchor="middle">H+ pumped into intermembrane space</text>
+</g>
+
+<g id="oxygen" class="stg">
+<circle cx="380" cy="145" r="10" fill="#378ADD"/>
+<text class="ts" x="380" y="200" text-anchor="middle">O2 + e- → H2O</text>
+</g>
+
+<g id="atpSynthase">
+<rect x="545" y="105" width="30" height="80" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<circle id="rotor" class="c-amber" cx="560" cy="150" r="14"/>
+<text class="ts" x="560" y="200" text-anchor="middle">ATP synthase</text>
+</g>
+
+<g id="atpOut" class="stg">
+<text class="th" x="560" y="90" text-anchor="middle">ADP + Pi → ATP</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 — electrons enter Complex I from NADH",
+  "Step 1 — electrons pass through I → III → IV, pumping H+ across the membrane",
+  "Step 2 — oxygen accepts electrons at Complex IV, forming water",
+  "Step 3 — protons flow back down their gradient through ATP synthase",
+  "Step 4 — ATP synthase spins, catalyzing ADP + Pi → ATP"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('electron').classList.toggle('on', step >= 0 && step <= 1);
+  document.getElementById('protons').classList.toggle('on', step >= 1 && step <= 2);
+  document.getElementById('oxygen').classList.toggle('on', step >= 2);
+  document.getElementById('rotor').classList.toggle('spin', step >= 3);
+  document.getElementById('atpOut').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# BLOOD_CLOTTING_GENERAL  (source: clotting.html)
+# ---------------------------------------------------------------------------
+BLOOD_CLOTTING_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of hemostasis: platelets plug an injured vessel, then the coagulation cascade converts fibrinogen into a fibrin mesh that stabilizes the clot.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Hemostasis, general view</title>
+<desc>Vessel injury exposes collagen, platelets adhere and aggregate to form a temporary plug, the coagulation cascade converges on thrombin, thrombin converts fibrinogen into fibrin strands, and the fibrin mesh stabilizes the clot.</desc>
+
+<path d="M60 150 L300 150" stroke="#B91C1C" stroke-width="18" stroke-linecap="round"/>
+<path id="injuryGap" d="M300 150 L380 150" stroke="#B91C1C" stroke-width="18" stroke-linecap="round" stroke-dasharray="0 0"/>
+<path d="M380 150 L620 150" stroke="#B91C1C" stroke-width="18" stroke-linecap="round"/>
+<text class="ts" x="340" y="120" text-anchor="middle">Vessel injury — collagen exposed</text>
+
+<g id="platelets" class="stg">
+<circle cx="320" cy="150" r="10" fill="#EF9F27"/>
+<circle cx="340" cy="145" r="10" fill="#EF9F27"/>
+<circle cx="360" cy="152" r="10" fill="#EF9F27"/>
+<circle cx="335" cy="160" r="10" fill="#EF9F27"/>
+<text class="ts" x="340" y="190" text-anchor="middle">Platelet plug</text>
+</g>
+
+<g id="cascade" class="stg">
+<text class="ts" x="340" y="230" text-anchor="middle">Coagulation cascade → thrombin</text>
+</g>
+
+<g id="fibrin" class="stg">
+<path d="M310 130 L370 170 M320 175 L365 130 M300 150 L385 150" stroke="#7F77DD" stroke-width="2"/>
+<text class="ts" x="340" y="260" text-anchor="middle">Fibrinogen → fibrin mesh</text>
+</g>
+
+<g id="stableClot" class="stg">
+<circle cx="340" cy="150" r="45" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="th" x="340" y="280" text-anchor="middle">Stable clot</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 — vessel injury exposes collagen",
+  "Step 1 — platelets adhere and aggregate, forming a temporary plug",
+  "Step 2 — coagulation cascade activates, converging on thrombin",
+  "Step 3 — thrombin converts fibrinogen into fibrin strands",
+  "Step 4 — fibrin mesh reinforces the platelet plug into a stable clot"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('platelets').classList.toggle('on', step >= 1);
+  document.getElementById('cascade').classList.toggle('on', step === 2);
+  document.getElementById('fibrin').classList.toggle('on', step >= 3);
+  document.getElementById('stableClot').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# BLOOD_GLUCOSE_HOMEOSTASIS_GENERAL  (source: glucose.html)
+# ---------------------------------------------------------------------------
+BLOOD_GLUCOSE_HOMEOSTASIS_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of blood glucose homeostasis: switchable view of the insulin pathway lowering high glucose and the glucagon pathway raising low glucose.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnHigh" onclick="setMode('high')">High blood glucose</button>
+  <button id="btnLow" onclick="setMode('low')">Low blood glucose</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Blood glucose homeostasis</title>
+<desc>When blood glucose is high, pancreatic beta cells release insulin, prompting cells to take up glucose via GLUT4 transporters, lowering blood glucose. When blood glucose is low, pancreatic alpha cells release glucagon, prompting the liver to break down glycogen and release glucose, raising blood glucose. Both loops return glucose toward the setpoint.</desc>
+
+<rect x="30" y="130" width="620" height="40" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="42" y="125">Bloodstream</text>
+<text class="ts" x="340" y="155" text-anchor="middle" id="glucoseLabel">Blood glucose: normal</text>
+
+<g id="pancreas">
+<ellipse cx="150" cy="80" rx="55" ry="35" class="c-amber"/>
+<text class="ts" x="150" y="80" text-anchor="middle" dominant-baseline="central" id="pancreasLabel">Pancreas</text>
+</g>
+
+<g id="hormone" class="stg">
+<circle cx="220" cy="110" r="8" fill="#7F77DD"/>
+<text class="ts" x="220" y="130" text-anchor="middle" id="hormoneLabel">Insulin</text>
+</g>
+
+<g id="targetOrgan" class="stg">
+<rect x="480" y="60" width="100" height="60" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="530" y="95" text-anchor="middle" id="organLabel">Body cells</text>
+</g>
+
+<g id="effect" class="stg">
+<text class="ts" x="530" y="140" text-anchor="middle" id="effectLabel">GLUT4 uptake ↑</text>
+</g>
+
+<g id="resultArrow" class="stg">
+<text class="ts" x="340" y="200" text-anchor="middle" id="resultLabel">Blood glucose falls back to setpoint</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'high';
+const configHigh = {
+  pancreasLabel: 'Beta cells sense high glucose',
+  hormoneLabel: 'Insulin released',
+  organLabel: 'Muscle / fat cells',
+  effectLabel: 'GLUT4 moves to surface, glucose uptake ↑',
+  resultLabel: 'Blood glucose falls back to setpoint',
+  glucoseSteps: ['Blood glucose: high', 'Blood glucose: high, insulin rising', 'Blood glucose: falling', 'Blood glucose: back to setpoint']
+};
+const configLow = {
+  pancreasLabel: 'Alpha cells sense low glucose',
+  hormoneLabel: 'Glucagon released',
+  organLabel: 'Liver',
+  effectLabel: 'Glycogen broken down, glucose released',
+  resultLabel: 'Blood glucose rises back to setpoint',
+  glucoseSteps: ['Blood glucose: low', 'Blood glucose: low, glucagon rising', 'Blood glucose: rising', 'Blood glucose: back to setpoint']
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnHigh').classList.toggle('active', m === 'high');
+  document.getElementById('btnLow').classList.toggle('active', m === 'low');
+  const cfg = m === 'high' ? configHigh : configLow;
+  document.getElementById('pancreasLabel').textContent = cfg.pancreasLabel;
+  document.getElementById('hormoneLabel').textContent = cfg.hormoneLabel;
+  document.getElementById('organLabel').textContent = cfg.organLabel;
+  document.getElementById('effectLabel').textContent = cfg.effectLabel;
+  document.getElementById('resultLabel').textContent = cfg.resultLabel;
+  render();
+}
+function render() {
+  const cfg = mode === 'high' ? configHigh : configLow;
+  document.getElementById('glucoseLabel').textContent = cfg.glucoseSteps[step];
+  document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 3';
+  document.getElementById('hormone').classList.toggle('on', step >= 1);
+  document.getElementById('hormone').classList.toggle('pulse', step === 1);
+  document.getElementById('targetOrgan').classList.toggle('on', step >= 2);
+  document.getElementById('effect').classList.toggle('on', step >= 2);
+  document.getElementById('resultArrow').classList.toggle('on', step >= 3);
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('high');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -2250,6 +2618,50 @@ REGISTRY = {
                 "O2 diffuses from alveolus into blood and binds "
                 "hemoglobin, while CO2 diffuses the opposite direction "
                 "to be exhaled — both driven by concentration gradients."
+            ),
+        },
+    },
+    "Synaptic transmission": {
+        "General": {
+            "fragment": SYNAPTIC_TRANSMISSION_GENERAL,
+            "height": 440,
+            "blurb": (
+                "An action potential opens Ca2+ channels at the axon "
+                "terminal, triggering vesicle fusion and neurotransmitter "
+                "release, which crosses the cleft and binds receptors."
+            ),
+        },
+    },
+    "Electron transport chain & ATP synthase": {
+        "General": {
+            "fragment": ELECTRON_TRANSPORT_CHAIN_GENERAL,
+            "height": 440,
+            "blurb": (
+                "Electrons pass through membrane complexes pumping "
+                "protons to build a gradient; protons flowing back "
+                "through ATP synthase spin it, generating ATP."
+            ),
+        },
+    },
+    "Blood clotting (hemostasis)": {
+        "General": {
+            "fragment": BLOOD_CLOTTING_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Platelets form a fast temporary plug at the injury; the "
+                "slower coagulation cascade converges on thrombin, which "
+                "converts fibrinogen into a fibrin mesh that stabilizes it."
+            ),
+        },
+    },
+    "Blood glucose homeostasis": {
+        "General": {
+            "fragment": BLOOD_GLUCOSE_HOMEOSTASIS_GENERAL,
+            "height": 440,
+            "blurb": (
+                "Switch between the insulin loop (high glucose → uptake) "
+                "and the glucagon loop (low glucose → liver releases "
+                "glucose) — a classic negative feedback pair."
             ),
         },
     },
