@@ -2673,51 +2673,9 @@ st.caption(
     "Use the controls in the sidebar to pick a mechanism and detail level."
 )
 
-# ---------------------------------------------------------------------------
-# CATEGORIES: purely organizational — groups REGISTRY keys by subfield for
-# the sidebar. Adding a new mechanism to REGISTRY also means adding its name
-# to the right list here (or it won't show up in the sidebar). Existing
-# REGISTRY entries and mechanism constants are untouched by this.
-# ---------------------------------------------------------------------------
-CATEGORIES = {
-    "Cell Biology": [
-        "Apoptosis",
-        "Cell division (mitosis)",
-        "Cell signaling (GPCR → cAMP → PKA)",
-        "Endocytosis / exocytosis",
-        "Enzyme kinetics & allosteric regulation",
-        "Meiosis",
-        "Membrane transport",
-    ],
-    "Embryology": [
-        "Fertilization",
-        "Gastrulation",
-    ],
-    "Immunology": [
-        "Humoral immune response",
-        "T cell activation",
-    ],
-    "Molecular Biology & Genetics": [
-        "DNA replication",
-        "Transcription",
-        "Translation",
-    ],
-    "Physiology": [
-        "Action potential",
-        "Blood clotting (hemostasis)",
-        "Blood glucose homeostasis",
-        "Cardiac conduction system",
-        "Electron transport chain & ATP synthase",
-        "Gas exchange (alveoli)",
-        "Muscle contraction",
-        "Synaptic transmission",
-    ],
-}
-
 with st.sidebar:
     st.header("Choose a mechanism")
-    category = st.selectbox("Category", sorted(CATEGORIES.keys()))
-    topic = st.radio("Mechanism", sorted(CATEGORIES[category]))
+    topic = st.radio("Mechanism", list(REGISTRY.keys()))
     levels_available = list(REGISTRY[topic].keys())
     level = st.radio("Detail level", levels_available)
 
