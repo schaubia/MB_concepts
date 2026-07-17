@@ -1170,6 +1170,8 @@ function render() {
   v.setAttribute('r', r); v.setAttribute('cy', cy);
   vc.setAttribute('r', cr); vc.setAttribute('cy', cy);
 }
+function stepFwd() { if (step < 3) step++; render(); }
+function reset() { step = 0; render(); }
 setMode('endo');
 </script>
 '''
