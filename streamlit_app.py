@@ -3175,6 +3175,103 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# LABOR_POSITIVE_FEEDBACK_GENERAL  (source: labor_feedback.html)
+# ---------------------------------------------------------------------------
+LABOR_POSITIVE_FEEDBACK_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the Ferguson reflex: labor as a positive feedback loop where cervical stretch triggers oxytocin release, which causes contractions that increase cervical stretch, escalating until birth.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #loopArrow { transition: stroke-width 0.5s ease, opacity 0.5s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Labor as a positive feedback loop — the Ferguson reflex</title>
+<desc>Pressure from the fetal head stretches the cervix, signaling the hypothalamus to trigger oxytocin release from the posterior pituitary. Oxytocin causes uterine contractions, which push the fetus further against the cervix, increasing the stretch signal and triggering even more oxytocin. Unlike most physiological control loops, this one amplifies rather than corrects, intensifying until birth occurs and the loop is broken.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<circle cx="340" cy="170" r="130" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+
+<g id="cervix">
+<ellipse cx="340" cy="280" rx="50" ry="24" fill="none" stroke="#B91C1C" stroke-width="2"/>
+<text class="ts" x="340" y="315" text-anchor="middle">Cervix stretch receptors</text>
+</g>
+
+<g id="loop1" class="stg">
+<path d="M370 260 Q460 220 480 150" stroke="#378ADD" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="470" y="200" text-anchor="middle">Signal to hypothalamus</text>
+</g>
+
+<ellipse cx="500" cy="120" rx="55" ry="35" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="500" y="120" text-anchor="middle" dominant-baseline="central">Hypothalamus / pituitary</text>
+
+<g id="oxytocin" class="stg">
+<circle id="oxyDot" cx="440" cy="90" r="7" class="c-purple pulse"/>
+<text class="ts" x="440" y="70" text-anchor="middle">Oxytocin released</text>
+</g>
+
+<g id="loop2" class="stg">
+<path d="M460 140 Q380 130 340 195" stroke="#7F77DD" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+</g>
+
+<g id="uterus" class="stg">
+<ellipse cx="340" cy="200" rx="70" ry="55" fill="none" stroke="#D85A30" stroke-width="2" id="uterusOutline"/>
+<text class="ts" x="340" y="200" text-anchor="middle" dominant-baseline="central" id="uterusLabel">Uterine contraction</text>
+</g>
+
+<g id="loop3" class="stg">
+<path id="loopArrow" d="M280 240 Q260 260 300 275" stroke="#B91C1C" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="230" y="255" text-anchor="middle">More stretch →</text>
+</g>
+
+<g id="birth" class="stg">
+<text class="th" x="340" y="40" text-anchor="middle">Birth occurs — loop breaks</text>
+</g>
+
+<text class="ts" x="340" y="330" text-anchor="middle" id="cycleLabel"></text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — fetal head presses against the cervix, some baseline stretch",
+  "Step 1 of 4 — stretch receptors signal the hypothalamus, triggering oxytocin release",
+  "Step 2 of 4 — oxytocin causes uterine contractions",
+  "Step 3 of 4 — contractions push the fetus further against the cervix — MORE stretch, MORE oxytocin (this is positive feedback: it amplifies rather than corrects)",
+  "Step 4 of 4 — the cycle intensifies over successive contractions until birth occurs, finally breaking the loop"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('loop1').classList.toggle('on', step >= 1);
+  document.getElementById('oxytocin').classList.toggle('on', step >= 1);
+  document.getElementById('loop2').classList.toggle('on', step >= 2);
+  document.getElementById('uterus').classList.toggle('on', step >= 2);
+  document.getElementById('loop3').classList.toggle('on', step >= 3);
+  document.getElementById('uterusOutline').setAttribute('stroke-width', step === 3 ? '4' : '2');
+  document.getElementById('birth').classList.toggle('on', step >= 4);
+  document.getElementById('cycleLabel').textContent = step === 3 ? 'Loop repeats, escalating each time' : '';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -3527,6 +3624,18 @@ REGISTRY = {
             ),
         },
     },
+    "Labor (positive feedback)": {
+        "General": {
+            "fragment": LABOR_POSITIVE_FEEDBACK_GENERAL,
+            "height": 460,
+            "blurb": (
+                "The Ferguson reflex: cervical stretch triggers oxytocin, "
+                "which causes contractions that increase cervical "
+                "stretch — positive feedback that escalates rather than "
+                "corrects, unlike almost every other loop in this app."
+            ),
+        },
+    },
 }
 
 st.title("Molecular Mechanisms — Interactive Explainers")
@@ -3572,6 +3681,7 @@ CATEGORIES = {
         "Cardiac conduction system",
         "Electron transport chain & ATP synthase",
         "Gas exchange (alveoli)",
+        "Labor (positive feedback)",
         "Muscle contraction (cardiac)",
         "Muscle contraction (skeletal)",
         "Nephron filtration",
