@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="Molecular Mechanisms", layout="wide")
+st.set_page_config(page_title="Molecular Mechanisms", page_icon="🧬", layout="wide")
 
 # ---------------------------------------------------------------------------
 # Shared CSS variables/classes used by every animation fragment below.
