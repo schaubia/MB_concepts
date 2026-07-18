@@ -2719,6 +2719,256 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# NEPHRON_FILTRATION_GENERAL  (source: nephron.html)
+# ---------------------------------------------------------------------------
+NEPHRON_FILTRATION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of nephron function: blood is filtered at the glomerulus, useful solutes are reabsorbed along the tubule, waste is secreted, and the remainder becomes urine.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.6s ease-in-out infinite; }
+  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(60px)} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Nephron function, general view</title>
+<desc>Blood enters the glomerulus where fluid and small solutes are filtered into Bowman's capsule, retaining blood cells and large proteins. The filtrate flows through the tubule, where useful substances like glucose, amino acids, and water are reabsorbed back into the blood, and waste products are secreted into the filtrate, which becomes urine.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<circle cx="120" cy="150" r="45" fill="none" stroke="#B91C1C" stroke-width="2"/>
+<text class="ts" x="120" y="115" text-anchor="middle">Glomerulus</text>
+<circle cx="120" cy="150" r="60" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="ts" x="120" y="222" text-anchor="middle">Bowman's capsule</text>
+
+<path d="M180 150 Q300 100 400 150 Q500 200 600 150" stroke="var(--t)" stroke-width="3" fill="none"/>
+<text class="ts" x="400" y="235" text-anchor="middle">Tubule</text>
+
+<g id="filtrate" class="stg">
+<circle class="drift" cx="185" cy="150" r="5" fill="#378ADD"/>
+<circle class="drift" cx="185" cy="145" r="5" fill="#EF9F27" style="animation-delay:.3s"/>
+<text class="ts" x="180" y="185" text-anchor="middle">Filtrate — water, ions, glucose</text>
+</g>
+
+<g id="reabsorption" class="stg">
+<line x1="300" y1="100" x2="300" y2="60" stroke="#639922" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="300" y="50" text-anchor="middle">Glucose, water, ions reabsorbed → blood</text>
+</g>
+
+<g id="secretion" class="stg">
+<line x1="480" y1="220" x2="480" y2="255" stroke="#B91C1C" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="480" y="275" text-anchor="middle">Waste, H+, K+ secreted → filtrate</text>
+</g>
+
+<g id="urine" class="stg">
+<circle cx="600" cy="150" r="16" fill="#D4A017"/>
+<text class="ts" x="600" y="185" text-anchor="middle">Urine</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — blood enters the glomerulus",
+  "Step 1 of 4 — glomerular filtration: fluid and small solutes filtered into Bowman's capsule",
+  "Step 2 of 4 — reabsorption: glucose, amino acids, water, and ions returned to the blood",
+  "Step 3 of 4 — secretion: waste products and excess ions added into the filtrate",
+  "Step 4 of 4 — remaining filtrate concentrated into urine"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('filtrate').classList.toggle('on', step >= 1);
+  document.getElementById('reabsorption').classList.toggle('on', step >= 2);
+  document.getElementById('secretion').classList.toggle('on', step >= 3);
+  document.getElementById('urine').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# REFLEX_ARC_GENERAL  (source: reflex_arc.html)
+# ---------------------------------------------------------------------------
+REFLEX_ARC_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the patellar reflex arc: a tap stretches the muscle spindle, a sensory neuron carries the signal to the spinal cord, it synapses directly onto a motor neuron, and the quadriceps contracts while the hamstring relaxes.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Patellar reflex arc, general view</title>
+<desc>A tap stretches the muscle spindle in the quadriceps, triggering a sensory neuron that carries the signal to the spinal cord. It synapses directly onto a motor neuron, monosynaptic and bypassing the brain, which signals the quadriceps to contract. An inhibitory interneuron simultaneously relaxes the antagonist hamstring muscle, a process called reciprocal inhibition.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<rect x="30" y="120" width="70" height="100" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="65" y="112" text-anchor="middle">Quadriceps</text>
+<circle id="tap" cx="65" cy="170" r="8" fill="#EF9F27"/>
+
+<ellipse cx="580" cy="170" rx="70" ry="90" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="580" y="70" text-anchor="middle">Spinal cord</text>
+
+<g id="sensoryPath" class="stg">
+<path d="M100 170 Q300 90 520 140" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="300" y="80" text-anchor="middle">Sensory (afferent) neuron</text>
+</g>
+
+<g id="synapse" class="stg">
+<circle cx="540" cy="150" r="6" fill="#7F77DD"/>
+<text class="ts" x="600" y="130" text-anchor="middle">Monosynaptic — no brain involved</text>
+</g>
+
+<g id="motorPath" class="stg">
+<path d="M520 190 Q300 260 100 200" stroke="#D85A30" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="300" y="280" text-anchor="middle">Motor (efferent) neuron</text>
+</g>
+
+<g id="contraction" class="stg">
+<text class="th" x="65" y="245" text-anchor="middle">Contracts</text>
+</g>
+
+<rect id="hamstring" x="150" y="230" width="70" height="50" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1" class="stg"/>
+<text class="ts" x="185" y="222" text-anchor="middle" class="stg" id="hamLabel1">Hamstring</text>
+<g id="inhibition" class="stg">
+<text class="ts" x="185" y="295" text-anchor="middle">Inhibitory interneuron relaxes it (reciprocal inhibition)</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — tap stretches the muscle spindle in the quadriceps",
+  "Step 1 of 4 — sensory neuron carries the signal to the spinal cord",
+  "Step 2 of 4 — synapses directly onto a motor neuron — monosynaptic, no brain involved",
+  "Step 3 of 4 — motor neuron signals the quadriceps to contract",
+  "Step 4 of 4 — reciprocal inhibition: an interneuron relaxes the hamstring simultaneously"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('tap').classList.toggle('pulse', step === 0);
+  document.getElementById('sensoryPath').classList.toggle('on', step >= 1);
+  document.getElementById('synapse').classList.toggle('on', step >= 2);
+  document.getElementById('motorPath').classList.toggle('on', step >= 3);
+  document.getElementById('contraction').classList.toggle('on', step >= 3);
+  document.getElementById('hamstring').classList.toggle('on', step >= 4);
+  document.getElementById('hamLabel1').classList.toggle('on', step >= 4);
+  document.getElementById('inhibition').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# BARORECEPTOR_REFLEX_GENERAL  (source: baroreceptor.html)
+# ---------------------------------------------------------------------------
+BARORECEPTOR_REFLEX_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the baroreceptor reflex: rising blood pressure stretches baroreceptors, the medulla increases parasympathetic and decreases sympathetic output, and heart rate and vessel tone fall, returning blood pressure to its setpoint.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Baroreceptor reflex, general view</title>
+<desc>Rising blood pressure stretches baroreceptors in the carotid sinus and aortic arch. Increased signaling reaches the medulla's cardiovascular center, which raises parasympathetic and lowers sympathetic output to the heart and vessels, reducing heart rate and contractility and dilating vessels, bringing blood pressure back down toward its setpoint.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<text class="th" x="120" y="80" text-anchor="middle" id="bpLabel">Blood pressure: normal</text>
+<ellipse cx="120" cy="140" rx="50" ry="30" fill="none" stroke="#B91C1C" stroke-width="2"/>
+<text class="ts" x="120" y="140" text-anchor="middle" dominant-baseline="central">Carotid sinus</text>
+<circle id="baro" cx="120" cy="110" r="6" fill="#EF9F27"/>
+
+<g id="signal1" class="stg">
+<path d="M170 140 Q280 90 380 130" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="280" y="80" text-anchor="middle">Afferent signal ↑</text>
+</g>
+
+<ellipse cx="440" cy="130" rx="60" ry="40" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="440" y="130" text-anchor="middle" dominant-baseline="central">Medulla</text>
+
+<g id="outputChange" class="stg">
+<text class="ts" x="440" y="185" text-anchor="middle" id="outputLabel">Parasympathetic ↑, sympathetic ↓</text>
+</g>
+
+<g id="signal2" class="stg">
+<path d="M400 170 Q280 220 170 200" stroke="#D85A30" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="280" y="240" text-anchor="middle">Efferent signal to heart & vessels</text>
+</g>
+
+<ellipse cx="120" cy="220" rx="45" ry="30" class="c-coral stg" id="heart"/>
+<text class="ts" x="120" y="220" text-anchor="middle" dominant-baseline="central" class="stg" id="heartLabel">Heart rate ↓</text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 3 — blood pressure rises, baroreceptors stretch",
+  "Step 1 of 3 — afferent signal to the medulla's cardiovascular center increases",
+  "Step 2 of 3 — medulla raises parasympathetic, lowers sympathetic output",
+  "Step 3 of 3 — heart rate and vessel tone fall, blood pressure returns to setpoint"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('bpLabel').textContent = step === 0 ? 'Blood pressure: rising' : step >= 3 ? 'Blood pressure: back to setpoint' : 'Blood pressure: elevated';
+  document.getElementById('baro').classList.toggle('pulse', step === 0);
+  document.getElementById('signal1').classList.toggle('on', step >= 1);
+  document.getElementById('outputChange').classList.toggle('on', step >= 2);
+  document.getElementById('signal2').classList.toggle('on', step >= 2);
+  document.getElementById('heart').classList.toggle('on', step >= 3);
+  document.getElementById('heartLabel').classList.toggle('on', step >= 3);
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -3014,6 +3264,40 @@ REGISTRY = {
             ),
         },
     },
+    "Nephron filtration": {
+        "General": {
+            "fragment": NEPHRON_FILTRATION_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Blood is filtered at the glomerulus, useful solutes are "
+                "reabsorbed along the tubule back into blood, waste is "
+                "secreted into the filtrate, and the rest becomes urine."
+            ),
+        },
+    },
+    "Reflex arc (patellar reflex)": {
+        "General": {
+            "fragment": REFLEX_ARC_GENERAL,
+            "height": 460,
+            "blurb": (
+                "A tap stretches the muscle spindle; a sensory neuron "
+                "synapses directly onto a motor neuron in the spinal "
+                "cord — no brain involved — contracting the quadriceps "
+                "while an interneuron relaxes the hamstring."
+            ),
+        },
+    },
+    "Baroreceptor reflex": {
+        "General": {
+            "fragment": BARORECEPTOR_REFLEX_GENERAL,
+            "height": 440,
+            "blurb": (
+                "Rising blood pressure stretches baroreceptors, the "
+                "medulla shifts autonomic output, and heart rate and "
+                "vessel tone fall to bring pressure back to setpoint."
+            ),
+        },
+    },
 }
 
 st.title("Molecular Mechanisms — Interactive Explainers")
@@ -3053,12 +3337,15 @@ CATEGORIES = {
     ],
     "Physiology": [
         "Action potential",
+        "Baroreceptor reflex",
         "Blood clotting (hemostasis)",
         "Blood glucose homeostasis",
         "Cardiac conduction system",
         "Electron transport chain & ATP synthase",
         "Gas exchange (alveoli)",
         "Muscle contraction",
+        "Nephron filtration",
+        "Reflex arc (patellar reflex)",
         "Synaptic transmission",
     ],
 }

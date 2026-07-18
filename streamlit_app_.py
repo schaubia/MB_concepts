@@ -970,12 +970,16 @@ APOPTOSIS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #cellBody { transition: d 0.8s ease, opacity .6s ease; }
+  #bodies { transition: transform 1s ease, opacity .8s ease; }
+  .engulfed #bodies { transform: translateX(120px) scale(0.3); opacity: 0; }
+  #phagocyte { transition: transform 0.8s ease; }
+  .approaching #phagocyte { transform: translateX(-40px); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
 <svg width="100%" viewBox="0 0 680 320" role="img">
 <title>Apoptosis, general view</title>
-<desc>A death ligand binds a receptor on the cell surface, activating an initiator caspase that in turn activates executioner caspases, which fragment DNA and break down the cytoskeleton, causing the cell to bleb into apoptotic bodies that are engulfed by a phagocyte.</desc>
+<desc>A death ligand binds a receptor on the cell surface, activating an initiator caspase that in turn activates executioner caspases, which fragment DNA and break down the cytoskeleton, causing the cell to bleb into apoptotic bodies. A phagocyte then approaches and engulfs the apoptotic bodies, clearing them without triggering inflammation.</desc>
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 </defs>
@@ -1016,7 +1020,11 @@ APOPTOSIS_GENERAL = '''
 
 <g id="phagocyte" class="stg">
 <ellipse cx="580" cy="170" rx="45" ry="35" class="c-teal"/>
-<text class="ts" x="580" y="170" text-anchor="middle" dominant-baseline="central">Phagocyte</text>
+<text class="ts" x="580" y="170" text-anchor="middle" dominant-baseline="central" id="phagocyteLabel">Phagocyte</text>
+</g>
+
+<g id="engulfNote" class="stg">
+<text class="th" x="500" y="270" text-anchor="middle">Bodies engulfed and digested — no inflammation</text>
 </g>
 </svg>
 
@@ -1024,17 +1032,18 @@ APOPTOSIS_GENERAL = '''
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 4</span>
+  <span id="stepLabel">Step 0 of 5</span>
 </div>
 
 <script>
 let step = 0;
 const labels = [
-  "Step 0 of 4 — healthy cell, no death signal",
-  "Step 1 of 4 — death ligand binds receptor, initiator caspase-8 activates",
-  "Step 2 of 4 — caspase-8 activates executioner caspase-3",
-  "Step 3 of 4 — caspase-3 fragments DNA, breaks down the cytoskeleton, cell blebs into apoptotic bodies",
-  "Step 4 of 4 — apoptotic bodies engulfed by a phagocyte, no inflammation"
+  "Step 0 of 5 — healthy cell, no death signal",
+  "Step 1 of 5 — death ligand binds receptor, initiator caspase-8 activates",
+  "Step 2 of 5 — caspase-8 activates executioner caspase-3",
+  "Step 3 of 5 — caspase-3 fragments DNA, breaks down the cytoskeleton, cell blebs into apoptotic bodies",
+  "Step 4 of 5 — a phagocyte approaches the apoptotic bodies",
+  "Step 5 of 5 — phagocytosis: the phagocyte engulfs and digests the bodies, no inflammation triggered"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -1045,10 +1054,15 @@ function render() {
   document.getElementById('caspase3').classList.toggle('pulse', step === 2);
   document.getElementById('damage').classList.toggle('on', step >= 3);
   document.getElementById('cellBody').style.opacity = step >= 3 ? '0.15' : '1';
-  document.getElementById('bodies').classList.toggle('on', step >= 3);
+  document.getElementById('bodies').classList.toggle('on', step >= 3 && step < 5);
   document.getElementById('phagocyte').classList.toggle('on', step >= 4);
+  const svg = document.querySelector('svg');
+  svg.classList.toggle('approaching', step === 4);
+  svg.classList.toggle('engulfed', step >= 5);
+  document.getElementById('phagocyteLabel').textContent = step >= 5 ? 'Phagocyte (fed)' : 'Phagocyte';
+  document.getElementById('engulfNote').classList.toggle('on', step >= 5);
 }
-function stepFwd() { if (step < 4) step++; render(); }
+function stepFwd() { if (step < 5) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
@@ -2830,7 +2844,8 @@ REGISTRY = {
             "blurb": (
                 "Extrinsic pathway: a death ligand activates initiator "
                 "caspase-8, which activates executioner caspase-3, "
-                "dismantling the cell into apoptotic bodies for clearance."
+                "dismantling the cell into apoptotic bodies that a "
+                "phagocyte then engulfs and digests."
             ),
         },
     },
