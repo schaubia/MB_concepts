@@ -1879,31 +1879,39 @@ MUSCLE_CONTRACTION_GENERAL = '''
 <line x1="290" y1="130" x2="320" y2="130" stroke="#7F77DD" stroke-width="3"/>
 <text class="ts" x="305" y="150" text-anchor="middle">Cross-bridge</text>
 </g>
+
+<g id="atpRelease" class="stg">
+<circle cx="340" cy="90" r="9" class="c-amber pulse"/>
+<text class="ts" x="340" y="90" text-anchor="middle" dominant-baseline="central" font-size="8">ATP</text>
+<text class="ts" x="340" y="75" text-anchor="middle">ATP binds — cross-bridge releases</text>
+</g>
 </svg>
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
+  <span id="stepLabel">Step 0 of 4</span>
 </div>
 
 <script>
 let step = 0;
 const labels = [
-  "Step 0 of 3 — relaxed: tropomyosin blocks the myosin-binding sites on actin",
-  "Step 1 of 3 — Ca2+ released, binds troponin, tropomyosin shifts to expose binding sites",
-  "Step 2 of 3 — myosin heads form cross-bridges and pull actin inward (power stroke)",
-  "Step 3 of 3 — sarcomere shortens, Z-lines drawn closer together"
+  "Step 0 of 4 — relaxed: tropomyosin blocks the myosin-binding sites on actin",
+  "Step 1 of 4 — Ca2+ released, binds troponin, tropomyosin shifts to expose binding sites",
+  "Step 2 of 4 — myosin heads form cross-bridges and pull actin inward (power stroke)",
+  "Step 3 of 4 — sarcomere shortens, Z-lines drawn closer together",
+  "Step 4 of 4 — ATP binds the myosin head, the cross-bridge releases — without ATP the head stays locked (this is why rigor mortis happens)"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('calcium').classList.toggle('on', step >= 1);
   document.querySelector('svg').classList.toggle('exposed', step >= 1);
-  document.getElementById('crossbridge').classList.toggle('on', step >= 2);
+  document.getElementById('crossbridge').classList.toggle('on', step >= 2 && step < 4);
   document.querySelector('svg').classList.toggle('contracted', step >= 3);
+  document.getElementById('atpRelease').classList.toggle('on', step >= 4);
 }
-function stepFwd() { if (step < 3) step++; render(); }
+function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
@@ -3068,6 +3076,105 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# MUSCLE_CONTRACTION_TECHNICAL  (source: muscle_technical.html)
+# ---------------------------------------------------------------------------
+MUSCLE_CONTRACTION_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of skeletal muscle excitation-contraction coupling and the full cross-bridge cycle: DHPR directly opens RyR, and myosin cycles through weak binding, power stroke, rigor, and ATP-driven detachment.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #myosinHead { transition: transform 1s ease; }
+  .stroke #myosinHead { transform: rotate(-25deg); transform-origin: 340px 160px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Skeletal muscle EC coupling and cross-bridge cycle, technical view</title>
+<desc>An action potential travels down the T-tubule, where the voltage sensor DHPR directly mechanically opens the ryanodine receptor on the adjacent sarcoplasmic reticulum, without needing a calcium trigger. Calcium floods out, binds troponin C, and tropomyosin shifts. Myosin then cycles through weak binding, a phosphate-release power stroke, a rigor state after ADP release, and ATP-driven detachment that resets the head for another cycle.</desc>
+
+<rect x="30" y="60" width="30" height="220" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="45" y="50" text-anchor="middle">T-tubule</text>
+<circle id="dhpr" cx="60" cy="150" r="8" class="c-amber"/>
+<text class="ts" x="60" y="175" text-anchor="middle">DHPR</text>
+
+<ellipse cx="140" cy="150" rx="60" ry="90" fill="none" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text class="ts" x="140" y="55" text-anchor="middle">Sarcoplasmic reticulum</text>
+<circle id="ryr" cx="90" cy="150" r="7" class="c-red"/>
+<text class="ts" x="90" y="175" text-anchor="middle" id="ryrLabel">RyR</text>
+
+<g id="calcium" class="stg">
+<circle cx="170" cy="130" r="4" fill="#B91C1C"/>
+<circle cx="185" cy="145" r="4" fill="#B91C1C"/>
+<circle cx="175" cy="165" r="4" fill="#B91C1C"/>
+<text class="ts" x="180" y="110" text-anchor="middle">Ca2+ floods out</text>
+</g>
+
+<g id="troponin" class="stg">
+<circle cx="260" cy="160" r="8" class="c-purple"/>
+<text class="ts" x="260" y="185" text-anchor="middle">Troponin C binds Ca2+</text>
+</g>
+
+<line x1="220" y1="200" x2="480" y2="200" stroke="#378ADD" stroke-width="6" stroke-linecap="round"/>
+<text class="ts" x="480" y="220" text-anchor="middle">Actin</text>
+<rect x="300" y="120" width="140" height="24" fill="#7F77DD"/>
+<text class="ts" x="370" y="112" text-anchor="middle">Myosin</text>
+
+<g id="myosinHead" class="stg">
+<line x1="340" y1="144" x2="340" y2="196" stroke="#7F77DD" stroke-width="4"/>
+<circle cx="340" cy="196" r="6" fill="#7F77DD"/>
+</g>
+
+<g id="stateLabel" class="stg">
+<text class="th" x="480" y="260" text-anchor="middle" id="crossBridgeState">Weak binding</text>
+</g>
+
+<g id="atpNote" class="stg">
+<text class="ts" x="480" y="280" text-anchor="middle">ATP binds — cross-bridge detaches, myosin re-cocks</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 5 — action potential travels down the T-tubule, DHPR senses voltage",
+  "Step 1 of 5 — DHPR directly (mechanically) opens RyR — no calcium trigger needed, unlike cardiac muscle",
+  "Step 2 of 5 — Ca2+ floods out, binds troponin C, tropomyosin shifts to expose binding sites",
+  "Step 3 of 5 — myosin weakly binds actin, then phosphate release drives the power stroke",
+  "Step 4 of 5 — ADP released — rigor state, myosin locked tightly to actin",
+  "Step 5 of 5 — ATP binds the myosin head, the cross-bridge detaches and re-cocks for another cycle"
+];
+const states = ["", "", "", "Weak binding → power stroke", "Rigor (ADP released)", "ATP-bound, detached"];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('dhpr').classList.toggle('pulse', step === 0);
+  document.getElementById('ryr').classList.toggle('on', step >= 1);
+  document.getElementById('ryr').classList.toggle('pulse', step === 1);
+  document.getElementById('calcium').classList.toggle('on', step >= 2);
+  document.getElementById('troponin').classList.toggle('on', step >= 2);
+  document.getElementById('myosinHead').classList.toggle('on', step >= 3);
+  document.querySelector('svg').classList.toggle('stroke', step === 3);
+  document.getElementById('stateLabel').classList.toggle('on', step >= 3);
+  document.getElementById('crossBridgeState').textContent = states[step] || '';
+  document.getElementById('atpNote').classList.toggle('on', step >= 5);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -3293,7 +3400,18 @@ REGISTRY = {
             "blurb": (
                 "The sliding filament model: Ca2+ exposes myosin-binding "
                 "sites on actin, cross-bridges form and pull the "
-                "filaments inward, shortening the sarcomere."
+                "filaments inward, and ATP is needed to release the "
+                "cross-bridge and reset the cycle."
+            ),
+        },
+        "Technical": {
+            "fragment": MUSCLE_CONTRACTION_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "DHPR directly (mechanically) opens RyR — no calcium "
+                "trigger, unlike cardiac muscle — and myosin cycles "
+                "through weak binding, power stroke, rigor, and "
+                "ATP-driven detachment."
             ),
         },
     },
