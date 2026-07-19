@@ -874,23 +874,23 @@ render();
 # MEIOSIS_GENERAL  (source: meiosis.html)
 # ---------------------------------------------------------------------------
 MEIOSIS_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of meiosis showing homolog pairing, crossing over, two rounds of division, and four haploid daughter cells.</h2>
+<h2 class="sr-only">Interactive diagram of meiosis showing homolog pairing, crossing over, two rounds of division, an explicit telophase I two-cell stage, and four visibly distinct haploid daughter cells.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #pair1, #pair2 { transition: transform 1s ease; }
-  .anaphase1 #pair1 { transform: translateX(-60px); }
-  .anaphase1 #pair2 { transform: translateX(60px); }
+  #pair1, #pair2 { transition: transform 1s ease, opacity .6s ease; }
+  .anaphase1 #pair1, .telophase1 #pair1 { transform: translateX(-60px); }
+  .anaphase1 #pair2, .telophase1 #pair2 { transform: translateX(60px); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
-<svg width="100%" viewBox="0 0 680 360" role="img">
+<svg width="100%" viewBox="0 0 680 380" role="img">
 <title>Meiosis, general view</title>
-<desc>A diploid cell with paired homologous chromosomes undergoes crossing over, aligns as tetrads, separates homologs in meiosis I, then separates sister chromatids in meiosis II, producing four genetically distinct haploid cells.</desc>
+<desc>A diploid cell with paired homologous chromosomes undergoes crossing over, aligns as tetrads, separates homologs in meiosis I to form two haploid cells with duplicated chromosomes, then separates sister chromatids in meiosis II, producing four genetically distinct haploid cells.</desc>
 
-<ellipse cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<ellipse id="parentCell" cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 <text class="ts" x="340" y="28" text-anchor="middle" id="stageLabel">Diploid cell, homologs unpaired</text>
 
 <g id="pair1">
@@ -912,12 +912,25 @@ MEIOSIS_GENERAL = '''
 <circle cx="540" cy="170" r="6" class="c-amber"/>
 </g>
 
+<g id="twoCells" class="stg">
+<ellipse cx="220" cy="170" rx="80" ry="60" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="460" cy="170" rx="80" ry="60" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<path d="M205 155 L225 175 M225 155 L205 175" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
+<path d="M445 155 L465 175 M465 155 L445 175" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
+<text class="ts" x="220" y="245" text-anchor="middle">Haploid, chromosomes still duplicated</text>
+<text class="ts" x="460" y="245" text-anchor="middle">Haploid, chromosomes still duplicated</text>
+</g>
+
 <g id="fourCells" class="stg">
-<ellipse cx="180" cy="290" rx="55" ry="38" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<ellipse cx="280" cy="290" rx="55" ry="38" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<ellipse cx="400" cy="290" rx="55" ry="38" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<ellipse cx="500" cy="290" rx="55" ry="38" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<text class="ts" x="340" y="345" text-anchor="middle">Four haploid cells, each genetically distinct</text>
+<ellipse cx="130" cy="300" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="270" cy="300" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="410" cy="300" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="550" cy="300" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="120" y1="300" x2="140" y2="300" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
+<line x1="260" y1="300" x2="280" y2="300" stroke="#85B7EB" stroke-width="4" stroke-linecap="round"/>
+<line x1="400" y1="300" x2="420" y2="300" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
+<line x1="540" y1="300" x2="560" y2="300" stroke="#F0997B" stroke-width="4" stroke-linecap="round"/>
+<text class="th" x="340" y="355" text-anchor="middle">Four haploid cells — each with a different chromosome combination</text>
 </g>
 </svg>
 
@@ -925,7 +938,7 @@ MEIOSIS_GENERAL = '''
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 5</span>
+  <span id="stepLabel">Step 0 of 6</span>
 </div>
 
 <script>
@@ -935,23 +948,27 @@ const labels = [
   "Prophase I — homologs pair (synapsis) and cross over",
   "Metaphase I — homolog pairs (tetrads) align at the equator",
   "Anaphase I — homologs separate to opposite poles (chromatids stay joined)",
-  "Meiosis II — sister chromatids finally separate, like mitosis",
-  "Result — four haploid cells, each genetically distinct"
+  "Telophase I — two haploid cells form, each chromosome still has two joined sister chromatids",
+  "Meiosis II — sister chromatids finally separate within each cell, like mitosis",
+  "Result — four haploid cells, each with a different mix of chromosomes from crossing over"
 ];
 function render() {
   document.getElementById('stageLabel').textContent = labels[step];
-  document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 5';
+  document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 6';
   document.getElementById('homolog1b').setAttribute('opacity', step >= 1 ? '1' : '0');
   document.getElementById('homolog2b').setAttribute('opacity', step >= 1 ? '1' : '0');
   document.getElementById('chiasma').classList.toggle('on', step === 1);
   document.getElementById('spindle').classList.toggle('on', step >= 2 && step <= 3);
-  document.querySelector('svg').classList.toggle('anaphase1', step === 3);
-  document.getElementById('fourCells').classList.toggle('on', step >= 4);
-  const opac = step >= 4 ? '0.15' : '1';
-  document.getElementById('pair1').style.opacity = opac;
-  document.getElementById('pair2').style.opacity = opac;
+  const svg = document.querySelector('svg');
+  svg.classList.toggle('anaphase1', step === 3);
+  svg.classList.toggle('telophase1', step === 4);
+  document.getElementById('pair1').style.opacity = step >= 4 ? '0' : '1';
+  document.getElementById('pair2').style.opacity = step >= 4 ? '0' : '1';
+  document.getElementById('parentCell').style.opacity = step >= 4 ? '0' : '1';
+  document.getElementById('twoCells').classList.toggle('on', step === 4);
+  document.getElementById('fourCells').classList.toggle('on', step >= 5);
 }
-function stepFwd() { if (step < 5) step++; render(); }
+function stepFwd() { if (step < 6) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
@@ -3538,11 +3555,12 @@ REGISTRY = {
     "Meiosis": {
         "General": {
             "fragment": MEIOSIS_GENERAL,
-            "height": 500,
+            "height": 520,
             "blurb": (
                 "Homologous chromosomes pair and cross over, then separate "
-                "in meiosis I, and sister chromatids separate in meiosis "
-                "II, producing four genetically distinct haploid cells."
+                "in meiosis I into two haploid cells (chromosomes still "
+                "duplicated), and sister chromatids separate in meiosis "
+                "II, producing four visibly distinct haploid cells."
             ),
         },
     },
