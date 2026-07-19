@@ -3670,6 +3670,383 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# CYTOTOXIC_T_CELL_GENERAL  (source: cytotoxic_t_cell.html)
+# ---------------------------------------------------------------------------
+CYTOTOXIC_T_CELL_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of cytotoxic T cell killing: a CD8 T cell recognizes viral peptide on MHC-I, releases perforin to form pores, and granzymes trigger apoptosis in the infected target cell.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #tcellGroup { transition: transform 1s ease; }
+  .docked #tcellGroup { transform: translateX(-40px); }
+  #targetCell { transition: opacity 0.8s ease, stroke 0.6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Cytotoxic T cell killing</title>
+<desc>An infected cell presents a viral peptide on MHC class one. A CD8 cytotoxic T cell's receptor recognizes this complex, releases perforin to punch pores in the target cell's membrane, and granzymes enter through the pores to trigger apoptosis, destroying the infected cell before the virus can spread.</desc>
+
+<circle cx="180" cy="150" r="70" fill="none" id="targetCell" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="180" y="235" text-anchor="middle">Infected cell</text>
+<rect x="165" y="90" width="30" height="12" rx="3" fill="#EF9F27"/>
+<text class="ts" x="180" y="75" text-anchor="middle">Viral peptide on MHC-I</text>
+
+<g id="tcellGroup">
+<circle cx="440" cy="150" r="55" class="c-red"/>
+<text class="th" x="440" y="150" text-anchor="middle" dominant-baseline="central">CD8 T cell</text>
+</g>
+
+<g id="recognition" class="stg">
+<line x1="385" y1="150" x2="255" y2="120" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="320" y="105" text-anchor="middle">TCR recognizes peptide-MHC-I</text>
+</g>
+
+<g id="perforin" class="stg">
+<circle cx="230" cy="120" r="3" fill="#B91C1C"/>
+<circle cx="230" cy="150" r="3" fill="#B91C1C"/>
+<circle cx="230" cy="180" r="3" fill="#B91C1C"/>
+<text class="ts" x="230" y="200" text-anchor="middle">Perforin punches pores</text>
+</g>
+
+<g id="granzyme" class="stg">
+<circle cx="180" cy="150" r="5" class="c-amber"/>
+<text class="ts" x="180" y="170" text-anchor="middle">Granzymes enter</text>
+</g>
+
+<g id="apoptosis" class="stg">
+<path d="M155 130 L170 145 M170 130 L155 145" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<path d="M190 155 L205 170 M205 155 L190 170" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<text class="th" x="180" y="260" text-anchor="middle">Apoptosis — infected cell destroyed</text>
+</g>
+
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — infected cell presents viral peptide on MHC-I",
+  "Step 1 of 4 — CD8 T cell's receptor recognizes the peptide-MHC-I complex",
+  "Step 2 of 4 — the T cell releases perforin, punching pores in the target's membrane",
+  "Step 3 of 4 — granzymes enter through the pores",
+  "Step 4 of 4 — granzymes trigger apoptosis — the infected cell is destroyed before the virus can spread"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('recognition').classList.toggle('on', step >= 1);
+  document.querySelector('svg').classList.toggle('docked', step >= 1);
+  document.getElementById('perforin').classList.toggle('on', step >= 2);
+  document.getElementById('granzyme').classList.toggle('on', step >= 3);
+  document.getElementById('apoptosis').classList.toggle('on', step >= 4);
+  document.getElementById('targetCell').style.opacity = step >= 4 ? '0.3' : '1';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# COMPLEMENT_SYSTEM_GENERAL  (source: complement.html)
+# ---------------------------------------------------------------------------
+COMPLEMENT_SYSTEM_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the complement system: a cascade of proteins opsonizes a pathogen and assembles a membrane attack complex that punches a lethal pore in its membrane.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #pathogenCell { transition: opacity 0.8s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Complement system, general view</title>
+<desc>Complement proteins activate in a cascade on a pathogen's surface. Early components opsonize the pathogen, tagging it for phagocytosis. The cascade continues through later components, which assemble into a membrane attack complex that inserts into the pathogen's membrane, forming a pore that causes it to lyse.</desc>
+
+<circle id="pathogenCell" cx="200" cy="150" r="70" class="c-coral"/>
+<text class="th" x="200" y="150" text-anchor="middle" dominant-baseline="central">Pathogen</text>
+
+<g id="cascade1" class="stg">
+<circle cx="130" cy="90" r="8" class="c-purple"/>
+<text class="ts" x="130" y="72" text-anchor="middle">C1, C4, C2 activate</text>
+</g>
+
+<g id="opsonize" class="stg">
+<circle cx="150" cy="200" r="7" class="c-amber"/>
+<circle cx="250" cy="200" r="7" class="c-amber"/>
+<text class="ts" x="200" y="225" text-anchor="middle">C3b opsonizes — tags for phagocytosis</text>
+</g>
+
+<g id="cascadeLate" class="stg">
+<text class="ts" x="200" y="60" text-anchor="middle">C5-C9 assemble</text>
+</g>
+
+<g id="mac" class="stg">
+<rect x="260" y="120" width="14" height="60" fill="#B91C1C"/>
+<rect x="280" y="120" width="14" height="60" fill="#B91C1C"/>
+<rect x="300" y="120" width="14" height="60" fill="#B91C1C"/>
+<text class="ts" x="280" y="105" text-anchor="middle">Membrane attack complex</text>
+</g>
+
+<g id="lysis" class="stg">
+<path d="M260 150 L340 150" stroke="#B91C1C" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="th" x="200" y="270" text-anchor="middle">Pore forms — pathogen lyses</text>
+</g>
+
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — pathogen present, complement not yet activated",
+  "Step 1 of 4 — early complement proteins (C1, C4, C2) activate on the surface",
+  "Step 2 of 4 — C3b opsonizes the pathogen, tagging it for phagocytosis",
+  "Step 3 of 4 — the cascade continues, C5 through C9 begin assembling",
+  "Step 4 of 4 — the membrane attack complex inserts into the membrane, forming a pore that lyses the pathogen"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('cascade1').classList.toggle('on', step >= 1);
+  document.getElementById('opsonize').classList.toggle('on', step >= 2);
+  document.getElementById('cascadeLate').classList.toggle('on', step === 3);
+  document.getElementById('mac').classList.toggle('on', step >= 4);
+  document.getElementById('lysis').classList.toggle('on', step >= 4);
+  document.getElementById('pathogenCell').style.opacity = step >= 4 ? '0.25' : '1';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# INNATE_IMMUNE_RECOGNITION_GENERAL  (source: innate_immunity.html)
+# ---------------------------------------------------------------------------
+INNATE_IMMUNE_RECOGNITION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of innate immune pattern recognition: a Toll-like receptor on a macrophage detects a pathogen-associated molecular pattern, triggering NF-kB signaling and inflammatory cytokine release.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.8s ease-in-out infinite; }
+  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Innate immune pattern recognition</title>
+<desc>A pathogen-associated molecular pattern such as bacterial LPS is recognized by a Toll-like receptor on a macrophage. Binding triggers an intracellular signaling cascade that activates the transcription factor NF-kB, which moves into the nucleus and drives the release of inflammatory cytokines, recruiting more immune cells and triggering inflammation.</desc>
+
+<ellipse cx="200" cy="170" rx="130" ry="90" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="200" y="70" text-anchor="middle">Macrophage</text>
+<ellipse cx="200" cy="200" rx="35" ry="25" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="ts" x="200" y="235" text-anchor="middle">Nucleus</text>
+
+<g id="pamp" class="stg">
+<circle cx="70" cy="140" r="8" fill="#B91C1C"/>
+<text class="ts" x="70" y="120" text-anchor="middle">PAMP (e.g. LPS)</text>
+</g>
+
+<circle id="tlr" cx="90" cy="150" r="10" class="c-amber"/>
+<text class="ts" x="90" y="175" text-anchor="middle">TLR</text>
+
+<g id="signaling" class="stg">
+<line x1="100" y1="150" x2="180" y2="180" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="140" y="150" text-anchor="middle">Signaling cascade</text>
+</g>
+
+<g id="nfkb" class="stg">
+<circle cx="200" cy="200" r="8" class="c-purple pulse"/>
+</g>
+
+<g id="cytokines" class="stg">
+<circle class="drift" cx="340" cy="130" r="6" fill="#E24B4A"/>
+<circle class="drift" cx="360" cy="150" r="6" fill="#E24B4A" style="animation-delay:.3s"/>
+<circle class="drift" cx="330" cy="170" r="6" fill="#E24B4A" style="animation-delay:.6s"/>
+<text class="ts" x="345" y="105" text-anchor="middle">Cytokines released (TNF-a, IL-1, IL-6)</text>
+</g>
+
+<g id="inflammation" class="stg">
+<text class="th" x="500" y="150" text-anchor="middle">Recruits immune cells, triggers inflammation</text>
+</g>
+
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — a pathogen-associated molecular pattern (PAMP) is present",
+  "Step 1 of 4 — a Toll-like receptor on the macrophage binds the PAMP",
+  "Step 2 of 4 — an intracellular signaling cascade activates",
+  "Step 3 of 4 — NF-kB moves into the nucleus, driving gene expression",
+  "Step 4 of 4 — inflammatory cytokines are released, recruiting more immune cells and triggering inflammation"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('pamp').classList.toggle('on', step === 0);
+  document.getElementById('tlr').classList.toggle('pulse', step === 1);
+  document.getElementById('signaling').classList.toggle('on', step >= 1);
+  document.getElementById('nfkb').classList.toggle('on', step >= 2);
+  document.getElementById('cytokines').classList.toggle('on', step >= 3);
+  document.getElementById('inflammation').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# NK_CELL_MISSING_SELF_GENERAL  (source: nk_cell.html)
+# ---------------------------------------------------------------------------
+NK_CELL_MISSING_SELF_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of NK cell missing-self recognition: a switchable comparison between a healthy cell presenting MHC-I, which inhibits killing, and an infected cell that has downregulated MHC-I, which triggers killing.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnHealthy" onclick="setMode('healthy')">Healthy cell</button>
+  <button id="btnInfected" onclick="setMode('infected')">Infected cell (MHC-I lost)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 280" role="img">
+<title>NK cell missing-self recognition</title>
+<desc>An NK cell checks target cells for MHC class one. A healthy cell displaying MHC-I sends an inhibitory signal that stops the NK cell from killing. An infected or cancerous cell that has downregulated MHC-I to evade T cells loses that inhibitory signal, so activating receptors detecting stress ligands go unopposed, and the NK cell kills it — recognizing the absence of a normal self marker rather than the presence of a foreign one.</desc>
+
+<circle cx="480" cy="140" r="55" class="c-purple"/>
+<text class="th" x="480" y="140" text-anchor="middle" dominant-baseline="central">NK cell</text>
+
+<circle id="targetCell" cx="180" cy="140" r="70" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="180" y="225" text-anchor="middle" id="targetLabel">Healthy cell</text>
+
+<g id="mhcMarker" class="stg">
+<rect x="165" y="90" width="30" height="12" rx="3" fill="#EF9F27"/>
+<text class="ts" x="180" y="75" text-anchor="middle" id="mhcLabel">MHC-I present</text>
+</g>
+
+<g id="inhibitorySignal" class="stg">
+<line x1="250" y1="130" x2="425" y2="130" stroke="#639922" stroke-width="2" marker-end="url(#arrow)"/>
+<text class="ts" x="340" y="115" text-anchor="middle">Inhibitory signal</text>
+</g>
+
+<g id="activatingSignal" class="stg">
+<line x1="250" y1="150" x2="425" y2="150" stroke="#E24B4A" stroke-width="2" marker-end="url(#arrow)"/>
+<text class="ts" x="340" y="170" text-anchor="middle">Activating signal (stress ligands)</text>
+</g>
+
+<g id="outcome" class="stg">
+<text class="th" x="480" y="220" text-anchor="middle" id="outcomeLabel">No killing</text>
+</g>
+
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 2</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'healthy';
+const configHealthy = {
+  targetLabel: 'Healthy cell',
+  mhcLabel: 'MHC-I present',
+  outcomeLabel: 'Inhibitory signal dominates — no killing',
+  labels: [
+    "Step 0 of 2 — NK cell surveys a healthy cell",
+    "Step 1 of 2 — MHC-I present sends an inhibitory signal",
+    "Step 2 of 2 — inhibitory signal dominates, the NK cell does not kill"
+  ]
+};
+const configInfected = {
+  targetLabel: 'Infected cell',
+  mhcLabel: 'MHC-I downregulated (missing)',
+  outcomeLabel: 'No inhibition — activating signal wins — NK cell kills',
+  labels: [
+    "Step 0 of 2 — NK cell surveys an infected cell that has downregulated MHC-I to evade T cells",
+    "Step 1 of 2 — no MHC-I means no inhibitory signal; stress ligands provide an activating signal",
+    "Step 2 of 2 — with nothing to oppose it, the activating signal wins — the NK cell kills the cell"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnHealthy').classList.toggle('active', m === 'healthy');
+  document.getElementById('btnInfected').classList.toggle('active', m === 'infected');
+  const cfg = m === 'healthy' ? configHealthy : configInfected;
+  document.getElementById('targetLabel').textContent = cfg.targetLabel;
+  document.getElementById('mhcLabel').textContent = cfg.mhcLabel;
+  document.getElementById('outcomeLabel').textContent = cfg.outcomeLabel;
+  render();
+}
+function render() {
+  const cfg = mode === 'healthy' ? configHealthy : configInfected;
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('mhcMarker').classList.toggle('on', step >= 1);
+  document.getElementById('inhibitorySignal').classList.toggle('on', mode === 'healthy' && step >= 1);
+  document.getElementById('activatingSignal').classList.toggle('on', step >= 1);
+  document.getElementById('outcome').classList.toggle('on', step >= 2);
+  document.getElementById('targetCell').style.opacity = (mode === 'infected' && step >= 2) ? '0.25' : '1';
+}
+function stepFwd() { if (step < 2) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('healthy');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -3856,6 +4233,51 @@ REGISTRY = {
                 "An antigen-presenting cell displays antigen on MHC-II; "
                 "full T cell activation needs both TCR/MHC binding "
                 "(signal 1) and CD28/B7 costimulation (signal 2)."
+            ),
+        },
+    },
+    "Cytotoxic T cell killing": {
+        "General": {
+            "fragment": CYTOTOXIC_T_CELL_GENERAL,
+            "height": 460,
+            "blurb": (
+                "A CD8 T cell recognizes viral peptide on MHC-I, releases "
+                "perforin to punch pores in the target's membrane, and "
+                "granzymes entering through them trigger apoptosis."
+            ),
+        },
+    },
+    "Complement system": {
+        "General": {
+            "fragment": COMPLEMENT_SYSTEM_GENERAL,
+            "height": 460,
+            "blurb": (
+                "A cascade of proteins opsonizes a pathogen for "
+                "phagocytosis, then assembles a membrane attack complex "
+                "that punches a lethal pore in its membrane."
+            ),
+        },
+    },
+    "Innate immune recognition": {
+        "General": {
+            "fragment": INNATE_IMMUNE_RECOGNITION_GENERAL,
+            "height": 460,
+            "blurb": (
+                "A Toll-like receptor on a macrophage detects a "
+                "pathogen-associated pattern, triggering NF-kB signaling "
+                "and inflammatory cytokine release."
+            ),
+        },
+    },
+    "NK cell missing-self recognition": {
+        "General": {
+            "fragment": NK_CELL_MISSING_SELF_GENERAL,
+            "height": 440,
+            "blurb": (
+                "Switch between a healthy cell (MHC-I present — "
+                "inhibits killing) and an infected cell (MHC-I lost — "
+                "killing proceeds), the opposite detection strategy from "
+                "cytotoxic T cells."
             ),
         },
     },
@@ -4097,7 +4519,11 @@ CATEGORIES = {
         "Gastrulation",
     ],
     "Immunology": [
+        "Complement system",
+        "Cytotoxic T cell killing",
         "Humoral immune response",
+        "Innate immune recognition",
+        "NK cell missing-self recognition",
         "T cell activation",
     ],
     "Molecular Biology & Genetics": [
