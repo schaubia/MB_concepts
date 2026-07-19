@@ -3272,6 +3272,103 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# LABOR_TECHNICAL  (source: labor_technical.html)
+# ---------------------------------------------------------------------------
+LABOR_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of labor initiation: progesterone withdrawal and rising CRH shift the uterus out of quiescence, prostaglandins ripen the cervix and upregulate oxytocin receptors, then the sensitized Ferguson reflex positive feedback loop drives labor to completion.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #progBar { transition: width 1s ease; }
+  #receptorDots circle { transition: opacity 0.6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Labor initiation and the primed Ferguson reflex, technical view</title>
+<desc>Late in pregnancy progesterone maintains uterine quiescence. Progesterone withdrawal alongside rising placental CRH and cortisol shifts the balance toward contraction readiness. Prostaglandins ripen the cervix and upregulate oxytocin receptors on the myometrium, sensitizing the tissue. Only then does the Ferguson reflex positive feedback loop — cervical stretch triggering oxytocin, which causes contractions that increase stretch — drive labor to completion.</desc>
+
+<text class="ts" x="60" y="40">Progesterone (uterine quiescence)</text>
+<rect x="60" y="50" width="200" height="16" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<rect id="progBar" x="60" y="50" width="200" height="16" fill="#7F77DD"/>
+
+<g id="crh" class="stg">
+<text class="ts" x="400" y="40">CRH / cortisol / estrogen rising</text>
+<circle class="pulse" cx="400" cy="60" r="7" fill="#EF9F27"/>
+</g>
+
+<ellipse cx="340" cy="180" rx="120" ry="90" fill="none" stroke="#D85A30" stroke-width="2" id="uterusOutline"/>
+<text class="ts" x="340" y="90" text-anchor="middle">Myometrium</text>
+
+<g id="prostaglandin" class="stg">
+<circle cx="260" cy="150" r="5" fill="#B91C1C"/>
+<circle cx="280" cy="170" r="5" fill="#B91C1C"/>
+<text class="ts" x="270" y="130" text-anchor="middle">Prostaglandins ripen cervix</text>
+</g>
+
+<g id="receptorDots" class="stg">
+<circle cx="300" cy="220" r="4" class="c-teal"/>
+<circle cx="320" cy="230" r="4" class="c-teal"/>
+<circle cx="340" cy="222" r="4" class="c-teal"/>
+<circle cx="360" cy="230" r="4" class="c-teal"/>
+<circle cx="380" cy="220" r="4" class="c-teal"/>
+<text class="ts" x="340" y="250" text-anchor="middle">Oxytocin receptors upregulated</text>
+</g>
+
+<ellipse cx="340" cy="270" rx="40" ry="18" fill="none" stroke="#B91C1C" stroke-width="2"/>
+<text class="ts" x="340" y="300" text-anchor="middle">Cervix</text>
+
+<g id="loop" class="stg">
+<path d="M370 260 Q450 200 400 130" stroke="#378ADD" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+<text class="th" x="440" y="180" text-anchor="middle">Ferguson reflex loop — now sensitized</text>
+</g>
+
+<g id="birth" class="stg">
+<text class="th" x="340" y="30" text-anchor="middle">Labor completes — loop breaks at birth</text>
+</g>
+
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — late pregnancy: high progesterone keeps the uterus quiescent",
+  "Step 1 of 4 — progesterone withdrawal, rising CRH/cortisol/estrogen shift the balance toward contraction readiness",
+  "Step 2 of 4 — prostaglandins ripen the cervix and upregulate oxytocin receptors on the myometrium",
+  "Step 3 of 4 — the sensitized tissue now responds strongly — the Ferguson reflex positive feedback loop takes over",
+  "Step 4 of 4 — contractions intensify, cervix fully dilates, labor completes and the loop breaks at birth"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('progBar').setAttribute('width', step === 0 ? '200' : step === 1 ? '80' : '20');
+  document.getElementById('crh').classList.toggle('on', step >= 1);
+  document.getElementById('prostaglandin').classList.toggle('on', step >= 2);
+  document.getElementById('receptorDots').classList.toggle('on', step >= 2);
+  document.getElementById('loop').classList.toggle('on', step >= 3);
+  document.getElementById('uterusOutline').setAttribute('stroke-width', step >= 3 ? '4' : '2');
+  document.getElementById('birth').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -3633,6 +3730,16 @@ REGISTRY = {
                 "which causes contractions that increase cervical "
                 "stretch — positive feedback that escalates rather than "
                 "corrects, unlike almost every other loop in this app."
+            ),
+        },
+        "Technical": {
+            "fragment": LABOR_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "What primes the loop: progesterone withdrawal and rising "
+                "CRH shift the uterus out of quiescence, prostaglandins "
+                "ripen the cervix and upregulate oxytocin receptors — "
+                "only then does the sensitized Ferguson reflex take over."
             ),
         },
     },

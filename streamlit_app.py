@@ -1195,7 +1195,7 @@ setMode('endo');
 # ENZYME_KINETICS_GENERAL  (source: enzyme_kinetics.html)
 # ---------------------------------------------------------------------------
 ENZYME_KINETICS_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of enzyme catalysis and allosteric inhibition: substrate binds the active site via induced fit, is converted to product, and an allosteric inhibitor can distort the active site to block binding.</h2>
+<h2 class="sr-only">Interactive diagram of enzyme regulation modes: normal catalysis, competitive inhibition at the active site, allosteric inhibition at a distinct site, and allosteric activation.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
@@ -1203,14 +1203,23 @@ ENZYME_KINETICS_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #substrateGroup { transition: transform 1s ease, opacity .5s ease; }
   .bound #substrateGroup { transform: translate(15px, 5px); }
-  #enzymeBody { transition: d 0.6s ease; }
-  .inhibited #enzymeBody { fill: var(--surface-1); }
+  #activeSite { transition: r 0.6s ease, stroke 0.6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
+
+<div class="rowbtns">
+  <button id="btnNormal" onclick="setMode('normal')">Normal</button>
+  <button id="btnComp" onclick="setMode('competitive')">Competitive inhibitor</button>
+  <button id="btnAlloI" onclick="setMode('alloInhibit')">Allosteric inhibitor</button>
+  <button id="btnAlloA" onclick="setMode('alloActivate')">Allosteric activator</button>
+</div>
+
 <svg width="100%" viewBox="0 0 680 300" role="img">
-<title>Enzyme catalysis and allosteric inhibition</title>
-<desc>A substrate approaches an enzyme's active site, binds via induced fit, is converted into product and released. Separately, an allosteric inhibitor can bind a distinct regulatory site, distorting the active site so the substrate no longer fits, providing feedback inhibition.</desc>
+<title>Enzyme regulation modes</title>
+<desc>Normal catalysis: substrate binds the active site by induced fit and is converted to product. Competitive inhibition: a lookalike molecule binds the same active site, directly blocking substrate. Allosteric inhibition: an inhibitor binds a separate site, distorting the active site so substrate cannot fit, regardless of substrate concentration. Allosteric activation: an activator binds a separate site and improves the active site's fit for substrate, enhancing catalysis.</desc>
 
 <path id="enzymeBody" d="M180 150 Q210 90 280 110 Q340 100 360 150 Q340 200 280 190 Q210 210 180 150 Z" class="c-teal" stroke-width="0.5"/>
 <circle id="activeSite" cx="270" cy="150" r="16" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="3 3"/>
@@ -1221,6 +1230,12 @@ ENZYME_KINETICS_GENERAL = '''
 <text class="ts" x="113" y="122" text-anchor="middle" id="substrateLabel">Substrate</text>
 </g>
 
+<g id="competitiveInhibitor" class="stg">
+<rect x="270" y="140" width="24" height="18" rx="4" fill="#B91C1C"/>
+<text class="ts" x="282" y="122" text-anchor="middle">Lookalike inhibitor</text>
+<text class="ts" x="330" y="260" text-anchor="middle">Blocks the same site — beaten by more substrate</text>
+</g>
+
 <g id="product" class="stg">
 <circle cx="420" cy="140" r="8" fill="#1D9E75"/>
 <circle cx="440" cy="155" r="8" fill="#1D9E75"/>
@@ -1228,51 +1243,95 @@ ENZYME_KINETICS_GENERAL = '''
 </g>
 
 <g id="allostericSite" class="stg">
-<circle cx="200" cy="180" r="10" fill="none" stroke="#E24B4A" stroke-width="1.5" stroke-dasharray="2 2"/>
+<circle cx="200" cy="180" r="10" fill="none" stroke="#7F77DD" stroke-width="1.5" stroke-dasharray="2 2"/>
 <text class="ts" x="200" y="205" text-anchor="middle">Allosteric site</text>
 </g>
 <g id="inhibitor" class="stg">
 <circle cx="200" cy="180" r="9" fill="#E24B4A"/>
-<text class="ts" x="200" y="255" text-anchor="middle">Inhibitor bound — active site distorted, substrate blocked</text>
+<text class="ts" x="270" y="260" text-anchor="middle">Different site — NOT beaten by more substrate</text>
+</g>
+<g id="activator" class="stg">
+<circle cx="200" cy="180" r="9" fill="#1D9E75"/>
+<text class="ts" x="270" y="260" text-anchor="middle" id="activatorNote">Active site opens wider — easier binding</text>
 </g>
 </svg>
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="reset()">Reset</button>
-  <button onclick="toggleInhibitor()">Toggle allosteric inhibitor</button>
   <span id="stepLabel">Step 0 of 3</span>
 </div>
 
 <script>
 let step = 0;
-let inhibited = false;
-const labels = [
+let mode = 'normal';
+const labelsNormal = [
   "Step 0 of 3 — substrate approaches the active site",
   "Step 1 of 3 — induced fit: substrate binds, enzyme-substrate complex forms",
   "Step 2 of 3 — reaction catalyzed, product formed",
   "Step 3 of 3 — product released, enzyme resets for another cycle"
 ];
-function render() {
-  document.getElementById('stepLabel').textContent = inhibited ? "Allosteric inhibitor bound — substrate can't bind" : labels[step];
-  const svg = document.querySelector('svg');
-  svg.classList.toggle('bound', step >= 1 && step < 3 && !inhibited);
-  document.getElementById('substrateLabel').textContent = step >= 1 ? 'Bound substrate' : 'Substrate';
-  document.getElementById('substrateGroup').style.opacity = (step >= 3 || inhibited) ? '0' : '1';
-  document.getElementById('activeSite').classList.toggle('pulse', step === 1 && !inhibited);
-  document.getElementById('product').classList.toggle('on', step >= 2 && !inhibited);
-}
-function stepFwd() { if (step < 3 && !inhibited) step++; render(); }
-function reset() { step = 0; render(); }
-function toggleInhibitor() {
-  inhibited = !inhibited;
-  step = 0;
-  document.getElementById('allostericSite').classList.toggle('on', true);
-  document.getElementById('inhibitor').classList.toggle('on', inhibited);
-  document.querySelector('svg').classList.toggle('inhibited', inhibited);
+const labelsComp = [
+  "Step 0 of 2 — a lookalike molecule approaches the same active site",
+  "Step 1 of 2 — it binds the active site directly, blocking substrate",
+  "Step 2 of 2 — reversible: raising substrate concentration can outcompete it (this is why competitive inhibition raises the apparent Km but not Vmax)"
+];
+const labelsAlloI = [
+  "Step 0 of 2 — an inhibitor approaches a site distinct from the active site",
+  "Step 1 of 2 — it binds the allosteric site",
+  "Step 2 of 2 — the active site is distorted — substrate can't bind no matter how much is added (this lowers Vmax, unlike competitive inhibition)"
+];
+const labelsAlloA = [
+  "Step 0 of 2 — an activator approaches the allosteric site",
+  "Step 1 of 2 — it binds, and the active site's shape improves",
+  "Step 2 of 2 — substrate now binds more readily — catalysis is enhanced, the opposite effect of an allosteric inhibitor"
+];
+function maxStep() { return mode === 'normal' ? 3 : 2; }
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnNormal').classList.toggle('active', m === 'normal');
+  document.getElementById('btnComp').classList.toggle('active', m === 'competitive');
+  document.getElementById('btnAlloI').classList.toggle('active', m === 'alloInhibit');
+  document.getElementById('btnAlloA').classList.toggle('active', m === 'alloActivate');
   render();
 }
-render();
+function render() {
+  const labels = mode === 'normal' ? labelsNormal : mode === 'competitive' ? labelsComp : mode === 'alloInhibit' ? labelsAlloI : labelsAlloA;
+  document.getElementById('stepLabel').textContent = labels[step];
+  const svg = document.querySelector('svg');
+
+  document.getElementById('competitiveInhibitor').classList.toggle('on', mode === 'competitive' && step >= 1);
+  document.getElementById('allostericSite').classList.toggle('on', (mode === 'alloInhibit' || mode === 'alloActivate') && step >= 0);
+  document.getElementById('inhibitor').classList.toggle('on', mode === 'alloInhibit' && step >= 1);
+  document.getElementById('activator').classList.toggle('on', mode === 'alloActivate' && step >= 1);
+
+  if (mode === 'normal') {
+    svg.classList.toggle('bound', step >= 1 && step < 3);
+    document.getElementById('substrateLabel').textContent = step >= 1 ? 'Bound substrate' : 'Substrate';
+    document.getElementById('substrateGroup').style.opacity = step >= 3 ? '0' : '1';
+    document.getElementById('activeSite').setAttribute('stroke', '#EF9F27');
+    document.getElementById('activeSite').setAttribute('r', '16');
+    document.getElementById('product').classList.toggle('on', step >= 2);
+  } else if (mode === 'competitive') {
+    document.getElementById('substrateGroup').style.opacity = step >= 1 ? '0.15' : '1';
+    document.getElementById('activeSite').setAttribute('stroke', '#EF9F27');
+    document.getElementById('activeSite').setAttribute('r', '16');
+    document.getElementById('product').classList.toggle('on', false);
+  } else if (mode === 'alloInhibit') {
+    document.getElementById('substrateGroup').style.opacity = step >= 1 ? '0.15' : '1';
+    document.getElementById('activeSite').setAttribute('stroke', step >= 1 ? '#E24B4A' : '#EF9F27');
+    document.getElementById('activeSite').setAttribute('r', step >= 1 ? '10' : '16');
+    document.getElementById('product').classList.toggle('on', false);
+  } else if (mode === 'alloActivate') {
+    document.getElementById('substrateGroup').style.opacity = '1';
+    document.getElementById('activeSite').setAttribute('stroke', step >= 1 ? '#1D9E75' : '#EF9F27');
+    document.getElementById('activeSite').setAttribute('r', step >= 1 ? '22' : '16');
+    document.getElementById('product').classList.toggle('on', false);
+  }
+}
+function stepFwd() { if (step < maxStep()) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('normal');
 </script>
 '''
 
@@ -3513,11 +3572,12 @@ REGISTRY = {
     "Enzyme kinetics & allosteric regulation": {
         "General": {
             "fragment": ENZYME_KINETICS_GENERAL,
-            "height": 460,
+            "height": 480,
             "blurb": (
-                "Substrate binds the active site by induced fit and is "
-                "converted to product; a separate allosteric inhibitor "
-                "can distort the active site to block binding entirely."
+                "Switch between normal catalysis, competitive inhibition "
+                "(same site, beatable by more substrate), allosteric "
+                "inhibition (different site, not beatable), and allosteric "
+                "activation — regulation isn't only inhibition."
             ),
         },
     },
