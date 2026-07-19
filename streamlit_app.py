@@ -4047,6 +4047,458 @@ setMode('healthy');
 
 
 # ---------------------------------------------------------------------------
+# GERMINAL_CENTER_TECHNICAL  (source: germinal_center.html)
+# ---------------------------------------------------------------------------
+GERMINAL_CENTER_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of the germinal center reaction: somatic hypermutation, affinity testing against follicular dendritic cells, Tfh-mediated selection, and cytokine-driven class switching.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Germinal center reaction, technical view</title>
+<desc>An activated B cell proliferates in the germinal center dark zone. AID enzyme introduces mutations into the antibody variable region genes, somatic hypermutation. Mutated B cells migrate to the light zone and test their affinity for antigen displayed on follicular dendritic cells. T follicular helper cells select only the highest-affinity clones to survive, driving affinity maturation, while low-affinity clones undergo apoptosis. Selected cells undergo cytokine-driven class switching and differentiate into high-affinity plasma cells and memory B cells.</desc>
+
+<ellipse cx="200" cy="160" rx="160" ry="120" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<line x1="200" y1="40" x2="200" y2="280" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" x="110" y="55" text-anchor="middle">Dark zone</text>
+<text class="ts" x="290" y="55" text-anchor="middle">Light zone</text>
+
+<circle cx="110" cy="150" r="14" class="c-teal"/>
+<text class="ts" x="110" y="185" text-anchor="middle">B cell proliferates</text>
+
+<g id="mutation" class="stg">
+<circle cx="110" cy="150" r="18" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="2 2" class="pulse"/>
+<text class="ts" x="110" y="120" text-anchor="middle">AID mutates BCR gene</text>
+</g>
+
+<g id="fdc" class="stg">
+<circle cx="290" cy="150" r="12" class="c-amber"/>
+<text class="ts" x="290" y="185" text-anchor="middle">Follicular dendritic cell</text>
+<text class="ts" x="290" y="120" text-anchor="middle">Antigen displayed — affinity tested</text>
+</g>
+
+<g id="selection" class="stg">
+<circle cx="330" cy="110" r="10" class="c-purple"/>
+<text class="ts" x="330" y="95" text-anchor="middle">Tfh selects high-affinity clones</text>
+<path d="M250 190 L270 210 M270 190 L250 210" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<text class="ts" x="260" y="230" text-anchor="middle">Low-affinity — apoptosis</text>
+</g>
+
+<g id="classSwitch" class="stg">
+<text class="th" x="290" y="255" text-anchor="middle">Class switching (cytokine-driven)</text>
+</g>
+
+<g id="output" class="stg">
+<circle cx="450" cy="130" r="20" class="c-coral"/>
+<text class="ts" x="450" y="130" text-anchor="middle" dominant-baseline="central">Plasma cell</text>
+<circle cx="450" cy="190" r="16" class="c-gray"/>
+<text class="ts" x="450" y="190" text-anchor="middle" dominant-baseline="central">Memory B</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — activated B cell proliferates in the dark zone",
+  "Step 1 of 4 — AID enzyme introduces mutations into the antibody gene (somatic hypermutation)",
+  "Step 2 of 4 — mutated B cells migrate to the light zone, testing affinity against antigen on follicular dendritic cells",
+  "Step 3 of 4 — Tfh cells select only the highest-affinity clones to survive; low-affinity clones undergo apoptosis (affinity maturation)",
+  "Step 4 of 4 — selected cells undergo class switching and differentiate into high-affinity plasma cells and memory B cells"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('mutation').classList.toggle('on', step >= 1);
+  document.getElementById('fdc').classList.toggle('on', step >= 2);
+  document.getElementById('selection').classList.toggle('on', step === 3);
+  document.getElementById('classSwitch').classList.toggle('on', step >= 4);
+  document.getElementById('output').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# TCR_SIGNALING_TECHNICAL  (source: tcr_signaling.html)
+# ---------------------------------------------------------------------------
+TCR_SIGNALING_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of TCR signaling: Lck phosphorylates CD3 ITAMs, ZAP-70 builds the LAT signalosome, PLC-gamma generates second messengers, and calcineurin activates NFAT to drive IL-2 transcription.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>TCR signaling cascade, technical view</title>
+<desc>The TCR-CD3 complex engages peptide-MHC. Lck phosphorylates ITAMs on CD3, recruiting ZAP-70, which phosphorylates LAT to form a signalosome and activates PLC-gamma. PLC-gamma generates DAG and IP3: DAG activates the Ras-MAPK pathway while IP3 triggers calcium release, activating calcineurin. Calcineurin dephosphorylates NFAT, which translocates to the nucleus and drives IL-2 gene transcription, causing T cell proliferation.</desc>
+
+<line x1="30" y1="140" x2="650" y2="140" stroke="var(--border-strong)" stroke-width="2"/>
+<text class="ts" x="60" y="125">Membrane</text>
+
+<circle cx="90" cy="140" r="12" class="c-purple"/>
+<text class="ts" x="90" y="165" text-anchor="middle">TCR-CD3</text>
+
+<g id="lck" class="stg">
+<circle cx="140" cy="120" r="8" class="c-amber pulse"/>
+<text class="ts" x="140" y="105" text-anchor="middle">Lck phosphorylates ITAMs</text>
+</g>
+
+<g id="zap70" class="stg">
+<circle cx="190" cy="140" r="9" class="c-teal"/>
+<text class="ts" x="190" y="165" text-anchor="middle">ZAP-70</text>
+</g>
+
+<g id="lat" class="stg">
+<circle cx="250" cy="160" r="10" class="c-coral"/>
+<text class="ts" x="250" y="185" text-anchor="middle">LAT signalosome</text>
+</g>
+
+<g id="plcg" class="stg">
+<circle cx="310" cy="140" r="9" class="c-red"/>
+<text class="ts" x="310" y="120" text-anchor="middle">PLC-gamma</text>
+</g>
+
+<g id="dag" class="stg">
+<circle cx="380" cy="100" r="7" fill="#639922"/>
+<text class="ts" x="380" y="82" text-anchor="middle">DAG → Ras-MAPK</text>
+</g>
+<g id="ip3" class="stg">
+<circle cx="380" cy="180" r="7" fill="#378ADD"/>
+<text class="ts" x="380" y="200" text-anchor="middle">IP3 → Ca2+ release</text>
+</g>
+
+<g id="calcineurin" class="stg">
+<circle cx="450" cy="180" r="9" class="c-purple"/>
+<text class="ts" x="450" y="205" text-anchor="middle">Calcineurin</text>
+</g>
+
+<g id="nfat" class="stg">
+<circle cx="520" cy="160" r="10" class="c-amber pulse"/>
+<text class="ts" x="520" y="185" text-anchor="middle">NFAT → nucleus</text>
+</g>
+
+<g id="il2" class="stg">
+<text class="th" x="600" y="160" text-anchor="middle">IL-2 gene transcribed — proliferation</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 5 — TCR-CD3 complex engages peptide-MHC",
+  "Step 1 of 5 — Lck phosphorylates ITAMs on CD3, recruiting ZAP-70",
+  "Step 2 of 5 — ZAP-70 phosphorylates LAT, forming a signalosome that activates PLC-gamma",
+  "Step 3 of 5 — PLC-gamma generates DAG (activating Ras-MAPK) and IP3 (triggering Ca2+ release)",
+  "Step 4 of 5 — calcium activates calcineurin, which dephosphorylates NFAT",
+  "Step 5 of 5 — NFAT enters the nucleus and drives IL-2 gene transcription — the T cell proliferates"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('lck').classList.toggle('on', step >= 1);
+  document.getElementById('zap70').classList.toggle('on', step >= 1);
+  document.getElementById('lat').classList.toggle('on', step >= 2);
+  document.getElementById('plcg').classList.toggle('on', step >= 2);
+  document.getElementById('dag').classList.toggle('on', step >= 3);
+  document.getElementById('ip3').classList.toggle('on', step >= 3);
+  document.getElementById('calcineurin').classList.toggle('on', step >= 4);
+  document.getElementById('nfat').classList.toggle('on', step >= 5);
+  document.getElementById('il2').classList.toggle('on', step >= 5);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# IMMUNOLOGICAL_MEMORY_GENERAL  (source: immunological_memory.html)
+# ---------------------------------------------------------------------------
+IMMUNOLOGICAL_MEMORY_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of immunological memory: a switchable comparison between the slow, modest primary immune response and the fast, strong secondary response driven by pre-existing memory cells.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #responseBar { transition: height 1s ease, y 1s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnPrimary" onclick="setMode('primary')">Primary exposure</button>
+  <button id="btnSecondary" onclick="setMode('secondary')">Secondary exposure</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Immunological memory — primary vs secondary response</title>
+<desc>On first exposure to an antigen, naive lymphocytes must find, activate, and proliferate, so the antibody response is slow to rise, taking one to two weeks, and moderate in magnitude, dominated initially by IgM. On second exposure, pre-existing memory cells respond within days, producing a faster, much larger, higher-affinity IgG-dominated response.</desc>
+
+<line x1="60" y1="240" x2="620" y2="240" stroke="var(--t)" stroke-width="1"/>
+<line x1="60" y1="240" x2="60" y2="40" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="340" y="270" text-anchor="middle">Time since exposure</text>
+<text class="ts" x="30" y="140" text-anchor="middle" transform="rotate(-90 30 140)">Antibody level</text>
+
+<rect id="responseBar" x="300" y="220" width="80" height="20" fill="#7F77DD"/>
+<text class="ts" x="340" y="255" text-anchor="middle" id="lagLabel">Lag: 1-2 weeks</text>
+<text class="ts" x="500" y="60" text-anchor="middle" id="peakLabel"></text>
+
+<g id="cellSource" class="stg">
+<circle cx="150" cy="140" r="10" class="c-gray"/>
+<text class="ts" x="150" y="120" text-anchor="middle" id="sourceLabel">Naive lymphocytes</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'primary';
+const configPrimary = {
+  source: 'Naive lymphocytes — must be found and activated',
+  lag: 'Lag: 1-2 weeks',
+  barY: [220, 190, 150],
+  barH: [20, 50, 90],
+  peakNote: 'Moderate peak, mostly IgM then IgG',
+  labels: [
+    'Step 0 of 2 — antigen encountered for the first time',
+    'Step 1 of 2 — naive B and T cells must be found and activated — slow',
+    'Step 2 of 2 — response peaks late (1-2 weeks) and moderate, IgM-dominant early on'
+  ]
+};
+const configSecondary = {
+  source: 'Memory cells — already primed and waiting',
+  lag: 'Lag: 1-2 days',
+  barY: [220, 130, 60],
+  barH: [20, 110, 180],
+  peakNote: 'Much higher peak, high-affinity IgG',
+  labels: [
+    'Step 0 of 2 — same antigen encountered again',
+    'Step 1 of 2 — pre-existing memory cells respond almost immediately',
+    'Step 2 of 2 — response peaks fast (1-2 days) and much higher, dominated by high-affinity IgG'
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnPrimary').classList.toggle('active', m === 'primary');
+  document.getElementById('btnSecondary').classList.toggle('active', m === 'secondary');
+  const cfg = m === 'primary' ? configPrimary : configSecondary;
+  document.getElementById('sourceLabel').textContent = cfg.source;
+  document.getElementById('lagLabel').textContent = cfg.lag;
+  render();
+}
+function render() {
+  const cfg = mode === 'primary' ? configPrimary : configSecondary;
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('cellSource').classList.toggle('on', step >= 1);
+  document.getElementById('responseBar').setAttribute('y', cfg.barY[step]);
+  document.getElementById('responseBar').setAttribute('height', cfg.barH[step]);
+  document.getElementById('peakLabel').textContent = step >= 2 ? cfg.peakNote : '';
+}
+function stepFwd() { if (step < 2) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('primary');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# TYPE1_HYPERSENSITIVITY_GENERAL  (source: type1_hypersensitivity.html)
+# ---------------------------------------------------------------------------
+TYPE1_HYPERSENSITIVITY_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of type one hypersensitivity: IgE sensitizes mast cells on first exposure, and a second exposure cross-links that IgE, triggering degranulation and histamine release.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.6s ease-in-out infinite; }
+  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Type I hypersensitivity, general view</title>
+<desc>On first exposure to an allergen, plasma cells produce IgE, which binds Fc receptors on mast cells, sensitizing them without triggering a reaction. On a second exposure, the allergen cross-links the bound IgE molecules, triggering the mast cell to degranulate, releasing histamine and other mediators that cause vasodilation, increased permeability, and smooth muscle contraction — the symptoms of an allergic reaction.</desc>
+
+<ellipse cx="340" cy="170" rx="90" ry="70" class="c-coral"/>
+<text class="th" x="340" y="170" text-anchor="middle" dominant-baseline="central">Mast cell</text>
+
+<g id="ige" class="stg">
+<path d="M270 120 L285 105 M285 120 L270 105" stroke="#7F77DD" stroke-width="2"/>
+<path d="M410 120 L425 105 M425 120 L410 105" stroke="#7F77DD" stroke-width="2"/>
+<text class="ts" x="340" y="90" text-anchor="middle">IgE bound to Fc receptors — sensitized</text>
+</g>
+
+<g id="allergen" class="stg">
+<circle cx="277" cy="90" r="8" fill="#EF9F27"/>
+<circle cx="417" cy="90" r="8" fill="#EF9F27"/>
+<text class="ts" x="340" y="65" text-anchor="middle">Allergen cross-links IgE</text>
+</g>
+
+<g id="degranulation" class="stg">
+<circle class="drift" cx="300" cy="180" r="6" fill="#B91C1C"/>
+<circle class="drift" cx="340" cy="200" r="6" fill="#B91C1C" style="animation-delay:.3s"/>
+<circle class="drift" cx="380" cy="180" r="6" fill="#B91C1C" style="animation-delay:.6s"/>
+<text class="ts" x="340" y="230" text-anchor="middle">Degranulation — histamine released</text>
+</g>
+
+<g id="symptoms" class="stg">
+<text class="th" x="340" y="270" text-anchor="middle">Vasodilation, swelling, bronchoconstriction</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 3 — first exposure: IgE binds Fc receptors on mast cells, sensitizing them (no reaction yet)",
+  "Step 1 of 3 — second exposure: allergen cross-links the bound IgE molecules",
+  "Step 2 of 3 — cross-linking triggers the mast cell to degranulate, releasing histamine",
+  "Step 3 of 3 — histamine causes vasodilation, swelling, and smooth muscle contraction — allergy symptoms"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('ige').classList.toggle('on', step >= 0);
+  document.getElementById('allergen').classList.toggle('on', step >= 1);
+  document.getElementById('degranulation').classList.toggle('on', step >= 2);
+  document.getElementById('symptoms').classList.toggle('on', step >= 3);
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# IMMUNE_CHECKPOINT_GENERAL  (source: immune_checkpoint.html)
+# ---------------------------------------------------------------------------
+IMMUNE_CHECKPOINT_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the PD-1/PD-L1 immune checkpoint: a tumor cell exploits PD-L1 to exhaust an attacking T cell, and a checkpoint inhibitor drug blocks this interaction to restore the T cell's killing ability.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #tcellGroup { transition: transform 1s ease; }
+  .docked #tcellGroup { transform: translateX(-30px); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>PD-1 / PD-L1 immune checkpoint, general view</title>
+<desc>An activated T cell expresses PD-1 as a normal negative feedback brake. A tumor cell exploits this by expressing PD-L1, and their binding delivers an inhibitory signal that exhausts the T cell, letting the tumor evade attack. A checkpoint inhibitor drug, an anti-PD-1 or anti-PD-L1 antibody, blocks this interaction, restoring the T cell's ability to kill the tumor cell — the basis of modern cancer immunotherapy.</desc>
+
+<circle cx="180" cy="150" r="70" fill="none" stroke="var(--t)" stroke-width="1.5" id="tumorCell"/>
+<text class="ts" x="180" y="235" text-anchor="middle">Tumor cell</text>
+
+<g id="pdl1" class="stg">
+<rect x="165" y="95" width="30" height="12" rx="3" fill="#E24B4A"/>
+<text class="ts" x="180" y="80" text-anchor="middle">PD-L1</text>
+</g>
+
+<g id="tcellGroup">
+<circle cx="440" cy="150" r="55" class="c-purple"/>
+<text class="th" x="440" y="150" text-anchor="middle" dominant-baseline="central">T cell</text>
+</g>
+
+<g id="pd1" class="stg">
+<rect x="385" y="120" width="26" height="12" rx="3" fill="#7F77DD"/>
+<text class="ts" x="398" y="105" text-anchor="middle">PD-1</text>
+</g>
+
+<g id="binding" class="stg">
+<line x1="255" y1="115" x2="385" y2="126" stroke="#E24B4A" stroke-width="2"/>
+<text class="ts" x="320" y="105" text-anchor="middle">Inhibitory signal — T cell exhausted</text>
+</g>
+
+<g id="drug" class="stg">
+<rect x="290" y="140" width="60" height="20" rx="6" class="c-teal"/>
+<text class="ts" x="320" y="150" text-anchor="middle" dominant-baseline="central">Anti-PD-1</text>
+<text class="ts" x="320" y="175" text-anchor="middle">Checkpoint inhibitor blocks binding</text>
+</g>
+
+<g id="restored" class="stg">
+<text class="th" x="320" y="250" text-anchor="middle">T cell restored — kills the tumor cell</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — activated T cell expresses PD-1, a normal negative feedback brake",
+  "Step 1 of 4 — tumor cell expresses PD-L1, exploiting this checkpoint",
+  "Step 2 of 4 — PD-1/PD-L1 binding delivers an inhibitory signal — the T cell becomes exhausted, tumor evades attack",
+  "Step 3 of 4 — a checkpoint inhibitor drug (anti-PD-1 antibody) blocks the interaction",
+  "Step 4 of 4 — T cell function restored — it can now kill the tumor cell (basis of cancer immunotherapy)"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('pdl1').classList.toggle('on', step >= 1);
+  document.getElementById('pd1').classList.toggle('on', step >= 0);
+  document.querySelector('svg').classList.toggle('docked', step >= 1 && step < 3);
+  document.getElementById('binding').classList.toggle('on', step >= 2 && step < 3);
+  document.getElementById('drug').classList.toggle('on', step >= 3);
+  document.getElementById('restored').classList.toggle('on', step >= 4);
+  document.getElementById('tumorCell').style.opacity = step >= 4 ? '0.3' : '1';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -4224,6 +4676,16 @@ REGISTRY = {
                 "secreting plasma cells and long-lived memory B cells."
             ),
         },
+        "Technical": {
+            "fragment": GERMINAL_CENTER_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "The germinal center reaction: AID mutates the antibody "
+                "gene (somatic hypermutation), Tfh cells select only the "
+                "highest-affinity clones (affinity maturation), and "
+                "surviving cells undergo class switching."
+            ),
+        },
     },
     "T cell activation": {
         "General": {
@@ -4233,6 +4695,15 @@ REGISTRY = {
                 "An antigen-presenting cell displays antigen on MHC-II; "
                 "full T cell activation needs both TCR/MHC binding "
                 "(signal 1) and CD28/B7 costimulation (signal 2)."
+            ),
+        },
+        "Technical": {
+            "fragment": TCR_SIGNALING_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "The actual signaling cascade: Lck phosphorylates CD3, "
+                "ZAP-70 builds the LAT signalosome, second messengers "
+                "activate calcineurin, and NFAT drives IL-2 transcription."
             ),
         },
     },
@@ -4278,6 +4749,39 @@ REGISTRY = {
                 "inhibits killing) and an infected cell (MHC-I lost — "
                 "killing proceeds), the opposite detection strategy from "
                 "cytotoxic T cells."
+            ),
+        },
+    },
+    "Immunological memory": {
+        "General": {
+            "fragment": IMMUNOLOGICAL_MEMORY_GENERAL,
+            "height": 440,
+            "blurb": (
+                "Compare primary exposure (naive cells, slow, moderate) "
+                "against secondary exposure (memory cells, fast, much "
+                "stronger) — why vaccines and boosters work."
+            ),
+        },
+    },
+    "Type I hypersensitivity": {
+        "General": {
+            "fragment": TYPE1_HYPERSENSITIVITY_GENERAL,
+            "height": 440,
+            "blurb": (
+                "The allergy mechanism: first exposure sensitizes mast "
+                "cells with IgE; a second exposure cross-links that IgE, "
+                "triggering degranulation and histamine release."
+            ),
+        },
+    },
+    "Immune checkpoint (PD-1/PD-L1)": {
+        "General": {
+            "fragment": IMMUNE_CHECKPOINT_GENERAL,
+            "height": 440,
+            "blurb": (
+                "How tumors evade T cells by exploiting a normal immune "
+                "brake, and how checkpoint inhibitor drugs block it — "
+                "the basis of modern cancer immunotherapy."
             ),
         },
     },
@@ -4522,9 +5026,12 @@ CATEGORIES = {
         "Complement system",
         "Cytotoxic T cell killing",
         "Humoral immune response",
+        "Immune checkpoint (PD-1/PD-L1)",
+        "Immunological memory",
         "Innate immune recognition",
         "NK cell missing-self recognition",
         "T cell activation",
+        "Type I hypersensitivity",
     ],
     "Molecular Biology & Genetics": [
         "DNA replication",
