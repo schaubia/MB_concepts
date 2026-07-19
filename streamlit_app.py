@@ -1357,13 +1357,18 @@ setMode('normal');
 # MEMBRANE_TRANSPORT_GENERAL  (source: membrane_transport.html)
 # ---------------------------------------------------------------------------
 MEMBRANE_TRANSPORT_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of membrane transport modes, each shown as an actual step-through: simple diffusion, facilitated diffusion through a channel, and active transport by an ATP-powered pump.</h2>
+<h2 class="sr-only">Interactive diagram of membrane transport modes, each shown as an actual step-through: simple diffusion, facilitated diffusion through a channel, active transport by an ATP-powered pump, and a ligand-gated channel that only opens when a ligand binds.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #molecule { transition: transform 1s ease, opacity .4s ease; }
+  #ligandGroup { transition: transform .8s ease, opacity .4s ease; }
+  .docked #ligandGroup { transform: translateY(45px); }
+  #gateTop, #gateBottom { transition: transform 0.8s ease; }
+  .gateopen #gateTop { transform: translateY(-14px); }
+  .gateopen #gateBottom { transform: translateY(14px); }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -1374,11 +1379,12 @@ MEMBRANE_TRANSPORT_GENERAL = '''
   <button id="btnSimple" onclick="setMode('simple')">Simple diffusion</button>
   <button id="btnFacil" onclick="setMode('facil')">Facilitated diffusion</button>
   <button id="btnActive" onclick="setMode('active')">Active transport</button>
+  <button id="btnLigand" onclick="setMode('ligand')">Ligand-gated channel</button>
 </div>
 
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Modes of membrane transport, stepped</title>
-<desc>Each transport mode is shown as a sequence: a molecule approaches the membrane, crosses it by a different mechanism depending on the mode, and arrives on the other side. Simple diffusion passes directly through the lipid bilayer. Facilitated diffusion passes through a channel protein. Active transport is pumped through against its gradient, consuming ATP.</desc>
+<desc>Each transport mode is shown as a sequence: a molecule approaches the membrane, crosses it by a different mechanism depending on the mode, and arrives on the other side. Simple diffusion passes directly through the lipid bilayer. Facilitated diffusion passes through an always-open channel protein. Active transport is pumped through against its gradient, consuming ATP. A ligand-gated channel stays closed until a ligand binds a receptor site, opening the pore only while the ligand remains bound.</desc>
 
 <rect x="280" y="40" width="120" height="220" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
 <text class="ts" x="340" y="30">Membrane</text>
@@ -1387,7 +1393,7 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 
 <g id="channelProt" class="stg">
 <rect x="320" y="60" width="40" height="180" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="340" y="255" text-anchor="middle">Channel protein</text>
+<text class="ts" x="340" y="255" text-anchor="middle">Channel protein (always open)</text>
 </g>
 
 <g id="pump" class="stg">
@@ -1395,6 +1401,18 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 <text class="ts" x="340" y="255" text-anchor="middle">Pump</text>
 <circle id="atp" cx="420" cy="150" r="12" class="c-amber" opacity="0"/>
 <text class="ts" x="420" y="150" text-anchor="middle" dominant-baseline="central" id="atpLabel" opacity="0">ATP</text>
+</g>
+
+<g id="ligandChannel" class="stg">
+<rect x="320" y="60" width="40" height="180" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<circle id="receptorSite" cx="340" cy="75" r="10" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<rect id="gateTop" x="330" y="120" width="20" height="20" fill="var(--t)" opacity="0.5"/>
+<rect id="gateBottom" x="330" y="120" width="20" height="20" fill="var(--t)" opacity="0.5"/>
+<text class="ts" x="340" y="255" text-anchor="middle">Ligand-gated channel</text>
+<g id="ligandGroup">
+<circle id="ligand" cx="340" cy="65" r="9" fill="#EF9F27"/>
+<text id="ligandLabel" class="ts" x="340" y="45" text-anchor="middle">Ligand</text>
+</g>
 </g>
 
 <circle id="molecule" cx="120" cy="150" r="10" fill="#1D9E75"/>
@@ -1434,27 +1452,47 @@ const configs = {
       "Step 3 of 4 — ADP + Pi released, pump resets",
       "Step 4 of 4 — molecule released on the other side, against its gradient"
     ]
+  },
+  ligand: {
+    labels: [
+      "Step 0 of 4 — channel closed by default, no ligand bound",
+      "Step 1 of 4 — ligand binds the receptor site on the channel's outer face",
+      "Step 2 of 4 — binding triggers a conformational change — the gate opens",
+      "Step 3 of 4 — while the ligand stays bound, the molecule passes through",
+      "Step 4 of 4 — ligand unbinds, the channel closes again — transport stops"
+    ]
   }
 };
-function maxStep() { return mode === 'active' ? 4 : 3; }
+function maxStep() { return mode === 'active' || mode === 'ligand' ? 4 : 3; }
 function setMode(m) {
   mode = m; step = 0;
   document.getElementById('btnSimple').classList.toggle('active', m === 'simple');
   document.getElementById('btnFacil').classList.toggle('active', m === 'facil');
   document.getElementById('btnActive').classList.toggle('active', m === 'active');
+  document.getElementById('btnLigand').classList.toggle('active', m === 'ligand');
   document.getElementById('channelProt').classList.toggle('on', m === 'facil');
   document.getElementById('pump').classList.toggle('on', m === 'active');
+  document.getElementById('ligandChannel').classList.toggle('on', m === 'ligand');
   document.getElementById('insideLabel').textContent = m === 'active' ? 'Inside — becomes higher concentration' : 'Inside — low concentration';
   render();
 }
 function render() {
   const cfg = configs[mode];
   document.getElementById('stepLabel').textContent = cfg.labels[step];
-  let x;
+  const svg = document.querySelector('svg');
+  let x = 120;
   if (mode === 'active') {
     x = step === 0 ? 120 : step === 1 ? 320 : step === 2 ? 340 : step === 3 ? 340 : 560;
     document.getElementById('atp').setAttribute('opacity', step === 1 ? '1' : '0');
     document.getElementById('atpLabel').setAttribute('opacity', step === 1 ? '1' : '0');
+  } else if (mode === 'ligand') {
+    svg.classList.toggle('docked', step >= 1);
+    svg.classList.toggle('gateopen', step >= 2 && step < 4);
+    document.getElementById('receptorSite').setAttribute('stroke', step >= 1 ? '#EF9F27' : 'var(--border-strong)');
+    document.getElementById('receptorSite').setAttribute('stroke-width', step >= 1 ? '2.5' : '1');
+    document.getElementById('ligandGroup').style.opacity = step >= 4 ? '0' : '1';
+    document.getElementById('ligandLabel').textContent = step >= 1 && step < 4 ? 'Ligand (bound)' : 'Ligand';
+    x = step === 3 ? 340 : step >= 4 ? 560 : 120;
   } else {
     x = step === 0 ? 120 : step === 1 ? 300 : step === 2 ? 340 : 560;
   }
@@ -3602,11 +3640,13 @@ REGISTRY = {
     "Membrane transport": {
         "General": {
             "fragment": MEMBRANE_TRANSPORT_GENERAL,
-            "height": 440,
+            "height": 460,
             "blurb": (
                 "Step through a molecule crossing the membrane under each "
-                "mode: straight through the bilayer (simple), through a "
-                "channel (facilitated), or pumped uphill with ATP (active)."
+                "mode: straight through the bilayer (simple), through an "
+                "always-open channel (facilitated), pumped uphill with ATP "
+                "(active), or through a channel that only opens once a "
+                "ligand binds its receptor site (ligand-gated)."
             ),
         },
     },
