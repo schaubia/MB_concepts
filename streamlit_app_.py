@@ -4901,6 +4901,199 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# SYNAPSE_TYPES_TECHNICAL  (source: synapse_types.html)
+# ---------------------------------------------------------------------------
+SYNAPSE_TYPES_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram comparing chemical and electrical synapses: chemical synapses use neurotransmitter release and clearance with a delay, while electrical synapses connect cells directly through gap junctions with almost no delay but no modifiability.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.6s ease-in-out infinite; }
+  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(80px)} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnChemical" onclick="setMode('chemical')">Chemical synapse</button>
+  <button id="btnElectrical" onclick="setMode('electrical')">Electrical synapse</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 280" role="img">
+<title>Chemical vs electrical synapses</title>
+<desc>A chemical synapse releases neurotransmitter across a gap, which binds receptors and is then cleared by reuptake or enzymatic degradation, taking one to five milliseconds but allowing the connection strength to be modified. An electrical synapse connects two cells directly through gap junction channels called connexons, letting ions flow straight through with almost no delay, but the connection strength cannot be adjusted.</desc>
+
+<rect x="60" y="80" width="120" height="120" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="120" y="70" text-anchor="middle">Presynaptic cell</text>
+<rect x="500" y="80" width="120" height="120" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="560" y="70" text-anchor="middle">Postsynaptic cell</text>
+
+<g id="chemGap" class="stg">
+<rect x="180" y="80" width="60" height="120" fill="var(--surface-1)"/>
+<text class="ts" x="210" y="230" text-anchor="middle">Synaptic cleft (20 nm)</text>
+<circle class="drift" cx="195" cy="140" r="5" fill="#7F77DD"/>
+<circle class="drift" cx="195" cy="120" r="5" fill="#7F77DD" style="animation-delay:.3s"/>
+<circle cx="440" cy="130" r="10" fill="none" stroke="#EF9F27" stroke-width="2"/>
+<text class="ts" x="440" y="110" text-anchor="middle">Receptor</text>
+<text class="ts" x="440" y="230" text-anchor="middle">Cleared by reuptake / degradation</text>
+</g>
+
+<g id="elecGap" class="stg">
+<rect x="180" y="80" width="60" height="120" fill="var(--surface-1)"/>
+<text class="ts" x="210" y="230" text-anchor="middle">Gap junction (3.5 nm)</text>
+<rect x="195" y="120" width="10" height="40" fill="#1D9E75"/>
+<rect x="215" y="120" width="10" height="40" fill="#1D9E75"/>
+<text class="ts" x="210" y="105" text-anchor="middle">Connexons</text>
+<circle class="drift" cx="200" cy="140" r="4" fill="#1D9E75"/>
+</g>
+
+<g id="delayNote" class="stg">
+<text class="th" x="340" y="250" text-anchor="middle" id="delayLabel"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'chemical';
+const chemical = {
+  labels: [
+    "Step 0 of 3 — presynaptic action potential triggers neurotransmitter release",
+    "Step 1 of 3 — neurotransmitter diffuses across the cleft and binds receptors",
+    "Step 2 of 3 — postsynaptic response triggered (delay: ~1-5 ms)",
+    "Step 3 of 3 — neurotransmitter cleared by reuptake or enzymatic degradation — synapse resets, and its strength CAN be modified (basis of plasticity)"
+  ]
+};
+const electrical = {
+  labels: [
+    "Step 0 of 3 — presynaptic cell depolarizes",
+    "Step 1 of 3 — ions flow directly through connexon channels — no neurotransmitter involved",
+    "Step 2 of 3 — postsynaptic cell depolarizes almost instantly (delay: ~0.1 ms)",
+    "Step 3 of 3 — connection is fast and often bidirectional, but its strength generally CANNOT be modified"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnChemical').classList.toggle('active', m === 'chemical');
+  document.getElementById('btnElectrical').classList.toggle('active', m === 'electrical');
+  document.getElementById('chemGap').classList.toggle('on', m === 'chemical');
+  document.getElementById('elecGap').classList.toggle('on', m === 'electrical');
+  render();
+}
+function render() {
+  const cfg = mode === 'chemical' ? chemical : electrical;
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('delayNote').classList.toggle('on', step === 3);
+  document.getElementById('delayLabel').textContent = step === 3 ? cfg.labels[3].split('— ')[1] : '';
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('chemical');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# SYNAPTIC_PLASTICITY_LTP_GENERAL  (source: ltp.html)
+# ---------------------------------------------------------------------------
+SYNAPTIC_PLASTICITY_LTP_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of long-term potentiation: the NMDA receptor acts as a coincidence detector, requiring both glutamate binding and postsynaptic depolarization to open, and its resulting calcium influx drives insertion of new AMPA receptors, strengthening the synapse.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #mgBlock { transition: transform 0.8s ease, opacity 0.5s ease; }
+  .expelled #mgBlock { transform: translateY(-30px); opacity: 0; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Long-term potentiation, general view</title>
+<desc>The NMDA receptor requires two simultaneous conditions to open: glutamate must be bound, and the postsynaptic membrane must already be depolarized enough to expel a blocking magnesium ion, making it a coincidence detector. When both conditions are met, calcium flows in and triggers a signaling cascade that inserts new AMPA receptors into the postsynaptic membrane, strengthening the synapse so future signals produce a larger response — the cellular basis of learning and memory.</desc>
+
+<rect x="30" y="60" width="620" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="60" y="50">Presynaptic terminal</text>
+
+<circle class="stg" id="glutamate1" cx="200" cy="70" r="6" fill="#7F77DD"/>
+<circle class="stg" id="glutamate2" cx="220" cy="70" r="6" fill="#7F77DD"/>
+<text class="ts" x="210" y="95" text-anchor="middle" id="glutamateLabel">Glutamate released</text>
+
+<rect x="80" y="140" width="600" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="110" y="130">Postsynaptic membrane</text>
+
+<circle cx="220" cy="160" r="14" class="c-purple"/>
+<text class="ts" x="220" y="185" text-anchor="middle">NMDA receptor</text>
+<circle id="mgBlock" cx="220" cy="150" r="5" fill="#EF9F27"/>
+<text class="ts" x="220" y="135" text-anchor="middle" id="mgLabel">Mg2+ block</text>
+
+<g id="calcium" class="stg">
+<circle cx="220" cy="180" r="4" fill="#B91C1C"/>
+<circle cx="230" cy="190" r="4" fill="#B91C1C"/>
+<text class="ts" x="220" y="215" text-anchor="middle">Ca2+ influx</text>
+</g>
+
+<g id="camkii" class="stg">
+<circle cx="320" cy="200" r="10" class="c-amber pulse"/>
+<text class="ts" x="320" y="225" text-anchor="middle">CaMKII activated</text>
+</g>
+
+<g id="ampaOld" class="c-teal">
+<circle cx="450" cy="170" r="10"/>
+<text class="ts" x="450" y="195" text-anchor="middle">AMPA receptor</text>
+</g>
+
+<g id="ampaNew" class="stg">
+<circle cx="500" cy="170" r="10" class="c-teal"/>
+<circle cx="550" cy="170" r="10" class="c-teal"/>
+<text class="th" x="520" y="145" text-anchor="middle">New AMPA receptors inserted</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — glutamate binds NMDA receptors, but a Mg2+ ion blocks the channel at resting potential",
+  "Step 1 of 4 — strong or repeated stimulation depolarizes the membrane enough to expel the Mg2+ block",
+  "Step 2 of 4 — with BOTH glutamate bound AND depolarization present, the NMDA receptor opens — Ca2+ flows in (coincidence detection)",
+  "Step 3 of 4 — Ca2+ activates CaMKII, triggering a signaling cascade",
+  "Step 4 of 4 — new AMPA receptors are inserted into the membrane — the synapse is strengthened (long-term potentiation)"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('glutamate1').classList.toggle('on', step >= 0);
+  document.getElementById('glutamate2').classList.toggle('on', step >= 0);
+  document.querySelector('svg').classList.toggle('expelled', step >= 2);
+  document.getElementById('mgLabel').style.opacity = step >= 2 ? '0' : '1';
+  document.getElementById('calcium').classList.toggle('on', step >= 2);
+  document.getElementById('camkii').classList.toggle('on', step >= 3);
+  document.getElementById('ampaNew').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -5351,6 +5544,28 @@ REGISTRY = {
                 "release, which crosses the cleft and binds receptors."
             ),
         },
+        "Technical": {
+            "fragment": SYNAPSE_TYPES_TECHNICAL,
+            "height": 440,
+            "blurb": (
+                "Chemical synapses aren't the only kind: compare them "
+                "against electrical synapses, which connect cells "
+                "directly through gap junctions — near-instant but not "
+                "modifiable, the opposite trade-off from chemical ones."
+            ),
+        },
+    },
+    "Synaptic plasticity (LTP)": {
+        "General": {
+            "fragment": SYNAPTIC_PLASTICITY_LTP_GENERAL,
+            "height": 460,
+            "blurb": (
+                "The cellular basis of learning and memory: the NMDA "
+                "receptor acts as a coincidence detector, needing both "
+                "glutamate AND depolarization to open, triggering AMPA "
+                "receptor insertion that strengthens the synapse."
+            ),
+        },
     },
     "Electron transport chain & ATP synthase": {
         "General": {
@@ -5502,6 +5717,7 @@ CATEGORIES = {
         "Muscle contraction (skeletal)",
         "Nephron filtration",
         "Reflex arc (patellar reflex)",
+        "Synaptic plasticity (LTP)",
         "Synaptic transmission",
     ],
 }

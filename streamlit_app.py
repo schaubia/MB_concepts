@@ -5094,6 +5094,289 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# DOPAMINE_REWARD_PATHWAY_GENERAL  (source: dopamine_reward.html)
+# ---------------------------------------------------------------------------
+DOPAMINE_REWARD_PATHWAY_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the dopamine reward pathway: a rewarding stimulus activates VTA dopamine neurons, which release dopamine into the nucleus accumbens, reinforcing the behavior, before reuptake ends the signal.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.6s ease-in-out infinite; }
+  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(70px)} }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 280" role="img">
+<title>Dopamine reward pathway, general view</title>
+<desc>A rewarding stimulus activates dopamine neurons in the ventral tegmental area, which project to and release dopamine in the nucleus accumbens, producing reinforcement that strengthens the behavior that led to the reward. Dopamine transporters then clear the dopamine from the synapse, ending the signal. Certain drugs of abuse hijack this pathway by blocking those transporters or triggering extra release, producing a much larger and more sustained surge than natural rewards.</desc>
+
+<circle cx="130" cy="150" r="16" fill="#EF9F27" id="stimulus"/>
+<text class="ts" x="130" y="120" text-anchor="middle">Rewarding stimulus</text>
+
+<ellipse cx="250" cy="150" rx="45" ry="35" class="c-purple"/>
+<text class="ts" x="250" y="150" text-anchor="middle" dominant-baseline="central">VTA</text>
+
+<g id="dopamineRelease" class="stg">
+<circle class="drift" cx="320" cy="140" r="5" fill="#7F77DD"/>
+<circle class="drift" cx="320" cy="160" r="5" fill="#7F77DD" style="animation-delay:.3s"/>
+<circle class="drift" cx="320" cy="150" r="5" fill="#7F77DD" style="animation-delay:.6s"/>
+</g>
+
+<ellipse cx="480" cy="150" rx="50" ry="38" class="c-teal"/>
+<text class="ts" x="480" y="150" text-anchor="middle" dominant-baseline="central">Nucleus accumbens</text>
+
+<g id="reinforcement" class="stg">
+<text class="th" x="480" y="215" text-anchor="middle">Reward signal — behavior reinforced</text>
+</g>
+
+<g id="reuptake" class="stg">
+<circle cx="440" cy="120" r="6" fill="#B91C1C"/>
+<text class="ts" x="440" y="100" text-anchor="middle">DAT clears dopamine — signal ends</text>
+</g>
+
+<g id="hijack" class="stg">
+<text class="th" x="480" y="240" text-anchor="middle">Some drugs block DAT or trigger extra release — much larger, longer surge</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — a rewarding stimulus (food, social contact, etc.) occurs",
+  "Step 1 of 4 — dopamine neurons in the ventral tegmental area (VTA) activate",
+  "Step 2 of 4 — dopamine is released into the nucleus accumbens",
+  "Step 3 of 4 — dopamine signaling produces reinforcement — the behavior that led here gets strengthened",
+  "Step 4 of 4 — dopamine transporters (DAT) clear it from the synapse, ending the signal — some drugs of abuse block this step or trigger extra release, producing a much larger surge"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('stimulus').classList.toggle('pulse', step === 0);
+  document.getElementById('dopamineRelease').classList.toggle('on', step >= 1 && step < 4);
+  document.getElementById('reinforcement').classList.toggle('on', step >= 2 && step < 4);
+  document.getElementById('reuptake').classList.toggle('on', step >= 4);
+  document.getElementById('hijack').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# MEDICATION_MECHANISM_GENERAL  (source: medication_mechanism.html)
+# ---------------------------------------------------------------------------
+MEDICATION_MECHANISM_GENERAL = '''
+<h2 class="sr-only">Interactive diagram comparing two psychiatric medication mechanisms of action: SSRIs blocking serotonin reuptake, and benzodiazepines acting as positive allosteric modulators of the GABA-A receptor.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.6s ease-in-out infinite; }
+  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSSRI" onclick="setMode('ssri')">SSRI</button>
+  <button id="btnBenzo" onclick="setMode('benzo')">Benzodiazepine</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 280" role="img">
+<title>Mechanism of action: SSRI vs benzodiazepine</title>
+<desc>SSRIs block the serotonin transporter, leaving more serotonin in the synapse to stimulate receptors for longer. Benzodiazepines bind a separate allosteric site on the GABA-A receptor, distinct from where GABA itself binds, increasing how often the receptor's chloride channel opens in response to GABA, enhancing inhibitory signaling.</desc>
+
+<line x1="30" y1="140" x2="650" y2="140" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<rect x="60" y="80" width="140" height="120" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="130" y="70">Presynaptic terminal</text>
+<rect x="480" y="80" width="140" height="120" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="550" y="70">Postsynaptic membrane</text>
+
+<circle id="transporter" cx="200" cy="150" r="10" class="c-teal"/>
+<text class="ts" x="200" y="175" text-anchor="middle" id="transporterLabel">SERT transporter</text>
+
+<g id="neurotransmitter" class="stg">
+<circle class="drift" cx="300" cy="140" r="5" fill="#7F77DD"/>
+<circle class="drift" cx="330" cy="150" r="5" fill="#7F77DD" style="animation-delay:.3s"/>
+<circle class="drift" cx="360" cy="140" r="5" fill="#7F77DD" style="animation-delay:.6s"/>
+</g>
+
+<circle id="receptor" cx="480" cy="150" r="14" class="c-purple"/>
+<text class="ts" x="480" y="180" text-anchor="middle" id="receptorLabel">Receptor</text>
+
+<g id="drug" class="stg">
+<rect x="185" y="130" width="30" height="14" rx="4" class="c-coral" id="drugShape"/>
+<text class="ts" x="200" y="115" text-anchor="middle" id="drugLabel">SSRI blocks transporter</text>
+</g>
+
+<g id="effect" class="stg">
+<text class="th" x="480" y="240" text-anchor="middle" id="effectLabel"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'ssri';
+const ssri = {
+  transporterLabel: 'SERT transporter',
+  receptorLabel: 'Serotonin receptor',
+  drugLabel: 'SSRI blocks the transporter',
+  labels: [
+    'Step 0 of 3 — normally, serotonin is released, binds its receptor, then SERT clears it away',
+    'Step 1 of 3 — an SSRI binds and blocks the SERT transporter',
+    'Step 2 of 3 — serotonin can no longer be cleared efficiently, so it stays in the synapse longer',
+    'Step 3 of 3 — receptors are stimulated for longer — over weeks this drives downstream adaptations linked to mood effects'
+  ]
+};
+const benzo = {
+  transporterLabel: '',
+  receptorLabel: 'GABA-A receptor',
+  drugLabel: 'Benzodiazepine binds a separate allosteric site',
+  labels: [
+    'Step 0 of 3 — normally, GABA binds its receptor, opening a chloride channel — an inhibitory signal',
+    'Step 1 of 3 — a benzodiazepine binds a DIFFERENT site on the same receptor, not where GABA binds',
+    'Step 2 of 3 — this is positive allosteric modulation — it doesn\'t activate the receptor alone, but makes it respond more strongly to GABA',
+    'Step 3 of 3 — the chloride channel opens more often when GABA is present — enhanced inhibitory signaling (calming, anti-anxiety effect)'
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnSSRI').classList.toggle('active', m === 'ssri');
+  document.getElementById('btnBenzo').classList.toggle('active', m === 'benzo');
+  const cfg = m === 'ssri' ? ssri : benzo;
+  document.getElementById('transporterLabel').textContent = cfg.transporterLabel;
+  document.getElementById('receptorLabel').textContent = cfg.receptorLabel;
+  document.getElementById('drugLabel').textContent = cfg.drugLabel;
+  document.getElementById('transporter').style.opacity = m === 'ssri' ? '1' : '0.12';
+  render();
+}
+function render() {
+  const cfg = mode === 'ssri' ? ssri : benzo;
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('neurotransmitter').classList.toggle('on', step >= 0);
+  document.getElementById('drug').classList.toggle('on', step >= 1);
+  document.getElementById('receptor').setAttribute('r', (mode === 'benzo' && step >= 2) ? '18' : '14');
+  document.getElementById('effect').classList.toggle('on', step >= 3);
+  document.getElementById('effectLabel').textContent = step >= 3 ? cfg.labels[3].split('— ').slice(1).join('— ') : '';
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('ssri');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# SLEEP_WAKE_REGULATION_GENERAL  (source: sleep_wake.html)
+# ---------------------------------------------------------------------------
+SLEEP_WAKE_REGULATION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of sleep-wake regulation: adenosine builds sleep pressure during wakefulness, the circadian clock gates timing, sleep-promoting neurons trigger sleep onset, and the brain cycles through NREM and REM stages with distinct wave patterns.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #adenosineBar { transition: width 1s ease; }
+  #waveTrace { transition: d 0.8s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Sleep-wake regulation, general view</title>
+<desc>During wakefulness, adenosine gradually accumulates and builds sleep pressure. The suprachiasmatic nucleus, the brain's circadian clock, tracks light and gates when sleep is appropriate. When sleep pressure is high and the circadian signal permits, sleep-promoting neurons inhibit arousal centers and sleep begins. Sleep cycles through NREM stages, with slow high-amplitude delta waves, and REM sleep, with fast low-amplitude waves resembling wakefulness plus muscle atonia and dreaming, roughly every ninety minutes.</desc>
+
+<text class="ts" x="60" y="40">Sleep pressure (adenosine)</text>
+<rect x="60" y="50" width="250" height="16" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<rect id="adenosineBar" x="60" y="50" width="20" height="16" fill="#B91C1C"/>
+
+<g id="scn" class="stg">
+<circle cx="450" cy="60" r="12" class="c-amber"/>
+<text class="ts" x="450" y="42" text-anchor="middle">SCN — circadian clock (light-gated)</text>
+</g>
+
+<g id="vlpo" class="stg">
+<circle cx="250" cy="120" r="10" class="c-purple pulse"/>
+<text class="ts" x="250" y="105" text-anchor="middle">Sleep-promoting neurons inhibit arousal</text>
+</g>
+
+<line x1="30" y1="200" x2="650" y2="200" stroke="var(--t)" stroke-width="1"/>
+<path id="waveTrace" d="M30 200 L650 200" stroke="#378ADD" stroke-width="2" fill="none"/>
+<text class="ts" x="60" y="230" id="waveLabel">Awake — fast, low-amplitude waves</text>
+
+<g id="cycleNote" class="stg">
+<text class="th" x="340" y="270" text-anchor="middle" id="cycleLabel"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — awake: adenosine gradually accumulates, building sleep pressure",
+  "Step 1 of 4 — the suprachiasmatic nucleus tracks light input, gating when sleep is appropriate",
+  "Step 2 of 4 — with high sleep pressure and circadian permission, sleep-promoting neurons inhibit arousal centers — sleep begins",
+  "Step 3 of 4 — NREM sleep: slow, high-amplitude delta waves — deep, restorative sleep",
+  "Step 4 of 4 — REM sleep: fast, low-amplitude waves resembling wakefulness, muscle atonia, dreaming — NREM/REM cycles repeat roughly every 90 minutes"
+];
+const waveTraces = [
+  "M30 200 L60 195 L90 205 L120 195 L150 205 L180 200 L650 200",
+  "M30 200 L60 195 L90 205 L120 195 L150 205 L180 200 L650 200",
+  "M30 200 L60 197 L90 203 L120 198 L150 200 L650 200",
+  "M30 200 Q70 160 110 200 Q150 240 190 200 Q230 160 270 200 L650 200",
+  "M30 200 L60 190 L90 210 L120 195 L150 205 L180 190 L210 210 L650 200"
+];
+const waveLabels = [
+  "Awake — fast, low-amplitude waves",
+  "Awake — fast, low-amplitude waves",
+  "Drowsy — waves begin slowing",
+  "NREM — slow, high-amplitude delta waves",
+  "REM — fast, low-amplitude waves + muscle atonia + dreaming"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('adenosineBar').setAttribute('width', 20 + step * 55);
+  document.getElementById('scn').classList.toggle('on', step >= 1);
+  document.getElementById('vlpo').classList.toggle('on', step >= 2);
+  document.getElementById('waveTrace').setAttribute('d', waveTraces[step]);
+  document.getElementById('waveLabel').textContent = waveLabels[step];
+  document.getElementById('cycleNote').classList.toggle('on', step === 4);
+  document.getElementById('cycleLabel').textContent = step === 4 ? "Cycles repeat ~every 90 minutes through the night" : "";
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -5567,6 +5850,41 @@ REGISTRY = {
             ),
         },
     },
+    "Dopamine reward pathway": {
+        "General": {
+            "fragment": DOPAMINE_REWARD_PATHWAY_GENERAL,
+            "height": 440,
+            "blurb": (
+                "A reward activates VTA dopamine neurons, releasing "
+                "dopamine into the nucleus accumbens to reinforce the "
+                "behavior; some drugs of abuse hijack this by blocking "
+                "reuptake or triggering extra release."
+            ),
+        },
+    },
+    "Medication mechanism of action": {
+        "General": {
+            "fragment": MEDICATION_MECHANISM_GENERAL,
+            "height": 440,
+            "blurb": (
+                "Compare two receptor pharmacology mechanisms: SSRIs "
+                "block serotonin reuptake, while benzodiazepines act as "
+                "positive allosteric modulators of the GABA-A receptor."
+            ),
+        },
+    },
+    "Sleep-wake regulation": {
+        "General": {
+            "fragment": SLEEP_WAKE_REGULATION_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Adenosine builds sleep pressure while awake, the "
+                "circadian clock (SCN) gates timing, and sleep cycles "
+                "through NREM (slow delta waves) and REM (fast waves, "
+                "muscle atonia, dreaming) roughly every 90 minutes."
+            ),
+        },
+    },
     "Electron transport chain & ATP synthase": {
         "General": {
             "fragment": ELECTRON_TRANSPORT_CHAIN_GENERAL,
@@ -5710,13 +6028,16 @@ CATEGORIES = {
         "Blood clotting (hemostasis)",
         "Blood glucose homeostasis",
         "Cardiac conduction system",
+        "Dopamine reward pathway",
         "Electron transport chain & ATP synthase",
         "Gas exchange (alveoli)",
         "Labor (positive feedback)",
+        "Medication mechanism of action",
         "Muscle contraction (cardiac)",
         "Muscle contraction (skeletal)",
         "Nephron filtration",
         "Reflex arc (patellar reflex)",
+        "Sleep-wake regulation",
         "Synaptic plasticity (LTP)",
         "Synaptic transmission",
     ],
