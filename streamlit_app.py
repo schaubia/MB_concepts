@@ -1861,84 +1861,140 @@ render();
 # ACTION_POTENTIAL_GENERAL  (source: action_potential.html)
 # ---------------------------------------------------------------------------
 ACTION_POTENTIAL_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of a neuronal action potential: resting potential, depolarization, repolarization, and propagation along the axon.</h2>
+<h2 class="sr-only">Interactive diagram comparing three types of action potential: the fast neuronal spike, the cardiac ventricular action potential with its plateau phase, and the spontaneously drifting pacemaker potential of the SA node.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #wavefront { transition: transform 1.2s ease; }
-  .propagating #wavefront { transform: translateX(220px); }
+  #traceLine { transition: d 0.8s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
+
+<div class="rowbtns">
+  <button id="btnNeuronal" onclick="setMode('neuronal')">Neuronal</button>
+  <button id="btnCardiac" onclick="setMode('cardiac')">Cardiac (ventricular)</button>
+  <button id="btnPacemaker" onclick="setMode('pacemaker')">Pacemaker (SA node)</button>
+</div>
+
 <svg width="100%" viewBox="0 0 680 320" role="img">
-<title>Action potential, general view</title>
-<desc>A resting neuron membrane at negative seventy millivolts depolarizes when voltage-gated sodium channels open, reverses briefly, then repolarizes as potassium channels open, and the depolarization wave propagates along the axon.</desc>
+<title>Three types of action potential</title>
+<desc>Neuronal action potentials are fast, brief spikes lasting one to two milliseconds, driven by voltage-gated sodium then potassium channels. Cardiac ventricular action potentials have a long plateau phase lasting two to three hundred milliseconds, where calcium influx balances potassium efflux, preventing the heart muscle from being tetanized. Pacemaker cells in the SA node have no stable resting potential; a funny current causes spontaneous slow depolarization to threshold, where calcium channels, not sodium channels, drive the upstroke, producing the heart's own spontaneous rhythm.</desc>
 
-<line x1="30" y1="130" x2="650" y2="130" stroke="var(--t)" stroke-width="3" stroke-linecap="round"/>
-<text class="ts" x="60" y="115">Axon membrane</text>
+<line x1="30" y1="140" x2="650" y2="140" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<text class="ts" x="60" y="125" id="cellLabel">Neuron axon membrane</text>
 
-<g id="voltageTrace">
 <path id="traceLine" d="M30 200 L650 200" stroke="#378ADD" stroke-width="2.5" fill="none"/>
-</g>
-<text class="ts" x="60" y="230" id="voltageLabel">Resting potential: −70 mV</text>
+<text class="ts" x="60" y="245" id="voltageLabel">Resting potential: −70 mV</text>
 
-<g id="naChannels" class="stg">
-<rect x="130" y="120" width="16" height="20" fill="#EF9F27"/>
-<text class="ts" x="138" y="105" text-anchor="middle">Na+ channels open</text>
+<g id="channelNote" class="stg">
+<text class="ts" x="340" y="280" text-anchor="middle" id="channelLabel"></text>
 </g>
 
-<g id="kChannels" class="stg">
-<rect x="170" y="120" width="16" height="20" fill="#378ADD"/>
-<text class="ts" x="178" y="105" text-anchor="middle">K+ channels open</text>
-</g>
-
-<g id="wavefront" class="stg">
-<circle cx="140" cy="130" r="10" fill="#E24B4A"/>
-<text class="ts" x="140" y="160" text-anchor="middle">Depolarization wave</text>
+<g id="specialNote" class="stg">
+<text class="th" x="340" y="300" text-anchor="middle" id="specialLabel"></text>
 </g>
 </svg>
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 of 4</span>
 </div>
 
 <script>
 let step = 0;
-const labels = [
-  "Step 0 of 4 — resting potential, Na/K pump maintains -70 mV",
-  "Step 1 of 4 — threshold reached, Na+ channels open, rapid depolarization",
-  "Step 2 of 4 — peak (~+30 mV), Na+ channels inactivate, K+ channels open",
-  "Step 3 of 4 — repolarization as K+ exits, brief undershoot",
-  "Step 4 of 4 — wave propagates down the axon to the next segment"
-];
-const traces = [
-  "M30 200 L650 200",
-  "M30 200 L120 200 L140 90 L160 200 L650 200",
-  "M30 200 L120 200 L140 90 L160 200 L650 200",
-  "M30 200 L120 200 L140 90 L160 215 L180 200 L650 200",
-  "M30 200 L340 200 L360 90 L380 215 L400 200 L650 200"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('voltageLabel').textContent = step === 0 ? 'Resting potential: −70 mV' :
-    step === 1 ? 'Depolarizing toward +30 mV' :
-    step === 2 ? 'Peak reached, Na+ channels inactivating' :
-    step === 3 ? 'Repolarizing, brief undershoot' : 'Wave moving to next segment';
-  document.getElementById('traceLine').setAttribute('d', traces[step]);
-  document.getElementById('naChannels').classList.toggle('on', step === 1 || step === 2);
-  document.getElementById('kChannels').classList.toggle('on', step >= 2 && step <= 3);
-  document.getElementById('wavefront').classList.toggle('on', step >= 1);
-  document.querySelector('svg').classList.toggle('propagating', step === 4);
+let mode = 'neuronal';
+
+const neuronal = {
+  cellLabel: 'Neuron axon membrane',
+  maxStep: 4,
+  labels: [
+    "Step 0 of 4 — resting potential, Na/K pump maintains -70 mV",
+    "Step 1 of 4 — threshold reached, Na+ channels open, rapid depolarization",
+    "Step 2 of 4 — peak (~+30 mV), Na+ channels inactivate, K+ channels open",
+    "Step 3 of 4 — repolarization as K+ exits, brief undershoot",
+    "Step 4 of 4 — wave propagates to the next segment — total duration ~1-2 ms"
+  ],
+  traces: [
+    "M30 200 L650 200",
+    "M30 200 L120 200 L140 90 L160 200 L650 200",
+    "M30 200 L120 200 L140 90 L160 200 L650 200",
+    "M30 200 L120 200 L140 90 L160 215 L180 200 L650 200",
+    "M340 200 L360 90 L380 215 L400 200 L650 200 M30 200 L340 200"
+  ],
+  voltage: ["Resting: −70 mV", "Depolarizing toward +30 mV", "Peak reached", "Repolarizing", "Wave moving on"],
+  channel: "Voltage-gated Na+ then K+ channels",
+  special: ""
+};
+
+const cardiac = {
+  cellLabel: 'Ventricular cardiomyocyte membrane',
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — resting potential, around -90 mV",
+    "Step 1 of 3 — rapid depolarization — fast Na+ channels open, sharp upstroke",
+    "Step 2 of 3 — PLATEAU phase (~200-300 ms) — Ca2+ influx balances K+ efflux, holding the cell depolarized",
+    "Step 3 of 3 — repolarization as Ca2+ channels close and K+ dominates — refractory period just ended"
+  ],
+  traces: [
+    "M30 200 L650 200",
+    "M30 200 L100 200 L120 90 L140 120 L650 120",
+    "M30 200 L100 200 L120 90 L140 120 L450 120 L650 120",
+    "M30 200 L100 200 L120 90 L140 120 L450 120 L480 200 L650 200"
+  ],
+  voltage: ["Resting: −90 mV", "Rapid upstroke", "Plateau — sustained depolarization", "Repolarized, refractory period ends"],
+  channel: "Fast Na+ (upstroke) then L-type Ca2+ (plateau) then K+",
+  special: "This plateau is why heart muscle can't be tetanized like skeletal muscle"
+};
+
+const pacemaker = {
+  cellLabel: 'SA node pacemaker cell membrane',
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — no stable resting potential, sits around -60 mV",
+    "Step 1 of 3 — the 'funny current' (HCN channels) causes slow, spontaneous depolarization",
+    "Step 2 of 3 — threshold reached — Ca2+ channels drive the upstroke (pacemaker cells lack fast Na+ channels)",
+    "Step 3 of 3 — K+ channels repolarize, then the cycle repeats spontaneously — no external stimulus needed"
+  ],
+  traces: [
+    "M30 170 L650 170",
+    "M30 170 Q250 170 450 150 Q550 140 600 135 L650 135",
+    "M30 170 Q250 170 450 150 Q550 140 600 135 L615 105 L640 170 L650 170",
+    "M30 170 Q250 170 450 150 Q550 140 600 135 L615 105 L640 170 L650 170"
+  ],
+  voltage: ["~ −60 mV, drifting", "Slow spontaneous depolarization", "Ca2+-driven upstroke", "Repolarized — cycle repeats"],
+  channel: "Funny current (If) then T/L-type Ca2+ then K+ — NO fast Na+ channels",
+  special: "This spontaneous, self-repeating cycle is the origin of your heartbeat's rhythm"
+};
+
+function getCfg() { return mode === 'neuronal' ? neuronal : mode === 'cardiac' ? cardiac : pacemaker; }
+
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnNeuronal').classList.toggle('active', m === 'neuronal');
+  document.getElementById('btnCardiac').classList.toggle('active', m === 'cardiac');
+  document.getElementById('btnPacemaker').classList.toggle('active', m === 'pacemaker');
+  document.getElementById('cellLabel').textContent = getCfg().cellLabel;
+  document.getElementById('channelLabel').textContent = getCfg().channel;
+  render();
 }
-function stepFwd() { if (step < 4) step++; render(); }
-function stepBack() { if (step > 0) step--; render(); }
+
+function render() {
+  const cfg = getCfg();
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('traceLine').setAttribute('d', cfg.traces[step]);
+  document.getElementById('voltageLabel').textContent = cfg.voltage[step];
+  document.getElementById('channelNote').classList.toggle('on', step >= 1);
+  document.getElementById('specialLabel').textContent = (step === cfg.maxStep && cfg.special) ? cfg.special : '';
+  document.getElementById('specialNote').classList.toggle('on', step === cfg.maxStep && !!cfg.special);
+}
+function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
 function reset() { step = 0; render(); }
-render();
+setMode('neuronal');
 </script>
 '''
 
@@ -5220,11 +5276,12 @@ REGISTRY = {
     "Action potential": {
         "General": {
             "fragment": ACTION_POTENTIAL_GENERAL,
-            "height": 460,
+            "height": 480,
             "blurb": (
-                "A resting neuron at -70 mV depolarizes when voltage-gated "
-                "Na+ channels open, repolarizes as K+ channels open, and "
-                "the wave propagates along the axon to the next segment."
+                "Compare three cell types: the fast neuronal spike, the "
+                "cardiac ventricular plateau (Ca2+ balances K+, prevents "
+                "tetany), and the spontaneously drifting SA node pacemaker "
+                "potential (Ca2+-driven, no fast Na+ channels at all)."
             ),
         },
     },

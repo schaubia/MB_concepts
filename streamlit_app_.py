@@ -4499,6 +4499,352 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# DNA_MISMATCH_REPAIR_GENERAL  (source: mismatch_repair.html)
+# ---------------------------------------------------------------------------
+DNA_MISMATCH_REPAIR_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of DNA mismatch repair: a replication error is detected, the faulty segment excised, and the correct sequence resynthesized and sealed.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #gap { transition: opacity 0.6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 260" role="img">
+<title>DNA mismatch repair, general view</title>
+<desc>DNA polymerase makes a replication error, creating a mismatched base pair. Mismatch repair proteins detect the distortion, excise the incorrect segment on the new strand, DNA polymerase resynthesizes the correct sequence using the template, and ligase seals the remaining nick.</desc>
+
+<line x1="30" y1="120" x2="650" y2="120" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="30" y1="140" x2="650" y2="140" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+
+<circle id="mismatch" cx="340" cy="130" r="8" fill="#E24B4A"/>
+<text class="ts" x="340" y="105" text-anchor="middle" id="mismatchLabel">Mismatched base</text>
+
+<g id="mutS" class="stg">
+<circle cx="340" cy="130" r="20" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="3 3" class="pulse"/>
+<text class="ts" x="340" y="165" text-anchor="middle">Repair complex detects distortion</text>
+</g>
+
+<g id="excision" class="stg">
+<rect id="gap" x="300" y="135" width="80" height="10" fill="var(--surface-1)"/>
+<text class="ts" x="340" y="190" text-anchor="middle">Faulty segment excised</text>
+</g>
+
+<g id="resynthesis" class="stg">
+<rect x="300" y="135" width="80" height="10" fill="#1D9E75" stroke-dasharray="4 3"/>
+<text class="ts" x="340" y="190" text-anchor="middle">Polymerase resynthesizes correct sequence</text>
+</g>
+
+<g id="ligate" class="stg">
+<circle cx="380" cy="140" r="6" fill="#EF9F27"/>
+<text class="ts" x="380" y="215" text-anchor="middle">Ligase seals the nick — error corrected</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — DNA polymerase makes a replication error, a mismatched base pair",
+  "Step 1 of 4 — mismatch repair proteins detect the distortion in the helix",
+  "Step 2 of 4 — the faulty segment on the new strand is excised",
+  "Step 3 of 4 — DNA polymerase resynthesizes the correct sequence using the template strand",
+  "Step 4 of 4 — ligase seals the remaining nick — the error is corrected"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('mismatchLabel').style.opacity = step === 0 ? '1' : '0';
+  document.getElementById('mutS').classList.toggle('on', step === 1);
+  document.getElementById('mismatch').style.opacity = step >= 2 ? '0' : '1';
+  document.getElementById('excision').classList.toggle('on', step === 2);
+  document.getElementById('resynthesis').classList.toggle('on', step >= 3);
+  document.getElementById('ligate').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# CRISPR_CAS9_GENERAL  (source: crispr_cas9.html)
+# ---------------------------------------------------------------------------
+CRISPR_CAS9_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of CRISPR-Cas9 gene editing: a guide RNA directs Cas9 to a target DNA sequence, Cas9 cuts both strands, and the cell repairs the break either by NHEJ or by homology-directed repair with a donor template.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #cas9Group { transition: transform 1s ease; }
+  .docked #cas9Group { transform: translateY(20px); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>CRISPR-Cas9 gene editing, general view</title>
+<desc>A guide RNA loaded into Cas9 protein scans DNA for a matching sequence next to a PAM site, base-pairs with the target strand to confirm the match, and Cas9 cuts both DNA strands. The cell then repairs the break either through error-prone non-homologous end joining, which disrupts the gene, or through homology-directed repair using a donor template, which precisely edits the sequence.</desc>
+
+<line x1="30" y1="150" x2="650" y2="150" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="30" y1="170" x2="650" y2="170" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<rect x="320" y="145" width="30" height="10" fill="#EF9F27"/>
+<text class="ts" x="335" y="135" text-anchor="middle">PAM</text>
+
+<g id="cas9Group">
+<circle cx="300" cy="110" r="30" class="c-purple"/>
+<text class="th" x="300" y="110" text-anchor="middle" dominant-baseline="central">Cas9</text>
+<path d="M300 140 L300 150" stroke="#7F77DD" stroke-width="3"/>
+</g>
+
+<g id="grna" class="stg">
+<text class="ts" x="300" y="70" text-anchor="middle">Guide RNA finds matching sequence</text>
+</g>
+
+<g id="basePairing" class="stg">
+<path d="M260 150 Q280 130 300 150" stroke="#639922" stroke-width="2" fill="none"/>
+<text class="ts" x="260" y="200" text-anchor="middle">gRNA base-pairs — match confirmed</text>
+</g>
+
+<g id="cut" class="stg">
+<line x1="290" y1="145" x2="290" y2="175" stroke="#E24B4A" stroke-width="3"/>
+<text class="ts" x="290" y="195" text-anchor="middle">Double-strand break</text>
+</g>
+
+<g id="nhej" class="stg">
+<text class="ts" x="180" y="240" text-anchor="middle">NHEJ — error-prone, disrupts gene</text>
+</g>
+
+<g id="hdr" class="stg">
+<rect x="380" y="140" width="60" height="20" rx="4" fill="#1D9E75" opacity="0.5"/>
+<text class="ts" x="410" y="240" text-anchor="middle">HDR — donor template, precise edit</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — guide RNA loaded into Cas9 scans DNA for a matching sequence near a PAM site",
+  "Step 1 of 4 — Cas9-gRNA complex docks near the PAM sequence",
+  "Step 2 of 4 — the guide RNA base-pairs with the target DNA strand, confirming the match",
+  "Step 3 of 4 — Cas9 cuts both DNA strands at the target site",
+  "Step 4 of 4 — the cell repairs the break: NHEJ disrupts the gene, or HDR with a donor template precisely edits it"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('grna').classList.toggle('on', step === 0);
+  document.querySelector('svg').classList.toggle('docked', step >= 1);
+  document.getElementById('basePairing').classList.toggle('on', step >= 2 && step < 3);
+  document.getElementById('cut').classList.toggle('on', step >= 3);
+  document.getElementById('nhej').classList.toggle('on', step >= 4);
+  document.getElementById('hdr').classList.toggle('on', step >= 4);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# LAC_OPERON_GENERAL  (source: lac_operon.html)
+# ---------------------------------------------------------------------------
+LAC_OPERON_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the lac operon: a switchable comparison between lactose absent, where a repressor blocks transcription, and lactose present, where the repressor is removed and the genes are transcribed.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #repressor { transition: transform 0.8s ease, opacity 0.5s ease; }
+  .removed #repressor { transform: translateY(-40px); opacity: 0; }
+  #rnaPol { transition: transform 1s ease, opacity 0.5s ease; }
+  .transcribing #rnaPol { transform: translateX(200px); }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnAbsent" onclick="setMode('absent')">Lactose absent</button>
+  <button id="btnPresent" onclick="setMode('present')">Lactose present</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 260" role="img">
+<title>The lac operon</title>
+<desc>When lactose is absent, a repressor protein binds the operator, physically blocking RNA polymerase from transcribing the lac genes, so no lactose-digesting enzymes are made. When lactose is present, it binds the repressor, changing its shape so it falls off the operator, freeing RNA polymerase to transcribe the genes and produce the enzymes needed to digest lactose.</desc>
+
+<line x1="30" y1="150" x2="650" y2="150" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<rect x="150" y="140" width="50" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="175" y="130" text-anchor="middle">Promoter</text>
+<rect x="210" y="140" width="50" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="235" y="130" text-anchor="middle">Operator</text>
+<rect x="270" y="140" width="300" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="420" y="185" text-anchor="middle">lac genes (lacZ, lacY, lacA)</text>
+
+<circle id="repressor" cx="235" cy="150" r="14" class="c-red"/>
+<text class="ts" x="235" y="105" text-anchor="middle" id="repressorLabel">Repressor bound</text>
+
+<g id="lactoseMol" class="stg">
+<circle cx="235" cy="90" r="7" fill="#EF9F27"/>
+<text class="ts" x="235" y="75" text-anchor="middle">Lactose binds repressor</text>
+</g>
+
+<circle id="rnaPol" cx="175" cy="150" r="12" class="c-teal"/>
+
+<g id="mrnaOut" class="stg">
+<text class="th" x="420" y="220" text-anchor="middle">Genes transcribed — enzymes made</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'absent';
+const configAbsent = {
+  repressorLabel: 'Repressor bound to operator',
+  labels: [
+    'Step 0 of 1 — no lactose present, repressor sits on the operator',
+    'Step 1 of 1 — RNA polymerase is blocked — genes stay OFF, no enzymes made'
+  ]
+};
+const configPresent = {
+  repressorLabel: '',
+  labels: [
+    'Step 0 of 2 — lactose is present',
+    'Step 1 of 2 — lactose binds the repressor, changing its shape so it releases the operator',
+    'Step 2 of 2 — RNA polymerase transcribes the genes — enzymes made to digest lactose'
+  ]
+};
+function maxStep() { return mode === 'absent' ? 1 : 2; }
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnAbsent').classList.toggle('active', m === 'absent');
+  document.getElementById('btnPresent').classList.toggle('active', m === 'present');
+  render();
+}
+function render() {
+  const cfg = mode === 'absent' ? configAbsent : configPresent;
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('lactoseMol').classList.toggle('on', mode === 'present' && step >= 1);
+  const svg = document.querySelector('svg');
+  svg.classList.toggle('removed', mode === 'present' && step >= 2);
+  svg.classList.toggle('transcribing', mode === 'present' && step >= 2);
+  document.getElementById('mrnaOut').classList.toggle('on', mode === 'present' && step >= 2);
+}
+function stepFwd() { if (step < maxStep()) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('absent');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# RNA_INTERFERENCE_GENERAL  (source: rna_interference.html)
+# ---------------------------------------------------------------------------
+RNA_INTERFERENCE_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of RNA interference: Dicer cleaves double-stranded RNA into siRNA, the guide strand loads into RISC, and RISC cleaves the complementary target mRNA, silencing the gene.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #riscGroup { transition: transform 1s ease; }
+  .docked #riscGroup { transform: translateX(120px); }
+  #targetMrna { transition: opacity 0.6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 280" role="img">
+<title>RNA interference, general view</title>
+<desc>Double-stranded RNA is cleaved by the enzyme Dicer into short interfering RNA fragments. One strand is loaded into the RNA-induced silencing complex, RISC, as a guide. The RISC-siRNA complex scans mRNA molecules in the cell, and when the guide strand base-pairs with a complementary target mRNA, RISC cleaves it, degrading the message and silencing that gene.</desc>
+
+<path d="M100 100 L180 100" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
+<path d="M100 115 L180 115" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
+<text class="ts" x="140" y="85" text-anchor="middle">Double-stranded RNA</text>
+
+<g id="dicer" class="stg">
+<circle cx="140" cy="107" r="16" class="c-amber pulse"/>
+<text class="ts" x="140" y="140" text-anchor="middle">Dicer cleaves into siRNA</text>
+</g>
+
+<g id="riscGroup">
+<ellipse cx="140" cy="180" rx="30" ry="22" class="c-purple stg" id="risc"/>
+<text class="ts" x="140" y="180" text-anchor="middle" dominant-baseline="central" id="riscLabel"></text>
+<path id="guideStrand" d="M120 175 L160 175" stroke="#D85A30" stroke-width="3" stroke-linecap="round" opacity="0"/>
+</g>
+
+<line x1="300" y1="180" x2="600" y2="180" id="targetMrna" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/>
+<text class="ts" x="450" y="200" text-anchor="middle">Target mRNA</text>
+
+<g id="basePairing" class="stg">
+<text class="ts" x="380" y="160" text-anchor="middle">Guide strand base-pairs with target</text>
+</g>
+
+<g id="cleavage" class="stg">
+<path d="M400 172 L400 188 M420 172 L420 188" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<text class="th" x="450" y="230" text-anchor="middle">mRNA cleaved — gene silenced</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 4 — double-stranded RNA present in the cell",
+  "Step 1 of 4 — Dicer cleaves it into short interfering RNA (siRNA) fragments",
+  "Step 2 of 4 — one strand loads into RISC as a guide",
+  "Step 3 of 4 — the RISC-siRNA complex finds and base-pairs with a complementary target mRNA",
+  "Step 4 of 4 — RISC cleaves the target mRNA — the gene is silenced, no protein made"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('dicer').classList.toggle('on', step >= 1);
+  document.getElementById('risc').classList.toggle('on', step >= 2);
+  document.getElementById('guideStrand').setAttribute('opacity', step >= 2 ? '1' : '0');
+  document.querySelector('svg').classList.toggle('docked', step >= 3);
+  document.getElementById('basePairing').classList.toggle('on', step === 3);
+  document.getElementById('cleavage').classList.toggle('on', step >= 4);
+  document.getElementById('targetMrna').style.opacity = step >= 4 ? '0.2' : '1';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -4603,6 +4949,50 @@ REGISTRY = {
                 "EF-Tu delivers tRNA with wobble pairing checked at codon "
                 "position 3, EF-G drives translocation, and — for "
                 "secreted proteins — SRP targets the ribosome to the ER."
+            ),
+        },
+    },
+    "DNA mismatch repair": {
+        "General": {
+            "fragment": DNA_MISMATCH_REPAIR_GENERAL,
+            "height": 440,
+            "blurb": (
+                "A replication error is detected, the faulty segment on "
+                "the new strand excised, correctly resynthesized from "
+                "the template, and sealed — proofreading after the fact."
+            ),
+        },
+    },
+    "CRISPR-Cas9 gene editing": {
+        "General": {
+            "fragment": CRISPR_CAS9_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Guide RNA directs Cas9 to a matching DNA sequence next "
+                "to a PAM site; Cas9 cuts both strands, and the cell "
+                "repairs it via error-prone NHEJ or precise HDR editing."
+            ),
+        },
+    },
+    "Lac operon": {
+        "General": {
+            "fragment": LAC_OPERON_GENERAL,
+            "height": 440,
+            "blurb": (
+                "The classic gene-regulation example: a repressor blocks "
+                "the lac genes until lactose binds it and releases the "
+                "operator, letting RNA polymerase transcribe them."
+            ),
+        },
+    },
+    "RNA interference": {
+        "General": {
+            "fragment": RNA_INTERFERENCE_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Dicer cleaves double-stranded RNA into siRNA; the guide "
+                "strand loads into RISC and directs it to cleave a "
+                "complementary target mRNA, silencing that gene."
             ),
         },
     },
@@ -5034,7 +5424,11 @@ CATEGORIES = {
         "Type I hypersensitivity",
     ],
     "Molecular Biology & Genetics": [
+        "CRISPR-Cas9 gene editing",
+        "DNA mismatch repair",
         "DNA replication",
+        "Lac operon",
+        "RNA interference",
         "Transcription",
         "Translation",
     ],
