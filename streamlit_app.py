@@ -1694,6 +1694,203 @@ setMode('normal');
 
 
 # ---------------------------------------------------------------------------
+# ENZYME_KINETICS_TECHNICAL  (source: enzyme_kinetics.html)
+# ---------------------------------------------------------------------------
+ENZYME_KINETICS_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of enzyme kinetics: non-cooperative Michaelis-Menten kinetics versus cooperative allosteric kinetics in a tetrameric enzyme, with ATP as an allosteric inhibitor and AMP as an allosteric activator modeled on PFK-1 in glycolysis, plotted as reaction velocity against substrate concentration.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .subunit { fill: var(--surface-2); stroke:#E24B4A; stroke-width:2.5; transition: r .5s ease, stroke .5s ease; }
+  .subunit.flipped { stroke:#1D9E75; }
+  #curveMarker { transition: cx .6s ease, cy .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnNoncoop" onclick="setKinetics('noncoop')">Non-cooperative (Michaelis-Menten)</button>
+  <button id="btnCoop" onclick="setKinetics('coop')">Cooperative (allosteric)</button>
+</div>
+<div class="rowbtns" id="effectorRow" style="display:none;">
+  <button id="btnEffNone" onclick="setEffector('none')">No effector</button>
+  <button id="btnEffAtp" onclick="setEffector('atp')">ATP — inhibitor</button>
+  <button id="btnEffAmp" onclick="setEffector('amp')">AMP — activator</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 430" role="img">
+<title>Cooperative vs non-cooperative enzyme kinetics, with a PFK-1-style feedback example</title>
+<desc>Non-cooperative enzymes follow hyperbolic Michaelis-Menten kinetics: velocity rises smoothly with substrate concentration. Cooperative allosteric enzymes are typically oligomeric — substrate binding at one subunit favors the high-affinity R state in the other subunits — producing a sigmoidal, switch-like velocity curve instead. Allosteric effectors shift this curve: an inhibitor like ATP favors the low-affinity T state and shifts the curve right and down; an activator like AMP favors the R state and shifts the curve left. This mirrors PFK-1, the key regulatory enzyme of glycolysis, which is inhibited by ATP and activated by AMP as feedback signals of the cell's energy state.</desc>
+<defs>
+<marker id="arrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<g id="monomerGroup">
+<path d="M60 90 Q85 55 130 68 Q165 60 180 90 Q165 120 130 112 Q85 130 60 90 Z" class="c-teal" stroke-width="0.5"/>
+<circle id="monoSite" cx="120" cy="90" r="14" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="3 3"/>
+<text class="ts" x="120" y="150" text-anchor="middle">Single active site</text>
+<text class="ts" x="120" y="168" text-anchor="middle">No cooperativity</text>
+</g>
+
+<g id="tetramerGroup">
+<line x1="80" y1="60" x2="150" y2="60" stroke="var(--t)" stroke-width="1.5"/>
+<line x1="80" y1="130" x2="150" y2="130" stroke="var(--t)" stroke-width="1.5"/>
+<line x1="80" y1="60" x2="80" y2="130" stroke="var(--t)" stroke-width="1.5"/>
+<line x1="150" y1="60" x2="150" y2="130" stroke="var(--t)" stroke-width="1.5"/>
+<circle id="sub0" class="subunit" cx="80" cy="60" r="14"/>
+<circle id="sub1" class="subunit" cx="150" cy="60" r="14"/>
+<circle id="sub2" class="subunit" cx="80" cy="130" r="14"/>
+<circle id="sub3" class="subunit" cx="150" cy="130" r="14"/>
+<text class="ts" x="115" y="160" text-anchor="middle">Tetramer</text>
+<text class="ts" x="115" y="178" text-anchor="middle" id="subunitReadout">0 / 4 subunits in R state</text>
+</g>
+
+<g transform="translate(330,10)">
+<line x1="60" y1="200" x2="60" y2="30" stroke="var(--t)" stroke-width="1.5"/>
+<line x1="60" y1="200" x2="300" y2="200" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="180" y="222" text-anchor="middle">[Substrate] →</text>
+<text class="ts" x="20" y="115" text-anchor="middle" transform="rotate(-90 20 115)">Velocity (v) →</text>
+<path id="mmRefCurve" d="M60,200 L80,120 L120,80 L160,66.7 L300,52.3" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4 3"/>
+<path id="activeCurve" d="M60,200 L80,120 L120,80 L160,66.7 L300,52.3" fill="none" stroke="#1D9E75" stroke-width="2.5"/>
+<circle id="curveMarker" cx="60" cy="200" r="5" fill="#EF9F27"/>
+<text class="ts" x="230" y="205" text-anchor="middle" id="mmLegend" style="display:none">gray dashed = non-cooperative reference</text>
+</g>
+
+<g id="feedbackGroup" class="stg">
+<rect x="40" y="290" width="60" height="32" rx="6" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="70" y="310" text-anchor="middle">F6P</text>
+<line x1="100" y1="306" x2="150" y2="306" stroke="var(--t)" stroke-width="1.5" marker-end="url(#arrow3)"/>
+<rect x="155" y="290" width="75" height="32" rx="6" class="c-teal" stroke-width="0.5"/>
+<text class="ts" x="192" y="310" text-anchor="middle">PFK-1</text>
+<line x1="230" y1="306" x2="280" y2="306" stroke="var(--t)" stroke-width="1.5" marker-end="url(#arrow3)"/>
+<rect x="285" y="290" width="60" height="32" rx="6" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="315" y="310" text-anchor="middle">FBP</text>
+<line x1="345" y1="306" x2="395" y2="306" stroke="var(--t)" stroke-width="1.5" marker-end="url(#arrow3)"/>
+<rect x="400" y="290" width="160" height="32" rx="6" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="480" y="310" text-anchor="middle">… → pyruvate → ATP</text>
+
+<path id="atpFeedbackArrow" d="M480 290 Q330 245 192 290" fill="none" stroke="#E24B4A" stroke-width="1.5" marker-end="url(#arrow3)"/>
+<text class="ts" x="330" y="252" text-anchor="middle">ATP inhibits (energy abundant)</text>
+
+<path id="ampFeedbackArrow" d="M480 322 Q330 367 192 322" fill="none" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arrow3)"/>
+<text class="ts" x="330" y="378" text-anchor="middle">AMP activates (energy low)</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let kinetics = 'noncoop';
+let effector = 'none';
+
+const chartX = [60,80,120,160,300];
+const yMM       = [200,120,80,66.7,52.3];
+const yCoopNone = [200,190.4,98.7,57.8,41.4];
+const yCoopATP  = [200,198.9,175.8,132,73.1];
+const yCoopAMP  = [200,145.8,50.8,42.5,40.2];
+const flipNone = [0,1,3,4,4];
+const flipATP  = [0,0,1,2,4];
+const flipAMP  = [0,2,4,4,4];
+const sDesc = ["no substrate","low [S]","moderate [S]","high [S]","saturating [S]"];
+
+function pathFor(coords) {
+  return coords.map((y,i) => (i===0?'M':'L') + chartX[i] + ',' + y).join(' ');
+}
+const mmPath = pathFor(yMM);
+const coopNonePath = pathFor(yCoopNone);
+const coopATPPath = pathFor(yCoopATP);
+const coopAMPPath = pathFor(yCoopAMP);
+
+function activeYTable() {
+  if (kinetics === 'noncoop') return yMM;
+  return effector === 'atp' ? yCoopATP : effector === 'amp' ? yCoopAMP : yCoopNone;
+}
+function activeFlipTable() {
+  return effector === 'atp' ? flipATP : effector === 'amp' ? flipAMP : flipNone;
+}
+function activePath() {
+  if (kinetics === 'noncoop') return mmPath;
+  return effector === 'atp' ? coopATPPath : effector === 'amp' ? coopAMPPath : coopNonePath;
+}
+function activeColor() {
+  if (kinetics === 'noncoop') return '#1D9E75';
+  return effector === 'atp' ? '#E24B4A' : effector === 'amp' ? '#1D9E75' : '#7F77DD';
+}
+
+function setKinetics(k) {
+  kinetics = k; step = 0;
+  document.getElementById('btnNoncoop').classList.toggle('active', k === 'noncoop');
+  document.getElementById('btnCoop').classList.toggle('active', k === 'coop');
+  document.getElementById('effectorRow').style.display = k === 'coop' ? 'flex' : 'none';
+  document.getElementById('monomerGroup').style.display = k === 'noncoop' ? '' : 'none';
+  document.getElementById('tetramerGroup').style.display = k === 'coop' ? '' : 'none';
+  document.getElementById('mmRefCurve').style.display = k === 'coop' ? '' : 'none';
+  document.getElementById('mmLegend').style.display = k === 'coop' ? '' : 'none';
+  document.getElementById('feedbackGroup').classList.toggle('on', k === 'coop');
+  render();
+}
+function setEffector(e) {
+  effector = e; step = 0;
+  document.getElementById('btnEffNone').classList.toggle('active', e === 'none');
+  document.getElementById('btnEffAtp').classList.toggle('active', e === 'atp');
+  document.getElementById('btnEffAmp').classList.toggle('active', e === 'amp');
+  render();
+}
+function render() {
+  const yTable = activeYTable();
+  const flipTable = activeFlipTable();
+  const flipped = flipTable[step];
+  const vPct = Math.round((200 - yTable[step]) / 1.6);
+
+  let effDesc = 'no effector bound';
+  if (kinetics === 'coop') {
+    effDesc = effector === 'atp' ? 'ATP bound at the allosteric site — enzyme favors the low-affinity T state'
+      : effector === 'amp' ? 'AMP bound at the allosteric site — enzyme favors the high-affinity R state'
+      : 'no effector bound — subunits still flip cooperatively as substrate binds';
+  }
+  const label = kinetics === 'noncoop'
+    ? `Step ${step} of 4 — ${sDesc[step]}: hyperbolic response, ~${vPct}% Vmax, no cooperativity between binding events`
+    : `Step ${step} of 4 — ${sDesc[step]}: ${flipped}/4 subunits in R state, ~${vPct}% Vmax. ${effDesc}`;
+  document.getElementById('stepLabel').textContent = label;
+
+  document.getElementById('activeCurve').setAttribute('d', activePath());
+  document.getElementById('activeCurve').setAttribute('stroke', activeColor());
+  document.getElementById('curveMarker').setAttribute('cx', chartX[step]);
+  document.getElementById('curveMarker').setAttribute('cy', yTable[step]);
+
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById('sub' + i);
+    const isFlipped = i < flipped;
+    el.classList.toggle('flipped', isFlipped);
+    el.setAttribute('r', isFlipped ? 18 : 14);
+  }
+  document.getElementById('subunitReadout').textContent = flipped + ' / 4 subunits in R state';
+  document.getElementById('monoSite').setAttribute('stroke', step >= 1 ? '#1D9E75' : '#EF9F27');
+
+  const atpOn = kinetics === 'coop' && effector === 'atp';
+  const ampOn = kinetics === 'coop' && effector === 'amp';
+  document.getElementById('atpFeedbackArrow').classList.toggle('pulse', atpOn);
+  document.getElementById('atpFeedbackArrow').style.opacity = atpOn ? '1' : '0.25';
+  document.getElementById('ampFeedbackArrow').classList.toggle('pulse', ampOn);
+  document.getElementById('ampFeedbackArrow').style.opacity = ampOn ? '1' : '0.25';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function reset() { step = 0; render(); }
+setKinetics('noncoop');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # MEMBRANE_TRANSPORT_GENERAL  (source: membrane_transport.html)
 # ---------------------------------------------------------------------------
 MEMBRANE_TRANSPORT_GENERAL = '''
@@ -5929,6 +6126,18 @@ REGISTRY = {
                 "(same site, beatable by more substrate), allosteric "
                 "inhibition (different site, not beatable), and allosteric "
                 "activation — regulation isn't only inhibition."
+            ),
+        },
+        "Technical": {
+            "fragment": ENZYME_KINETICS_TECHNICAL,
+            "height": 620,
+            "blurb": (
+                "Adds what actually makes an enzyme 'allosteric': a "
+                "tetrameric enzyme with cooperative subunits producing a "
+                "sigmoidal velocity curve (vs. the hyperbolic "
+                "Michaelis-Menten curve for a non-cooperative enzyme), "
+                "plus a real feedback-inhibition example — PFK-1 in "
+                "glycolysis, inhibited by ATP and activated by AMP."
             ),
         },
     },
