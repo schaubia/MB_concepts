@@ -982,8 +982,8 @@ function render() {
     m.matA_c1=[-165,0]; m.matA_c2=[-165,0]; m.patA_c1=[195,0]; m.patA_c2=[195,0];
     m.matB_c1=[-215,0]; m.matB_c2=[-215,0]; m.patB_c1=[145,0]; m.patB_c2=[145,0];
   } else if (step >= 5) {
-    m.matA_c1=[-168,160]; m.matA_c2=[-43,160]; m.patA_c1=[77,160]; m.patA_c2=[202,160];
-    m.matB_c1=[-222,160]; m.matB_c2=[-97,160]; m.patB_c1=[23,160]; m.patB_c2=[148,160];
+    m.matA_c1=[-195,140]; m.matA_c2=[-135,140]; m.patA_c1=[165,140]; m.patA_c2=[225,140];
+    m.matB_c1=[-245,140]; m.matB_c2=[-185,140]; m.patB_c1=[115,140]; m.patB_c2=[175,140];
   }
   ids.forEach(id => {
     document.getElementById(id).style.transform = `translate(${m[id][0]}px, ${m[id][1]}px)`;
