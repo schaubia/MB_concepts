@@ -5377,6 +5377,104 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# APOPTOSIS_TECHNICAL  (source: apoptosis_technical.html)
+# ---------------------------------------------------------------------------
+APOPTOSIS_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of the intrinsic mitochondrial apoptosis pathway: cellular stress tips the Bcl-2 family balance, Bax/Bak permeabilize the mitochondrial membrane, cytochrome c forms the apoptosome, and caspase-9 activates the same executioner caspase-3 used by the extrinsic pathway.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.6s ease-in-out infinite; }
+  @keyframes drift { 0%{transform:translateY(0)} 100%{transform:translateY(-40px)} }
+  #mitoOutline { transition: stroke-width 0.6s ease, stroke-dasharray 0.6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Intrinsic (mitochondrial) apoptosis pathway, technical view</title>
+<desc>Cellular stress or DNA damage, often sensed by p53, activates pro-apoptotic BH3-only proteins, tipping the balance of the Bcl-2 protein family. This causes Bax and Bak to oligomerize and permeabilize the mitochondrial outer membrane, releasing cytochrome c into the cytoplasm. Cytochrome c, Apaf-1, and caspase-9 assemble into a complex called the apoptosome, which activates caspase-9. Caspase-9 then activates caspase-3, the same executioner caspase used by the extrinsic death-receptor pathway — two different triggers converging on one final machinery.</desc>
+
+<g id="stressSignal" >
+<circle cx="90" cy="90" r="10" fill="#B91C1C"/>
+<text class="ts" x="90" y="70" text-anchor="middle">DNA damage / stress (sensed by p53)</text>
+</g>
+
+<g id="bh3" class="stg">
+<circle cx="180" cy="120" r="8" class="c-amber pulse"/>
+<text class="ts" x="180" y="145" text-anchor="middle">BH3-only proteins activate</text>
+</g>
+
+<ellipse id="mitoOutline" cx="380" cy="180" rx="120" ry="70" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="380" y="100" text-anchor="middle">Mitochondrion</text>
+
+<g id="baxbak" class="stg">
+<circle cx="290" cy="150" r="6" fill="#E24B4A"/>
+<circle cx="300" cy="165" r="6" fill="#E24B4A"/>
+<text class="ts" x="295" y="130" text-anchor="middle">Bax/Bak oligomerize — MOMP</text>
+</g>
+
+<g id="cytc" class="stg">
+<circle class="drift" cx="380" cy="180" r="5" fill="#EF9F27"/>
+<circle class="drift" cx="395" cy="190" r="5" fill="#EF9F27" style="animation-delay:.3s"/>
+<text class="ts" x="380" y="270" text-anchor="middle">Cytochrome c released</text>
+</g>
+
+<g id="apoptosome" class="stg">
+<circle cx="500" cy="130" r="22" class="c-purple"/>
+<text class="ts" x="500" y="130" text-anchor="middle" dominant-baseline="central" font-size="9">Apoptosome</text>
+<text class="ts" x="500" y="105" text-anchor="middle">Cyt c + Apaf-1 + caspase-9</text>
+</g>
+
+<g id="caspase9" class="stg">
+<circle cx="570" cy="180" r="14" class="c-teal"/>
+<text class="ts" x="570" y="180" text-anchor="middle" dominant-baseline="central">C9</text>
+</g>
+
+<g id="caspase3" class="stg">
+<circle cx="600" cy="240" r="14" class="c-red"/>
+<text class="ts" x="600" y="240" text-anchor="middle" dominant-baseline="central">C3</text>
+<text class="th" x="560" y="280" text-anchor="middle">Same executioner as the extrinsic pathway</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 5 — cellular stress or DNA damage detected, often sensed by p53",
+  "Step 1 of 5 — pro-apoptotic BH3-only proteins activate, tipping the Bcl-2 family balance",
+  "Step 2 of 5 — Bax and Bak oligomerize on the mitochondrial outer membrane — MOMP (mitochondrial outer membrane permeabilization)",
+  "Step 3 of 5 — cytochrome c is released from the mitochondrion into the cytoplasm",
+  "Step 4 of 5 — cytochrome c, Apaf-1, and caspase-9 assemble into the apoptosome",
+  "Step 5 of 5 — the apoptosome activates caspase-9, which activates caspase-3 — the SAME executioner caspase the extrinsic pathway uses"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('bh3').classList.toggle('on', step >= 1);
+  document.getElementById('baxbak').classList.toggle('on', step >= 2);
+  document.getElementById('mitoOutline').setAttribute('stroke-dasharray', step >= 2 ? '4 3' : '0');
+  document.getElementById('cytc').classList.toggle('on', step >= 3);
+  document.getElementById('apoptosome').classList.toggle('on', step >= 4);
+  document.getElementById('caspase9').classList.toggle('on', step >= 5);
+  document.getElementById('caspase3').classList.toggle('on', step >= 5);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -5549,6 +5647,16 @@ REGISTRY = {
                 "caspase-8, which activates executioner caspase-3, "
                 "dismantling the cell into apoptotic bodies that a "
                 "phagocyte then engulfs and digests."
+            ),
+        },
+        "Technical": {
+            "fragment": APOPTOSIS_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "The intrinsic (mitochondrial) pathway: internal stress "
+                "tips the Bcl-2 balance, Bax/Bak permeabilize the "
+                "mitochondrion, and the apoptosome activates the SAME "
+                "executioner caspase-3 the extrinsic pathway uses."
             ),
         },
     },
