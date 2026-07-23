@@ -658,9 +658,12 @@ function render() {
     ax1=ax2=-12; ay1=ay2=-8; bx1=bx2=10; by1=by2=6;
   } else if (step === 3) {
     ax1=ax2=0; ay1=ay2=0; bx1=bx2=0; by1=by2=0;
-  } else if (step >= 4) {
+  } else if (step === 4) {
     ax1=-165; ay1=0; ax2=215; ay2=0;
     bx1=-215; by1=0; bx2=165; by2=0;
+  } else if (step >= 5) {
+    ax1=-100; ay1=0; ax2=120; ay2=0;
+    bx1=-120; by1=0; bx2=100; by2=0;
   }
   document.getElementById('chrA_c1').style.transform = `translate(${ax1}px, ${ay1}px)`;
   document.getElementById('chrA_c2').style.transform = `translate(${ax2}px, ${ay2}px)`;
@@ -1559,7 +1562,7 @@ ENZYME_KINETICS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #substrateGroup { transition: transform 1s ease, opacity .5s ease; }
-  .bound #substrateGroup { transform: translate(15px, 5px); }
+  .bound #substrateGroup { transform: translate(157px, 0px); }
   #activeSite { transition: r 0.6s ease, stroke 0.6s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
@@ -1902,7 +1905,7 @@ MEMBRANE_TRANSPORT_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #molecule { transition: transform 1s ease, opacity .4s ease; }
   #ligandGroup { transition: transform .8s ease, opacity .4s ease; }
-  .docked #ligandGroup { transform: translateY(45px); }
+  .docked #ligandGroup { transform: translateY(12px); }
   #gateTop, #gateBottom { transition: transform 0.8s ease; }
   .gateopen #gateTop { transform: translateY(-14px); }
   .gateopen #gateBottom { transform: translateY(14px); }
@@ -2237,7 +2240,7 @@ FERTILIZATION_GENERAL = '''
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #spermGroup { transition: transform 1s ease; }
+  #spermGroup { transition: transform 1s ease, opacity 1s ease; }
   .fused #spermGroup { transform: translateX(70px); opacity: 0; }
   #zonaLayer { transition: stroke 0.6s ease, stroke-width 0.6s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -2253,14 +2256,14 @@ FERTILIZATION_GENERAL = '''
 <text class="ts" x="380" y="255" text-anchor="middle">Zona pellucida</text>
 
 <g id="spermGroup">
-<path d="M150 150 L200 150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
-<circle cx="145" cy="150" r="10" fill="#378ADD"/>
-<text class="ts" x="145" y="130" text-anchor="middle">Sperm</text>
+<path d="M225 150 L275 150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<circle cx="220" cy="150" r="10" fill="#378ADD"/>
+<text class="ts" x="220" y="130" text-anchor="middle">Sperm</text>
 </g>
 
 <g id="acrosome" class="stg">
-<circle cx="200" cy="150" r="5" fill="#EF9F27"/>
-<text class="ts" x="200" y="185" text-anchor="middle">Acrosomal enzymes penetrate zona</text>
+<circle cx="280" cy="150" r="5" fill="#EF9F27"/>
+<text class="ts" x="255" y="195" text-anchor="middle">Acrosomal enzymes penetrate zona</text>
 </g>
 
 <g id="corticalReaction" class="stg">
