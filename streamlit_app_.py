@@ -543,42 +543,43 @@ render();
 # MITOSIS_GENERAL  (source: mitosis_general.html)
 # ---------------------------------------------------------------------------
 MITOSIS_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of mitotic cell division with seven visually distinct stages: interphase, prophase, prometaphase, metaphase, anaphase, telophase, and cytokinesis.</h2>
+<h2 class="sr-only">Corrected interactive diagram of mitosis where individual sister chromatids separate to opposite poles at anaphase, so each daughter cell receives one copy of each chromosome.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #chrom1, #chrom2 { transition: transform 1s cubic-bezier(.3,0,.2,1); }
-  #spindleLinesL, #spindleLinesR { transition: opacity .6s ease, stroke-dasharray .6s ease; }
-  #furrowTop, #furrowBot { transition: transform 1s ease; }
-  .cytokinesis #furrowTop { transform: translateY(40px); }
-  .cytokinesis #furrowBot { transform: translateY(-40px); }
+  #chrA_c1, #chrA_c2, #chrB_c1, #chrB_c2 { transition: transform 1s cubic-bezier(.3,0,.2,1); }
+  #linkA, #linkB { transition: opacity 0.5s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
 <svg width="100%" viewBox="0 0 680 400" role="img">
-<title>Mitotic cell division, seven-stage general view</title>
-<desc>A cell progresses through interphase, prophase, prometaphase, metaphase, anaphase, telophase, and cytokinesis, ending as two separate daughter cells. Chromosome position and spindle attachment visibly change at each stage.</desc>
+<title>Mitosis with correct sister chromatid segregation</title>
+<desc>Two chromosomes, blue and red, each duplicated into two identical sister chromatids. At anaphase, each chromosome's own two sister chromatids separate from each other and move to opposite poles, so each resulting daughter cell receives one blue chromatid and one red chromatid — genetically identical to each other and to the parent cell.</desc>
 
-<ellipse id="cellOutline" cx="340" cy="180" rx="220" ry="140" fill="none" stroke="var(--t)" stroke-width="1.5"/>
-<text class="ts" x="340" y="30" text-anchor="middle" id="stageLabel">Interphase</text>
+<ellipse id="cellOutline" cx="340" cy="190" rx="220" ry="140" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="340" y="40" text-anchor="middle" id="stageLabel">Interphase</text>
 
-<ellipse id="nucleus" cx="340" cy="165" rx="90" ry="55" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse id="nucleus" cx="340" cy="175" rx="90" ry="55" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 
 <g id="chromatin">
-<path d="M260 150 Q280 120 300 150 Q320 180 340 150" stroke="#378ADD" stroke-width="2" fill="none" opacity="0.5"/>
-<path d="M300 190 Q320 160 350 200 Q370 230 390 200" stroke="#D85A30" stroke-width="2" fill="none" opacity="0.5"/>
-<path d="M360 140 Q390 160 410 130" stroke="#1D9E75" stroke-width="2" fill="none" opacity="0.5"/>
+<path d="M280 160 Q300 130 320 160 Q340 190 360 160" stroke="#378ADD" stroke-width="2" fill="none" opacity="0.5"/>
+<path d="M340 190 Q360 220 380 190" stroke="#D85A30" stroke-width="2" fill="none" opacity="0.5"/>
 </g>
 
 <g id="condensed" class="stg">
-<g id="chrom1">
-<path d="M310 150 L340 180 M340 150 L310 180" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
-</g>
-<g id="chrom2">
-<path d="M340 150 L370 180 M370 150 L340 180" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
-</g>
+<!-- Chromosome A (blue) -->
+<line id="chrA_c1" x1="305" y1="145" x2="305" y2="195" stroke="#378ADD" stroke-width="7" stroke-linecap="round"/>
+<line id="chrA_c2" x1="325" y1="145" x2="325" y2="195" stroke="#378ADD" stroke-width="7" stroke-linecap="round"/>
+<line id="linkA" x1="305" y1="170" x2="325" y2="170" stroke="#378ADD" stroke-width="3"/>
+<text class="ts" x="315" y="130" text-anchor="middle">Chromosome A</text>
+
+<!-- Chromosome B (red) -->
+<line id="chrB_c1" x1="355" y1="145" x2="355" y2="195" stroke="#D85A30" stroke-width="7" stroke-linecap="round"/>
+<line id="chrB_c2" x1="375" y1="145" x2="375" y2="195" stroke="#D85A30" stroke-width="7" stroke-linecap="round"/>
+<line id="linkB" x1="355" y1="170" x2="375" y2="170" stroke="#D85A30" stroke-width="3"/>
+<text class="ts" x="365" y="215" text-anchor="middle">Chromosome B</text>
 </g>
 
 <g id="spindle" class="stg">
@@ -586,29 +587,22 @@ MITOSIS_GENERAL = '''
 <circle cx="540" cy="180" r="6" class="c-amber"/>
 <text class="ts" x="140" y="160" text-anchor="middle">Pole</text>
 <text class="ts" x="540" y="160" text-anchor="middle">Pole</text>
-<g id="spindleLinesL">
-<line x1="140" y1="180" x2="325" y2="163" stroke="var(--t)" stroke-width="0.75"/>
-<line x1="140" y1="180" x2="325" y2="180" stroke="var(--t)" stroke-width="0.75"/>
-</g>
-<g id="spindleLinesR">
-<line x1="540" y1="180" x2="355" y2="163" stroke="var(--t)" stroke-width="0.75"/>
-<line x1="540" y1="180" x2="355" y2="180" stroke="var(--t)" stroke-width="0.75"/>
-</g>
 </g>
 
 <g id="newNuclei" class="stg">
-<ellipse cx="240" cy="180" rx="55" ry="45" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<ellipse cx="440" cy="180" rx="55" ry="45" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="220" cy="190" rx="60" ry="48" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="460" cy="190" rx="60" ry="48" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 </g>
 
 <g id="furrow" class="stg">
-<path id="furrowTop" d="M340 40 L340 140" stroke="var(--border-strong)" stroke-width="2.5"/>
-<path id="furrowBot" d="M340 220 L340 320" stroke="var(--border-strong)" stroke-width="2.5"/>
+<line x1="340" y1="50" x2="340" y2="330" stroke="var(--border-strong)" stroke-width="2" stroke-dasharray="5 4"/>
 </g>
 
 <g id="daughterLabels" class="stg">
-<text class="ts" x="220" y="345" text-anchor="middle">Daughter cell 1</text>
-<text class="ts" x="460" y="345" text-anchor="middle">Daughter cell 2</text>
+<text class="th" x="220" y="360" text-anchor="middle">Daughter cell 1</text>
+<text class="ts" x="220" y="378" text-anchor="middle">1 blue + 1 red — identical to cell 2</text>
+<text class="th" x="460" y="360" text-anchor="middle">Daughter cell 2</text>
+<text class="ts" x="460" y="378" text-anchor="middle">1 blue + 1 red — identical to cell 1</text>
 </g>
 </svg>
 
@@ -622,47 +616,45 @@ MITOSIS_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Interphase — chromatin uncondensed, nuclear envelope intact",
-  "Prophase — chromosomes condense inside an intact nucleus, no spindle attachment yet",
-  "Prometaphase — envelope broken, spindle fibers search and probe for chromosomes (dashed, scattered)",
-  "Metaphase — every chromosome captured and pulled into a single line at the equator (solid, taut)",
-  "Anaphase — sister chromatids split and pulled to opposite poles",
-  "Telophase — nuclear envelopes reform around each chromosome set",
-  "Cytokinesis — cleavage furrow splits the cell into two"
+  "Interphase — chromatin uncondensed",
+  "Prophase — each chromosome condenses; A and B are each ALREADY duplicated (2 identical sister chromatids, same color)",
+  "Prometaphase — nuclear envelope breaks down, spindle fibers search for attachment",
+  "Metaphase — both chromosomes align at the equator, sister chromatids still joined",
+  "Anaphase — sister chromatids separate: ONE blue chromatid and ONE red chromatid go to EACH pole",
+  "Telophase — nuclear envelopes reform around each set (1 blue + 1 red apiece)",
+  "Cytokinesis — two daughter cells, each with one blue and one red chromosome — genetically identical"
 ];
-const positions = {
-  1: [-45,-25, 45,20],
-  2: [-18,-30, 22,25],
-  3: [0,0, 0,0],
-  4: [0,0, 0,0],
-  5: [-100,0, 100,0],
-  6: [-100,0, 100,0]
-};
 function render() {
   document.getElementById('stageLabel').textContent = labels[step];
   document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 6';
   document.getElementById('chromatin').style.opacity = step === 0 ? '1' : '0';
   document.getElementById('nucleus').style.opacity = step <= 1 ? '1' : '0';
   document.getElementById('condensed').classList.toggle('on', step >= 1);
-
-  const pos = positions[step] || [0,0,0,0];
-  let extra1 = '', extra2 = '';
-  if (step === 4) { extra1 = ' translateX(-70px)'; extra2 = ' translateX(70px)'; }
-  document.getElementById('chrom1').style.transform = `translate(${pos[0]}px, ${pos[1]}px)` + extra1;
-  document.getElementById('chrom2').style.transform = `translate(${pos[2]}px, ${pos[3]}px)` + extra2;
-
   document.getElementById('spindle').classList.toggle('on', step >= 2 && step <= 4);
-  const searching = step === 2;
-  [document.getElementById('spindleLinesL'), document.getElementById('spindleLinesR')].forEach(g => {
-    g.style.opacity = searching ? '0.5' : '1';
-    g.querySelectorAll('line').forEach(l => l.setAttribute('stroke-dasharray', searching ? '3 3' : '0'));
-  });
+
+  let ax1=0, ay1=0, ax2=0, ay2=0, bx1=0, by1=0, bx2=0, by2=0;
+  if (step === 1) {
+    ax1=ax2=-30; ay1=ay2=-20; bx1=bx2=25; by1=by2=15;
+  } else if (step === 2) {
+    ax1=ax2=-12; ay1=ay2=-8; bx1=bx2=10; by1=by2=6;
+  } else if (step === 3) {
+    ax1=ax2=0; ay1=ay2=0; bx1=bx2=0; by1=by2=0;
+  } else if (step >= 4) {
+    ax1=-165; ay1=0; ax2=215; ay2=0;
+    bx1=-215; by1=0; bx2=165; by2=0;
+  }
+  document.getElementById('chrA_c1').style.transform = `translate(${ax1}px, ${ay1}px)`;
+  document.getElementById('chrA_c2').style.transform = `translate(${ax2}px, ${ay2}px)`;
+  document.getElementById('chrB_c1').style.transform = `translate(${bx1}px, ${by1}px)`;
+  document.getElementById('chrB_c2').style.transform = `translate(${bx2}px, ${by2}px)`;
+  document.getElementById('linkA').style.opacity = step >= 4 ? '0' : (step >= 1 ? '1' : '0');
+  document.getElementById('linkB').style.opacity = step >= 4 ? '0' : (step >= 1 ? '1' : '0');
 
   document.getElementById('newNuclei').classList.toggle('on', step >= 5);
-  document.getElementById('condensed').style.opacity = step >= 5 ? '0.3' : (step>=1 ? '1':'0.12');
+  document.getElementById('condensed').style.opacity = step >= 5 ? '0.35' : (step>=1 ? '1':'0.12');
   document.getElementById('furrow').classList.toggle('on', step >= 6);
-  document.querySelector('svg').classList.toggle('cytokinesis', step >= 6);
   document.getElementById('daughterLabels').classList.toggle('on', step >= 6);
+  document.getElementById('cellOutline').style.opacity = step >= 6 ? '0' : '1';
 }
 function stepFwd() { if (step < 6) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
@@ -874,37 +866,43 @@ render();
 # MEIOSIS_GENERAL  (source: meiosis.html)
 # ---------------------------------------------------------------------------
 MEIOSIS_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of meiosis showing homolog pairing, crossing over, two rounds of division, an explicit telophase I two-cell stage, and four visibly distinct haploid daughter cells.</h2>
+<h2 class="sr-only">Corrected interactive diagram of meiosis where homologs (maternal vs paternal copies) separate at anaphase I, and only later do sister chromatids separate at meiosis II, producing four haploid cells.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #pair1, #pair2 { transition: transform 1s ease, opacity .6s ease; }
-  .anaphase1 #pair1, .telophase1 #pair1 { transform: translateX(-60px); }
-  .anaphase1 #pair2, .telophase1 #pair2 { transform: translateX(60px); }
+  #matA_c1, #matA_c2, #patA_c1, #patA_c2, #matB_c1, #matB_c2, #patB_c1, #patB_c2 { transition: transform 1s cubic-bezier(.3,0,.2,1); }
+  #linkMatA, #linkPatA, #linkMatB, #linkPatB { transition: opacity 0.5s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
-<svg width="100%" viewBox="0 0 680 380" role="img">
-<title>Meiosis, general view</title>
-<desc>A diploid cell with paired homologous chromosomes undergoes crossing over, aligns as tetrads, separates homologs in meiosis I to form two haploid cells with duplicated chromosomes, then separates sister chromatids in meiosis II, producing four genetically distinct haploid cells.</desc>
+<svg width="100%" viewBox="0 0 680 420" role="img">
+<title>Meiosis with correct homolog then chromatid separation</title>
+<desc>Two homologous chromosome pairs: chromosome A (maternal solid blue, paternal light blue) and chromosome B (maternal solid red, paternal light red). At anaphase I, the maternal and paternal homologs of each chromosome separate from each other to opposite poles, while their own sister chromatids stay joined. Only in meiosis II do sister chromatids finally separate, producing four haploid cells, each with a different combination of maternal and paternal chromosomes.</desc>
 
-<ellipse id="parentCell" cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<ellipse id="cellOutline" cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 <text class="ts" x="340" y="28" text-anchor="middle" id="stageLabel">Diploid cell, homologs unpaired</text>
 
-<g id="pair1">
-<path d="M300 150 L320 170 M320 150 L300 170" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
-<path id="homolog1b" d="M300 190 L320 210 M320 190 L300 210" stroke="#85B7EB" stroke-width="4" stroke-linecap="round" opacity="0"/>
-</g>
-<g id="pair2">
-<path d="M360 150 L380 170 M380 150 L360 170" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
-<path id="homolog2b" d="M360 190 L380 210 M380 190 L360 210" stroke="#F0997B" stroke-width="4" stroke-linecap="round" opacity="0"/>
-</g>
+<line id="matA_c1" x1="290" y1="145" x2="290" y2="185" stroke="#378ADD" stroke-width="6" stroke-linecap="round"/>
+<line id="matA_c2" x1="305" y1="145" x2="305" y2="185" stroke="#378ADD" stroke-width="6" stroke-linecap="round"/>
+<line id="linkMatA" x1="290" y1="165" x2="305" y2="165" stroke="#378ADD" stroke-width="2.5"/>
+
+<line id="patA_c1" x1="325" y1="145" x2="325" y2="185" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<line id="patA_c2" x1="340" y1="145" x2="340" y2="185" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<line id="linkPatA" x1="325" y1="165" x2="340" y2="165" stroke="#85B7EB" stroke-width="2.5"/>
+
+<line id="matB_c1" x1="360" y1="145" x2="360" y2="185" stroke="#D85A30" stroke-width="6" stroke-linecap="round"/>
+<line id="matB_c2" x1="375" y1="145" x2="375" y2="185" stroke="#D85A30" stroke-width="6" stroke-linecap="round"/>
+<line id="linkMatB" x1="360" y1="165" x2="375" y2="165" stroke="#D85A30" stroke-width="2.5"/>
+
+<line id="patB_c1" x1="395" y1="145" x2="395" y2="185" stroke="#F0997B" stroke-width="6" stroke-linecap="round"/>
+<line id="patB_c2" x1="410" y1="145" x2="410" y2="185" stroke="#F0997B" stroke-width="6" stroke-linecap="round"/>
+<line id="linkPatB" x1="395" y1="165" x2="410" y2="165" stroke="#F0997B" stroke-width="2.5"/>
 
 <g id="chiasma" class="stg">
-<circle cx="330" cy="180" r="4" fill="#EF9F27"/>
-<text class="ts" x="330" y="230" text-anchor="middle">Crossing over (chiasma)</text>
+<circle cx="315" cy="165" r="4" fill="#EF9F27"/>
+<text class="ts" x="315" y="205" text-anchor="middle">Crossing over (chiasma)</text>
 </g>
 
 <g id="spindle" class="stg">
@@ -915,22 +913,16 @@ MEIOSIS_GENERAL = '''
 <g id="twoCells" class="stg">
 <ellipse cx="220" cy="170" rx="80" ry="60" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 <ellipse cx="460" cy="170" rx="80" ry="60" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<path d="M205 155 L225 175 M225 155 L205 175" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
-<path d="M445 155 L465 175 M465 155 L445 175" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
-<text class="ts" x="220" y="245" text-anchor="middle">Haploid, chromosomes still duplicated</text>
-<text class="ts" x="460" y="245" text-anchor="middle">Haploid, chromosomes still duplicated</text>
+<text class="ts" x="220" y="250" text-anchor="middle">Maternal A + maternal B</text>
+<text class="ts" x="460" y="250" text-anchor="middle">Paternal A + paternal B</text>
 </g>
 
 <g id="fourCells" class="stg">
-<ellipse cx="130" cy="300" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<ellipse cx="270" cy="300" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<ellipse cx="410" cy="300" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<ellipse cx="550" cy="300" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<line x1="120" y1="300" x2="140" y2="300" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
-<line x1="260" y1="300" x2="280" y2="300" stroke="#85B7EB" stroke-width="4" stroke-linecap="round"/>
-<line x1="400" y1="300" x2="420" y2="300" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
-<line x1="540" y1="300" x2="560" y2="300" stroke="#F0997B" stroke-width="4" stroke-linecap="round"/>
-<text class="th" x="340" y="355" text-anchor="middle">Four haploid cells — each with a different chromosome combination</text>
+<ellipse cx="130" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="270" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="410" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<ellipse cx="550" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="th" x="340" y="390" text-anchor="middle">Four haploid cells — each a different maternal/paternal combination</text>
 </g>
 </svg>
 
@@ -944,29 +936,48 @@ MEIOSIS_GENERAL = '''
 <script>
 let step = 0;
 const labels = [
-  "Diploid cell, homologs unpaired",
-  "Prophase I — homologs pair (synapsis) and cross over",
+  "Diploid cell — each chromosome (A and B) already duplicated; maternal and paternal homologs shown as dark vs light shade",
+  "Prophase I — homologous chromosomes pair up (synapsis) and cross over",
   "Metaphase I — homolog pairs (tetrads) align at the equator",
-  "Anaphase I — homologs separate to opposite poles (chromatids stay joined)",
-  "Telophase I — two haploid cells form, each chromosome still has two joined sister chromatids",
-  "Meiosis II — sister chromatids finally separate within each cell, like mitosis",
-  "Result — four haploid cells, each with a different mix of chromosomes from crossing over"
+  "Anaphase I — the MATERNAL and PATERNAL homologs separate from EACH OTHER (not sister chromatids — those stay joined)",
+  "Telophase I — two haploid cells form: one gets maternal A + maternal B, the other gets paternal A + paternal B",
+  "Meiosis II — NOW sister chromatids separate within each cell, like mitosis",
+  "Result — four haploid cells, each with a different maternal/paternal combination"
 ];
 function render() {
   document.getElementById('stageLabel').textContent = labels[step];
   document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 6';
-  document.getElementById('homolog1b').setAttribute('opacity', step >= 1 ? '1' : '0');
-  document.getElementById('homolog2b').setAttribute('opacity', step >= 1 ? '1' : '0');
   document.getElementById('chiasma').classList.toggle('on', step === 1);
   document.getElementById('spindle').classList.toggle('on', step >= 2 && step <= 3);
-  const svg = document.querySelector('svg');
-  svg.classList.toggle('anaphase1', step === 3);
-  svg.classList.toggle('telophase1', step === 4);
-  document.getElementById('pair1').style.opacity = step >= 4 ? '0' : '1';
-  document.getElementById('pair2').style.opacity = step >= 4 ? '0' : '1';
-  document.getElementById('parentCell').style.opacity = step >= 4 ? '0' : '1';
+
+  let m = {};
+  const ids = ['matA_c1','matA_c2','patA_c1','patA_c2','matB_c1','matB_c2','patB_c1','patB_c2'];
+  ids.forEach(id => m[id] = [0,0]);
+
+  if (step === 1) {
+    m.matA_c1=[-15,-15]; m.matA_c2=[-15,-15]; m.patA_c1=[15,15]; m.patA_c2=[15,15];
+    m.matB_c1=[-15,-15]; m.matB_c2=[-15,-15]; m.patB_c1=[15,15]; m.patB_c2=[15,15];
+  } else if (step >= 3 && step < 4) {
+    // metaphase I: base positions
+  } else if (step >= 4 && step < 5) {
+    m.matA_c1=[-165,0]; m.matA_c2=[-165,0]; m.patA_c1=[195,0]; m.patA_c2=[195,0];
+    m.matB_c1=[-215,0]; m.matB_c2=[-215,0]; m.patB_c1=[145,0]; m.patB_c2=[145,0];
+  } else if (step >= 5) {
+    m.matA_c1=[-195,140]; m.matA_c2=[-135,140]; m.patA_c1=[165,140]; m.patA_c2=[225,140];
+    m.matB_c1=[-245,140]; m.matB_c2=[-185,140]; m.patB_c1=[115,140]; m.patB_c2=[175,140];
+  }
+  ids.forEach(id => {
+    document.getElementById(id).style.transform = `translate(${m[id][0]}px, ${m[id][1]}px)`;
+  });
+  const linksVisible = step < 4;
+  document.getElementById('linkMatA').style.opacity = linksVisible ? '1' : '0';
+  document.getElementById('linkPatA').style.opacity = linksVisible ? '1' : '0';
+  document.getElementById('linkMatB').style.opacity = (step < 5) ? '1' : '0';
+  document.getElementById('linkPatB').style.opacity = (step < 5) ? '1' : '0';
+
   document.getElementById('twoCells').classList.toggle('on', step === 4);
   document.getElementById('fourCells').classList.toggle('on', step >= 5);
+  document.getElementById('cellOutline').style.opacity = step >= 4 ? '0' : '1';
 }
 function stepFwd() { if (step < 6) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
@@ -5512,10 +5523,11 @@ REGISTRY = {
     "Cell division (mitosis)": {
         "General": {
             "fragment": MITOSIS_GENERAL,
-            "height": 560,
+            "height": 580,
             "blurb": (
-                "Seven visually distinct stages: interphase, prophase, "
-                "prometaphase, metaphase, anaphase, telophase, cytokinesis."
+                "Seven stages, with sister chromatids correctly separating "
+                "individually at anaphase — each daughter cell ends up "
+                "with one copy of each chromosome, genetically identical."
             ),
         },
         "Technical": {
@@ -5616,12 +5628,12 @@ REGISTRY = {
     "Meiosis": {
         "General": {
             "fragment": MEIOSIS_GENERAL,
-            "height": 520,
+            "height": 560,
             "blurb": (
-                "Homologous chromosomes pair and cross over, then separate "
-                "in meiosis I into two haploid cells (chromosomes still "
-                "duplicated), and sister chromatids separate in meiosis "
-                "II, producing four visibly distinct haploid cells."
+                "Correctly shows homologs (maternal vs paternal) "
+                "separating at anaphase I — not sister chromatids, which "
+                "stay joined until meiosis II — producing four haploid "
+                "cells, each a different parental combination."
             ),
         },
     },

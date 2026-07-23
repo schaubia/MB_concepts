@@ -161,7 +161,7 @@ render();
 # GPCR_TECHNICAL  (source: gpcr_technical.html)
 # ---------------------------------------------------------------------------
 GPCR_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of GPCR signaling showing Gs, Gi, and Gq branches, the intrinsic GTPase off-switch, and the PKA R2C2 holoenzyme.</h2>
+<h2 class="sr-only">Technical diagram of GPCR signaling showing Gs, Gi, and Gq branches, the intrinsic GTPase off-switch, the PKA R2C2 holoenzyme, and the Gq branch extending to IP3-triggered calcium release and DAG-activated PKC.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
@@ -187,9 +187,9 @@ GPCR_TECHNICAL = '''
   <button id="btnGq" onclick="setPath('Gq')">Gq pathway</button>
 </div>
 
-<svg width="100%" viewBox="0 0 680 470" role="img">
+<svg width="100%" viewBox="0 0 680 500" role="img">
 <title>GPCR Gs/Gi/Gq branching with GTPase off-switch</title>
-<desc>A receptor couples to Gs, Gi, or Gq depending on selection. Gs stimulates and Gi inhibits adenylyl cyclase, changing cAMP; Gq activates phospholipase C to produce IP3 and DAG. Intrinsic GTPase activity on G-alpha hydrolyzes GTP back to GDP, returning the switch to its resting state.</desc>
+<desc>A receptor couples to Gs, Gi, or Gq depending on selection. Gs stimulates and Gi inhibits adenylyl cyclase, changing cAMP; Gq activates phospholipase C to produce IP3 and DAG. IP3 diffuses to the endoplasmic reticulum and triggers calcium release, while DAG remains at the membrane and activates protein kinase C. Intrinsic GTPase activity on G-alpha hydrolyzes GTP back to GDP, returning the switch to its resting state.</desc>
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 </defs>
@@ -242,6 +242,23 @@ GPCR_TECHNICAL = '''
 <circle class="drift" cx="550" cy="235" r="4" fill="#1D9E75" style="animation-delay:.4s"/>
 </g>
 
+<g id="ip3Block" class="stg">
+<line x1="520" y1="245" x2="492" y2="388" stroke="#1D9E75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<rect x="455" y="390" width="75" height="42" rx="8" fill="var(--surface-2)" stroke="#8B5CF6" stroke-width="1.2"/>
+<text class="ts" x="492" y="411" text-anchor="middle" dominant-baseline="central">ER</text>
+<circle class="drift" cx="475" cy="448" r="4" fill="#8B5CF6"/>
+<circle class="drift" cx="492" cy="456" r="4" fill="#8B5CF6" style="animation-delay:.3s"/>
+<circle class="drift" cx="509" cy="448" r="4" fill="#8B5CF6" style="animation-delay:.6s"/>
+<text class="ts" x="492" y="474" text-anchor="middle">Ca2+ released</text>
+</g>
+
+<g id="dagBlock" class="stg">
+<line x1="548" y1="245" x2="585" y2="388" stroke="#1D9E75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<rect x="570" y="390" width="75" height="42" rx="8" class="c-amber" stroke-width="0.5"/>
+<text class="ts" x="607" y="411" text-anchor="middle" dominant-baseline="central">PKC</text>
+<text class="ts" x="607" y="474" text-anchor="middle">PKC activated</text>
+</g>
+
 <g id="pkaBlock" class="stg">
 <g id="pkaGroup" transform="translate(393,320)">
   <rect x="-70" y="-24" width="60" height="48" rx="8" class="c-teal" stroke-width="0.5"/>
@@ -282,8 +299,8 @@ let step = 0;
 let path = 'Gs';
 const labelsGs = ["Step 0 of 4 — resting","Step 1 of 4 — ligand docks, Ga-GTP forms","Step 2 of 4 — AC activated, cAMP rises","Step 3 of 4 — PKA holoenzyme splits","Step 4 of 4 — target phosphorylated"];
 const labelsGi = ["Step 0 of 2 — resting","Step 1 of 2 — ligand docks, Ga-GTP forms","Step 2 of 2 — AC inhibited, cAMP falls"];
-const labelsGq = ["Step 0 of 2 — resting","Step 1 of 2 — ligand docks, Ga-GTP forms","Step 2 of 2 — PLC activated, IP3 + DAG produced"];
-function maxStep() { return path==='Gs' ? 4 : 2; }
+const labelsGq = ["Step 0 of 4 — resting","Step 1 of 4 — ligand docks, Ga-GTP forms","Step 2 of 4 — PLC activated, IP3 + DAG produced","Step 3 of 4 — IP3 diffuses to the ER, releasing Ca2+","Step 4 of 4 — DAG (with Ca2+) activates PKC at the membrane"];
+function maxStep() { return path==='Gi' ? 2 : 4; }
 function setPath(p) {
   path = p; step = 0;
   document.querySelectorAll('.rowbtns button').forEach(b=>b.classList.remove('active'));
@@ -305,6 +322,8 @@ function render() {
   document.getElementById('gsPath').classList.toggle('on', path==='Gs' && step>=1);
   document.getElementById('giPath').classList.toggle('on', path==='Gi' && step>=1);
   document.getElementById('gqPath').classList.toggle('on', path==='Gq' && step>=1);
+  document.getElementById('ip3Block').classList.toggle('on', path==='Gq' && step>=3);
+  document.getElementById('dagBlock').classList.toggle('on', path==='Gq' && step>=4);
   document.getElementById('campUp').classList.toggle('on', path==='Gs' && step>=2);
   document.getElementById('pkaBlock').classList.toggle('on', path==='Gs' && step>=3);
   document.getElementById('pkaGroup').classList.toggle('split', path==='Gs' && step>=3);
@@ -5492,11 +5511,13 @@ REGISTRY = {
         },
         "Technical": {
             "fragment": GPCR_TECHNICAL,
-            "height": 640,
+            "height": 680,
             "blurb": (
                 "Adds the Gs / Gi / Gq branch selector, the intrinsic "
-                "GTPase off-switch, and the PKA R2C2 holoenzyme splitting "
-                "into free catalytic subunits."
+                "GTPase off-switch, the PKA R2C2 holoenzyme splitting "
+                "into free catalytic subunits, and — on the Gq branch — "
+                "IP3 triggering ER calcium release alongside DAG "
+                "activating PKC."
             ),
         },
     },
