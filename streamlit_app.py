@@ -1206,7 +1206,7 @@ setMode('extrinsic');
 # ENDO_EXOCYTOSIS_GENERAL  (source: endo_exocytosis.html)
 # ---------------------------------------------------------------------------
 ENDO_EXOCYTOSIS_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of endocytosis and exocytosis: a switchable view of vesicle formation from the membrane, or vesicle docking and fusion to release cargo.</h2>
+<h2 class="sr-only">Interactive diagram of clathrin-mediated endocytosis and SNARE-mediated exocytosis: a switchable view of vesicle formation from the membrane, or vesicle docking and fusion to release cargo.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
@@ -1226,7 +1226,7 @@ ENDO_EXOCYTOSIS_GENERAL = '''
 
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Endocytosis and exocytosis</title>
-<desc>Endocytosis: the membrane invaginates around extracellular cargo, coated by clathrin, then pinches off into an intracellular vesicle. Exocytosis: an intracellular vesicle moves to the membrane, docks via SNARE proteins, and fuses to release its cargo outside the cell.</desc>
+<desc>Clathrin-mediated endocytosis: the membrane invaginates around extracellular cargo, coated by clathrin, then pinches off into an intracellular vesicle. SNARE-mediated exocytosis: an intracellular vesicle moves to the membrane and docks — SNAREs are membrane-anchored proteins on the vesicle (v-SNARE) and the target membrane (t-SNARE) that pair up and pull the two membranes together — then the membranes fuse and cargo is released outside the cell.</desc>
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 </defs>
@@ -1256,7 +1256,7 @@ ENDO_EXOCYTOSIS_GENERAL = '''
 
 <g id="snare" class="stg">
 <rect x="185" y="140" width="30" height="14" rx="4" class="c-teal"/>
-<text class="ts" x="200" y="127" text-anchor="middle">SNARE docking</text>
+<text class="ts" x="200" y="127" text-anchor="middle">v-SNARE + t-SNARE pairing</text>
 </g>
 
 <g id="released" class="stg">
@@ -1276,13 +1276,13 @@ let step = 0;
 let mode = 'endo';
 const labelsEndo = [
   "Step 0 of 3 — cargo outside, membrane flat",
-  "Step 1 of 3 — clathrin coats the membrane, it begins to invaginate",
+  "Step 1 of 3 — clathrin coats the membrane (clathrin-mediated endocytosis), it begins to invaginate",
   "Step 2 of 3 — vesicle pinches off, enclosing the cargo",
   "Step 3 of 3 — vesicle moves into the cytoplasm and uncoats"
 ];
 const labelsExo = [
   "Step 0 of 3 — vesicle with cargo inside the cytoplasm",
-  "Step 1 of 3 — vesicle moves to the membrane and docks via SNARE proteins",
+  "Step 1 of 3 — vesicle moves to the membrane; v-SNARE (vesicle) pairs with t-SNARE (membrane) to dock it",
   "Step 2 of 3 — vesicle membrane fuses with the plasma membrane",
   "Step 3 of 3 — cargo released outside the cell"
 ];
@@ -1317,6 +1317,231 @@ function render() {
   vc.setAttribute('r', cr); vc.setAttribute('cy', cy);
 }
 function stepFwd() { if (step < 3) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('endo');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# ENDO_EXOCYTOSIS_TECHNICAL  (source: endo_exocytosis.html)
+# ---------------------------------------------------------------------------
+ENDO_EXOCYTOSIS_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of clathrin-mediated endocytosis with AP2 and dynamin, and SNARE-mediated exocytosis split into constitutive and Ca2+-triggered regulated pathways with synaptotagmin.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 2s ease-in-out infinite; }
+  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
+  @media (prefers-reduced-motion: reduce) { .pulse, .drift { animation: none; } }
+  #vesicleEndo, #vcargoEndo, #vesicleExo, #vcargoExo { transition: cy 1s ease, r .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnEndo" onclick="setMode('endo')">Endocytosis</button>
+  <button id="btnExo" onclick="setMode('exo')">Exocytosis</button>
+</div>
+<div class="rowbtns" id="exoSubRow" style="display:none;">
+  <button id="btnConst" onclick="setExoType('const')">Constitutive</button>
+  <button id="btnReg" onclick="setExoType('reg')">Regulated (Ca2+)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 520" role="img">
+<title>Clathrin-mediated endocytosis and SNARE-mediated exocytosis (constitutive vs Ca2+-regulated)</title>
+<desc>Endocytosis: AP2 adaptor and clathrin coat the membrane around a receptor-cargo complex; dynamin polymerizes as a collar around the neck and GTP hydrolysis drives scission; Hsc70 then uncoats the free vesicle. Exocytosis: a vesicle's v-SNARE pairs with membrane t-SNAREs and they zipper together to fuse the membranes. In constitutive exocytosis this happens continuously with no trigger. In regulated exocytosis, typified by synaptic vesicles, synaptotagmin clamps the SNARE complex in a primed-but-paused state until a voltage-gated channel admits Ca2+, which binds synaptotagmin, releases the clamp, and lets fusion complete rapidly.</desc>
+<defs>
+<marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<line x1="30" y1="200" x2="670" y2="200" stroke="var(--border-strong)" stroke-width="2"/>
+<text class="ts" x="350" y="185" text-anchor="middle">Plasma membrane</text>
+<text class="ts" x="350" y="470" text-anchor="middle">Inside the cell</text>
+<text class="ts" x="350" y="45" text-anchor="middle">Outside the cell</text>
+
+<!-- ================= ENDOCYTOSIS (clathrin-mediated), centered near x=200 ================= -->
+<g id="cargoOutside" class="stg">
+<circle cx="200" cy="70" r="10" fill="#EF9F27"/>
+<text class="ts" x="200" y="52" text-anchor="middle">Cargo</text>
+</g>
+<g id="receptorTag" class="stg">
+<rect x="188" y="195" width="24" height="10" rx="2" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="200" y="228" text-anchor="middle">Receptor</text>
+</g>
+<g id="ap2" class="stg">
+<rect x="172" y="204" width="8" height="8" class="c-purple"/>
+<rect x="220" y="204" width="8" height="8" class="c-purple"/>
+<text class="ts" x="200" y="252" text-anchor="middle">AP2 adaptor</text>
+</g>
+<g id="clathrinLattice" class="stg">
+<circle cx="182" cy="222" r="3.5" class="c-purple"/>
+<circle cx="200" cy="228" r="3.5" class="c-purple"/>
+<circle cx="218" cy="222" r="3.5" class="c-purple"/>
+<circle cx="182" cy="208" r="3.5" class="c-purple"/>
+<circle cx="218" cy="208" r="3.5" class="c-purple"/>
+<text class="ts" x="200" y="276" text-anchor="middle">Clathrin lattice</text>
+</g>
+<g id="dynaminCollar" class="stg">
+<ellipse cx="200" cy="222" rx="24" ry="9" fill="none" class="c-coral" stroke-width="3"/>
+<text class="ts" x="200" y="300" text-anchor="middle">Dynamin collar — GTP hydrolysis drives scission</text>
+</g>
+<g id="uncoatLabel" class="stg">
+<text class="ts" x="200" y="300" text-anchor="middle">Hsc70 strips the clathrin coat (uncoating)</text>
+</g>
+<g id="vesicleGroupEndo">
+<circle id="vesicleEndo" cx="200" cy="200" r="0" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<circle id="vcargoEndo" cx="200" cy="200" r="0" fill="#EF9F27"/>
+</g>
+
+<!-- ================= EXOCYTOSIS (constitutive vs regulated), centered near x=500 ================= -->
+<g id="ca2Channel" class="stg">
+<rect x="490" y="196" width="20" height="8" fill="var(--surface-2)" stroke="#8B5CF6" stroke-width="1.5"/>
+<text class="ts" x="500" y="182" text-anchor="middle" style="opacity:0">.</text>
+<text class="ts" x="500" y="60" text-anchor="middle">Voltage-gated Ca2+ channel</text>
+<circle class="drift" cx="494" cy="90" r="4" fill="#8B5CF6"/>
+<circle class="drift" cx="506" cy="105" r="4" fill="#8B5CF6" style="animation-delay:.3s"/>
+<circle class="drift" cx="500" cy="130" r="4" fill="#8B5CF6" style="animation-delay:.6s"/>
+<circle class="drift" cx="496" cy="160" r="4" fill="#8B5CF6" style="animation-delay:.9s"/>
+</g>
+<g id="vSnare" class="stg">
+<rect x="486" y="188" width="28" height="9" rx="3" class="c-teal"/>
+<text class="ts" x="500" y="176" text-anchor="middle">v-SNARE (VAMP)</text>
+</g>
+<g id="tSnare" class="stg">
+<rect x="486" y="204" width="28" height="9" rx="3" fill="var(--surface-2)" stroke="#0F6E56" stroke-width="1.5"/>
+<text class="ts" x="500" y="232" text-anchor="middle">t-SNARE (syntaxin + SNAP-25)</text>
+</g>
+<g id="synClamp" class="stg">
+<rect x="470" y="196" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="#EF9F27" stroke-width="1.5"/>
+<text class="ts" x="440" y="248" text-anchor="middle">Synaptotagmin clamp — primed but paused</text>
+</g>
+<g id="synReleased" class="stg">
+<text class="ts" x="440" y="248" text-anchor="middle">Ca2+ binds synaptotagmin — clamp releases, zippering completes</text>
+</g>
+<g id="constNote" class="stg">
+<text class="ts" x="500" y="252" text-anchor="middle">Continuous — no trigger needed</text>
+</g>
+<g id="fusedLabelExo" class="stg">
+<circle cx="500" cy="150" r="9" fill="#EF9F27"/>
+<text class="ts" x="500" y="130" text-anchor="middle">Cargo released</text>
+</g>
+<g id="vesicleGroupExo">
+<circle id="vesicleExo" cx="500" cy="400" r="18" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<circle id="vcargoExo" cx="500" cy="400" r="8" fill="#EF9F27"/>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'endo';
+let exoType = 'const';
+
+const labelsEndo = [
+  "Step 0 of 4 — receptor-cargo complex at the membrane, no coat yet",
+  "Step 1 of 4 — AP2 adaptor binds the receptor and recruits clathrin",
+  "Step 2 of 4 — clathrin triskelions polymerize into a lattice; membrane invaginates deeply",
+  "Step 3 of 4 — dynamin polymerizes as a collar around the neck; GTP hydrolysis drives scission",
+  "Step 4 of 4 — vesicle is free in the cytoplasm; Hsc70 strips the clathrin coat"
+];
+const labelsExoConst = [
+  "Step 0 of 3 — vesicle with cargo in the cytoplasm",
+  "Step 1 of 3 — vesicle reaches the membrane; v-SNARE pairs with t-SNAREs and zippering begins",
+  "Step 2 of 3 — SNAREs fully zippered, membranes fuse",
+  "Step 3 of 3 — cargo released continuously, no trigger needed"
+];
+const labelsExoReg = [
+  "Step 0 of 4 — vesicle pre-docked at the membrane, SNAREs partially zippered",
+  "Step 1 of 4 — synaptotagmin clamps the SNARE complex, holding fusion primed but paused",
+  "Step 2 of 4 — a voltage-gated channel opens, admitting Ca2+",
+  "Step 3 of 4 — Ca2+ binds synaptotagmin, releasing the clamp; SNAREs finish zippering",
+  "Step 4 of 4 — rapid fusion; cargo released in a burst (e.g. neurotransmitter release)"
+];
+
+function currentLabels() {
+  if (mode === 'endo') return labelsEndo;
+  return exoType === 'const' ? labelsExoConst : labelsExoReg;
+}
+function maxStep() {
+  if (mode === 'endo') return 4;
+  return exoType === 'const' ? 3 : 4;
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnEndo').classList.toggle('active', m === 'endo');
+  document.getElementById('btnExo').classList.toggle('active', m === 'exo');
+  document.getElementById('exoSubRow').style.display = m === 'exo' ? 'flex' : 'none';
+  render();
+}
+function setExoType(t) {
+  exoType = t; step = 0;
+  document.getElementById('btnConst').classList.toggle('active', t === 'const');
+  document.getElementById('btnReg').classList.toggle('active', t === 'reg');
+  render();
+}
+function render() {
+  const labels = currentLabels();
+  document.getElementById('stepLabel').textContent = labels[step];
+
+  document.getElementById('cargoOutside').classList.toggle('on', mode === 'endo' && step <= 1);
+  document.getElementById('receptorTag').classList.toggle('on', mode === 'endo' && step <= 2);
+  document.getElementById('ap2').classList.toggle('on', mode === 'endo' && step >= 1 && step <= 3);
+  document.getElementById('clathrinLattice').classList.toggle('on', mode === 'endo' && step >= 1 && step <= 3);
+  document.getElementById('dynaminCollar').classList.toggle('on', mode === 'endo' && step === 3);
+  document.getElementById('uncoatLabel').classList.toggle('on', mode === 'endo' && step === 4);
+
+  const exoOn = mode === 'exo';
+  const showSnare = exoOn && (exoType === 'reg' || step >= 1);
+  document.getElementById('vSnare').classList.toggle('on', showSnare);
+  document.getElementById('tSnare').classList.toggle('on', showSnare);
+  document.getElementById('synClamp').classList.toggle('on', exoOn && exoType === 'reg' && step <= 2);
+  document.getElementById('synReleased').classList.toggle('on', exoOn && exoType === 'reg' && step >= 3);
+  document.getElementById('ca2Channel').classList.toggle('on', exoOn && exoType === 'reg' && step >= 2);
+  document.getElementById('constNote').classList.toggle('on', exoOn && exoType === 'const' && step === 3);
+  document.getElementById('fusedLabelExo').classList.toggle('on',
+    (exoOn && exoType === 'const' && step >= 3) || (exoOn && exoType === 'reg' && step >= 4));
+
+  const ve = document.getElementById('vesicleEndo');
+  const vce = document.getElementById('vcargoEndo');
+  let er = 0, ecy = 200, ecr = 0;
+  if (mode === 'endo') {
+    if (step === 1) { er = 14; ecy = 210; ecr = 6; }
+    else if (step === 2) { er = 18; ecy = 220; ecr = 8; }
+    else if (step === 3) { er = 18; ecy = 260; ecr = 8; }
+    else if (step === 4) { er = 18; ecy = 340; ecr = 8; }
+  }
+  ve.setAttribute('r', er); ve.setAttribute('cy', ecy);
+  vce.setAttribute('r', ecr); vce.setAttribute('cy', ecy);
+
+  const vx = document.getElementById('vesicleExo');
+  const vcx = document.getElementById('vcargoExo');
+  let xr = 18, xcy = 400, xcr = 8;
+  if (mode === 'exo') {
+    if (exoType === 'const') {
+      if (step === 0) { xcy = 400; }
+      else if (step === 1) { xcy = 220; }
+      else if (step === 2) { xcy = 200; }
+      else { xr = 0; xcr = 0; xcy = 200; }
+    } else {
+      if (step <= 2) { xcy = 210; }
+      else if (step === 3) { xcy = 205; }
+      else { xr = 0; xcr = 0; xcy = 200; }
+    }
+  }
+  vx.setAttribute('r', xr); vx.setAttribute('cy', xcy);
+  vcx.setAttribute('r', xcr); vcx.setAttribute('cy', xcy);
+}
+function stepFwd() { if (step < maxStep()) step++; render(); }
 function reset() { step = 0; render(); }
 setMode('endo');
 </script>
@@ -5676,9 +5901,22 @@ REGISTRY = {
             "fragment": ENDO_EXOCYTOSIS_GENERAL,
             "height": 460,
             "blurb": (
-                "Switch between the two directions: endocytosis pinches a "
-                "clathrin-coated vesicle in from the membrane; exocytosis "
-                "docks and fuses a vesicle to release cargo outward."
+                "Switch between the two directions: clathrin-mediated "
+                "endocytosis pinches a coated vesicle in from the "
+                "membrane; SNARE-mediated exocytosis docks and fuses a "
+                "vesicle to release cargo outward."
+            ),
+        },
+        "Technical": {
+            "fragment": ENDO_EXOCYTOSIS_TECHNICAL,
+            "height": 660,
+            "blurb": (
+                "Adds AP2 and dynamin to endocytosis (GTP-driven scission "
+                "and Hsc70 uncoating), and splits exocytosis into a "
+                "constitutive branch (v-/t-SNARE zippering, no trigger) "
+                "and a regulated Ca2+-triggered branch (synaptotagmin "
+                "clamp released by Ca2+ influx, as in synaptic vesicle "
+                "release)."
             ),
         },
     },
