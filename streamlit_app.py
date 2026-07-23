@@ -980,23 +980,34 @@ render();
 # APOPTOSIS_GENERAL  (source: apoptosis.html)
 # ---------------------------------------------------------------------------
 APOPTOSIS_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of apoptosis: a death ligand triggers a caspase cascade that dismantles the cell into apoptotic bodies, which are cleared by a phagocyte.</h2>
+<h2 class="sr-only">Interactive diagram of apoptosis with two pathways: the extrinsic pathway triggered by a death ligand, and the intrinsic mitochondrial pathway triggered by internal cellular stress, both converging on the same executioner caspase-3.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.6s ease-in-out infinite; }
+  @keyframes drift { 0%{transform:translateY(0)} 100%{transform:translateY(-40px)} }
   #cellBody { transition: d 0.8s ease, opacity .6s ease; }
   #bodies { transition: transform 1s ease, opacity .8s ease; }
   .engulfed #bodies { transform: translateX(120px) scale(0.3); opacity: 0; }
   #phagocyte { transition: transform 0.8s ease; }
   .approaching #phagocyte { transform: translateX(-40px); }
+  #mitoOutline { transition: stroke-dasharray 0.6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
+
+<div class="rowbtns">
+  <button id="btnExtrinsic" onclick="setMode('extrinsic')">Extrinsic pathway</button>
+  <button id="btnIntrinsic" onclick="setMode('intrinsic')">Intrinsic pathway</button>
+</div>
+
 <svg width="100%" viewBox="0 0 680 320" role="img">
-<title>Apoptosis, general view</title>
-<desc>A death ligand binds a receptor on the cell surface, activating an initiator caspase that in turn activates executioner caspases, which fragment DNA and break down the cytoskeleton, causing the cell to bleb into apoptotic bodies. A phagocyte then approaches and engulfs the apoptotic bodies, clearing them without triggering inflammation.</desc>
+<title>Apoptosis — extrinsic and intrinsic pathways</title>
+<desc>The extrinsic pathway begins when a death ligand binds a surface receptor, activating initiator caspase-8. The intrinsic (mitochondrial) pathway begins with internal cellular stress or DNA damage, which tips the Bcl-2 family balance, permeabilizes the mitochondrial outer membrane, and releases cytochrome c to form the apoptosome, activating initiator caspase-9. Both pathways converge on the same executioner caspase-3, which dismantles the cell into apoptotic bodies that a phagocyte clears.</desc>
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 </defs>
@@ -1005,6 +1016,7 @@ APOPTOSIS_GENERAL = '''
 <circle cx="200" cy="170" r="28" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
 <text class="ts" x="200" y="270" text-anchor="middle">Nucleus intact</text>
 
+<!-- Extrinsic-only elements -->
 <g id="ligand" class="stg">
 <circle cx="200" cy="60" r="8" fill="#E24B4A"/>
 <text class="ts" x="200" y="42" text-anchor="middle">Death ligand</text>
@@ -1016,10 +1028,46 @@ APOPTOSIS_GENERAL = '''
 <text class="ts" x="200" y="105" text-anchor="middle" dominant-baseline="central">C8</text>
 </g>
 
+<!-- Intrinsic-only elements -->
+<g id="stressSignal" class="stg">
+<circle cx="90" cy="60" r="10" fill="#B91C1C"/>
+<text class="ts" x="90" y="42" text-anchor="middle">DNA damage / stress (p53)</text>
+</g>
+
+<g id="bh3" class="stg">
+<circle cx="130" cy="100" r="8" class="c-amber pulse"/>
+<text class="ts" x="130" y="120" text-anchor="middle">BH3-only proteins tip Bcl-2 balance</text>
+</g>
+
+<ellipse id="mitoOutline" cx="130" cy="150" rx="45" ry="30" fill="none" stroke="var(--t)" stroke-width="1.5" class="stg"/>
+<text class="ts" x="130" y="112" text-anchor="middle" id="mitoLabel" class="stg"></text>
+
+<g id="baxbak" class="stg">
+<circle cx="115" cy="150" r="5" fill="#E24B4A"/>
+<circle cx="130" cy="160" r="5" fill="#E24B4A"/>
+<text class="ts" x="130" y="192" text-anchor="middle">Bax/Bak — MOMP</text>
+</g>
+
+<g id="cytc" class="stg">
+<circle class="drift" cx="130" cy="150" r="4" fill="#EF9F27"/>
+<circle class="drift" cx="140" cy="160" r="4" fill="#EF9F27" style="animation-delay:.3s"/>
+</g>
+
+<g id="apoptosome" class="stg">
+<circle cx="200" cy="100" r="16" class="c-purple"/>
+<text class="ts" x="200" y="80" text-anchor="middle" font-size="8">Apoptosome</text>
+</g>
+
+<g id="caspase9" class="stg">
+<circle cx="200" cy="105" r="14" class="c-teal"/>
+<text class="ts" x="200" y="105" text-anchor="middle" dominant-baseline="central">C9</text>
+</g>
+
+<!-- Shared convergence point -->
 <g id="caspase3" class="stg">
 <circle cx="260" cy="140" r="14" class="c-red"/>
 <text class="ts" x="260" y="140" text-anchor="middle" dominant-baseline="central">C3</text>
-<text class="ts" x="290" y="140" text-anchor="middle">Executioner</text>
+<text class="ts" x="290" y="140" text-anchor="middle" id="executionerLabel">Executioner</text>
 </g>
 
 <g id="damage" class="stg">
@@ -1049,40 +1097,77 @@ APOPTOSIS_GENERAL = '''
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 5</span>
+  <span id="stepLabel">Step 0 of 6</span>
 </div>
 
 <script>
 let step = 0;
-const labels = [
-  "Step 0 of 5 — healthy cell, no death signal",
-  "Step 1 of 5 — death ligand binds receptor, initiator caspase-8 activates",
-  "Step 2 of 5 — caspase-8 activates executioner caspase-3",
-  "Step 3 of 5 — caspase-3 fragments DNA, breaks down the cytoskeleton, cell blebs into apoptotic bodies",
-  "Step 4 of 5 — a phagocyte approaches the apoptotic bodies",
-  "Step 5 of 5 — phagocytosis: the phagocyte engulfs and digests the bodies, no inflammation triggered"
+let mode = 'extrinsic';
+const extrinsicLabels = [
+  "Step 0 of 6 — healthy cell, no death signal",
+  "Step 1 of 6 — death ligand binds receptor, initiator caspase-8 activates",
+  "Step 2 of 6 — caspase-8 activates executioner caspase-3",
+  "Step 3 of 6 — caspase-3 fragments DNA, breaks down the cytoskeleton, cell blebs into apoptotic bodies",
+  "Step 4 of 6 — a phagocyte approaches the apoptotic bodies",
+  "Step 5 of 6 — phagocytosis: the phagocyte engulfs and digests the bodies",
+  "Step 6 of 6 — cleared without triggering inflammation"
 ];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('ligand').classList.toggle('on', step >= 1);
-  document.getElementById('caspase8').classList.toggle('on', step >= 1);
-  document.getElementById('caspase8').classList.toggle('pulse', step === 1);
-  document.getElementById('caspase3').classList.toggle('on', step >= 2);
-  document.getElementById('caspase3').classList.toggle('pulse', step === 2);
-  document.getElementById('damage').classList.toggle('on', step >= 3);
-  document.getElementById('cellBody').style.opacity = step >= 3 ? '0.15' : '1';
-  document.getElementById('bodies').classList.toggle('on', step >= 3 && step < 5);
-  document.getElementById('phagocyte').classList.toggle('on', step >= 4);
-  const svg = document.querySelector('svg');
-  svg.classList.toggle('approaching', step === 4);
-  svg.classList.toggle('engulfed', step >= 5);
-  document.getElementById('phagocyteLabel').textContent = step >= 5 ? 'Phagocyte (fed)' : 'Phagocyte';
-  document.getElementById('engulfNote').classList.toggle('on', step >= 5);
+const intrinsicLabels = [
+  "Step 0 of 6 — cellular stress or DNA damage detected, often sensed by p53",
+  "Step 1 of 6 — pro-apoptotic BH3-only proteins activate, tipping the Bcl-2 family balance",
+  "Step 2 of 6 — Bax/Bak oligomerize on the mitochondrial membrane — MOMP — and cytochrome c is released",
+  "Step 3 of 6 — cytochrome c + Apaf-1 + caspase-9 assemble into the apoptosome, activating caspase-9, which activates the SAME executioner caspase-3 as the extrinsic pathway",
+  "Step 4 of 6 — caspase-3 fragments DNA, breaks down the cytoskeleton, cell blebs into apoptotic bodies",
+  "Step 5 of 6 — a phagocyte approaches the apoptotic bodies",
+  "Step 6 of 6 — phagocytosis clears them without triggering inflammation"
+];
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnExtrinsic').classList.toggle('active', m === 'extrinsic');
+  document.getElementById('btnIntrinsic').classList.toggle('active', m === 'intrinsic');
+  render();
 }
-function stepFwd() { if (step < 5) step++; render(); }
+function render() {
+  const labels = mode === 'extrinsic' ? extrinsicLabels : intrinsicLabels;
+  document.getElementById('stepLabel').textContent = labels[step];
+  const svg = document.querySelector('svg');
+
+  document.getElementById('ligand').classList.toggle('on', mode === 'extrinsic' && step >= 1);
+  document.getElementById('caspase8').classList.toggle('on', mode === 'extrinsic' && step >= 1);
+  document.getElementById('caspase8').classList.toggle('pulse', mode === 'extrinsic' && step === 1);
+
+  document.getElementById('stressSignal').classList.toggle('on', mode === 'intrinsic');
+  document.getElementById('bh3').classList.toggle('on', mode === 'intrinsic' && step >= 1);
+  document.getElementById('mitoOutline').classList.toggle('on', mode === 'intrinsic');
+  document.getElementById('mitoOutline').setAttribute('stroke-dasharray', mode === 'intrinsic' && step >= 2 ? '4 3' : '0');
+  document.getElementById('baxbak').classList.toggle('on', mode === 'intrinsic' && step >= 2);
+  document.getElementById('cytc').classList.toggle('on', mode === 'intrinsic' && step >= 2);
+  document.getElementById('apoptosome').classList.toggle('on', mode === 'intrinsic' && step >= 3);
+  document.getElementById('caspase9').classList.toggle('on', mode === 'intrinsic' && step >= 3);
+
+  const c3threshold = mode === 'extrinsic' ? 2 : 3;
+  document.getElementById('caspase3').classList.toggle('on', step >= c3threshold);
+  document.getElementById('caspase3').classList.toggle('pulse', step === c3threshold);
+  document.getElementById('executionerLabel').textContent = (mode === 'intrinsic' && step === c3threshold) ? 'Same executioner!' : 'Executioner';
+
+  const dmgThreshold = mode === 'extrinsic' ? 3 : 4;
+  const bodiesThreshold = dmgThreshold;
+  const phagoThreshold = mode === 'extrinsic' ? 4 : 5;
+  const engulfThreshold = mode === 'extrinsic' ? 5 : 6;
+
+  document.getElementById('damage').classList.toggle('on', step >= dmgThreshold);
+  document.getElementById('cellBody').style.opacity = step >= dmgThreshold ? '0.15' : '1';
+  document.getElementById('bodies').classList.toggle('on', step >= bodiesThreshold && step < engulfThreshold);
+  document.getElementById('phagocyte').classList.toggle('on', step >= phagoThreshold);
+  svg.classList.toggle('approaching', step === phagoThreshold);
+  svg.classList.toggle('engulfed', step >= engulfThreshold);
+  document.getElementById('phagocyteLabel').textContent = step >= engulfThreshold ? 'Phagocyte (fed)' : 'Phagocyte';
+  document.getElementById('engulfNote').classList.toggle('on', step >= engulfThreshold);
+}
+function stepFwd() { if (step < 6) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
-render();
+setMode('extrinsic');
 </script>
 '''
 
@@ -5377,104 +5462,6 @@ render();
 
 
 # ---------------------------------------------------------------------------
-# APOPTOSIS_TECHNICAL  (source: apoptosis_technical.html)
-# ---------------------------------------------------------------------------
-APOPTOSIS_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of the intrinsic mitochondrial apoptosis pathway: cellular stress tips the Bcl-2 family balance, Bax/Bak permeabilize the mitochondrial membrane, cytochrome c forms the apoptosome, and caspase-9 activates the same executioner caspase-3 used by the extrinsic pathway.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .drift { animation: drift 1.6s ease-in-out infinite; }
-  @keyframes drift { 0%{transform:translateY(0)} 100%{transform:translateY(-40px)} }
-  #mitoOutline { transition: stroke-width 0.6s ease, stroke-dasharray 0.6s ease; }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-<svg width="100%" viewBox="0 0 680 320" role="img">
-<title>Intrinsic (mitochondrial) apoptosis pathway, technical view</title>
-<desc>Cellular stress or DNA damage, often sensed by p53, activates pro-apoptotic BH3-only proteins, tipping the balance of the Bcl-2 protein family. This causes Bax and Bak to oligomerize and permeabilize the mitochondrial outer membrane, releasing cytochrome c into the cytoplasm. Cytochrome c, Apaf-1, and caspase-9 assemble into a complex called the apoptosome, which activates caspase-9. Caspase-9 then activates caspase-3, the same executioner caspase used by the extrinsic death-receptor pathway — two different triggers converging on one final machinery.</desc>
-
-<g id="stressSignal" >
-<circle cx="90" cy="90" r="10" fill="#B91C1C"/>
-<text class="ts" x="90" y="70" text-anchor="middle">DNA damage / stress (sensed by p53)</text>
-</g>
-
-<g id="bh3" class="stg">
-<circle cx="180" cy="120" r="8" class="c-amber pulse"/>
-<text class="ts" x="180" y="145" text-anchor="middle">BH3-only proteins activate</text>
-</g>
-
-<ellipse id="mitoOutline" cx="380" cy="180" rx="120" ry="70" fill="none" stroke="var(--t)" stroke-width="1.5"/>
-<text class="ts" x="380" y="100" text-anchor="middle">Mitochondrion</text>
-
-<g id="baxbak" class="stg">
-<circle cx="290" cy="150" r="6" fill="#E24B4A"/>
-<circle cx="300" cy="165" r="6" fill="#E24B4A"/>
-<text class="ts" x="295" y="130" text-anchor="middle">Bax/Bak oligomerize — MOMP</text>
-</g>
-
-<g id="cytc" class="stg">
-<circle class="drift" cx="380" cy="180" r="5" fill="#EF9F27"/>
-<circle class="drift" cx="395" cy="190" r="5" fill="#EF9F27" style="animation-delay:.3s"/>
-<text class="ts" x="380" y="270" text-anchor="middle">Cytochrome c released</text>
-</g>
-
-<g id="apoptosome" class="stg">
-<circle cx="500" cy="130" r="22" class="c-purple"/>
-<text class="ts" x="500" y="130" text-anchor="middle" dominant-baseline="central" font-size="9">Apoptosome</text>
-<text class="ts" x="500" y="105" text-anchor="middle">Cyt c + Apaf-1 + caspase-9</text>
-</g>
-
-<g id="caspase9" class="stg">
-<circle cx="570" cy="180" r="14" class="c-teal"/>
-<text class="ts" x="570" y="180" text-anchor="middle" dominant-baseline="central">C9</text>
-</g>
-
-<g id="caspase3" class="stg">
-<circle cx="600" cy="240" r="14" class="c-red"/>
-<text class="ts" x="600" y="240" text-anchor="middle" dominant-baseline="central">C3</text>
-<text class="th" x="560" y="280" text-anchor="middle">Same executioner as the extrinsic pathway</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="stepBack()">Back</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 5</span>
-</div>
-
-<script>
-let step = 0;
-const labels = [
-  "Step 0 of 5 — cellular stress or DNA damage detected, often sensed by p53",
-  "Step 1 of 5 — pro-apoptotic BH3-only proteins activate, tipping the Bcl-2 family balance",
-  "Step 2 of 5 — Bax and Bak oligomerize on the mitochondrial outer membrane — MOMP (mitochondrial outer membrane permeabilization)",
-  "Step 3 of 5 — cytochrome c is released from the mitochondrion into the cytoplasm",
-  "Step 4 of 5 — cytochrome c, Apaf-1, and caspase-9 assemble into the apoptosome",
-  "Step 5 of 5 — the apoptosome activates caspase-9, which activates caspase-3 — the SAME executioner caspase the extrinsic pathway uses"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('bh3').classList.toggle('on', step >= 1);
-  document.getElementById('baxbak').classList.toggle('on', step >= 2);
-  document.getElementById('mitoOutline').setAttribute('stroke-dasharray', step >= 2 ? '4 3' : '0');
-  document.getElementById('cytc').classList.toggle('on', step >= 3);
-  document.getElementById('apoptosome').classList.toggle('on', step >= 4);
-  document.getElementById('caspase9').classList.toggle('on', step >= 5);
-  document.getElementById('caspase3').classList.toggle('on', step >= 5);
-}
-function stepFwd() { if (step < 5) step++; render(); }
-function stepBack() { if (step > 0) step--; render(); }
-function reset() { step = 0; render(); }
-render();
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -5643,20 +5630,11 @@ REGISTRY = {
             "fragment": APOPTOSIS_GENERAL,
             "height": 460,
             "blurb": (
-                "Extrinsic pathway: a death ligand activates initiator "
-                "caspase-8, which activates executioner caspase-3, "
-                "dismantling the cell into apoptotic bodies that a "
-                "phagocyte then engulfs and digests."
-            ),
-        },
-        "Technical": {
-            "fragment": APOPTOSIS_TECHNICAL,
-            "height": 460,
-            "blurb": (
-                "The intrinsic (mitochondrial) pathway: internal stress "
-                "tips the Bcl-2 balance, Bax/Bak permeabilize the "
-                "mitochondrion, and the apoptosome activates the SAME "
-                "executioner caspase-3 the extrinsic pathway uses."
+                "Two different triggers, one ending: switch between the "
+                "extrinsic pathway (death ligand → caspase-8) and the "
+                "intrinsic pathway (internal stress → mitochondria → "
+                "caspase-9) — both converge on the same executioner "
+                "caspase-3."
             ),
         },
     },
