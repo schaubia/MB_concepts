@@ -1905,6 +1905,10 @@ GASTRULATION_GENERAL = '''
 
 <path id="innerFold" d="M340 270 Q340 270 340 270" fill="none" stroke="#D85A30" stroke-width="3" class="stg"/>
 
+<g id="mesodermLayer" class="stg">
+<circle cx="340" cy="160" r="75" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="4 3"/>
+</g>
+
 <g id="archenteron" class="stg">
 <ellipse cx="340" cy="190" rx="45" ry="60" fill="none" stroke="#D85A30" stroke-width="2"/>
 <text class="ts" x="340" y="190" text-anchor="middle" dominant-baseline="central">Archenteron</text>
@@ -1948,6 +1952,7 @@ function render() {
   document.getElementById('innerFold').classList.toggle('on', step >= 1);
   document.getElementById('innerFold').setAttribute('d', folds[step]);
   document.getElementById('archenteron').classList.toggle('on', step >= 2);
+  document.getElementById('mesodermLayer').classList.toggle('on', step >= 3);
   document.getElementById('layers').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
