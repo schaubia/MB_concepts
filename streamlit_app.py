@@ -640,8 +640,8 @@ function render() {
   } else if (step === 3) {
     ax1=ax2=0; ay1=ay2=0; bx1=bx2=0; by1=by2=0;
   } else if (step >= 4) {
-    ax1=-165; ay1=0; ax2=215; ay2=0;
-    bx1=-215; by1=0; bx2=165; by2=0;
+    ax1=-100; ay1=0; ax2=120; ay2=0;
+    bx1=-120; by1=0; bx2=100; by2=0;
   }
   document.getElementById('chrA_c1').style.transform = `translate(${ax1}px, ${ay1}px)`;
   document.getElementById('chrA_c2').style.transform = `translate(${ax2}px, ${ay2}px)`;
