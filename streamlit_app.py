@@ -1915,12 +1915,12 @@ GASTRULATION_GENERAL = '''
 </g>
 
 <g id="layers" class="stg">
-<text class="ts" x="490" y="90" text-anchor="middle">Ectoderm (outer)</text>
 <circle cx="450" cy="90" r="5" fill="#378ADD"/>
-<text class="ts" x="490" y="160" text-anchor="middle">Mesoderm (middle)</text>
+<text class="ts" x="465" y="90" text-anchor="start" dominant-baseline="central">Ectoderm (outer)</text>
 <circle cx="450" cy="160" r="5" fill="#7F77DD"/>
-<text class="ts" x="490" y="230" text-anchor="middle">Endoderm (inner)</text>
+<text class="ts" x="465" y="160" text-anchor="start" dominant-baseline="central">Mesoderm (middle)</text>
 <circle cx="450" cy="230" r="5" fill="#D85A30"/>
+<text class="ts" x="465" y="230" text-anchor="start" dominant-baseline="central">Endoderm (inner)</text>
 </g>
 </svg>
 
