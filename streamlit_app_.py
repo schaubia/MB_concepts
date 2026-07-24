@@ -1315,7 +1315,7 @@ ENZYME_KINETICS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #substrateGroup { transition: transform 1s ease, opacity .5s ease; }
-  .bound #substrateGroup { transform: translate(157px, 0px); }
+  .bound #substrateGroup { transform: translate(15px, 5px); }
   #activeSite { transition: r 0.6s ease, stroke 0.6s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
