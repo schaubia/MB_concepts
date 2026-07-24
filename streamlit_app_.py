@@ -922,7 +922,7 @@ MEIOSIS_GENERAL = '''
 <ellipse cx="270" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 <ellipse cx="410" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 <ellipse cx="550" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<text class="th" x="340" y="390" text-anchor="middle">2 identical maternal + 2 identical paternal copies</text>
+<text class="th" x="340" y="390" text-anchor="middle">Four haploid cells — 2 identical maternal copies + 2 identical paternal copies</text>
 </g>
 </svg>
 
@@ -942,7 +942,7 @@ const labels = [
   "Anaphase I — the MATERNAL and PATERNAL homologs separate from EACH OTHER (not sister chromatids — those stay joined)",
   "Telophase I — two haploid cells form: one gets maternal A + maternal B, the other gets paternal A + paternal B",
   "Meiosis II — NOW sister chromatids separate within each cell, like mitosis",
-  "Result — four haploid cells: 2 identical maternal copies, 2 identical paternal copies"
+  "Result — four haploid cells: cells 1-2 are identical maternal-combo copies, cells 3-4 identical paternal-combo copies (crossing over and other chromosome pairs are what create further diversity)"
 ];
 function render() {
   document.getElementById('stageLabel').textContent = labels[step];
@@ -957,10 +957,8 @@ function render() {
   if (step === 1) {
     m.matA_c1=[-15,-15]; m.matA_c2=[-15,-15]; m.patA_c1=[15,15]; m.patA_c2=[15,15];
     m.matB_c1=[-15,-15]; m.matB_c2=[-15,-15]; m.patB_c1=[15,15]; m.patB_c2=[15,15];
-  } else if (step === 3) {
-    // anaphase I: homologs pulling apart toward opposite poles, sister chromatids still joined
-    m.matA_c1=[-55,0]; m.matA_c2=[-55,0]; m.patA_c1=[45,0]; m.patA_c2=[45,0];
-    m.matB_c1=[-65,0]; m.matB_c2=[-65,0]; m.patB_c1=[35,0]; m.patB_c2=[35,0];
+  } else if (step >= 3 && step < 4) {
+    // metaphase I: base positions
   } else if (step >= 4 && step < 5) {
     m.matA_c1=[-103,0]; m.matA_c2=[-103,0]; m.patA_c1=[83,0]; m.patA_c2=[83,0];
     m.matB_c1=[-123,0]; m.matB_c2=[-123,0]; m.patB_c1=[63,0]; m.patB_c2=[63,0];
@@ -971,11 +969,11 @@ function render() {
   ids.forEach(id => {
     document.getElementById(id).style.transform = `translate(${m[id][0]}px, ${m[id][1]}px)`;
   });
-  const linksVisible = step < 5;
+  const linksVisible = step < 4;
   document.getElementById('linkMatA').style.opacity = linksVisible ? '1' : '0';
   document.getElementById('linkPatA').style.opacity = linksVisible ? '1' : '0';
-  document.getElementById('linkMatB').style.opacity = linksVisible ? '1' : '0';
-  document.getElementById('linkPatB').style.opacity = linksVisible ? '1' : '0';
+  document.getElementById('linkMatB').style.opacity = (step < 5) ? '1' : '0';
+  document.getElementById('linkPatB').style.opacity = (step < 5) ? '1' : '0';
 
   document.getElementById('twoCells').classList.toggle('on', step === 4);
   document.getElementById('fourCells').classList.toggle('on', step >= 5);
