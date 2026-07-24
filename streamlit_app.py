@@ -879,7 +879,7 @@ MEIOSIS_GENERAL = '''
 </style>
 <svg width="100%" viewBox="0 0 680 420" role="img">
 <title>Meiosis with correct homolog then chromatid separation</title>
-<desc>Two homologous chromosome pairs: chromosome A (maternal solid blue, paternal light blue) and chromosome B (maternal solid red, paternal light red). At anaphase I, the maternal and paternal homologs of each chromosome separate from each other to opposite poles, while their own sister chromatids stay joined. Only in meiosis II do sister chromatids finally separate, producing four haploid cells, each with a different combination of maternal and paternal chromosomes.</desc>
+<desc>Two homologous chromosome pairs: chromosome A (maternal solid blue, paternal light blue) and chromosome B (maternal solid red, paternal light red). At anaphase I, the maternal and paternal homologs of each chromosome separate from each other to opposite poles, while their own sister chromatids stay joined. Only in meiosis II do sister chromatids finally separate, producing four haploid cells: two identical cells carrying the maternal combination, and two identical cells carrying the paternal combination.</desc>
 
 <ellipse id="cellOutline" cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 <text class="ts" x="340" y="28" text-anchor="middle" id="stageLabel">Diploid cell, homologs unpaired</text>
@@ -922,7 +922,7 @@ MEIOSIS_GENERAL = '''
 <ellipse cx="270" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 <ellipse cx="410" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 <ellipse cx="550" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<text class="th" x="340" y="390" text-anchor="middle">Four haploid cells — each a different maternal/paternal combination</text>
+<text class="th" x="340" y="390" text-anchor="middle">Four haploid cells — 2 identical maternal copies + 2 identical paternal copies</text>
 </g>
 </svg>
 
@@ -942,7 +942,7 @@ const labels = [
   "Anaphase I — the MATERNAL and PATERNAL homologs separate from EACH OTHER (not sister chromatids — those stay joined)",
   "Telophase I — two haploid cells form: one gets maternal A + maternal B, the other gets paternal A + paternal B",
   "Meiosis II — NOW sister chromatids separate within each cell, like mitosis",
-  "Result — four haploid cells, each with a different maternal/paternal combination"
+  "Result — four haploid cells: cells 1-2 are identical maternal-combo copies, cells 3-4 identical paternal-combo copies (crossing over and other chromosome pairs are what create further diversity)"
 ];
 function render() {
   document.getElementById('stageLabel').textContent = labels[step];
@@ -960,11 +960,11 @@ function render() {
   } else if (step >= 3 && step < 4) {
     // metaphase I: base positions
   } else if (step >= 4 && step < 5) {
-    m.matA_c1=[-165,0]; m.matA_c2=[-165,0]; m.patA_c1=[195,0]; m.patA_c2=[195,0];
-    m.matB_c1=[-215,0]; m.matB_c2=[-215,0]; m.patB_c1=[145,0]; m.patB_c2=[145,0];
+    m.matA_c1=[-103,0]; m.matA_c2=[-103,0]; m.patA_c1=[83,0]; m.patA_c2=[83,0];
+    m.matB_c1=[-123,0]; m.matB_c2=[-123,0]; m.patB_c1=[63,0]; m.patB_c2=[63,0];
   } else if (step >= 5) {
-    m.matA_c1=[-195,140]; m.matA_c2=[-135,140]; m.patA_c1=[165,140]; m.patA_c2=[225,140];
-    m.matB_c1=[-245,140]; m.matB_c2=[-185,140]; m.patB_c1=[115,140]; m.patB_c2=[175,140];
+    m.matA_c1=[-165,165]; m.matA_c2=[-40,165]; m.patA_c1=[80,165]; m.patA_c2=[205,165];
+    m.matB_c1=[-225,165]; m.matB_c2=[-100,165]; m.patB_c1=[20,165]; m.patB_c2=[145,165];
   }
   ids.forEach(id => {
     document.getElementById(id).style.transform = `translate(${m[id][0]}px, ${m[id][1]}px)`;
