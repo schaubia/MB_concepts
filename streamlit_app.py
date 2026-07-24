@@ -1316,6 +1316,7 @@ ENZYME_KINETICS_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #substrateGroup { transition: transform 1s ease, opacity .5s ease; }
   .bound #substrateGroup { transform: translate(157px, 0px); }
+  .activated #substrateGroup { transform: translate(157px, 0px); }
   #activeSite { transition: r 0.6s ease, stroke 0.6s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
@@ -1431,11 +1432,13 @@ function render() {
     document.getElementById('activeSite').setAttribute('r', '16');
     document.getElementById('product').classList.toggle('on', false);
   } else if (mode === 'alloInhibit') {
-    document.getElementById('substrateGroup').style.opacity = step >= 1 ? '0.15' : '1';
-    document.getElementById('activeSite').setAttribute('stroke', step >= 1 ? '#E24B4A' : '#EF9F27');
-    document.getElementById('activeSite').setAttribute('r', step >= 1 ? '10' : '16');
+    document.getElementById('substrateGroup').style.opacity = step >= 2 ? '0.15' : '1';
+    document.getElementById('activeSite').setAttribute('stroke', step >= 2 ? '#E24B4A' : '#EF9F27');
+    document.getElementById('activeSite').setAttribute('r', step >= 2 ? '10' : '16');
     document.getElementById('product').classList.toggle('on', false);
   } else if (mode === 'alloActivate') {
+    svg.classList.toggle('activated', step >= 2);
+    document.getElementById('substrateLabel').textContent = step >= 2 ? 'Bound substrate' : 'Substrate';
     document.getElementById('substrateGroup').style.opacity = '1';
     document.getElementById('activeSite').setAttribute('stroke', step >= 1 ? '#1D9E75' : '#EF9F27');
     document.getElementById('activeSite').setAttribute('r', step >= 1 ? '22' : '16');
