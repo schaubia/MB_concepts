@@ -161,7 +161,7 @@ render();
 # GPCR_TECHNICAL  (source: gpcr_technical.html)
 # ---------------------------------------------------------------------------
 GPCR_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of GPCR signaling showing Gs, Gi, and Gq branches, the intrinsic GTPase off-switch, the PKA R2C2 holoenzyme, and the Gq branch extending to IP3-triggered calcium release and DAG-activated PKC.</h2>
+<h2 class="sr-only">Technical diagram of GPCR signaling showing Gs, Gi, and Gq branches, the intrinsic GTPase off-switch, and the PKA R2C2 holoenzyme.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
@@ -187,9 +187,9 @@ GPCR_TECHNICAL = '''
   <button id="btnGq" onclick="setPath('Gq')">Gq pathway</button>
 </div>
 
-<svg width="100%" viewBox="0 0 680 500" role="img">
+<svg width="100%" viewBox="0 0 680 470" role="img">
 <title>GPCR Gs/Gi/Gq branching with GTPase off-switch</title>
-<desc>A receptor couples to Gs, Gi, or Gq depending on selection. Gs stimulates and Gi inhibits adenylyl cyclase, changing cAMP; Gq activates phospholipase C to produce IP3 and DAG. IP3 diffuses to the endoplasmic reticulum and triggers calcium release, while DAG remains at the membrane and activates protein kinase C. Intrinsic GTPase activity on G-alpha hydrolyzes GTP back to GDP, returning the switch to its resting state.</desc>
+<desc>A receptor couples to Gs, Gi, or Gq depending on selection. Gs stimulates and Gi inhibits adenylyl cyclase, changing cAMP; Gq activates phospholipase C to produce IP3 and DAG. Intrinsic GTPase activity on G-alpha hydrolyzes GTP back to GDP, returning the switch to its resting state.</desc>
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 </defs>
@@ -242,23 +242,6 @@ GPCR_TECHNICAL = '''
 <circle class="drift" cx="550" cy="235" r="4" fill="#1D9E75" style="animation-delay:.4s"/>
 </g>
 
-<g id="ip3Block" class="stg">
-<line x1="520" y1="245" x2="492" y2="388" stroke="#1D9E75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<rect x="455" y="390" width="75" height="42" rx="8" fill="var(--surface-2)" stroke="#8B5CF6" stroke-width="1.2"/>
-<text class="ts" x="492" y="411" text-anchor="middle" dominant-baseline="central">ER</text>
-<circle class="drift" cx="475" cy="448" r="4" fill="#8B5CF6"/>
-<circle class="drift" cx="492" cy="456" r="4" fill="#8B5CF6" style="animation-delay:.3s"/>
-<circle class="drift" cx="509" cy="448" r="4" fill="#8B5CF6" style="animation-delay:.6s"/>
-<text class="ts" x="492" y="474" text-anchor="middle">Ca2+ released</text>
-</g>
-
-<g id="dagBlock" class="stg">
-<line x1="548" y1="245" x2="585" y2="388" stroke="#1D9E75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<rect x="570" y="390" width="75" height="42" rx="8" class="c-amber" stroke-width="0.5"/>
-<text class="ts" x="607" y="411" text-anchor="middle" dominant-baseline="central">PKC</text>
-<text class="ts" x="607" y="474" text-anchor="middle">PKC activated</text>
-</g>
-
 <g id="pkaBlock" class="stg">
 <g id="pkaGroup" transform="translate(393,320)">
   <rect x="-70" y="-24" width="60" height="48" rx="8" class="c-teal" stroke-width="0.5"/>
@@ -299,8 +282,8 @@ let step = 0;
 let path = 'Gs';
 const labelsGs = ["Step 0 of 4 — resting","Step 1 of 4 — ligand docks, Ga-GTP forms","Step 2 of 4 — AC activated, cAMP rises","Step 3 of 4 — PKA holoenzyme splits","Step 4 of 4 — target phosphorylated"];
 const labelsGi = ["Step 0 of 2 — resting","Step 1 of 2 — ligand docks, Ga-GTP forms","Step 2 of 2 — AC inhibited, cAMP falls"];
-const labelsGq = ["Step 0 of 4 — resting","Step 1 of 4 — ligand docks, Ga-GTP forms","Step 2 of 4 — PLC activated, IP3 + DAG produced","Step 3 of 4 — IP3 diffuses to the ER, releasing Ca2+","Step 4 of 4 — DAG (with Ca2+) activates PKC at the membrane"];
-function maxStep() { return path==='Gi' ? 2 : 4; }
+const labelsGq = ["Step 0 of 2 — resting","Step 1 of 2 — ligand docks, Ga-GTP forms","Step 2 of 2 — PLC activated, IP3 + DAG produced"];
+function maxStep() { return path==='Gs' ? 4 : 2; }
 function setPath(p) {
   path = p; step = 0;
   document.querySelectorAll('.rowbtns button').forEach(b=>b.classList.remove('active'));
@@ -322,8 +305,6 @@ function render() {
   document.getElementById('gsPath').classList.toggle('on', path==='Gs' && step>=1);
   document.getElementById('giPath').classList.toggle('on', path==='Gi' && step>=1);
   document.getElementById('gqPath').classList.toggle('on', path==='Gq' && step>=1);
-  document.getElementById('ip3Block').classList.toggle('on', path==='Gq' && step>=3);
-  document.getElementById('dagBlock').classList.toggle('on', path==='Gq' && step>=4);
   document.getElementById('campUp').classList.toggle('on', path==='Gs' && step>=2);
   document.getElementById('pkaBlock').classList.toggle('on', path==='Gs' && step>=3);
   document.getElementById('pkaGroup').classList.toggle('split', path==='Gs' && step>=3);
@@ -658,12 +639,9 @@ function render() {
     ax1=ax2=-12; ay1=ay2=-8; bx1=bx2=10; by1=by2=6;
   } else if (step === 3) {
     ax1=ax2=0; ay1=ay2=0; bx1=bx2=0; by1=by2=0;
-  } else if (step === 4) {
+  } else if (step >= 4) {
     ax1=-165; ay1=0; ax2=215; ay2=0;
     bx1=-215; by1=0; bx2=165; by2=0;
-  } else if (step >= 5) {
-    ax1=-100; ay1=0; ax2=120; ay2=0;
-    bx1=-120; by1=0; bx2=100; by2=0;
   }
   document.getElementById('chrA_c1').style.transform = `translate(${ax1}px, ${ay1}px)`;
   document.getElementById('chrA_c2').style.transform = `translate(${ax2}px, ${ay2}px)`;
@@ -985,8 +963,8 @@ function render() {
     m.matA_c1=[-165,0]; m.matA_c2=[-165,0]; m.patA_c1=[195,0]; m.patA_c2=[195,0];
     m.matB_c1=[-215,0]; m.matB_c2=[-215,0]; m.patB_c1=[145,0]; m.patB_c2=[145,0];
   } else if (step >= 5) {
-    m.matA_c1=[-168,160]; m.matA_c2=[-43,160]; m.patA_c1=[77,160]; m.patA_c2=[202,160];
-    m.matB_c1=[-222,160]; m.matB_c2=[-97,160]; m.patB_c1=[23,160]; m.patB_c2=[148,160];
+    m.matA_c1=[-195,140]; m.matA_c2=[-135,140]; m.patA_c1=[165,140]; m.patA_c2=[225,140];
+    m.matB_c1=[-245,140]; m.matB_c2=[-185,140]; m.patB_c1=[115,140]; m.patB_c2=[175,140];
   }
   ids.forEach(id => {
     document.getElementById(id).style.transform = `translate(${m[id][0]}px, ${m[id][1]}px)`;
@@ -1186,7 +1164,7 @@ function render() {
   const dmgThreshold = mode === 'extrinsic' ? 3 : 4;
   const bodiesThreshold = dmgThreshold;
   const phagoThreshold = mode === 'extrinsic' ? 4 : 5;
-  const engulfThreshold = mode === 'extrinsic' ? 5 : 6;
+  const engulfThreshold = 6;
 
   document.getElementById('damage').classList.toggle('on', step >= dmgThreshold);
   document.getElementById('cellBody').style.opacity = step >= dmgThreshold ? '0.15' : '1';
@@ -1209,7 +1187,7 @@ setMode('extrinsic');
 # ENDO_EXOCYTOSIS_GENERAL  (source: endo_exocytosis.html)
 # ---------------------------------------------------------------------------
 ENDO_EXOCYTOSIS_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of clathrin-mediated endocytosis and SNARE-mediated exocytosis: a switchable view of vesicle formation from the membrane, or vesicle docking and fusion to release cargo.</h2>
+<h2 class="sr-only">Interactive diagram of endocytosis and exocytosis: a switchable view of vesicle formation from the membrane, or vesicle docking and fusion to release cargo.</h2>
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
@@ -1229,7 +1207,7 @@ ENDO_EXOCYTOSIS_GENERAL = '''
 
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Endocytosis and exocytosis</title>
-<desc>Clathrin-mediated endocytosis: the membrane invaginates around extracellular cargo, coated by clathrin, then pinches off into an intracellular vesicle. SNARE-mediated exocytosis: an intracellular vesicle moves to the membrane and docks — SNAREs are membrane-anchored proteins on the vesicle (v-SNARE) and the target membrane (t-SNARE) that pair up and pull the two membranes together — then the membranes fuse and cargo is released outside the cell.</desc>
+<desc>Endocytosis: the membrane invaginates around extracellular cargo, coated by clathrin, then pinches off into an intracellular vesicle. Exocytosis: an intracellular vesicle moves to the membrane, docks via SNARE proteins, and fuses to release its cargo outside the cell.</desc>
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 </defs>
@@ -1259,7 +1237,7 @@ ENDO_EXOCYTOSIS_GENERAL = '''
 
 <g id="snare" class="stg">
 <rect x="185" y="140" width="30" height="14" rx="4" class="c-teal"/>
-<text class="ts" x="200" y="127" text-anchor="middle">v-SNARE + t-SNARE pairing</text>
+<text class="ts" x="200" y="127" text-anchor="middle">SNARE docking</text>
 </g>
 
 <g id="released" class="stg">
@@ -1279,13 +1257,13 @@ let step = 0;
 let mode = 'endo';
 const labelsEndo = [
   "Step 0 of 3 — cargo outside, membrane flat",
-  "Step 1 of 3 — clathrin coats the membrane (clathrin-mediated endocytosis), it begins to invaginate",
+  "Step 1 of 3 — clathrin coats the membrane, it begins to invaginate",
   "Step 2 of 3 — vesicle pinches off, enclosing the cargo",
   "Step 3 of 3 — vesicle moves into the cytoplasm and uncoats"
 ];
 const labelsExo = [
   "Step 0 of 3 — vesicle with cargo inside the cytoplasm",
-  "Step 1 of 3 — vesicle moves to the membrane; v-SNARE (vesicle) pairs with t-SNARE (membrane) to dock it",
+  "Step 1 of 3 — vesicle moves to the membrane and docks via SNARE proteins",
   "Step 2 of 3 — vesicle membrane fuses with the plasma membrane",
   "Step 3 of 3 — cargo released outside the cell"
 ];
@@ -1327,231 +1305,6 @@ setMode('endo');
 
 
 # ---------------------------------------------------------------------------
-# ENDO_EXOCYTOSIS_TECHNICAL  (source: endo_exocytosis.html)
-# ---------------------------------------------------------------------------
-ENDO_EXOCYTOSIS_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of clathrin-mediated endocytosis with AP2 and dynamin, and SNARE-mediated exocytosis split into constitutive and Ca2+-triggered regulated pathways with synaptotagmin.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.3s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .drift { animation: drift 2s ease-in-out infinite; }
-  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
-  @media (prefers-reduced-motion: reduce) { .pulse, .drift { animation: none; } }
-  #vesicleEndo, #vcargoEndo, #vesicleExo, #vcargoExo { transition: cy 1s ease, r .6s ease; }
-  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-
-<div class="rowbtns">
-  <button id="btnEndo" onclick="setMode('endo')">Endocytosis</button>
-  <button id="btnExo" onclick="setMode('exo')">Exocytosis</button>
-</div>
-<div class="rowbtns" id="exoSubRow" style="display:none;">
-  <button id="btnConst" onclick="setExoType('const')">Constitutive</button>
-  <button id="btnReg" onclick="setExoType('reg')">Regulated (Ca2+)</button>
-</div>
-
-<svg width="100%" viewBox="0 0 700 520" role="img">
-<title>Clathrin-mediated endocytosis and SNARE-mediated exocytosis (constitutive vs Ca2+-regulated)</title>
-<desc>Endocytosis: AP2 adaptor and clathrin coat the membrane around a receptor-cargo complex; dynamin polymerizes as a collar around the neck and GTP hydrolysis drives scission; Hsc70 then uncoats the free vesicle. Exocytosis: a vesicle's v-SNARE pairs with membrane t-SNAREs and they zipper together to fuse the membranes. In constitutive exocytosis this happens continuously with no trigger. In regulated exocytosis, typified by synaptic vesicles, synaptotagmin clamps the SNARE complex in a primed-but-paused state until a voltage-gated channel admits Ca2+, which binds synaptotagmin, releases the clamp, and lets fusion complete rapidly.</desc>
-<defs>
-<marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
-</defs>
-
-<line x1="30" y1="200" x2="670" y2="200" stroke="var(--border-strong)" stroke-width="2"/>
-<text class="ts" x="350" y="185" text-anchor="middle">Plasma membrane</text>
-<text class="ts" x="350" y="470" text-anchor="middle">Inside the cell</text>
-<text class="ts" x="350" y="45" text-anchor="middle">Outside the cell</text>
-
-<!-- ================= ENDOCYTOSIS (clathrin-mediated), centered near x=200 ================= -->
-<g id="cargoOutside" class="stg">
-<circle cx="200" cy="70" r="10" fill="#EF9F27"/>
-<text class="ts" x="200" y="52" text-anchor="middle">Cargo</text>
-</g>
-<g id="receptorTag" class="stg">
-<rect x="188" y="195" width="24" height="10" rx="2" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="200" y="228" text-anchor="middle">Receptor</text>
-</g>
-<g id="ap2" class="stg">
-<rect x="172" y="204" width="8" height="8" class="c-purple"/>
-<rect x="220" y="204" width="8" height="8" class="c-purple"/>
-<text class="ts" x="200" y="252" text-anchor="middle">AP2 adaptor</text>
-</g>
-<g id="clathrinLattice" class="stg">
-<circle cx="182" cy="222" r="3.5" class="c-purple"/>
-<circle cx="200" cy="228" r="3.5" class="c-purple"/>
-<circle cx="218" cy="222" r="3.5" class="c-purple"/>
-<circle cx="182" cy="208" r="3.5" class="c-purple"/>
-<circle cx="218" cy="208" r="3.5" class="c-purple"/>
-<text class="ts" x="200" y="276" text-anchor="middle">Clathrin lattice</text>
-</g>
-<g id="dynaminCollar" class="stg">
-<ellipse cx="200" cy="222" rx="24" ry="9" fill="none" class="c-coral" stroke-width="3"/>
-<text class="ts" x="200" y="300" text-anchor="middle">Dynamin collar — GTP hydrolysis drives scission</text>
-</g>
-<g id="uncoatLabel" class="stg">
-<text class="ts" x="200" y="300" text-anchor="middle">Hsc70 strips the clathrin coat (uncoating)</text>
-</g>
-<g id="vesicleGroupEndo">
-<circle id="vesicleEndo" cx="200" cy="200" r="0" fill="none" stroke="var(--t)" stroke-width="1.5"/>
-<circle id="vcargoEndo" cx="200" cy="200" r="0" fill="#EF9F27"/>
-</g>
-
-<!-- ================= EXOCYTOSIS (constitutive vs regulated), centered near x=500 ================= -->
-<g id="ca2Channel" class="stg">
-<rect x="490" y="196" width="20" height="8" fill="var(--surface-2)" stroke="#8B5CF6" stroke-width="1.5"/>
-<text class="ts" x="500" y="182" text-anchor="middle" style="opacity:0">.</text>
-<text class="ts" x="500" y="60" text-anchor="middle">Voltage-gated Ca2+ channel</text>
-<circle class="drift" cx="494" cy="90" r="4" fill="#8B5CF6"/>
-<circle class="drift" cx="506" cy="105" r="4" fill="#8B5CF6" style="animation-delay:.3s"/>
-<circle class="drift" cx="500" cy="130" r="4" fill="#8B5CF6" style="animation-delay:.6s"/>
-<circle class="drift" cx="496" cy="160" r="4" fill="#8B5CF6" style="animation-delay:.9s"/>
-</g>
-<g id="vSnare" class="stg">
-<rect x="486" y="188" width="28" height="9" rx="3" class="c-teal"/>
-<text class="ts" x="500" y="176" text-anchor="middle">v-SNARE (VAMP)</text>
-</g>
-<g id="tSnare" class="stg">
-<rect x="486" y="204" width="28" height="9" rx="3" fill="var(--surface-2)" stroke="#0F6E56" stroke-width="1.5"/>
-<text class="ts" x="500" y="232" text-anchor="middle">t-SNARE (syntaxin + SNAP-25)</text>
-</g>
-<g id="synClamp" class="stg">
-<rect x="470" y="196" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="#EF9F27" stroke-width="1.5"/>
-<text class="ts" x="440" y="248" text-anchor="middle">Synaptotagmin clamp — primed but paused</text>
-</g>
-<g id="synReleased" class="stg">
-<text class="ts" x="440" y="248" text-anchor="middle">Ca2+ binds synaptotagmin — clamp releases, zippering completes</text>
-</g>
-<g id="constNote" class="stg">
-<text class="ts" x="500" y="252" text-anchor="middle">Continuous — no trigger needed</text>
-</g>
-<g id="fusedLabelExo" class="stg">
-<circle cx="500" cy="150" r="9" fill="#EF9F27"/>
-<text class="ts" x="500" y="130" text-anchor="middle">Cargo released</text>
-</g>
-<g id="vesicleGroupExo">
-<circle id="vesicleExo" cx="500" cy="400" r="18" fill="none" stroke="var(--t)" stroke-width="1.5"/>
-<circle id="vcargoExo" cx="500" cy="400" r="8" fill="#EF9F27"/>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0</span>
-</div>
-
-<script>
-let step = 0;
-let mode = 'endo';
-let exoType = 'const';
-
-const labelsEndo = [
-  "Step 0 of 4 — receptor-cargo complex at the membrane, no coat yet",
-  "Step 1 of 4 — AP2 adaptor binds the receptor and recruits clathrin",
-  "Step 2 of 4 — clathrin triskelions polymerize into a lattice; membrane invaginates deeply",
-  "Step 3 of 4 — dynamin polymerizes as a collar around the neck; GTP hydrolysis drives scission",
-  "Step 4 of 4 — vesicle is free in the cytoplasm; Hsc70 strips the clathrin coat"
-];
-const labelsExoConst = [
-  "Step 0 of 3 — vesicle with cargo in the cytoplasm",
-  "Step 1 of 3 — vesicle reaches the membrane; v-SNARE pairs with t-SNAREs and zippering begins",
-  "Step 2 of 3 — SNAREs fully zippered, membranes fuse",
-  "Step 3 of 3 — cargo released continuously, no trigger needed"
-];
-const labelsExoReg = [
-  "Step 0 of 4 — vesicle pre-docked at the membrane, SNAREs partially zippered",
-  "Step 1 of 4 — synaptotagmin clamps the SNARE complex, holding fusion primed but paused",
-  "Step 2 of 4 — a voltage-gated channel opens, admitting Ca2+",
-  "Step 3 of 4 — Ca2+ binds synaptotagmin, releasing the clamp; SNAREs finish zippering",
-  "Step 4 of 4 — rapid fusion; cargo released in a burst (e.g. neurotransmitter release)"
-];
-
-function currentLabels() {
-  if (mode === 'endo') return labelsEndo;
-  return exoType === 'const' ? labelsExoConst : labelsExoReg;
-}
-function maxStep() {
-  if (mode === 'endo') return 4;
-  return exoType === 'const' ? 3 : 4;
-}
-function setMode(m) {
-  mode = m; step = 0;
-  document.getElementById('btnEndo').classList.toggle('active', m === 'endo');
-  document.getElementById('btnExo').classList.toggle('active', m === 'exo');
-  document.getElementById('exoSubRow').style.display = m === 'exo' ? 'flex' : 'none';
-  render();
-}
-function setExoType(t) {
-  exoType = t; step = 0;
-  document.getElementById('btnConst').classList.toggle('active', t === 'const');
-  document.getElementById('btnReg').classList.toggle('active', t === 'reg');
-  render();
-}
-function render() {
-  const labels = currentLabels();
-  document.getElementById('stepLabel').textContent = labels[step];
-
-  document.getElementById('cargoOutside').classList.toggle('on', mode === 'endo' && step <= 1);
-  document.getElementById('receptorTag').classList.toggle('on', mode === 'endo' && step <= 2);
-  document.getElementById('ap2').classList.toggle('on', mode === 'endo' && step >= 1 && step <= 3);
-  document.getElementById('clathrinLattice').classList.toggle('on', mode === 'endo' && step >= 1 && step <= 3);
-  document.getElementById('dynaminCollar').classList.toggle('on', mode === 'endo' && step === 3);
-  document.getElementById('uncoatLabel').classList.toggle('on', mode === 'endo' && step === 4);
-
-  const exoOn = mode === 'exo';
-  const showSnare = exoOn && (exoType === 'reg' || step >= 1);
-  document.getElementById('vSnare').classList.toggle('on', showSnare);
-  document.getElementById('tSnare').classList.toggle('on', showSnare);
-  document.getElementById('synClamp').classList.toggle('on', exoOn && exoType === 'reg' && step <= 2);
-  document.getElementById('synReleased').classList.toggle('on', exoOn && exoType === 'reg' && step >= 3);
-  document.getElementById('ca2Channel').classList.toggle('on', exoOn && exoType === 'reg' && step >= 2);
-  document.getElementById('constNote').classList.toggle('on', exoOn && exoType === 'const' && step === 3);
-  document.getElementById('fusedLabelExo').classList.toggle('on',
-    (exoOn && exoType === 'const' && step >= 3) || (exoOn && exoType === 'reg' && step >= 4));
-
-  const ve = document.getElementById('vesicleEndo');
-  const vce = document.getElementById('vcargoEndo');
-  let er = 0, ecy = 200, ecr = 0;
-  if (mode === 'endo') {
-    if (step === 1) { er = 14; ecy = 210; ecr = 6; }
-    else if (step === 2) { er = 18; ecy = 220; ecr = 8; }
-    else if (step === 3) { er = 18; ecy = 260; ecr = 8; }
-    else if (step === 4) { er = 18; ecy = 340; ecr = 8; }
-  }
-  ve.setAttribute('r', er); ve.setAttribute('cy', ecy);
-  vce.setAttribute('r', ecr); vce.setAttribute('cy', ecy);
-
-  const vx = document.getElementById('vesicleExo');
-  const vcx = document.getElementById('vcargoExo');
-  let xr = 18, xcy = 400, xcr = 8;
-  if (mode === 'exo') {
-    if (exoType === 'const') {
-      if (step === 0) { xcy = 400; }
-      else if (step === 1) { xcy = 220; }
-      else if (step === 2) { xcy = 200; }
-      else { xr = 0; xcr = 0; xcy = 200; }
-    } else {
-      if (step <= 2) { xcy = 210; }
-      else if (step === 3) { xcy = 205; }
-      else { xr = 0; xcr = 0; xcy = 200; }
-    }
-  }
-  vx.setAttribute('r', xr); vx.setAttribute('cy', xcy);
-  vcx.setAttribute('r', xcr); vcx.setAttribute('cy', xcy);
-}
-function stepFwd() { if (step < maxStep()) step++; render(); }
-function reset() { step = 0; render(); }
-setMode('endo');
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
 # ENZYME_KINETICS_GENERAL  (source: enzyme_kinetics.html)
 # ---------------------------------------------------------------------------
 ENZYME_KINETICS_GENERAL = '''
@@ -1562,7 +1315,7 @@ ENZYME_KINETICS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #substrateGroup { transition: transform 1s ease, opacity .5s ease; }
-  .bound #substrateGroup { transform: translate(157px, 0px); }
+  .bound #substrateGroup { transform: translate(15px, 5px); }
   #activeSite { transition: r 0.6s ease, stroke 0.6s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
@@ -1697,203 +1450,6 @@ setMode('normal');
 
 
 # ---------------------------------------------------------------------------
-# ENZYME_KINETICS_TECHNICAL  (source: enzyme_kinetics.html)
-# ---------------------------------------------------------------------------
-ENZYME_KINETICS_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of enzyme kinetics: non-cooperative Michaelis-Menten kinetics versus cooperative allosteric kinetics in a tetrameric enzyme, with ATP as an allosteric inhibitor and AMP as an allosteric activator modeled on PFK-1 in glycolysis, plotted as reaction velocity against substrate concentration.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.3s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .subunit { fill: var(--surface-2); stroke:#E24B4A; stroke-width:2.5; transition: r .5s ease, stroke .5s ease; }
-  .subunit.flipped { stroke:#1D9E75; }
-  #curveMarker { transition: cx .6s ease, cy .6s ease; }
-  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-
-<div class="rowbtns">
-  <button id="btnNoncoop" onclick="setKinetics('noncoop')">Non-cooperative (Michaelis-Menten)</button>
-  <button id="btnCoop" onclick="setKinetics('coop')">Cooperative (allosteric)</button>
-</div>
-<div class="rowbtns" id="effectorRow" style="display:none;">
-  <button id="btnEffNone" onclick="setEffector('none')">No effector</button>
-  <button id="btnEffAtp" onclick="setEffector('atp')">ATP — inhibitor</button>
-  <button id="btnEffAmp" onclick="setEffector('amp')">AMP — activator</button>
-</div>
-
-<svg width="100%" viewBox="0 0 700 430" role="img">
-<title>Cooperative vs non-cooperative enzyme kinetics, with a PFK-1-style feedback example</title>
-<desc>Non-cooperative enzymes follow hyperbolic Michaelis-Menten kinetics: velocity rises smoothly with substrate concentration. Cooperative allosteric enzymes are typically oligomeric — substrate binding at one subunit favors the high-affinity R state in the other subunits — producing a sigmoidal, switch-like velocity curve instead. Allosteric effectors shift this curve: an inhibitor like ATP favors the low-affinity T state and shifts the curve right and down; an activator like AMP favors the R state and shifts the curve left. This mirrors PFK-1, the key regulatory enzyme of glycolysis, which is inhibited by ATP and activated by AMP as feedback signals of the cell's energy state.</desc>
-<defs>
-<marker id="arrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
-</defs>
-
-<g id="monomerGroup">
-<path d="M60 90 Q85 55 130 68 Q165 60 180 90 Q165 120 130 112 Q85 130 60 90 Z" class="c-teal" stroke-width="0.5"/>
-<circle id="monoSite" cx="120" cy="90" r="14" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="3 3"/>
-<text class="ts" x="120" y="150" text-anchor="middle">Single active site</text>
-<text class="ts" x="120" y="168" text-anchor="middle">No cooperativity</text>
-</g>
-
-<g id="tetramerGroup">
-<line x1="80" y1="60" x2="150" y2="60" stroke="var(--t)" stroke-width="1.5"/>
-<line x1="80" y1="130" x2="150" y2="130" stroke="var(--t)" stroke-width="1.5"/>
-<line x1="80" y1="60" x2="80" y2="130" stroke="var(--t)" stroke-width="1.5"/>
-<line x1="150" y1="60" x2="150" y2="130" stroke="var(--t)" stroke-width="1.5"/>
-<circle id="sub0" class="subunit" cx="80" cy="60" r="14"/>
-<circle id="sub1" class="subunit" cx="150" cy="60" r="14"/>
-<circle id="sub2" class="subunit" cx="80" cy="130" r="14"/>
-<circle id="sub3" class="subunit" cx="150" cy="130" r="14"/>
-<text class="ts" x="115" y="160" text-anchor="middle">Tetramer</text>
-<text class="ts" x="115" y="178" text-anchor="middle" id="subunitReadout">0 / 4 subunits in R state</text>
-</g>
-
-<g transform="translate(330,10)">
-<line x1="60" y1="200" x2="60" y2="30" stroke="var(--t)" stroke-width="1.5"/>
-<line x1="60" y1="200" x2="300" y2="200" stroke="var(--t)" stroke-width="1.5"/>
-<text class="ts" x="180" y="222" text-anchor="middle">[Substrate] →</text>
-<text class="ts" x="20" y="115" text-anchor="middle" transform="rotate(-90 20 115)">Velocity (v) →</text>
-<path id="mmRefCurve" d="M60,200 L80,120 L120,80 L160,66.7 L300,52.3" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4 3"/>
-<path id="activeCurve" d="M60,200 L80,120 L120,80 L160,66.7 L300,52.3" fill="none" stroke="#1D9E75" stroke-width="2.5"/>
-<circle id="curveMarker" cx="60" cy="200" r="5" fill="#EF9F27"/>
-<text class="ts" x="230" y="205" text-anchor="middle" id="mmLegend" style="display:none">gray dashed = non-cooperative reference</text>
-</g>
-
-<g id="feedbackGroup" class="stg">
-<rect x="40" y="290" width="60" height="32" rx="6" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="70" y="310" text-anchor="middle">F6P</text>
-<line x1="100" y1="306" x2="150" y2="306" stroke="var(--t)" stroke-width="1.5" marker-end="url(#arrow3)"/>
-<rect x="155" y="290" width="75" height="32" rx="6" class="c-teal" stroke-width="0.5"/>
-<text class="ts" x="192" y="310" text-anchor="middle">PFK-1</text>
-<line x1="230" y1="306" x2="280" y2="306" stroke="var(--t)" stroke-width="1.5" marker-end="url(#arrow3)"/>
-<rect x="285" y="290" width="60" height="32" rx="6" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="315" y="310" text-anchor="middle">FBP</text>
-<line x1="345" y1="306" x2="395" y2="306" stroke="var(--t)" stroke-width="1.5" marker-end="url(#arrow3)"/>
-<rect x="400" y="290" width="160" height="32" rx="6" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="480" y="310" text-anchor="middle">… → pyruvate → ATP</text>
-
-<path id="atpFeedbackArrow" d="M480 290 Q330 245 192 290" fill="none" stroke="#E24B4A" stroke-width="1.5" marker-end="url(#arrow3)"/>
-<text class="ts" x="330" y="252" text-anchor="middle">ATP inhibits (energy abundant)</text>
-
-<path id="ampFeedbackArrow" d="M480 322 Q330 367 192 322" fill="none" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#arrow3)"/>
-<text class="ts" x="330" y="378" text-anchor="middle">AMP activates (energy low)</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 4</span>
-</div>
-
-<script>
-let step = 0;
-let kinetics = 'noncoop';
-let effector = 'none';
-
-const chartX = [60,80,120,160,300];
-const yMM       = [200,120,80,66.7,52.3];
-const yCoopNone = [200,190.4,98.7,57.8,41.4];
-const yCoopATP  = [200,198.9,175.8,132,73.1];
-const yCoopAMP  = [200,145.8,50.8,42.5,40.2];
-const flipNone = [0,1,3,4,4];
-const flipATP  = [0,0,1,2,4];
-const flipAMP  = [0,2,4,4,4];
-const sDesc = ["no substrate","low [S]","moderate [S]","high [S]","saturating [S]"];
-
-function pathFor(coords) {
-  return coords.map((y,i) => (i===0?'M':'L') + chartX[i] + ',' + y).join(' ');
-}
-const mmPath = pathFor(yMM);
-const coopNonePath = pathFor(yCoopNone);
-const coopATPPath = pathFor(yCoopATP);
-const coopAMPPath = pathFor(yCoopAMP);
-
-function activeYTable() {
-  if (kinetics === 'noncoop') return yMM;
-  return effector === 'atp' ? yCoopATP : effector === 'amp' ? yCoopAMP : yCoopNone;
-}
-function activeFlipTable() {
-  return effector === 'atp' ? flipATP : effector === 'amp' ? flipAMP : flipNone;
-}
-function activePath() {
-  if (kinetics === 'noncoop') return mmPath;
-  return effector === 'atp' ? coopATPPath : effector === 'amp' ? coopAMPPath : coopNonePath;
-}
-function activeColor() {
-  if (kinetics === 'noncoop') return '#1D9E75';
-  return effector === 'atp' ? '#E24B4A' : effector === 'amp' ? '#1D9E75' : '#7F77DD';
-}
-
-function setKinetics(k) {
-  kinetics = k; step = 0;
-  document.getElementById('btnNoncoop').classList.toggle('active', k === 'noncoop');
-  document.getElementById('btnCoop').classList.toggle('active', k === 'coop');
-  document.getElementById('effectorRow').style.display = k === 'coop' ? 'flex' : 'none';
-  document.getElementById('monomerGroup').style.display = k === 'noncoop' ? '' : 'none';
-  document.getElementById('tetramerGroup').style.display = k === 'coop' ? '' : 'none';
-  document.getElementById('mmRefCurve').style.display = k === 'coop' ? '' : 'none';
-  document.getElementById('mmLegend').style.display = k === 'coop' ? '' : 'none';
-  document.getElementById('feedbackGroup').classList.toggle('on', k === 'coop');
-  render();
-}
-function setEffector(e) {
-  effector = e; step = 0;
-  document.getElementById('btnEffNone').classList.toggle('active', e === 'none');
-  document.getElementById('btnEffAtp').classList.toggle('active', e === 'atp');
-  document.getElementById('btnEffAmp').classList.toggle('active', e === 'amp');
-  render();
-}
-function render() {
-  const yTable = activeYTable();
-  const flipTable = activeFlipTable();
-  const flipped = flipTable[step];
-  const vPct = Math.round((200 - yTable[step]) / 1.6);
-
-  let effDesc = 'no effector bound';
-  if (kinetics === 'coop') {
-    effDesc = effector === 'atp' ? 'ATP bound at the allosteric site — enzyme favors the low-affinity T state'
-      : effector === 'amp' ? 'AMP bound at the allosteric site — enzyme favors the high-affinity R state'
-      : 'no effector bound — subunits still flip cooperatively as substrate binds';
-  }
-  const label = kinetics === 'noncoop'
-    ? `Step ${step} of 4 — ${sDesc[step]}: hyperbolic response, ~${vPct}% Vmax, no cooperativity between binding events`
-    : `Step ${step} of 4 — ${sDesc[step]}: ${flipped}/4 subunits in R state, ~${vPct}% Vmax. ${effDesc}`;
-  document.getElementById('stepLabel').textContent = label;
-
-  document.getElementById('activeCurve').setAttribute('d', activePath());
-  document.getElementById('activeCurve').setAttribute('stroke', activeColor());
-  document.getElementById('curveMarker').setAttribute('cx', chartX[step]);
-  document.getElementById('curveMarker').setAttribute('cy', yTable[step]);
-
-  for (let i = 0; i < 4; i++) {
-    const el = document.getElementById('sub' + i);
-    const isFlipped = i < flipped;
-    el.classList.toggle('flipped', isFlipped);
-    el.setAttribute('r', isFlipped ? 18 : 14);
-  }
-  document.getElementById('subunitReadout').textContent = flipped + ' / 4 subunits in R state';
-  document.getElementById('monoSite').setAttribute('stroke', step >= 1 ? '#1D9E75' : '#EF9F27');
-
-  const atpOn = kinetics === 'coop' && effector === 'atp';
-  const ampOn = kinetics === 'coop' && effector === 'amp';
-  document.getElementById('atpFeedbackArrow').classList.toggle('pulse', atpOn);
-  document.getElementById('atpFeedbackArrow').style.opacity = atpOn ? '1' : '0.25';
-  document.getElementById('ampFeedbackArrow').classList.toggle('pulse', ampOn);
-  document.getElementById('ampFeedbackArrow').style.opacity = ampOn ? '1' : '0.25';
-}
-function stepFwd() { if (step < 4) step++; render(); }
-function reset() { step = 0; render(); }
-setKinetics('noncoop');
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
 # MEMBRANE_TRANSPORT_GENERAL  (source: membrane_transport.html)
 # ---------------------------------------------------------------------------
 MEMBRANE_TRANSPORT_GENERAL = '''
@@ -1905,7 +1461,7 @@ MEMBRANE_TRANSPORT_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #molecule { transition: transform 1s ease, opacity .4s ease; }
   #ligandGroup { transition: transform .8s ease, opacity .4s ease; }
-  .docked #ligandGroup { transform: translateY(12px); }
+  .docked #ligandGroup { transform: translateY(45px); }
   #gateTop, #gateBottom { transition: transform 0.8s ease; }
   .gateopen #gateTop { transform: translateY(-14px); }
   .gateopen #gateBottom { transform: translateY(14px); }
@@ -2240,7 +1796,7 @@ FERTILIZATION_GENERAL = '''
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #spermGroup { transition: transform 1s ease, opacity 1s ease; }
+  #spermGroup { transition: transform 1s ease; }
   .fused #spermGroup { transform: translateX(70px); opacity: 0; }
   #zonaLayer { transition: stroke 0.6s ease, stroke-width 0.6s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -2256,14 +1812,14 @@ FERTILIZATION_GENERAL = '''
 <text class="ts" x="380" y="255" text-anchor="middle">Zona pellucida</text>
 
 <g id="spermGroup">
-<path d="M225 150 L275 150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
-<circle cx="220" cy="150" r="10" fill="#378ADD"/>
-<text class="ts" x="220" y="130" text-anchor="middle">Sperm</text>
+<path d="M150 150 L200 150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<circle cx="145" cy="150" r="10" fill="#378ADD"/>
+<text class="ts" x="145" y="130" text-anchor="middle">Sperm</text>
 </g>
 
 <g id="acrosome" class="stg">
-<circle cx="280" cy="150" r="5" fill="#EF9F27"/>
-<text class="ts" x="255" y="195" text-anchor="middle">Acrosomal enzymes penetrate zona</text>
+<circle cx="200" cy="150" r="5" fill="#EF9F27"/>
+<text class="ts" x="200" y="185" text-anchor="middle">Acrosomal enzymes penetrate zona</text>
 </g>
 
 <g id="corticalReaction" class="stg">
@@ -5936,13 +5492,11 @@ REGISTRY = {
         },
         "Technical": {
             "fragment": GPCR_TECHNICAL,
-            "height": 680,
+            "height": 640,
             "blurb": (
                 "Adds the Gs / Gi / Gq branch selector, the intrinsic "
-                "GTPase off-switch, the PKA R2C2 holoenzyme splitting "
-                "into free catalytic subunits, and — on the Gq branch — "
-                "IP3 triggering ER calcium release alongside DAG "
-                "activating PKC."
+                "GTPase off-switch, and the PKA R2C2 holoenzyme splitting "
+                "into free catalytic subunits."
             ),
         },
     },
@@ -6101,22 +5655,9 @@ REGISTRY = {
             "fragment": ENDO_EXOCYTOSIS_GENERAL,
             "height": 460,
             "blurb": (
-                "Switch between the two directions: clathrin-mediated "
-                "endocytosis pinches a coated vesicle in from the "
-                "membrane; SNARE-mediated exocytosis docks and fuses a "
-                "vesicle to release cargo outward."
-            ),
-        },
-        "Technical": {
-            "fragment": ENDO_EXOCYTOSIS_TECHNICAL,
-            "height": 660,
-            "blurb": (
-                "Adds AP2 and dynamin to endocytosis (GTP-driven scission "
-                "and Hsc70 uncoating), and splits exocytosis into a "
-                "constitutive branch (v-/t-SNARE zippering, no trigger) "
-                "and a regulated Ca2+-triggered branch (synaptotagmin "
-                "clamp released by Ca2+ influx, as in synaptic vesicle "
-                "release)."
+                "Switch between the two directions: endocytosis pinches a "
+                "clathrin-coated vesicle in from the membrane; exocytosis "
+                "docks and fuses a vesicle to release cargo outward."
             ),
         },
     },
@@ -6129,18 +5670,6 @@ REGISTRY = {
                 "(same site, beatable by more substrate), allosteric "
                 "inhibition (different site, not beatable), and allosteric "
                 "activation — regulation isn't only inhibition."
-            ),
-        },
-        "Technical": {
-            "fragment": ENZYME_KINETICS_TECHNICAL,
-            "height": 620,
-            "blurb": (
-                "Adds what actually makes an enzyme 'allosteric': a "
-                "tetrameric enzyme with cooperative subunits producing a "
-                "sigmoidal velocity curve (vs. the hyperbolic "
-                "Michaelis-Menten curve for a non-cooperative enzyme), "
-                "plus a real feedback-inhibition example — PFK-1 in "
-                "glycolysis, inhibited by ATP and activated by AMP."
             ),
         },
     },
