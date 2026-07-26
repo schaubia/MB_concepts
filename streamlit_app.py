@@ -1618,6 +1618,12 @@ HUMORAL_IMMUNE_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 2s ease-in-out infinite; }
   @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  .pulse-ring { animation: pulsering 1.4s ease-out infinite; transform-origin: center; }
+  @keyframes pulsering { 0%{opacity:.9; transform:scale(0.7)} 100%{opacity:0; transform:scale(1.6)} }
+  #antigenGroup { transition: transform .7s cubic-bezier(.2,.8,.2,1); }
+  #antigenGroup.bound { transform: translateY(36px); }
+  #antigenGroup.bound .drift { animation: none; }
+  #bcr { transition: stroke .4s ease, stroke-width .4s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -1630,11 +1636,17 @@ HUMORAL_IMMUNE_GENERAL = '''
 
 <circle cx="180" cy="180" r="60" class="c-teal"/>
 <text class="th" x="180" y="180" text-anchor="middle" dominant-baseline="central">B cell</text>
-<path id="bcr" d="M180 120 L165 100 M180 120 L195 100" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"/>
+<path id="bcr" d="M180 120 L165 100 M180 120 L195 100" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+<g id="bindGlow" class="stg">
+<circle class="pulse-ring" cx="180" cy="106" r="12" fill="none" stroke="#EF9F27" stroke-width="2"/>
+</g>
 
 <g id="antigen" class="stg">
+<g id="antigenGroup">
 <circle class="drift" cx="180" cy="70" r="9" fill="#EF9F27"/>
-<text class="ts" x="180" y="52" text-anchor="middle">Antigen</text>
+<text id="antigenLabel" class="ts" x="180" y="52" text-anchor="middle">Antigen</text>
+</g>
 </g>
 
 <g id="mhcPresent" class="stg">
@@ -1688,6 +1700,19 @@ const labels = [
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('antigen').classList.toggle('on', step <= 1);
+  document.getElementById('antigenGroup').classList.toggle('bound', step === 1);
+  document.getElementById('bindGlow').classList.toggle('on', step === 1);
+  const bcr = document.getElementById('bcr');
+  const antigenLabel = document.getElementById('antigenLabel');
+  if (step === 1) {
+    bcr.setAttribute('stroke', '#EF9F27');
+    bcr.setAttribute('stroke-width', '3');
+    antigenLabel.textContent = 'Antigen (bound)';
+  } else {
+    bcr.setAttribute('stroke', '#0F6E56');
+    bcr.setAttribute('stroke-width', '2');
+    antigenLabel.textContent = 'Antigen';
+  }
   document.getElementById('mhcPresent').classList.toggle('on', step >= 1 && step <= 2);
   document.getElementById('helperT').classList.toggle('on', step >= 2);
   document.getElementById('plasmaCells').classList.toggle('on', step >= 3);
