@@ -1940,12 +1940,12 @@ GASTRULATION_GENERAL = '''
 </g>
 
 <g id="layers" class="stg">
-<circle cx="455" cy="90" r="5" fill="#378ADD"/>
-<text class="ts" x="465" y="90" text-anchor="start" dominant-baseline="central">Ectoderm (outer)</text>
-<circle cx="455" cy="160" r="5" fill="#7F77DD"/>
-<text class="ts" x="465" y="160" text-anchor="start" dominant-baseline="central">Mesoderm (middle)</text>
-<circle cx="455" cy="230" r="5" fill="#D85A30"/>
-<text class="ts" x="465" y="230" text-anchor="start" dominant-baseline="central">Endoderm (inner)</text>
+<circle cx="465" cy="90" r="5" fill="#378ADD"/>
+<text class="ts" x="475" y="90" text-anchor="start" dominant-baseline="central">Ectoderm (outer)</text>
+<circle cx="465" cy="160" r="5" fill="#7F77DD"/>
+<text class="ts" x="475" y="160" text-anchor="start" dominant-baseline="central">Mesoderm (middle)</text>
+<circle cx="465" cy="230" r="5" fill="#D85A30"/>
+<text class="ts" x="475" y="230" text-anchor="start" dominant-baseline="central">Endoderm (inner)</text>
 </g>
 </svg>
 
@@ -5938,9 +5938,24 @@ REGISTRY = {
             "fragment": IMMUNOLOGICAL_MEMORY_GENERAL,
             "height": 440,
             "blurb": (
-                "Compare primary exposure (naive cells, slow, moderate) "
-                "against secondary exposure (memory cells, fast, much "
-                "stronger) — why vaccines and boosters work."
+                "Immunological memory is why the adaptive immune system "
+                "gets faster and stronger every time it meets the same "
+                "threat, and it's the entire basis for how vaccines work. "
+                "After a primary response, a small population of the B "
+                "and T cells that responded doesn't die off — they persist "
+                "for years to decades as long-lived memory B cells and "
+                "memory T cells, parked in lymph nodes and bone marrow "
+                "waiting for a rematch. Because these memory B cells "
+                "already went through affinity maturation and class "
+                "switching in the germinal center, they carry "
+                "higher-affinity, IgG-class receptors from the start, so "
+                "they don't need the one-to-two-week head start naive "
+                "cells require. On re-exposure they're activated within "
+                "days, expand faster, and produce more antibody at higher "
+                "affinity — the secondary response shown below. This is "
+                "also why booster shots work: each additional exposure to "
+                "a vaccine antigen re-engages the existing memory pool and "
+                "pushes the average antibody affinity even higher."
             ),
         },
     },
