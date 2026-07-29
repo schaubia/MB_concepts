@@ -5171,6 +5171,7 @@ LAC_OPERON_GENERAL = '''
 <text class="ts" x="420" y="185" text-anchor="middle">lac genes (lacZ, lacY, lacA)</text>
 
 <circle id="repressor" cx="235" cy="150" r="14" class="c-red"/>
+<circle id="blockRing" cx="235" cy="150" r="21" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="3 3" class="stg"/>
 <text class="ts" x="235" y="105" text-anchor="middle" id="repressorLabel">Repressor bound</text>
 
 <g id="lactoseMol" class="stg">
@@ -5220,6 +5221,8 @@ function render() {
   const cfg = mode === 'absent' ? configAbsent : configPresent;
   document.getElementById('stepLabel').textContent = cfg.labels[step];
   document.getElementById('lactoseMol').classList.toggle('on', mode === 'present' && step >= 1);
+  document.getElementById('blockRing').classList.toggle('on', mode === 'absent' && step >= 1);
+  document.getElementById('rnaPol').classList.toggle('pulse', mode === 'absent' && step >= 1);
   const svg = document.querySelector('svg');
   svg.classList.toggle('removed', mode === 'present' && step >= 2);
   svg.classList.toggle('transcribing', mode === 'present' && step >= 2);
