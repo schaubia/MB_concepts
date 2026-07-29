@@ -4169,8 +4169,13 @@ NK_CELL_MISSING_SELF_GENERAL = '''
 <text class="ts" x="180" y="225" text-anchor="middle" id="targetLabel">Healthy cell</text>
 
 <g id="mhcMarker" class="stg">
-<rect x="165" y="90" width="30" height="12" rx="3" fill="#EF9F27"/>
-<text class="ts" x="180" y="75" text-anchor="middle" id="mhcLabel">MHC-I present</text>
+<rect id="mhcRectPresent" x="165" y="90" width="30" height="12" rx="3" fill="#EF9F27"/>
+<g id="mhcRectMissing" style="display:none">
+<rect x="165" y="90" width="30" height="12" rx="3" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+<line x1="165" y1="90" x2="195" y2="102" stroke="#DC2626" stroke-width="1.5"/>
+<line x1="195" y1="90" x2="165" y2="102" stroke="#DC2626" stroke-width="1.5"/>
+</g>
+<text class="ts" x="180" y="52" text-anchor="middle" id="mhcLabel">MHC-I present</text>
 </g>
 
 <g id="inhibitorySignal" class="stg">
@@ -4195,7 +4200,7 @@ NK_CELL_MISSING_SELF_GENERAL = '''
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 2</span>
+  <span id="stepLabel">Step 0 of 4</span>
 </div>
 
 <script>
@@ -4206,9 +4211,11 @@ const configHealthy = {
   mhcLabel: 'MHC-I present',
   outcomeLabel: 'Inhibitory signal dominates — no killing',
   labels: [
-    "Step 0 of 2 — NK cell surveys a healthy cell",
-    "Step 1 of 2 — MHC-I present sends an inhibitory signal",
-    "Step 2 of 2 — inhibitory signal dominates, the NK cell does not kill"
+    "Step 0 of 4 — NK cell surveys a healthy cell",
+    "Step 1 of 4 — MHC-I is present on the surface",
+    "Step 2 of 4 — inhibitory receptor engages MHC-I — inhibitory signal sent",
+    "Step 3 of 4 — activating receptor also detects baseline stress ligands — a weaker activating signal is sent too",
+    "Step 4 of 4 — the inhibitory signal dominates, so the NK cell does not kill"
   ]
 };
 const configInfected = {
@@ -4216,9 +4223,11 @@ const configInfected = {
   mhcLabel: 'MHC-I downregulated (missing)',
   outcomeLabel: 'No inhibition — activating signal wins — NK cell kills',
   labels: [
-    "Step 0 of 2 — NK cell surveys an infected cell that has downregulated MHC-I to evade T cells",
-    "Step 1 of 2 — no MHC-I means no inhibitory signal; stress ligands provide an activating signal",
-    "Step 2 of 2 — with nothing to oppose it, the activating signal wins — the NK cell kills the cell"
+    "Step 0 of 4 — NK cell surveys an infected cell that has downregulated MHC-I to evade T cells",
+    "Step 1 of 4 — MHC-I is downregulated — missing from the surface",
+    "Step 2 of 4 — no MHC-I to engage — the inhibitory receptor stays unliganded, no inhibitory signal",
+    "Step 3 of 4 — activating receptor detects stress ligands — activating signal sent",
+    "Step 4 of 4 — nothing opposes the activating signal, so the NK cell kills the cell"
   ]
 };
 function setMode(m) {
@@ -4229,22 +4238,165 @@ function setMode(m) {
   document.getElementById('targetLabel').textContent = cfg.targetLabel;
   document.getElementById('mhcLabel').textContent = cfg.mhcLabel;
   document.getElementById('outcomeLabel').textContent = cfg.outcomeLabel;
+  document.getElementById('mhcRectPresent').style.display = m === 'healthy' ? '' : 'none';
+  document.getElementById('mhcRectMissing').style.display = m === 'healthy' ? 'none' : '';
   render();
 }
 function render() {
   const cfg = mode === 'healthy' ? configHealthy : configInfected;
   document.getElementById('stepLabel').textContent = cfg.labels[step];
   document.getElementById('mhcMarker').classList.toggle('on', step >= 1);
-  document.getElementById('inhibitorySignal').classList.toggle('on', mode === 'healthy' && step >= 1);
-  document.getElementById('activatingSignal').classList.toggle('on', step >= 1);
-  document.getElementById('outcome').classList.toggle('on', step >= 2);
-  document.getElementById('targetCell').style.opacity = (mode === 'infected' && step >= 2) ? '0.25' : '1';
+  document.getElementById('inhibitorySignal').classList.toggle('on', mode === 'healthy' && step >= 2);
+  document.getElementById('activatingSignal').classList.toggle('on', step >= 3);
+  document.getElementById('outcome').classList.toggle('on', step >= 4);
+  document.getElementById('targetCell').style.opacity = (mode === 'infected' && step >= 4) ? '0.25' : '1';
 }
-function stepFwd() { if (step < 2) step++; render(); }
+function stepFwd() { if (step < 4) step++; render(); }
 function reset() { step = 0; render(); }
 setMode('healthy');
 </script>
 '''
+
+
+# ---------------------------------------------------------------------------
+# NK_CELL_MISSING_SELF_TECHNICAL  (source: nk_cell.html)
+# ---------------------------------------------------------------------------
+NK_CELL_MISSING_SELF_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram comparing NK cell receptor signaling: the inhibitory KIR/NKG2A pathway via ITIM motifs and SHP phosphatases, against the activating NKG2D pathway via the DAP10 adaptor and PI3K signaling.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnInhib" onclick="setMode('inhib')">Inhibitory: KIR / NKG2A</button>
+  <button id="btnActiv" onclick="setMode('activ')">Activating: NKG2D</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>NK cell receptor signaling — inhibitory vs activating pathways</title>
+<desc>The inhibitory receptor KIR (binding HLA-C) or NKG2A (binding HLA-E, which displays leader peptides from other class one molecules) has cytoplasmic ITIM motifs that get phosphorylated on ligand engagement, recruiting SHP-1 and SHP-2 phosphatases that dephosphorylate activating pathway components and shut down the killing program. The activating receptor NKG2D binds stress-induced ligands such as MICA, MICB or ULBPs, which are upregulated by DNA damage, viral infection or malignant transformation. NKG2D associates with the adaptor DAP10, which recruits PI3 kinase and Grb2 to drive cytoskeletal reorganization and lytic granule polarization toward the target cell. During development, NK cells are licensed: at least one inhibitory receptor must engage a self MHC-I molecule for the cell to become fully functional; NK cells that never receive this signal remain hyporesponsive.</desc>
+
+<rect x="60" y="90" width="140" height="120" rx="12" class="c-purple"/>
+<text class="th" x="130" y="80" text-anchor="middle">NK cell</text>
+
+<rect x="480" y="90" width="140" height="120" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="th" x="550" y="80" text-anchor="middle" id="targetLabelT">Target cell</text>
+
+<g id="inhibReceptor" class="stg">
+<rect x="192" y="135" width="16" height="30" rx="3" class="c-teal"/>
+<text class="ts" x="200" y="120" text-anchor="middle">KIR / NKG2A</text>
+</g>
+<g id="inhibLigand" class="stg">
+<rect x="472" y="135" width="16" height="30" rx="3" class="c-amber"/>
+<text class="ts" x="480" y="120" text-anchor="middle" id="inhibLigandLabel">HLA-C / HLA-E</text>
+</g>
+<g id="itim" class="stg">
+<circle cx="200" cy="185" r="10" class="c-red"/>
+<text class="ts" x="200" y="205" text-anchor="middle">ITIM-P</text>
+</g>
+<g id="shp" class="stg">
+<circle cx="150" cy="185" r="12" class="c-gray"/>
+<text class="ts" x="150" y="185" text-anchor="middle" dominant-baseline="central" style="font-size:9px">SHP1/2</text>
+<text class="ts" x="130" y="230" text-anchor="middle">Dephosphorylates activating pathway</text>
+</g>
+
+<g id="activReceptor" class="stg">
+<rect x="192" y="135" width="16" height="30" rx="3" class="c-teal"/>
+<text class="ts" x="200" y="120" text-anchor="middle">NKG2D</text>
+</g>
+<g id="activLigand" class="stg">
+<rect x="472" y="135" width="16" height="30" rx="3" class="c-coral"/>
+<text class="ts" x="480" y="120" text-anchor="middle">MICA / MICB / ULBP</text>
+</g>
+<g id="dap10" class="stg">
+<circle cx="150" cy="185" r="12" class="c-green"/>
+<text class="ts" x="150" y="185" text-anchor="middle" dominant-baseline="central" style="font-size:9px">DAP10</text>
+</g>
+<g id="pi3k" class="stg">
+<circle cx="105" cy="185" r="12" class="c-gray"/>
+<text class="ts" x="105" y="185" text-anchor="middle" dominant-baseline="central" style="font-size:8px">PI3K</text>
+<text class="ts" x="130" y="230" text-anchor="middle">Cytoskeleton reorganizes — lytic granules polarize</text>
+</g>
+
+<g id="netSignal" class="stg">
+<text class="th" x="340" y="270" text-anchor="middle" id="netSignalLabel"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'inhib';
+const inhib = {
+  targetLabel: 'Healthy cell (self MHC-I)',
+  netSignal: 'Net signal: INHIBITORY — lytic synapse blocked, no killing',
+  labels: [
+    "Step 0 of 3 — KIR or NKG2A engages self MHC-I (HLA-C, or HLA-E displaying a leader peptide)",
+    "Step 1 of 3 — cytoplasmic ITIM motifs on the receptor tail get phosphorylated",
+    "Step 2 of 3 — SHP-1 / SHP-2 phosphatases are recruited to the phosphorylated ITIMs",
+    "Step 3 of 3 — SHP-1/2 dephosphorylate activating-pathway components — net signal is inhibitory, killing is blocked"
+  ]
+};
+const activ = {
+  targetLabel: 'Stressed / infected cell',
+  netSignal: 'Net signal: ACTIVATING — lytic synapse forms, perforin/granzyme released',
+  labels: [
+    "Step 0 of 3 — NKG2D binds a stress-induced ligand (MICA, MICB or a ULBP) upregulated by DNA damage or infection",
+    "Step 1 of 3 — NKG2D associates with the adaptor DAP10",
+    "Step 2 of 3 — DAP10 recruits PI3 kinase (and Grb2), triggering downstream signaling",
+    "Step 3 of 3 — the cytoskeleton reorganizes and lytic granules polarize toward the target — net signal is activating, the cell is killed"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnInhib').classList.toggle('active', m === 'inhib');
+  document.getElementById('btnActiv').classList.toggle('active', m === 'activ');
+  document.getElementById('targetLabelT').textContent = (m === 'inhib' ? inhib : activ).targetLabel;
+  document.getElementById('inhibReceptor').style.display = m === 'inhib' ? '' : 'none';
+  document.getElementById('inhibLigand').style.display = m === 'inhib' ? '' : 'none';
+  document.getElementById('itim').style.display = m === 'inhib' ? '' : 'none';
+  document.getElementById('shp').style.display = m === 'inhib' ? '' : 'none';
+  document.getElementById('activReceptor').style.display = m === 'activ' ? '' : 'none';
+  document.getElementById('activLigand').style.display = m === 'activ' ? '' : 'none';
+  document.getElementById('dap10').style.display = m === 'activ' ? '' : 'none';
+  document.getElementById('pi3k').style.display = m === 'activ' ? '' : 'none';
+  render();
+}
+function render() {
+  const cfg = mode === 'inhib' ? inhib : activ;
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  if (mode === 'inhib') {
+    document.getElementById('inhibReceptor').classList.toggle('on', step >= 0);
+    document.getElementById('inhibLigand').classList.toggle('on', step >= 0);
+    document.getElementById('itim').classList.toggle('on', step >= 1);
+    document.getElementById('shp').classList.toggle('on', step >= 2);
+  } else {
+    document.getElementById('activReceptor').classList.toggle('on', step >= 0);
+    document.getElementById('activLigand').classList.toggle('on', step >= 0);
+    document.getElementById('dap10').classList.toggle('on', step >= 1);
+    document.getElementById('pi3k').classList.toggle('on', step >= 2);
+  }
+  document.getElementById('netSignal').classList.toggle('on', step >= 3);
+  document.getElementById('netSignalLabel').textContent = step >= 3 ? cfg.netSignal : '';
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('inhib');
+</script>
+'''
+
 
 
 # ---------------------------------------------------------------------------
@@ -5938,12 +6090,22 @@ REGISTRY = {
     "NK cell missing-self recognition": {
         "General": {
             "fragment": NK_CELL_MISSING_SELF_GENERAL,
-            "height": 440,
+            "height": 460,
             "blurb": (
                 "Switch between a healthy cell (MHC-I present — "
                 "inhibits killing) and an infected cell (MHC-I lost — "
                 "killing proceeds), the opposite detection strategy from "
                 "cytotoxic T cells."
+            ),
+        },
+        "Technical": {
+            "fragment": NK_CELL_MISSING_SELF_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "Compare the two receptor pathways underneath: inhibitory "
+                "KIR/NKG2A signal through ITIM motifs and SHP phosphatases, "
+                "while activating NKG2D signals through the DAP10 adaptor "
+                "and PI3K — the balance of these two decides the outcome."
             ),
         },
     },
