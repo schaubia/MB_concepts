@@ -6673,9 +6673,9 @@ PCR_GENERAL = '''
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
-<svg width="100%" viewBox="0 0 680 240" role="img">
+<svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Polymerase chain reaction (PCR)</title>
-<desc>Each PCR cycle has three steps. Denaturation at around 95 degrees Celsius separates the double-stranded DNA template into single strands. Annealing at around 50 to 65 degrees lets short primers bind complementary sequences flanking the target region. Extension at around 72 degrees lets a heat-stable DNA polymerase, such as Taq polymerase, synthesize new complementary strands from the primers. Each cycle roughly doubles the amount of target DNA, so after n cycles there are approximately two to the n copies.</desc>
+<desc>Each PCR cycle has three steps. Denaturation at around 95 degrees Celsius separates the double-stranded DNA template into single strands. Annealing at around 50 to 65 degrees lets short primers bind complementary sequences flanking the target region. Extension at around 72 degrees lets a heat-stable DNA polymerase, such as Taq polymerase, synthesize new complementary strands from the primers. Each cycle roughly doubles the amount of target DNA, so after n cycles there are approximately two to the n copies — repeating the three-step cycle around 30 times turns a single template into roughly a billion copies.</desc>
 
 <g id="strands">
 <line id="topStrand" x1="150" y1="120" x2="530" y2="120" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
@@ -6698,33 +6698,162 @@ PCR_GENERAL = '''
 <g id="cycleNote" class="stg">
 <text class="th" x="340" y="220" text-anchor="middle">Each cycle ~doubles the target — n cycles ≈ 2ⁿ copies</text>
 </g>
+
+<g id="ampChart" class="stg">
+<rect x="185" y="270" width="30" height="10" class="c-teal"/>
+<text class="ts" x="200" y="264" text-anchor="middle" style="font-size:9px">32</text>
+<text class="ts" x="200" y="295" text-anchor="middle" style="font-size:9px">Cycle 5</text>
+
+<rect x="285" y="245" width="30" height="35" class="c-teal"/>
+<text class="ts" x="300" y="239" text-anchor="middle" style="font-size:9px">32,768</text>
+<text class="ts" x="300" y="295" text-anchor="middle" style="font-size:9px">Cycle 15</text>
+
+<rect x="385" y="200" width="30" height="80" class="c-teal"/>
+<text class="ts" x="400" y="194" text-anchor="middle" style="font-size:9px">~33 million</text>
+<text class="ts" x="400" y="295" text-anchor="middle" style="font-size:9px">Cycle 25</text>
+
+<rect x="485" y="160" width="30" height="120" class="c-teal"/>
+<text class="ts" x="500" y="154" text-anchor="middle" style="font-size:9px">~1 billion</text>
+<text class="ts" x="500" y="295" text-anchor="middle" style="font-size:9px">Cycle 30</text>
+</g>
 </svg>
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
+  <span id="stepLabel">Step 0 of 4</span>
 </div>
 
 <script>
 let step = 0;
 const labels = [
-  "Step 0 of 3 — start with double-stranded template DNA containing the target region",
-  "Step 1 of 3 — denaturation (~95°C): heat separates the strands",
-  "Step 2 of 3 — annealing (~50-65°C): short primers bind complementary sequences flanking the target",
-  "Step 3 of 3 — extension (~72°C): heat-stable polymerase (e.g. Taq) synthesizes new strands — repeat the cycle to amplify exponentially"
+  "Step 0 of 4 — start with double-stranded template DNA containing the target region",
+  "Step 1 of 4 — denaturation (~95°C): heat separates the strands",
+  "Step 2 of 4 — annealing (~50-65°C): short primers bind complementary sequences flanking the target",
+  "Step 3 of 4 — extension (~72°C): heat-stable polymerase (e.g. Taq) synthesizes new strands, completing one cycle",
+  "Step 4 of 4 — repeat the cycle: doubling compounds fast — 30 cycles turns one template into roughly a billion copies"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
-  document.querySelector('svg').classList.toggle('denatured', step >= 1);
-  document.getElementById('phaseLabel').textContent = step === 0 ? 'Double-stranded template' : (step === 1 ? 'Strands separated' : '');
-  document.getElementById('primers').classList.toggle('on', step >= 2);
-  document.getElementById('extension').classList.toggle('on', step >= 3);
+  document.querySelector('svg').classList.toggle('denatured', step >= 1 && step < 4);
+  document.getElementById('phaseLabel').textContent = step === 0 ? 'Double-stranded template' : (step === 1 || step === 2 || step === 3 ? 'Strands separated' : '');
+  document.getElementById('primers').classList.toggle('on', step >= 2 && step < 4);
+  document.getElementById('extension').classList.toggle('on', step === 3);
   document.getElementById('cycleNote').classList.toggle('on', step >= 3);
+  document.getElementById('ampChart').classList.toggle('on', step === 4);
+  document.getElementById('strands').style.opacity = step === 4 ? '0.15' : '1';
 }
-function stepFwd() { if (step < 3) step++; render(); }
+function stepFwd() { if (step < 4) step++; render(); }
 function reset() { step = 0; render(); }
 render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# PCR_TECHNICAL  (source: pcr.html)
+# ---------------------------------------------------------------------------
+PCR_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram comparing Taq and Pfu DNA polymerase in PCR: both synthesize 5' to 3' from a primer, but Taq lacks 3' to 5' proofreading exonuclease activity and is fast with a higher error rate, while Pfu has proofreading activity and is slower with a much lower error rate.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnTaq" onclick="setMode('taq')">Taq polymerase</button>
+  <button id="btnPfu" onclick="setMode('pfu')">Pfu polymerase</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 260" role="img">
+<title>Taq vs Pfu polymerase — speed and fidelity trade-off</title>
+<desc>Taq polymerase, from the thermophilic bacterium Thermus aquaticus, synthesizes new DNA 5' to 3' from a primer but has no 3' to 5' proofreading exonuclease activity, so mismatched nucleotides are not checked or removed, giving an error rate around one in ten thousand to one in a hundred thousand bases; it is fast and inexpensive, making it the default choice for routine and diagnostic PCR. Pfu polymerase, from the archaeon Pyrococcus furiosus, has 3' to 5' proofreading exonuclease activity that detects and excises a mismatched nucleotide before continuing synthesis, giving a much lower error rate around one in a million to one in ten million bases; it is slower, making it the choice when accuracy matters, such as cloning or sequencing applications.</desc>
+
+<line x1="60" y1="130" x2="500" y2="130" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<rect x="100" y="122" width="30" height="8" fill="#EF9F27"/>
+<text class="ts" x="115" y="110" text-anchor="middle">Primer (3'-OH)</text>
+
+<rect id="newStrand" x="130" y="122" width="180" height="8" fill="#1D9E75"/>
+<text class="ts" x="220" y="150" text-anchor="middle">Synthesis 5' → 3'</text>
+
+<g id="mismatch" class="stg">
+<circle cx="310" cy="126" r="7" fill="#E24B4A"/>
+<text class="ts" x="310" y="105" text-anchor="middle">Mismatched nucleotide incorporated</text>
+</g>
+
+<g id="noProofread" class="stg">
+<text class="th" x="310" y="185" text-anchor="middle">No proofreading — mismatch stays, synthesis continues</text>
+</g>
+
+<g id="proofreadCheck" class="stg">
+<circle cx="310" cy="126" r="16" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="3 3" class="pulse"/>
+<text class="ts" x="310" y="165" text-anchor="middle">3'→5' exonuclease checks the last base</text>
+</g>
+
+<g id="excised" class="stg">
+<text class="th" x="310" y="185" text-anchor="middle">Mismatch excised — correct base re-inserted</text>
+</g>
+
+<g id="outcome" class="stg">
+<text class="th" x="280" y="225" text-anchor="middle" id="outcomeLabel"></text>
+<text class="ts" x="280" y="245" text-anchor="middle" id="useLabel"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 2</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'taq';
+const taq = {
+  labels: [
+    "Step 0 of 2 — Taq polymerase (from Thermus aquaticus) synthesizes new DNA 5' to 3' from the primer",
+    "Step 1 of 2 — a mismatched nucleotide is occasionally incorporated",
+    "Step 2 of 2 — no 3'→5' proofreading exonuclease activity — the mismatch stays, giving an error rate of roughly 1 in 10⁴-10⁵ bases; fast and cheap, the default for routine PCR"
+  ],
+  outcome: 'Error rate ≈ 1 in 10⁴-10⁵ bases',
+  use: 'Fast, inexpensive — routine & diagnostic PCR'
+};
+const pfu = {
+  labels: [
+    "Step 0 of 2 — Pfu polymerase (from Pyrococcus furiosus) synthesizes new DNA 5' to 3' from the primer",
+    "Step 1 of 2 — a mismatched nucleotide is occasionally incorporated",
+    "Step 2 of 2 — 3'→5' proofreading exonuclease activity detects and excises the mismatch, re-inserting the correct base — error rate roughly 1 in 10⁶-10⁷ bases; slower, used when accuracy matters"
+  ],
+  outcome: 'Error rate ≈ 1 in 10⁶-10⁷ bases',
+  use: 'Slower, higher fidelity — cloning & sequencing'
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnTaq').classList.toggle('active', m === 'taq');
+  document.getElementById('btnPfu').classList.toggle('active', m === 'pfu');
+  render();
+}
+function render() {
+  const cfg = mode === 'taq' ? taq : pfu;
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('mismatch').classList.toggle('on', step >= 1);
+  document.getElementById('noProofread').classList.toggle('on', mode === 'taq' && step >= 2);
+  document.getElementById('proofreadCheck').classList.toggle('on', mode === 'pfu' && step === 2);
+  document.getElementById('mismatch').style.opacity = (mode === 'pfu' && step >= 2) ? '0' : (step >= 1 ? '1' : '0');
+  document.getElementById('excised').classList.toggle('on', mode === 'pfu' && step >= 2);
+  document.getElementById('outcome').classList.toggle('on', step >= 2);
+  document.getElementById('outcomeLabel').textContent = step >= 2 ? cfg.outcome : '';
+  document.getElementById('useLabel').textContent = step >= 2 ? cfg.use : '';
+}
+function stepFwd() { if (step < 2) step++; render(); }
+function reset() { step = 0; render(); }
+setMode('taq');
 </script>
 '''
 
@@ -7470,12 +7599,23 @@ REGISTRY = {
     "PCR (polymerase chain reaction)": {
         "General": {
             "fragment": PCR_GENERAL,
-            "height": 420,
+            "height": 460,
             "blurb": (
                 "Denaturation, annealing, and extension, repeated: each "
                 "cycle roughly doubles the target DNA, so n cycles give "
                 "about 2ⁿ copies — the lab technique behind most modern "
-                "genetic testing."
+                "genetic testing. See the exponential growth after 30 "
+                "cycles in the final step."
+            ),
+        },
+        "Technical": {
+            "fragment": PCR_TECHNICAL,
+            "height": 440,
+            "blurb": (
+                "Compare Taq (fast, no proofreading, ~1 error per "
+                "10⁴-10⁵ bases — routine PCR) against Pfu (slower, 3'→5' "
+                "proofreading exonuclease, ~1 error per 10⁶-10⁷ bases — "
+                "cloning & sequencing)."
             ),
         },
     },
