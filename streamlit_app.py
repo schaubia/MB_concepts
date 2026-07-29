@@ -4700,6 +4700,7 @@ TYPE1_HYPERSENSITIVITY_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 1.6s ease-in-out infinite; }
   @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .dim { opacity: 0.45; transition: opacity .4s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -4713,7 +4714,7 @@ TYPE1_HYPERSENSITIVITY_GENERAL = '''
 <g id="ige" class="stg">
 <path d="M270 120 L285 105 M285 120 L270 105" stroke="#7F77DD" stroke-width="2"/>
 <path d="M410 120 L425 105 M425 120 L410 105" stroke="#7F77DD" stroke-width="2"/>
-<text class="ts" x="340" y="90" text-anchor="middle">IgE bound to Fc receptors — sensitized</text>
+<text id="igeLabel" class="ts" x="340" y="90" text-anchor="middle">IgE bound to Fc receptors — sensitized</text>
 </g>
 
 <g id="allergen" class="stg">
@@ -4752,6 +4753,7 @@ const labels = [
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('ige').classList.toggle('on', step >= 0);
+  document.getElementById('igeLabel').classList.toggle('dim', step >= 1);
   document.getElementById('allergen').classList.toggle('on', step >= 1);
   document.getElementById('degranulation').classList.toggle('on', step >= 2);
   document.getElementById('symptoms').classList.toggle('on', step >= 3);
