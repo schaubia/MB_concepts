@@ -2393,7 +2393,7 @@ SYNAPTIC_TRANSMISSION_GENERAL = '''
 </style>
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Synaptic transmission, general view</title>
-<desc>An action potential arrives at the axon terminal, opening voltage-gated calcium channels. Calcium influx triggers a synaptic vesicle to fuse with the presynaptic membrane, releasing neurotransmitter into the synaptic cleft, which diffuses across and binds receptors on the postsynaptic membrane, triggering a response. The neurotransmitter is then cleared by reuptake or enzymatic degradation, resetting the synapse.</desc>
+<desc>An action potential arrives at the axon terminal, opening voltage-gated calcium channels. Calcium influx triggers a synaptic vesicle to fuse with the presynaptic membrane, releasing neurotransmitter into the synaptic cleft, which diffuses across and binds receptors on the postsynaptic membrane.</desc>
 
 <rect x="40" y="80" width="140" height="140" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <text class="ts" x="110" y="70" text-anchor="middle">Axon terminal</text>
@@ -2431,48 +2431,34 @@ SYNAPTIC_TRANSMISSION_GENERAL = '''
 <circle cx="503" cy="150" r="20" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="3 3"/>
 <text class="ts" x="570" y="195" text-anchor="middle">Postsynaptic response (ion channel opens)</text>
 </g>
-
-<g id="reuptake" class="stg">
-<rect x="210" y="140" width="14" height="30" rx="3" fill="none" stroke="#B45309" stroke-width="2"/>
-<text class="ts" x="217" y="185" text-anchor="middle">Reuptake</text>
-<path d="M290,150 L225,150" stroke="#B45309" stroke-width="2" fill="none" marker-end="url(#arrowClear)"/>
-<text class="ts" x="340" y="230" text-anchor="middle">NT cleared — reuptake / enzymatic degradation</text>
-</g>
-<defs>
-<marker id="arrowClear" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-<path d="M0,0 L6,3 L0,6 Z" fill="#B45309"/>
-</marker>
-</defs>
 </svg>
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 5</span>
+  <span id="stepLabel">Step 0 of 4</span>
 </div>
 
 <script>
 let step = 0;
 const labels = [
-  "Step 0 of 5 — action potential arrives at the axon terminal",
-  "Step 1 of 5 — voltage-gated Ca2+ channels open, calcium flows in",
-  "Step 2 of 5 — vesicle fuses with the membrane, neurotransmitter released",
-  "Step 3 of 5 — neurotransmitter diffuses across the synaptic cleft",
-  "Step 4 of 5 — neurotransmitter binds receptors, postsynaptic response triggered",
-  "Step 5 of 5 — neurotransmitter cleared by reuptake or enzymatic degradation, synapse resets"
+  "Step 0 of 4 — action potential arrives at the axon terminal",
+  "Step 1 of 4 — voltage-gated Ca2+ channels open, calcium flows in",
+  "Step 2 of 4 — vesicle fuses with the membrane, neurotransmitter released",
+  "Step 3 of 4 — neurotransmitter diffuses across the synaptic cleft",
+  "Step 4 of 4 — neurotransmitter binds receptors, postsynaptic response triggered"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('apArrow').classList.toggle('on', step === 0);
   document.getElementById('caChannel').classList.toggle('on', step >= 1);
   document.querySelector('svg').classList.toggle('released', step >= 2);
-  document.getElementById('neurotransmitter').classList.toggle('on', step >= 2 && step < 5);
+  document.getElementById('neurotransmitter').classList.toggle('on', step >= 2 && step < 4);
   document.getElementById('receptor').classList.toggle('on', step >= 3);
   document.getElementById('response').classList.toggle('on', step >= 4);
-  document.getElementById('reuptake').classList.toggle('on', step >= 5);
 }
-function stepFwd() { if (step < 5) step++; render(); }
+function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
@@ -6112,9 +6098,7 @@ REGISTRY = {
             "blurb": (
                 "An action potential opens Ca2+ channels at the axon "
                 "terminal, triggering vesicle fusion and neurotransmitter "
-                "release, which crosses the cleft and binds receptors, "
-                "triggering a response — then gets cleared by reuptake "
-                "or enzymatic degradation so the synapse can reset."
+                "release, which crosses the cleft and binds receptors."
             ),
         },
         "Technical": {
