@@ -640,8 +640,8 @@ function render() {
   } else if (step === 3) {
     ax1=ax2=0; ay1=ay2=0; bx1=bx2=0; by1=by2=0;
   } else if (step >= 4) {
-    ax1=-100; ay1=0; ax2=120; ay2=0;
-    bx1=-120; by1=0; bx2=100; by2=0;
+    ax1=-165; ay1=0; ax2=215; ay2=0;
+    bx1=-215; by1=0; bx2=165; by2=0;
   }
   document.getElementById('chrA_c1').style.transform = `translate(${ax1}px, ${ay1}px)`;
   document.getElementById('chrA_c2').style.transform = `translate(${ax2}px, ${ay2}px)`;
@@ -673,7 +673,8 @@ TRANSCRIPTION_GENERAL = '''
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #rnapGroup { transition: transform 1.2s ease; }
+  #rnapGroup { transition: transform 1.2s ease, opacity 1.2s ease; }
+  .unbound #rnapGroup { transform: translate(-45px, -75px); opacity: 0.55; }
   .elongating #rnapGroup { transform: translateX(180px); }
   .terminated #rnapGroup { transform: translateX(340px); opacity: 0; }
   #mrnaTail { transition: stroke-dasharray 1.2s ease; }
@@ -743,12 +744,13 @@ const labels = [
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('promoterBox').setAttribute('stroke-width', step === 1 ? '2.5' : '1.5');
+  document.getElementById('promoterBox').setAttribute('stroke-width', (step >= 1 && step <= 2) ? '2.5' : '1.5');
   document.getElementById('bubble').classList.toggle('on', step >= 2);
   document.getElementById('mrna').classList.toggle('on', step >= 2);
   document.getElementById('mrnaTail').style.strokeDashoffset = step >= 2 ? '0' : '1000';
   document.getElementById('released').classList.toggle('on', step >= 4);
   const svg = document.querySelector('svg');
+  svg.classList.toggle('unbound', step === 0);
   svg.classList.toggle('elongating', step === 3);
   svg.classList.toggle('terminated', step >= 4);
 }
@@ -879,7 +881,7 @@ MEIOSIS_GENERAL = '''
 </style>
 <svg width="100%" viewBox="0 0 680 420" role="img">
 <title>Meiosis with correct homolog then chromatid separation</title>
-<desc>Two homologous chromosome pairs: chromosome A (maternal solid blue, paternal light blue) and chromosome B (maternal solid red, paternal light red). At anaphase I, the maternal and paternal homologs of each chromosome separate from each other to opposite poles, while their own sister chromatids stay joined. Only in meiosis II do sister chromatids finally separate, producing four haploid cells: two identical cells carrying the maternal combination, and two identical cells carrying the paternal combination.</desc>
+<desc>Two homologous chromosome pairs: chromosome A (maternal solid blue, paternal light blue) and chromosome B (maternal solid red, paternal light red). At anaphase I, the maternal and paternal homologs of each chromosome separate from each other to opposite poles, while their own sister chromatids stay joined. Only in meiosis II do sister chromatids finally separate, producing four haploid cells, each with a different combination of maternal and paternal chromosomes.</desc>
 
 <ellipse id="cellOutline" cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 <text class="ts" x="340" y="28" text-anchor="middle" id="stageLabel">Diploid cell, homologs unpaired</text>
@@ -922,7 +924,7 @@ MEIOSIS_GENERAL = '''
 <ellipse cx="270" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 <ellipse cx="410" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 <ellipse cx="550" cy="330" rx="55" ry="42" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<text class="th" x="340" y="390" text-anchor="middle">2 identical maternal + 2 identical paternal copies</text>
+<text class="th" x="340" y="390" text-anchor="middle">Four haploid cells — each a different maternal/paternal combination</text>
 </g>
 </svg>
 
@@ -942,7 +944,7 @@ const labels = [
   "Anaphase I — the MATERNAL and PATERNAL homologs separate from EACH OTHER (not sister chromatids — those stay joined)",
   "Telophase I — two haploid cells form: one gets maternal A + maternal B, the other gets paternal A + paternal B",
   "Meiosis II — NOW sister chromatids separate within each cell, like mitosis",
-  "Result — four haploid cells: 2 identical maternal copies, 2 identical paternal copies"
+  "Result — four haploid cells, each with a different maternal/paternal combination"
 ];
 function render() {
   document.getElementById('stageLabel').textContent = labels[step];
@@ -957,25 +959,23 @@ function render() {
   if (step === 1) {
     m.matA_c1=[-15,-15]; m.matA_c2=[-15,-15]; m.patA_c1=[15,15]; m.patA_c2=[15,15];
     m.matB_c1=[-15,-15]; m.matB_c2=[-15,-15]; m.patB_c1=[15,15]; m.patB_c2=[15,15];
-  } else if (step === 3) {
-    // anaphase I: homologs pulling apart toward opposite poles, sister chromatids still joined
-    m.matA_c1=[-55,0]; m.matA_c2=[-55,0]; m.patA_c1=[45,0]; m.patA_c2=[45,0];
-    m.matB_c1=[-65,0]; m.matB_c2=[-65,0]; m.patB_c1=[35,0]; m.patB_c2=[35,0];
+  } else if (step >= 3 && step < 4) {
+    // metaphase I: base positions
   } else if (step >= 4 && step < 5) {
-    m.matA_c1=[-103,0]; m.matA_c2=[-103,0]; m.patA_c1=[83,0]; m.patA_c2=[83,0];
-    m.matB_c1=[-123,0]; m.matB_c2=[-123,0]; m.patB_c1=[63,0]; m.patB_c2=[63,0];
+    m.matA_c1=[-165,0]; m.matA_c2=[-165,0]; m.patA_c1=[195,0]; m.patA_c2=[195,0];
+    m.matB_c1=[-215,0]; m.matB_c2=[-215,0]; m.patB_c1=[145,0]; m.patB_c2=[145,0];
   } else if (step >= 5) {
-    m.matA_c1=[-165,165]; m.matA_c2=[-40,165]; m.patA_c1=[80,165]; m.patA_c2=[205,165];
-    m.matB_c1=[-225,165]; m.matB_c2=[-100,165]; m.patB_c1=[20,165]; m.patB_c2=[145,165];
+    m.matA_c1=[-195,140]; m.matA_c2=[-135,140]; m.patA_c1=[165,140]; m.patA_c2=[225,140];
+    m.matB_c1=[-245,140]; m.matB_c2=[-185,140]; m.patB_c1=[115,140]; m.patB_c2=[175,140];
   }
   ids.forEach(id => {
     document.getElementById(id).style.transform = `translate(${m[id][0]}px, ${m[id][1]}px)`;
   });
-  const linksVisible = step < 5;
+  const linksVisible = step < 4;
   document.getElementById('linkMatA').style.opacity = linksVisible ? '1' : '0';
   document.getElementById('linkPatA').style.opacity = linksVisible ? '1' : '0';
-  document.getElementById('linkMatB').style.opacity = linksVisible ? '1' : '0';
-  document.getElementById('linkPatB').style.opacity = linksVisible ? '1' : '0';
+  document.getElementById('linkMatB').style.opacity = (step < 5) ? '1' : '0';
+  document.getElementById('linkPatB').style.opacity = (step < 5) ? '1' : '0';
 
   document.getElementById('twoCells').classList.toggle('on', step === 4);
   document.getElementById('fourCells').classList.toggle('on', step >= 5);
@@ -1166,7 +1166,7 @@ function render() {
   const dmgThreshold = mode === 'extrinsic' ? 3 : 4;
   const bodiesThreshold = dmgThreshold;
   const phagoThreshold = mode === 'extrinsic' ? 4 : 5;
-  const engulfThreshold = 6;
+  const engulfThreshold = mode === 'extrinsic' ? 5 : 6;
 
   document.getElementById('damage').classList.toggle('on', step >= dmgThreshold);
   document.getElementById('cellBody').style.opacity = step >= dmgThreshold ? '0.15' : '1';
@@ -1317,8 +1317,7 @@ ENZYME_KINETICS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #substrateGroup { transition: transform 1s ease, opacity .5s ease; }
-  .bound #substrateGroup { transform: translate(157px, 0px); }
-  .activated #substrateGroup { transform: translate(157px, 0px); }
+  .bound #substrateGroup { transform: translate(15px, 5px); }
   #activeSite { transition: r 0.6s ease, stroke 0.6s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
@@ -1434,13 +1433,11 @@ function render() {
     document.getElementById('activeSite').setAttribute('r', '16');
     document.getElementById('product').classList.toggle('on', false);
   } else if (mode === 'alloInhibit') {
-    document.getElementById('substrateGroup').style.opacity = step >= 2 ? '0.15' : '1';
-    document.getElementById('activeSite').setAttribute('stroke', step >= 2 ? '#E24B4A' : '#EF9F27');
-    document.getElementById('activeSite').setAttribute('r', step >= 2 ? '10' : '16');
+    document.getElementById('substrateGroup').style.opacity = step >= 1 ? '0.15' : '1';
+    document.getElementById('activeSite').setAttribute('stroke', step >= 1 ? '#E24B4A' : '#EF9F27');
+    document.getElementById('activeSite').setAttribute('r', step >= 1 ? '10' : '16');
     document.getElementById('product').classList.toggle('on', false);
   } else if (mode === 'alloActivate') {
-    svg.classList.toggle('activated', step >= 2);
-    document.getElementById('substrateLabel').textContent = step >= 2 ? 'Bound substrate' : 'Substrate';
     document.getElementById('substrateGroup').style.opacity = '1';
     document.getElementById('activeSite').setAttribute('stroke', step >= 1 ? '#1D9E75' : '#EF9F27');
     document.getElementById('activeSite').setAttribute('r', step >= 1 ? '22' : '16');
@@ -1618,12 +1615,6 @@ HUMORAL_IMMUNE_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 2s ease-in-out infinite; }
   @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
-  .pulse-ring { animation: pulsering 1.4s ease-out infinite; transform-origin: center; }
-  @keyframes pulsering { 0%{opacity:.9; transform:scale(0.7)} 100%{opacity:0; transform:scale(1.6)} }
-  #antigenGroup { transition: transform .7s cubic-bezier(.2,.8,.2,1); }
-  #antigenGroup.bound { transform: translateY(36px); }
-  #antigenGroup.bound .drift { animation: none; }
-  #bcr { transition: stroke .4s ease, stroke-width .4s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -1636,17 +1627,11 @@ HUMORAL_IMMUNE_GENERAL = '''
 
 <circle cx="180" cy="180" r="60" class="c-teal"/>
 <text class="th" x="180" y="180" text-anchor="middle" dominant-baseline="central">B cell</text>
-<path id="bcr" d="M180 120 L165 100 M180 120 L195 100" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" fill="none"/>
-
-<g id="bindGlow" class="stg">
-<circle class="pulse-ring" cx="180" cy="106" r="12" fill="none" stroke="#EF9F27" stroke-width="2"/>
-</g>
+<path id="bcr" d="M180 120 L165 100 M180 120 L195 100" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"/>
 
 <g id="antigen" class="stg">
-<g id="antigenGroup">
 <circle class="drift" cx="180" cy="70" r="9" fill="#EF9F27"/>
-<text id="antigenLabel" class="ts" x="180" y="52" text-anchor="middle">Antigen</text>
-</g>
+<text class="ts" x="180" y="52" text-anchor="middle">Antigen</text>
 </g>
 
 <g id="mhcPresent" class="stg">
@@ -1700,19 +1685,6 @@ const labels = [
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('antigen').classList.toggle('on', step <= 1);
-  document.getElementById('antigenGroup').classList.toggle('bound', step === 1);
-  document.getElementById('bindGlow').classList.toggle('on', step === 1);
-  const bcr = document.getElementById('bcr');
-  const antigenLabel = document.getElementById('antigenLabel');
-  if (step === 1) {
-    bcr.setAttribute('stroke', '#EF9F27');
-    bcr.setAttribute('stroke-width', '3');
-    antigenLabel.textContent = 'Antigen (bound)';
-  } else {
-    bcr.setAttribute('stroke', '#0F6E56');
-    bcr.setAttribute('stroke-width', '2');
-    antigenLabel.textContent = 'Antigen';
-  }
   document.getElementById('mhcPresent').classList.toggle('on', step >= 1 && step <= 2);
   document.getElementById('helperT').classList.toggle('on', step >= 2);
   document.getElementById('plasmaCells').classList.toggle('on', step >= 3);
@@ -1930,22 +1902,18 @@ GASTRULATION_GENERAL = '''
 
 <path id="innerFold" d="M340 270 Q340 270 340 270" fill="none" stroke="#D85A30" stroke-width="3" class="stg"/>
 
-<g id="mesodermLayer" class="stg">
-<circle cx="340" cy="160" r="75" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="4 3"/>
-</g>
-
 <g id="archenteron" class="stg">
 <ellipse cx="340" cy="190" rx="45" ry="60" fill="none" stroke="#D85A30" stroke-width="2"/>
 <text class="ts" x="340" y="190" text-anchor="middle" dominant-baseline="central">Archenteron</text>
 </g>
 
 <g id="layers" class="stg">
-<circle cx="465" cy="90" r="5" fill="#378ADD"/>
-<text class="ts" x="475" y="90" text-anchor="start" dominant-baseline="central">Ectoderm (outer)</text>
-<circle cx="465" cy="160" r="5" fill="#7F77DD"/>
-<text class="ts" x="475" y="160" text-anchor="start" dominant-baseline="central">Mesoderm (middle)</text>
-<circle cx="465" cy="230" r="5" fill="#D85A30"/>
-<text class="ts" x="475" y="230" text-anchor="start" dominant-baseline="central">Endoderm (inner)</text>
+<text class="ts" x="490" y="90" text-anchor="middle">Ectoderm (outer)</text>
+<circle cx="450" cy="90" r="5" fill="#378ADD"/>
+<text class="ts" x="490" y="160" text-anchor="middle">Mesoderm (middle)</text>
+<circle cx="450" cy="160" r="5" fill="#7F77DD"/>
+<text class="ts" x="490" y="230" text-anchor="middle">Endoderm (inner)</text>
+<circle cx="450" cy="230" r="5" fill="#D85A30"/>
 </g>
 </svg>
 
@@ -1977,7 +1945,6 @@ function render() {
   document.getElementById('innerFold').classList.toggle('on', step >= 1);
   document.getElementById('innerFold').setAttribute('d', folds[step]);
   document.getElementById('archenteron').classList.toggle('on', step >= 2);
-  document.getElementById('mesodermLayer').classList.toggle('on', step >= 3);
   document.getElementById('layers').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
@@ -2393,7 +2360,7 @@ SYNAPTIC_TRANSMISSION_GENERAL = '''
 </style>
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Synaptic transmission, general view</title>
-<desc>An action potential arrives at the axon terminal, opening voltage-gated calcium channels. Calcium influx triggers a synaptic vesicle to fuse with the presynaptic membrane, releasing neurotransmitter into the synaptic cleft, which diffuses across and binds receptors on the postsynaptic membrane, triggering a response. The neurotransmitter is then cleared by reuptake or enzymatic degradation, resetting the synapse.</desc>
+<desc>An action potential arrives at the axon terminal, opening voltage-gated calcium channels. Calcium influx triggers a synaptic vesicle to fuse with the presynaptic membrane, releasing neurotransmitter into the synaptic cleft, which diffuses across and binds receptors on the postsynaptic membrane.</desc>
 
 <rect x="40" y="80" width="140" height="140" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <text class="ts" x="110" y="70" text-anchor="middle">Axon terminal</text>
@@ -2431,48 +2398,34 @@ SYNAPTIC_TRANSMISSION_GENERAL = '''
 <circle cx="503" cy="150" r="20" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="3 3"/>
 <text class="ts" x="570" y="195" text-anchor="middle">Postsynaptic response (ion channel opens)</text>
 </g>
-
-<g id="reuptake" class="stg">
-<rect x="210" y="140" width="14" height="30" rx="3" fill="none" stroke="#B45309" stroke-width="2"/>
-<text class="ts" x="217" y="185" text-anchor="middle">Reuptake</text>
-<path d="M290,150 L225,150" stroke="#B45309" stroke-width="2" fill="none" marker-end="url(#arrowClear)"/>
-<text class="ts" x="340" y="230" text-anchor="middle">NT cleared — reuptake / enzymatic degradation</text>
-</g>
-<defs>
-<marker id="arrowClear" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-<path d="M0,0 L6,3 L0,6 Z" fill="#B45309"/>
-</marker>
-</defs>
 </svg>
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 5</span>
+  <span id="stepLabel">Step 0 of 4</span>
 </div>
 
 <script>
 let step = 0;
 const labels = [
-  "Step 0 of 5 — action potential arrives at the axon terminal",
-  "Step 1 of 5 — voltage-gated Ca2+ channels open, calcium flows in",
-  "Step 2 of 5 — vesicle fuses with the membrane, neurotransmitter released",
-  "Step 3 of 5 — neurotransmitter diffuses across the synaptic cleft",
-  "Step 4 of 5 — neurotransmitter binds receptors, postsynaptic response triggered",
-  "Step 5 of 5 — neurotransmitter cleared by reuptake or enzymatic degradation, synapse resets"
+  "Step 0 of 4 — action potential arrives at the axon terminal",
+  "Step 1 of 4 — voltage-gated Ca2+ channels open, calcium flows in",
+  "Step 2 of 4 — vesicle fuses with the membrane, neurotransmitter released",
+  "Step 3 of 4 — neurotransmitter diffuses across the synaptic cleft",
+  "Step 4 of 4 — neurotransmitter binds receptors, postsynaptic response triggered"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('apArrow').classList.toggle('on', step === 0);
   document.getElementById('caChannel').classList.toggle('on', step >= 1);
   document.querySelector('svg').classList.toggle('released', step >= 2);
-  document.getElementById('neurotransmitter').classList.toggle('on', step >= 2 && step < 5);
+  document.getElementById('neurotransmitter').classList.toggle('on', step >= 2 && step < 4);
   document.getElementById('receptor').classList.toggle('on', step >= 3);
   document.getElementById('response').classList.toggle('on', step >= 4);
-  document.getElementById('reuptake').classList.toggle('on', step >= 5);
 }
-function stepFwd() { if (step < 5) step++; render(); }
+function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
@@ -3034,169 +2987,6 @@ function render() {
   document.getElementById('erMembrane').classList.toggle('on', step >= 4);
 }
 function stepFwd() { if (step < 4) step++; render(); }
-function stepBack() { if (step > 0) step--; render(); }
-function reset() { step = 0; render(); }
-render();
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
-# RNA_SPLICING_GENERAL  (source: rna_splicing.html)
-# ---------------------------------------------------------------------------
-RNA_SPLICING_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of RNA splicing: the spliceosome removes introns from pre-mRNA and joins the exons together to form mature mRNA.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .drift { animation: drift 1.6s ease-in-out infinite; }
-  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-  #introns { transition: opacity 0.6s ease; }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-<svg width="100%" viewBox="0 0 680 260" role="img">
-<title>RNA splicing, general view</title>
-<desc>A newly made pre-mRNA contains both exons, the coding segments, and introns, the non-coding segments in between. The spliceosome assembles at the intron boundaries, removes each intron by looping it out, and joins the flanking exons together, producing a mature mRNA ready for export from the nucleus and translation.</desc>
-
-<rect x="60" y="140" width="80" height="20" class="c-green"/>
-<text class="ts" x="100" y="125" text-anchor="middle">Exon 1</text>
-<path id="intron1" d="M140,150 C140,105 260,105 260,150" stroke="#7F77DD" stroke-width="3" fill="none"/>
-<rect x="260" y="140" width="80" height="20" class="c-green"/>
-<text class="ts" x="300" y="125" text-anchor="middle">Exon 2</text>
-<path id="intron2" d="M340,150 C340,105 460,105 460,150" stroke="#7F77DD" stroke-width="3" fill="none"/>
-<rect x="460" y="140" width="80" height="20" class="c-green"/>
-<text class="ts" x="500" y="125" text-anchor="middle">Exon 3</text>
-<text class="ts" x="300" y="80" text-anchor="middle">Pre-mRNA (exons + introns)</text>
-
-<g id="spliceosome" class="stg">
-<circle cx="200" cy="150" r="10" class="c-purple"/>
-<circle cx="400" cy="150" r="10" class="c-purple"/>
-<text class="ts" x="300" y="180" text-anchor="middle">Spliceosome assembles at intron boundaries</text>
-</g>
-
-<g id="removed" class="stg">
-<text class="ts drift" x="200" y="65" text-anchor="middle">Intron removed</text>
-<text class="ts drift" x="400" y="65" text-anchor="middle">Intron removed</text>
-</g>
-
-<g id="matureMrna" class="stg">
-<rect x="60" y="215" width="80" height="16" class="c-green"/>
-<rect x="140" y="215" width="80" height="16" class="c-green"/>
-<rect x="220" y="215" width="80" height="16" class="c-green"/>
-<text class="th" x="300" y="250" text-anchor="middle">Mature mRNA — ready for export &amp; translation</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="stepBack()">Back</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-const labels = [
-  "Step 0 of 3 — pre-mRNA contains exons (coding) and introns (non-coding) after transcription",
-  "Step 1 of 3 — the spliceosome assembles at each intron's boundaries",
-  "Step 2 of 3 — each intron is looped out and removed",
-  "Step 3 of 3 — the exons are joined together — mature mRNA is ready for export and translation"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('spliceosome').classList.toggle('on', step === 1);
-  document.getElementById('intron1').style.opacity = step >= 2 ? '0' : '1';
-  document.getElementById('intron2').style.opacity = step >= 2 ? '0' : '1';
-  document.getElementById('removed').classList.toggle('on', step === 2);
-  document.getElementById('matureMrna').classList.toggle('on', step >= 3);
-}
-function stepFwd() { if (step < 3) step++; render(); }
-function stepBack() { if (step > 0) step--; render(); }
-function reset() { step = 0; render(); }
-render();
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
-# RNA_SPLICING_TECHNICAL  (source: rna_splicing.html)
-# ---------------------------------------------------------------------------
-RNA_SPLICING_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of spliceosome catalysis: U1 and U2 snRNPs bind the 5' splice site and branch point, the tri-snRNP joins to assemble the catalytic spliceosome, a first transesterification forms a lariat intermediate, and a second transesterification ligates the exons and releases the intron lariat. Alternative splicing can include or skip exons to produce multiple isoforms.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-<svg width="100%" viewBox="0 0 680 280" role="img">
-<title>Spliceosome catalysis — branch point and lariat formation</title>
-<desc>U1 snRNP base-pairs with the 5' splice site (GU) and U2 snRNP with the branch point sequence. The U4/U6.U5 tri-snRNP then joins, U1 and U4 are released, and the catalytic core is activated. In the first transesterification, the branch point adenosine's 2' hydroxyl attacks the 5' splice site, forming a lariat intermediate. In the second transesterification, the freed 3' hydroxyl of exon 1 attacks the 3' splice site (AG), ligating the exons and releasing the intron as a lariat, which is degraded. Because exons can be included or skipped, alternative splicing lets one gene produce multiple mRNA and protein isoforms.</desc>
-
-<rect x="60" y="140" width="100" height="20" class="c-green"/>
-<text class="ts" x="110" y="125" text-anchor="middle">Exon 1</text>
-<rect x="460" y="140" width="100" height="20" class="c-green"/>
-<text class="ts" x="510" y="125" text-anchor="middle">Exon 2</text>
-<line id="intronLine" x1="160" y1="150" x2="460" y2="150" stroke="#7F77DD" stroke-width="3"/>
-<path id="lariatPath" d="M175,150 C175,90 380,90 380,150" stroke="#7F77DD" stroke-width="3" fill="none" style="display:none"/>
-
-<text class="ts" x="175" y="172" text-anchor="middle">GU</text>
-<text class="ts" x="445" y="172" text-anchor="middle">AG</text>
-
-<g id="u1u2" class="stg">
-<circle cx="175" cy="150" r="10" class="c-teal"/>
-<text class="ts" x="175" y="150" text-anchor="middle" dominant-baseline="central" style="font-size:8px">U1</text>
-<circle cx="380" cy="150" r="10" class="c-amber"/>
-<text class="ts" x="380" y="150" text-anchor="middle" dominant-baseline="central" style="font-size:8px">U2</text>
-<text class="ts" x="300" y="105" text-anchor="middle">U1 → 5' splice site, U2 → branch point (A)</text>
-</g>
-
-<g id="triSnrnp" class="stg">
-<ellipse cx="270" cy="150" rx="140" ry="35" fill="none" stroke="#B45309" stroke-width="2" stroke-dasharray="3 3"/>
-<text class="ts" x="270" y="200" text-anchor="middle">U4/U6.U5 joins — spliceosome assembled, catalytic core active</text>
-</g>
-
-<g id="step1Note" class="stg">
-<text class="th" x="270" y="70" text-anchor="middle">Lariat forms — branch point 2'-OH attacks the 5' splice site</text>
-</g>
-
-<g id="ligated" class="stg">
-<rect x="60" y="215" width="100" height="16" class="c-green"/>
-<rect x="160" y="215" width="100" height="16" class="c-green"/>
-<text class="th" x="300" y="250" text-anchor="middle">Exons ligated — intron lariat released &amp; degraded</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="stepBack()">Back</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-const labels = [
-  "Step 0 of 3 — U1 snRNP binds the 5' splice site (GU), U2 snRNP binds the branch point sequence",
-  "Step 1 of 3 — the U4/U6.U5 tri-snRNP joins; U1 and U4 are released, activating the catalytic core",
-  "Step 2 of 3 — first transesterification: the branch point adenosine's 2'-OH attacks the 5' splice site, forming a lariat intermediate",
-  "Step 3 of 3 — second transesterification: exon 1's freed 3'-OH attacks the 3' splice site (AG) — exons are ligated, the intron lariat is released"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('u1u2').classList.toggle('on', step >= 0);
-  document.getElementById('triSnrnp').classList.toggle('on', step === 1);
-  document.getElementById('intronLine').style.display = step >= 2 ? 'none' : '';
-  document.getElementById('lariatPath').style.display = step >= 2 ? '' : 'none';
-  document.getElementById('step1Note').classList.toggle('on', step === 2);
-  document.getElementById('ligated').classList.toggle('on', step >= 3);
-}
-function stepFwd() { if (step < 3) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
@@ -4332,13 +4122,8 @@ NK_CELL_MISSING_SELF_GENERAL = '''
 <text class="ts" x="180" y="225" text-anchor="middle" id="targetLabel">Healthy cell</text>
 
 <g id="mhcMarker" class="stg">
-<rect id="mhcRectPresent" x="165" y="90" width="30" height="12" rx="3" fill="#EF9F27"/>
-<g id="mhcRectMissing" style="display:none">
-<rect x="165" y="90" width="30" height="12" rx="3" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-<line x1="165" y1="90" x2="195" y2="102" stroke="#DC2626" stroke-width="1.5"/>
-<line x1="195" y1="90" x2="165" y2="102" stroke="#DC2626" stroke-width="1.5"/>
-</g>
-<text class="ts" x="180" y="52" text-anchor="middle" id="mhcLabel">MHC-I present</text>
+<rect x="165" y="90" width="30" height="12" rx="3" fill="#EF9F27"/>
+<text class="ts" x="180" y="75" text-anchor="middle" id="mhcLabel">MHC-I present</text>
 </g>
 
 <g id="inhibitorySignal" class="stg">
@@ -4363,7 +4148,7 @@ NK_CELL_MISSING_SELF_GENERAL = '''
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
   <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 4</span>
+  <span id="stepLabel">Step 0 of 2</span>
 </div>
 
 <script>
@@ -4374,11 +4159,9 @@ const configHealthy = {
   mhcLabel: 'MHC-I present',
   outcomeLabel: 'Inhibitory signal dominates — no killing',
   labels: [
-    "Step 0 of 4 — NK cell surveys a healthy cell",
-    "Step 1 of 4 — MHC-I is present on the surface",
-    "Step 2 of 4 — inhibitory receptor engages MHC-I — inhibitory signal sent",
-    "Step 3 of 4 — activating receptor also detects baseline stress ligands — a weaker activating signal is sent too",
-    "Step 4 of 4 — the inhibitory signal dominates, so the NK cell does not kill"
+    "Step 0 of 2 — NK cell surveys a healthy cell",
+    "Step 1 of 2 — MHC-I present sends an inhibitory signal",
+    "Step 2 of 2 — inhibitory signal dominates, the NK cell does not kill"
   ]
 };
 const configInfected = {
@@ -4386,11 +4169,9 @@ const configInfected = {
   mhcLabel: 'MHC-I downregulated (missing)',
   outcomeLabel: 'No inhibition — activating signal wins — NK cell kills',
   labels: [
-    "Step 0 of 4 — NK cell surveys an infected cell that has downregulated MHC-I to evade T cells",
-    "Step 1 of 4 — MHC-I is downregulated — missing from the surface",
-    "Step 2 of 4 — no MHC-I to engage — the inhibitory receptor stays unliganded, no inhibitory signal",
-    "Step 3 of 4 — activating receptor detects stress ligands — activating signal sent",
-    "Step 4 of 4 — nothing opposes the activating signal, so the NK cell kills the cell"
+    "Step 0 of 2 — NK cell surveys an infected cell that has downregulated MHC-I to evade T cells",
+    "Step 1 of 2 — no MHC-I means no inhibitory signal; stress ligands provide an activating signal",
+    "Step 2 of 2 — with nothing to oppose it, the activating signal wins — the NK cell kills the cell"
   ]
 };
 function setMode(m) {
@@ -4401,165 +4182,22 @@ function setMode(m) {
   document.getElementById('targetLabel').textContent = cfg.targetLabel;
   document.getElementById('mhcLabel').textContent = cfg.mhcLabel;
   document.getElementById('outcomeLabel').textContent = cfg.outcomeLabel;
-  document.getElementById('mhcRectPresent').style.display = m === 'healthy' ? '' : 'none';
-  document.getElementById('mhcRectMissing').style.display = m === 'healthy' ? 'none' : '';
   render();
 }
 function render() {
   const cfg = mode === 'healthy' ? configHealthy : configInfected;
   document.getElementById('stepLabel').textContent = cfg.labels[step];
   document.getElementById('mhcMarker').classList.toggle('on', step >= 1);
-  document.getElementById('inhibitorySignal').classList.toggle('on', mode === 'healthy' && step >= 2);
-  document.getElementById('activatingSignal').classList.toggle('on', step >= 3);
-  document.getElementById('outcome').classList.toggle('on', step >= 4);
-  document.getElementById('targetCell').style.opacity = (mode === 'infected' && step >= 4) ? '0.25' : '1';
+  document.getElementById('inhibitorySignal').classList.toggle('on', mode === 'healthy' && step >= 1);
+  document.getElementById('activatingSignal').classList.toggle('on', step >= 1);
+  document.getElementById('outcome').classList.toggle('on', step >= 2);
+  document.getElementById('targetCell').style.opacity = (mode === 'infected' && step >= 2) ? '0.25' : '1';
 }
-function stepFwd() { if (step < 4) step++; render(); }
+function stepFwd() { if (step < 2) step++; render(); }
 function reset() { step = 0; render(); }
 setMode('healthy');
 </script>
 '''
-
-
-# ---------------------------------------------------------------------------
-# NK_CELL_MISSING_SELF_TECHNICAL  (source: nk_cell.html)
-# ---------------------------------------------------------------------------
-NK_CELL_MISSING_SELF_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram comparing NK cell receptor signaling: the inhibitory KIR/NKG2A pathway via ITIM motifs and SHP phosphatases, against the activating NKG2D pathway via the DAP10 adaptor and PI3K signaling.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-
-<div class="rowbtns">
-  <button id="btnInhib" onclick="setMode('inhib')">Inhibitory: KIR / NKG2A</button>
-  <button id="btnActiv" onclick="setMode('activ')">Activating: NKG2D</button>
-</div>
-
-<svg width="100%" viewBox="0 0 680 300" role="img">
-<title>NK cell receptor signaling — inhibitory vs activating pathways</title>
-<desc>The inhibitory receptor KIR (binding HLA-C) or NKG2A (binding HLA-E, which displays leader peptides from other class one molecules) has cytoplasmic ITIM motifs that get phosphorylated on ligand engagement, recruiting SHP-1 and SHP-2 phosphatases that dephosphorylate activating pathway components and shut down the killing program. The activating receptor NKG2D binds stress-induced ligands such as MICA, MICB or ULBPs, which are upregulated by DNA damage, viral infection or malignant transformation. NKG2D associates with the adaptor DAP10, which recruits PI3 kinase and Grb2 to drive cytoskeletal reorganization and lytic granule polarization toward the target cell. During development, NK cells are licensed: at least one inhibitory receptor must engage a self MHC-I molecule for the cell to become fully functional; NK cells that never receive this signal remain hyporesponsive.</desc>
-
-<rect x="60" y="90" width="140" height="120" rx="12" class="c-purple"/>
-<text class="th" x="130" y="80" text-anchor="middle">NK cell</text>
-
-<rect x="480" y="90" width="140" height="120" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="th" x="550" y="80" text-anchor="middle" id="targetLabelT">Target cell</text>
-
-<g id="inhibReceptor" class="stg">
-<rect x="192" y="135" width="16" height="30" rx="3" class="c-teal"/>
-<text class="ts" x="200" y="120" text-anchor="middle">KIR / NKG2A</text>
-</g>
-<g id="inhibLigand" class="stg">
-<rect x="472" y="135" width="16" height="30" rx="3" class="c-amber"/>
-<text class="ts" x="480" y="120" text-anchor="middle" id="inhibLigandLabel">HLA-C / HLA-E</text>
-</g>
-<g id="itim" class="stg">
-<circle cx="200" cy="185" r="10" class="c-red"/>
-<text class="ts" x="200" y="205" text-anchor="middle">ITIM-P</text>
-</g>
-<g id="shp" class="stg">
-<circle cx="150" cy="185" r="12" class="c-gray"/>
-<text class="ts" x="150" y="185" text-anchor="middle" dominant-baseline="central" style="font-size:9px">SHP1/2</text>
-<text class="ts" x="130" y="230" text-anchor="middle">Dephosphorylates activating pathway</text>
-</g>
-
-<g id="activReceptor" class="stg">
-<rect x="192" y="135" width="16" height="30" rx="3" class="c-teal"/>
-<text class="ts" x="200" y="120" text-anchor="middle">NKG2D</text>
-</g>
-<g id="activLigand" class="stg">
-<rect x="472" y="135" width="16" height="30" rx="3" class="c-coral"/>
-<text class="ts" x="480" y="120" text-anchor="middle">MICA / MICB / ULBP</text>
-</g>
-<g id="dap10" class="stg">
-<circle cx="150" cy="185" r="12" class="c-green"/>
-<text class="ts" x="150" y="185" text-anchor="middle" dominant-baseline="central" style="font-size:9px">DAP10</text>
-</g>
-<g id="pi3k" class="stg">
-<circle cx="105" cy="185" r="12" class="c-gray"/>
-<text class="ts" x="105" y="185" text-anchor="middle" dominant-baseline="central" style="font-size:8px">PI3K</text>
-<text class="ts" x="130" y="230" text-anchor="middle">Cytoskeleton reorganizes — lytic granules polarize</text>
-</g>
-
-<g id="netSignal" class="stg">
-<text class="th" x="340" y="270" text-anchor="middle" id="netSignalLabel"></text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-let mode = 'inhib';
-const inhib = {
-  targetLabel: 'Healthy cell (self MHC-I)',
-  netSignal: 'Net signal: INHIBITORY — lytic synapse blocked, no killing',
-  labels: [
-    "Step 0 of 3 — KIR or NKG2A engages self MHC-I (HLA-C, or HLA-E displaying a leader peptide)",
-    "Step 1 of 3 — cytoplasmic ITIM motifs on the receptor tail get phosphorylated",
-    "Step 2 of 3 — SHP-1 / SHP-2 phosphatases are recruited to the phosphorylated ITIMs",
-    "Step 3 of 3 — SHP-1/2 dephosphorylate activating-pathway components — net signal is inhibitory, killing is blocked"
-  ]
-};
-const activ = {
-  targetLabel: 'Stressed / infected cell',
-  netSignal: 'Net signal: ACTIVATING — lytic synapse forms, perforin/granzyme released',
-  labels: [
-    "Step 0 of 3 — NKG2D binds a stress-induced ligand (MICA, MICB or a ULBP) upregulated by DNA damage or infection",
-    "Step 1 of 3 — NKG2D associates with the adaptor DAP10",
-    "Step 2 of 3 — DAP10 recruits PI3 kinase (and Grb2), triggering downstream signaling",
-    "Step 3 of 3 — the cytoskeleton reorganizes and lytic granules polarize toward the target — net signal is activating, the cell is killed"
-  ]
-};
-function setMode(m) {
-  mode = m; step = 0;
-  document.getElementById('btnInhib').classList.toggle('active', m === 'inhib');
-  document.getElementById('btnActiv').classList.toggle('active', m === 'activ');
-  document.getElementById('targetLabelT').textContent = (m === 'inhib' ? inhib : activ).targetLabel;
-  document.getElementById('inhibReceptor').style.display = m === 'inhib' ? '' : 'none';
-  document.getElementById('inhibLigand').style.display = m === 'inhib' ? '' : 'none';
-  document.getElementById('itim').style.display = m === 'inhib' ? '' : 'none';
-  document.getElementById('shp').style.display = m === 'inhib' ? '' : 'none';
-  document.getElementById('activReceptor').style.display = m === 'activ' ? '' : 'none';
-  document.getElementById('activLigand').style.display = m === 'activ' ? '' : 'none';
-  document.getElementById('dap10').style.display = m === 'activ' ? '' : 'none';
-  document.getElementById('pi3k').style.display = m === 'activ' ? '' : 'none';
-  render();
-}
-function render() {
-  const cfg = mode === 'inhib' ? inhib : activ;
-  document.getElementById('stepLabel').textContent = cfg.labels[step];
-  if (mode === 'inhib') {
-    document.getElementById('inhibReceptor').classList.toggle('on', step >= 0);
-    document.getElementById('inhibLigand').classList.toggle('on', step >= 0);
-    document.getElementById('itim').classList.toggle('on', step >= 1);
-    document.getElementById('shp').classList.toggle('on', step >= 2);
-  } else {
-    document.getElementById('activReceptor').classList.toggle('on', step >= 0);
-    document.getElementById('activLigand').classList.toggle('on', step >= 0);
-    document.getElementById('dap10').classList.toggle('on', step >= 1);
-    document.getElementById('pi3k').classList.toggle('on', step >= 2);
-  }
-  document.getElementById('netSignal').classList.toggle('on', step >= 3);
-  document.getElementById('netSignalLabel').textContent = step >= 3 ? cfg.netSignal : '';
-}
-function stepFwd() { if (step < 3) step++; render(); }
-function reset() { step = 0; render(); }
-setMode('inhib');
-</script>
-'''
-
 
 
 # ---------------------------------------------------------------------------
@@ -4863,7 +4501,6 @@ TYPE1_HYPERSENSITIVITY_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 1.6s ease-in-out infinite; }
   @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-  .dim { opacity: 0.45; transition: opacity .4s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -4877,7 +4514,7 @@ TYPE1_HYPERSENSITIVITY_GENERAL = '''
 <g id="ige" class="stg">
 <path d="M270 120 L285 105 M285 120 L270 105" stroke="#7F77DD" stroke-width="2"/>
 <path d="M410 120 L425 105 M425 120 L410 105" stroke="#7F77DD" stroke-width="2"/>
-<text id="igeLabel" class="ts" x="340" y="90" text-anchor="middle">IgE bound to Fc receptors — sensitized</text>
+<text class="ts" x="340" y="90" text-anchor="middle">IgE bound to Fc receptors — sensitized</text>
 </g>
 
 <g id="allergen" class="stg">
@@ -4916,7 +4553,6 @@ const labels = [
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('ige').classList.toggle('on', step >= 0);
-  document.getElementById('igeLabel').classList.toggle('dim', step >= 1);
   document.getElementById('allergen').classList.toggle('on', step >= 1);
   document.getElementById('degranulation').classList.toggle('on', step >= 2);
   document.getElementById('symptoms').classList.toggle('on', step >= 3);
@@ -5095,91 +4731,7 @@ render();
 
 
 # ---------------------------------------------------------------------------
-# DNA_MISMATCH_REPAIR_TECHNICAL  (source: mismatch_repair.html)
-# ---------------------------------------------------------------------------
-DNA_MISMATCH_REPAIR_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of the bacterial MutS-MutL-MutH mismatch repair pathway: MutS binds the mismatch, MutL is recruited, MutH nicks the unmethylated new strand at a GATC site to distinguish it from the template, exonuclease degrades back to the mismatch, and Pol III and ligase restore the strand.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #degradeZone { transition: width 0.8s ease, x 0.8s ease; }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-<svg width="100%" viewBox="0 0 680 280" role="img">
-<title>Mismatch repair, technical view — MutS/MutL/MutH</title>
-<desc>MutS binds the mismatch and kinks the DNA. MutL is recruited, forming a complex that scans for a strand discrimination signal. In E. coli, the new strand is transiently unmethylated at GATC sites, while the template strand is methylated; MutH uses this difference to nick the new strand specifically. An exonuclease degrades the nicked strand from the GATC site back past the mismatch, single-strand binding proteins protect the gap, and DNA polymerase III resynthesizes the correct sequence, with ligase sealing the final nick.</desc>
-
-<line x1="30" y1="120" x2="650" y2="120" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
-<line x1="30" y1="140" x2="650" y2="140" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
-<text class="ts" x="40" y="105" text-anchor="start">Template strand (methylated)</text>
-<text class="ts" x="40" y="160" text-anchor="start">New strand (unmethylated)</text>
-
-<circle id="mismatch" cx="340" cy="130" r="7" fill="#E24B4A"/>
-
-<g id="mutS" class="stg">
-<circle cx="340" cy="130" r="18" fill="none" stroke="#7F77DD" stroke-width="2"/>
-<text class="ts" x="340" y="105" text-anchor="middle">MutS binds mismatch</text>
-</g>
-
-<g id="mutL" class="stg">
-<circle cx="365" cy="130" r="12" fill="none" stroke="#1D9E75" stroke-width="2"/>
-<text class="ts" x="365" y="95" text-anchor="middle">MutL recruited — scans for GATC</text>
-</g>
-
-<g id="gatcSite" class="stg">
-<rect x="470" y="135" width="24" height="10" fill="#EF9F27"/>
-<text class="ts" x="482" y="120" text-anchor="middle">GATC site</text>
-<text class="ts" x="482" y="165" text-anchor="middle" id="mutHLabel">MutH nicks new strand here</text>
-</g>
-
-<rect id="degradeZone" class="stg" x="340" y="135" width="150" height="10" fill="var(--surface-1)"/>
-<text class="ts" x="410" y="190" text-anchor="middle" id="degradeLabel"></text>
-
-<g id="resynth" class="stg">
-<rect x="340" y="135" width="150" height="10" fill="#1D9E75" stroke-dasharray="4 3"/>
-<text class="ts" x="410" y="215" text-anchor="middle">Pol III resynthesizes — ligase seals the nick</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="stepBack()">Back</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 4</span>
-</div>
-
-<script>
-let step = 0;
-const labels = [
-  "Step 0 of 4 — MutS binds the mismatch, kinking the DNA at the distortion",
-  "Step 1 of 4 — MutL is recruited, forming a MutS-MutL complex that scans outward for a strand discrimination signal",
-  "Step 2 of 4 — the new strand is transiently unmethylated at a nearby GATC site; MutH nicks the new strand there, distinguishing it from the methylated template",
-  "Step 3 of 4 — an exonuclease degrades the nicked strand back past the mismatch, while SSB proteins protect the resulting gap",
-  "Step 4 of 4 — DNA polymerase III resynthesizes the correct sequence using the template, and ligase seals the remaining nick"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('mutS').classList.toggle('on', step >= 1);
-  document.getElementById('mutL').classList.toggle('on', step >= 2);
-  document.getElementById('gatcSite').classList.toggle('on', step >= 2);
-  document.getElementById('degradeZone').classList.toggle('on', step === 3);
-  document.getElementById('degradeLabel').textContent = step === 3 ? 'Exonuclease degrades strand back to the mismatch' : '';
-  if (step === 3) {
-    document.getElementById('degradeZone').setAttribute('x', '340');
-    document.getElementById('degradeZone').setAttribute('width', '150');
-  }
-  document.getElementById('resynth').classList.toggle('on', step >= 4);
-  document.getElementById('mismatch').style.opacity = step >= 3 ? '0' : '1';
-}
-function stepFwd() { if (step < 4) step++; render(); }
-function stepBack() { if (step > 0) step--; render(); }
-function reset() { step = 0; render(); }
-render();
-</script>
-'''
+# CRISPR_CAS9_GENERAL  (source: crispr_cas9.html)
 # ---------------------------------------------------------------------------
 CRISPR_CAS9_GENERAL = '''
 <h2 class="sr-only">Interactive diagram of CRISPR-Cas9 gene editing: a guide RNA directs Cas9 to a target DNA sequence, Cas9 cuts both strands, and the cell repairs the break either by NHEJ or by homology-directed repair with a donor template.</h2>
@@ -5266,121 +4818,6 @@ render();
 
 
 # ---------------------------------------------------------------------------
-# CRISPR_CAS9_TECHNICAL  (source: crispr_cas9_technical.html)
-# ---------------------------------------------------------------------------
-CRISPR_CAS9_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of CRISPR-Cas9 gene editing: PAM recognition triggers local DNA unwinding, the sgRNA spacer invades to form an R-loop starting from the PAM-proximal seed sequence, full complementarity activates the HNH and RuvC nuclease domains to make a blunt double-strand break 3 bp upstream of the PAM, and the break is resolved by NHEJ or HDR.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #cas9Group { transition: transform 1s ease; }
-  .docked #cas9Group { transform: translateY(15px); }
-  #domains { transition: opacity .5s ease; }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-<svg width="100%" viewBox="0 0 680 320" role="img">
-<title>CRISPR-Cas9 gene editing, technical view</title>
-<desc>The Cas9-sgRNA ribonucleoprotein scans DNA via its PAM-interacting domain. Recognition of a 5-prime NGG PAM triggers local unwinding. The sgRNA spacer invades and base-pairs with the target strand starting from the PAM-proximal seed sequence, roughly the first 10 to 12 nucleotides; full complementarity across the ~20-nucleotide spacer completes an R-loop and triggers a conformational checkpoint. This activates the HNH domain, which nicks the target strand, and the RuvC domain, which nicks the non-target strand, producing a blunt double-strand break about 3 base pairs upstream of the PAM. The cell resolves the break either by non-homologous end joining, using the Ku70/80 and DNA-PKcs complex to ligate the ends with occasional indels, or by homology-directed repair, using RAD51-mediated strand invasion of a donor template for a precise edit.</desc>
-
-<line x1="30" y1="150" x2="650" y2="150" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
-<line x1="30" y1="170" x2="650" y2="170" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
-<text class="ts" x="60" y="140" text-anchor="middle">Target strand</text>
-<text class="ts" x="60" y="188" text-anchor="middle">Non-target strand</text>
-<rect x="320" y="145" width="30" height="10" fill="#EF9F27"/>
-<text class="ts" x="335" y="135" text-anchor="middle">PAM (5'-NGG-3')</text>
-
-<g id="cas9Group">
-<ellipse cx="300" cy="105" rx="46" ry="34" class="c-purple"/>
-<text class="th" x="300" y="98" text-anchor="middle" dominant-baseline="central">Cas9 RNP</text>
-<text class="ts" x="300" y="118" text-anchor="middle" dominant-baseline="central">PAM-interacting domain</text>
-<path d="M300 139 L300 150" stroke="#7F77DD" stroke-width="3"/>
-</g>
-
-<g id="scan" class="stg">
-<text class="ts" x="300" y="60" text-anchor="middle">sgRNA spacer (~20 nt) + scaffold loaded; scanning DNA</text>
-</g>
-
-<g id="unwind" class="stg">
-<text class="ts" x="300" y="200" text-anchor="middle">PAM recognized — local DNA unwinding begins</text>
-</g>
-
-<g id="seed" class="stg">
-<rect x="210" y="146" width="110" height="8" fill="none" stroke="#1D9E75" stroke-width="2"/>
-<text class="ts" x="265" y="215" text-anchor="middle">Seed sequence (PAM-proximal ~10-12 nt) pairs first</text>
-</g>
-
-<path id="rloop" d="M210 170 Q265 143 320 170" stroke="#D85A30" stroke-width="2" fill="none" class="stg"/>
-<g id="rloopLabel" class="stg">
-<text class="ts" x="265" y="230" text-anchor="middle">R-loop: non-target strand displaced</text>
-</g>
-
-<g id="domains" class="stg">
-<circle cx="278" cy="132" r="10" fill="#E24B4A"/>
-<text class="ts" x="278" y="118" text-anchor="middle">HNH</text>
-<circle cx="322" cy="132" r="10" fill="#7F77DD"/>
-<text class="ts" x="322" y="118" text-anchor="middle">RuvC</text>
-</g>
-
-<g id="cut" class="stg">
-<line x1="290" y1="145" x2="290" y2="175" stroke="#E24B4A" stroke-width="3"/>
-<text class="ts" x="290" y="245" text-anchor="middle">Blunt DSB, ~3 bp upstream of PAM</text>
-</g>
-
-<g id="nhej" class="stg">
-<circle cx="150" cy="150" r="10" fill="none" stroke="#639922" stroke-width="2"/>
-<text class="ts" x="150" y="270" text-anchor="middle">NHEJ — Ku70/80 + DNA-PKcs</text>
-<text class="ts" x="150" y="286" text-anchor="middle">error-prone ligation, indels</text>
-</g>
-
-<g id="hdr" class="stg">
-<rect x="400" y="140" width="60" height="20" rx="4" fill="#1D9E75" opacity="0.5"/>
-<text class="ts" x="430" y="270" text-anchor="middle">HDR — RAD51 strand invasion</text>
-<text class="ts" x="430" y="286" text-anchor="middle">donor template, precise edit</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="stepBack()">Back</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 5</span>
-</div>
-
-<script>
-let step = 0;
-const labels = [
-  "Step 0 of 5 — Cas9-sgRNA RNP assembles (spacer + scaffold); PAM-interacting domain scans DNA",
-  "Step 1 of 5 — a 5'-NGG-3' PAM is recognized, triggering local DNA unwinding",
-  "Step 2 of 5 — the spacer invades and pairs from the PAM-proximal seed sequence (~10-12 nt) outward",
-  "Step 3 of 5 — full ~20 nt complementarity completes the R-loop, triggering the HNH/RuvC conformational checkpoint",
-  "Step 4 of 5 — HNH nicks the target strand, RuvC nicks the non-target strand — a blunt DSB ~3 bp upstream of the PAM",
-  "Step 5 of 5 — repair: NHEJ (Ku70/80 + DNA-PKcs, error-prone) or HDR (RAD51, donor template, precise edit)"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('scan').classList.toggle('on', step === 0);
-  document.querySelector('svg').classList.toggle('docked', step >= 1);
-  document.getElementById('unwind').classList.toggle('on', step === 1);
-  document.getElementById('seed').classList.toggle('on', step >= 2 && step < 4);
-  document.getElementById('rloop').classList.toggle('on', step >= 2 && step < 5);
-  document.getElementById('rloopLabel').classList.toggle('on', step >= 2 && step < 4);
-  document.getElementById('domains').classList.toggle('on', step >= 3);
-  document.getElementById('cut').classList.toggle('on', step >= 4);
-  document.getElementById('nhej').classList.toggle('on', step >= 5);
-  document.getElementById('hdr').classList.toggle('on', step >= 5);
-}
-function stepFwd() { if (step < 5) step++; render(); }
-function stepBack() { if (step > 0) step--; render(); }
-function reset() { step = 0; render(); }
-render();
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
 # LAC_OPERON_GENERAL  (source: lac_operon.html)
 # ---------------------------------------------------------------------------
 LAC_OPERON_GENERAL = '''
@@ -5418,7 +4855,6 @@ LAC_OPERON_GENERAL = '''
 <text class="ts" x="420" y="185" text-anchor="middle">lac genes (lacZ, lacY, lacA)</text>
 
 <circle id="repressor" cx="235" cy="150" r="14" class="c-red"/>
-<circle id="blockRing" cx="235" cy="150" r="21" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="3 3" class="stg"/>
 <text class="ts" x="235" y="105" text-anchor="middle" id="repressorLabel">Repressor bound</text>
 
 <g id="lactoseMol" class="stg">
@@ -5468,8 +4904,6 @@ function render() {
   const cfg = mode === 'absent' ? configAbsent : configPresent;
   document.getElementById('stepLabel').textContent = cfg.labels[step];
   document.getElementById('lactoseMol').classList.toggle('on', mode === 'present' && step >= 1);
-  document.getElementById('blockRing').classList.toggle('on', mode === 'absent' && step >= 1);
-  document.getElementById('rnaPol').classList.toggle('pulse', mode === 'absent' && step >= 1);
   const svg = document.querySelector('svg');
   svg.classList.toggle('removed', mode === 'present' && step >= 2);
   svg.classList.toggle('transcribing', mode === 'present' && step >= 2);
@@ -5483,109 +4917,7 @@ setMode('absent');
 
 
 # ---------------------------------------------------------------------------
-# LAC_OPERON_TECHNICAL  (source: lac_operon.html)
-# ---------------------------------------------------------------------------
-LAC_OPERON_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram of catabolite repression at the lac operon: glucose levels set cAMP concentration, which controls whether the CAP activator binds upstream of the promoter to boost RNA polymerase recruitment, layered on top of lactose-repressor control.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-
-<div class="rowbtns">
-  <button id="btnGlu" onclick="setMode('glucose')">Glucose present</button>
-  <button id="btnNoGlu" onclick="setMode('noglucose')">Glucose absent</button>
-</div>
-
-<svg width="100%" viewBox="0 0 680 260" role="img">
-<title>Catabolite repression — CAP/cAMP control of the lac operon</title>
-<desc>This view assumes lactose is present, so the lac repressor is already off the operator, and asks a separate question: how much glucose is available. When glucose is present, adenylyl cyclase is inhibited and cAMP stays low, so little CAP-cAMP complex forms and RNA polymerase binds the promoter only weakly on its own, giving basal transcription. When glucose is absent, cAMP rises, CAP-cAMP forms and binds the CAP site upstream of the promoter, bending the DNA and strongly recruiting RNA polymerase, giving maximal transcription. This is layered on top of, not instead of, lactose-repressor control.</desc>
-
-<line x1="30" y1="150" x2="650" y2="150" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
-<rect x="90" y="140" width="45" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="112" y="130" text-anchor="middle">CAP site</text>
-<rect x="150" y="140" width="50" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="175" y="130" text-anchor="middle">Promoter</text>
-<rect x="210" y="140" width="50" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="235" y="130" text-anchor="middle">Operator</text>
-<rect x="270" y="140" width="300" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="420" y="185" text-anchor="middle">lac genes (lacZ, lacY, lacA)</text>
-
-<g id="camp" class="stg">
-<circle cx="112" cy="100" r="7" fill="#EF9F27"/>
-<text class="ts" x="112" y="80" text-anchor="middle" id="campLabel">cAMP rising</text>
-</g>
-
-<g id="capBound" class="stg">
-<circle cx="112" cy="150" r="14" fill="none" stroke="#1D9E75" stroke-width="2"/>
-<text class="ts" x="112" y="170" text-anchor="middle" style="font-size:9px">CAP</text>
-</g>
-
-<circle id="rnaPol" cx="175" cy="150" r="12" class="c-teal"/>
-
-<g id="basalNote" class="stg">
-<text class="th" x="420" y="220" text-anchor="middle">Basal (weak) transcription — RNA pol binds unaided</text>
-</g>
-<g id="maxNote" class="stg">
-<text class="th" x="420" y="220" text-anchor="middle">Maximal transcription — CAP-cAMP recruits RNA pol strongly</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-let mode = 'glucose';
-const configGlucose = {
-  campLabel: 'cAMP stays low',
-  labels: [
-    "Step 0 of 3 — glucose is present, so adenylyl cyclase is inhibited",
-    "Step 1 of 3 — cAMP stays low — little CAP-cAMP complex forms",
-    "Step 2 of 3 — the CAP site remains unbound",
-    "Step 3 of 3 — RNA polymerase binds the promoter only weakly on its own — basal (low) transcription, even with lactose present"
-  ]
-};
-const configNoGlucose = {
-  campLabel: 'cAMP rises',
-  labels: [
-    "Step 0 of 3 — glucose is absent, so adenylyl cyclase is active",
-    "Step 1 of 3 — cAMP rises and binds CAP, forming the CAP-cAMP complex",
-    "Step 2 of 3 — CAP-cAMP binds the CAP site upstream of the promoter, bending the DNA",
-    "Step 3 of 3 — RNA polymerase is strongly recruited — maximal transcription when lactose is also present"
-  ]
-};
-function setMode(m) {
-  mode = m; step = 0;
-  document.getElementById('btnGlu').classList.toggle('active', m === 'glucose');
-  document.getElementById('btnNoGlu').classList.toggle('active', m === 'noglucose');
-  const cfg = m === 'glucose' ? configGlucose : configNoGlucose;
-  document.getElementById('campLabel').textContent = cfg.campLabel;
-  render();
-}
-function render() {
-  const cfg = mode === 'glucose' ? configGlucose : configNoGlucose;
-  document.getElementById('stepLabel').textContent = cfg.labels[step];
-  document.getElementById('camp').classList.toggle('on', step >= 1);
-  document.getElementById('capBound').classList.toggle('on', mode === 'noglucose' && step >= 2);
-  document.getElementById('rnaPol').classList.toggle('pulse', mode === 'noglucose' && step >= 2);
-  document.getElementById('basalNote').classList.toggle('on', mode === 'glucose' && step >= 3);
-  document.getElementById('maxNote').classList.toggle('on', mode === 'noglucose' && step >= 3);
-}
-function stepFwd() { if (step < 3) step++; render(); }
-function reset() { step = 0; render(); }
-setMode('glucose');
-</script>
-'''
+# RNA_INTERFERENCE_GENERAL  (source: rna_interference.html)
 # ---------------------------------------------------------------------------
 RNA_INTERFERENCE_GENERAL = '''
 <h2 class="sr-only">Interactive diagram of RNA interference: Dicer cleaves double-stranded RNA into siRNA, the guide strand loads into RISC, and RISC cleaves the complementary target mRNA, silencing the gene.</h2>
@@ -5667,152 +4999,7 @@ render();
 
 
 # ---------------------------------------------------------------------------
-# RNA_INTERFERENCE_TECHNICAL  (source: rna_interference.html)
-# ---------------------------------------------------------------------------
-RNA_INTERFERENCE_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram comparing the siRNA and miRNA silencing pathways: siRNA comes from exogenous double-stranded RNA processed directly by Dicer in the cytoplasm and pairs perfectly to slice its target, while miRNA is processed from a nuclear hairpin by Drosha then Dicer and typically pairs imperfectly, repressing translation instead of slicing.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-
-<div class="rowbtns">
-  <button id="btnSi" onclick="setMode('sirna')">siRNA pathway</button>
-  <button id="btnMi" onclick="setMode('mirna')">miRNA pathway</button>
-</div>
-
-<svg width="100%" viewBox="0 0 680 300" role="img">
-<title>siRNA vs miRNA silencing pathways</title>
-<desc>siRNA originates from exogenous or viral double-stranded RNA, is cleaved directly by Dicer in the cytoplasm, and pairs perfectly with its target, so Argonaute's slicer activity cleaves the mRNA. miRNA originates from a hairpin transcribed in the nucleus, is first cropped by the Drosha-DGCR8 microprocessor into a pre-miRNA, exported to the cytoplasm by Exportin-5, then trimmed by Dicer; because it typically pairs imperfectly with the target 3 prime UTR, it represses translation or destabilizes the mRNA rather than slicing it outright.</desc>
-
-<g id="nucleusBox" style="display:none">
-<rect x="20" y="45" width="230" height="190" rx="10" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="4 3"/>
-<text class="ts" x="135" y="60" text-anchor="middle">Nucleus</text>
-</g>
-
-<g id="priHairpin" class="stg">
-<path d="M70 140 C70 100 130 100 130 140" stroke="#378ADD" stroke-width="3" fill="none"/>
-<path d="M70 140 L70 165" stroke="#378ADD" stroke-width="3"/>
-<path d="M130 140 L130 165" stroke="#D85A30" stroke-width="3"/>
-<text class="ts" x="100" y="90" text-anchor="middle" id="hairpinLabel">pri-miRNA (hairpin)</text>
-</g>
-
-<g id="dsRnaStraight" class="stg">
-<path d="M60 130 L150 130" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
-<path d="M60 148 L150 148" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
-<text class="ts" x="105" y="110" text-anchor="middle">Long dsRNA (exogenous / viral)</text>
-</g>
-
-<g id="drosha" class="stg">
-<circle cx="100" cy="180" r="14" class="c-amber"/>
-<text class="ts" x="100" y="205" text-anchor="middle">Drosha/DGCR8 crops to pre-miRNA</text>
-</g>
-
-<g id="exportin" class="stg">
-<line x1="170" y1="140" x2="235" y2="140" stroke="#1D9E75" stroke-width="2" marker-end="url(#arrowT)"/>
-<text class="ts" x="200" y="125" text-anchor="middle" style="font-size:9px">Exportin-5</text>
-</g>
-
-<circle id="dicer" cx="280" cy="140" r="15" class="c-teal stg"/>
-<text class="ts" x="280" y="175" text-anchor="middle" id="dicerLabel"></text>
-
-<ellipse id="risc" cx="390" cy="170" rx="32" ry="22" class="c-purple stg"/>
-<text class="ts" x="390" y="170" text-anchor="middle" dominant-baseline="central" style="font-size:9px" id="riscLabel">Argonaute</text>
-
-<line id="targetMrna" x1="460" y1="170" x2="630" y2="170" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/>
-<text class="ts" x="545" y="190" text-anchor="middle">Target mRNA (3'UTR)</text>
-
-<g id="pairingPerfect" class="stg">
-<path d="M400 172 L400 188 M420 172 L420 188 M440 172 L440 188" stroke="var(--t)" stroke-width="1.5"/>
-<text class="ts" x="420" y="205" text-anchor="middle">Perfect complementarity</text>
-</g>
-<g id="pairingImperfect" class="stg">
-<path d="M400 172 L400 188 M440 172 L440 188" stroke="var(--t)" stroke-width="1.5"/>
-<circle cx="420" cy="180" r="6" fill="none" stroke="#E24B4A" stroke-width="1.5"/>
-<text class="ts" x="420" y="205" text-anchor="middle">Imperfect — mismatch bulge</text>
-</g>
-
-<g id="outcome" class="stg">
-<text class="th" x="390" y="255" text-anchor="middle" id="outcomeLabel"></text>
-</g>
-
-<defs>
-<marker id="arrowT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
-</defs>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-let mode = 'sirna';
-const si = {
-  labels: [
-    "Step 0 of 3 — long double-stranded RNA (exogenous or viral) is present in the cytoplasm",
-    "Step 1 of 3 — Dicer cleaves it directly into siRNA duplexes — no nuclear processing needed",
-    "Step 2 of 3 — the guide strand loads into Argonaute/RISC",
-    "Step 3 of 3 — siRNA pairs perfectly with its target, so Argonaute's slicer domain cleaves the mRNA directly"
-  ],
-  outcome: 'mRNA sliced and degraded'
-};
-const mi = {
-  labels: [
-    "Step 0 of 3 — a gene is transcribed into a pri-miRNA hairpin in the nucleus",
-    "Step 1 of 3 — the Drosha-DGCR8 microprocessor crops it into a pre-miRNA, which Exportin-5 carries to the cytoplasm",
-    "Step 2 of 3 — Dicer trims the pre-miRNA into a mature miRNA duplex, and the guide strand loads into Argonaute/RISC",
-    "Step 3 of 3 — pairing with the target 3'UTR is typically imperfect, so RISC represses translation or destabilizes the mRNA rather than slicing it"
-  ],
-  outcome: 'Translation repressed / mRNA destabilized'
-};
-function setMode(m) {
-  mode = m; step = 0;
-  document.getElementById('btnSi').classList.toggle('active', m === 'sirna');
-  document.getElementById('btnMi').classList.toggle('active', m === 'mirna');
-  document.getElementById('nucleusBox').style.display = m === 'mirna' ? '' : 'none';
-  document.getElementById('priHairpin').style.display = m === 'mirna' ? '' : 'none';
-  document.getElementById('dsRnaStraight').style.display = m === 'sirna' ? '' : 'none';
-  document.getElementById('drosha').style.display = m === 'mirna' ? '' : 'none';
-  document.getElementById('exportin').style.display = m === 'mirna' ? '' : 'none';
-  render();
-}
-function render() {
-  const cfg = mode === 'sirna' ? si : mi;
-  document.getElementById('stepLabel').textContent = cfg.labels[step];
-  if (mode === 'sirna') {
-    document.getElementById('dsRnaStraight').classList.toggle('on', step >= 0);
-    document.getElementById('dicer').classList.toggle('on', step >= 1);
-    document.getElementById('dicerLabel').textContent = step >= 1 ? 'Dicer' : '';
-    document.getElementById('risc').classList.toggle('on', step >= 2);
-    document.getElementById('pairingPerfect').classList.toggle('on', step >= 3);
-  } else {
-    document.getElementById('priHairpin').classList.toggle('on', step >= 0);
-    document.getElementById('hairpinLabel').textContent = step >= 1 ? 'Pre-miRNA (cropped)' : 'pri-miRNA (hairpin)';
-    document.getElementById('drosha').classList.toggle('on', step >= 1);
-    document.getElementById('exportin').classList.toggle('on', step >= 1);
-    document.getElementById('dicer').classList.toggle('on', step >= 2);
-    document.getElementById('dicerLabel').textContent = step >= 2 ? 'Dicer' : '';
-    document.getElementById('risc').classList.toggle('on', step >= 2);
-    document.getElementById('pairingImperfect').classList.toggle('on', step >= 3);
-  }
-  document.getElementById('outcome').classList.toggle('on', step >= 3);
-  document.getElementById('outcomeLabel').textContent = step >= 3 ? cfg.outcome : '';
-  document.getElementById('targetMrna').style.opacity = (step >= 3 && mode === 'sirna') ? '0.25' : '1';
-}
-function stepFwd() { if (step < 3) step++; render(); }
-function reset() { step = 0; render(); }
-setMode('sirna');
-</script>
-'''
+# SYNAPSE_TYPES_TECHNICAL  (source: synapse_types.html)
 # ---------------------------------------------------------------------------
 SYNAPSE_TYPES_TECHNICAL = '''
 <h2 class="sr-only">Technical diagram comparing chemical and electrical synapses: chemical synapses use neurotransmitter release and clearance with a delay, while electrical synapses connect cells directly through gap junctions with almost no delay but no modifiability.</h2>
@@ -6288,577 +5475,6 @@ render();
 
 
 # ---------------------------------------------------------------------------
-# DNA_DAMAGE_REPAIR_GENERAL  (source: dna_damage_repair.html)
-# ---------------------------------------------------------------------------
-DNA_DAMAGE_REPAIR_GENERAL = '''
-<h2 class="sr-only">Interactive diagram comparing nucleotide excision repair, which removes bulky helix-distorting lesions such as UV thymine dimers, against base excision repair, which removes small damaged bases such as oxidized guanine.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-
-<div class="rowbtns">
-  <button id="btnNer" onclick="setMode('ner')">Nucleotide excision repair (bulky lesion)</button>
-  <button id="btnBer" onclick="setMode('ber')">Base excision repair (damaged base)</button>
-</div>
-
-<svg width="100%" viewBox="0 0 680 260" role="img">
-<title>DNA damage repair — NER vs BER</title>
-<desc>Nucleotide excision repair handles bulky, helix-distorting lesions such as UV-induced thymine dimers: a repair complex recognizes the distortion, helicases unwind around it, endonucleases cut the damaged strand on both sides of the lesion, and polymerase and ligase fill and seal the resulting gap. Base excision repair handles small base-level damage such as an oxidized guanine, which barely distorts the helix: a DNA glycosylase removes just the damaged base, leaving an abasic site, an AP endonuclease nicks the backbone there, and polymerase and ligase fill and seal the single-nucleotide gap.</desc>
-
-<line x1="30" y1="120" x2="650" y2="120" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
-<line x1="30" y1="140" x2="650" y2="140" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
-
-<circle id="damage" cx="340" cy="130" r="9" fill="#E24B4A"/>
-<text class="ts" x="340" y="105" text-anchor="middle" id="damageLabel">Thymine dimer (bulky lesion)</text>
-
-<g id="recognition" class="stg">
-<circle cx="340" cy="130" r="24" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="3 3" class="pulse"/>
-<text class="ts" x="340" y="170" text-anchor="middle" id="recogLabel">Repair complex recognizes distortion</text>
-</g>
-
-<rect id="excisionGap" class="stg" x="300" y="135" width="80" height="10" fill="var(--surface-1)"/>
-<text class="ts" x="340" y="190" text-anchor="middle" id="excisionLabel"></text>
-
-<rect id="resynth" class="stg" x="300" y="135" width="80" height="10" fill="#1D9E75" stroke-dasharray="4 3"/>
-<text class="ts" x="340" y="215" text-anchor="middle" id="resynthLabel">Polymerase fills the gap, ligase seals it</text>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-let mode = 'ner';
-const ner = {
-  damageLabel: 'Thymine dimer (bulky lesion)',
-  recogLabel: 'Repair complex detects the distortion, helicases unwind around it',
-  excisionLabel: 'Endonucleases cut both sides of the lesion — a ~24-32 nt segment is excised',
-  gapWidth: 80,
-  labels: [
-    "Step 0 of 3 — a bulky lesion (e.g. a UV-induced thymine dimer) distorts the helix",
-    "Step 1 of 3 — a repair complex recognizes the distortion and helicases unwind the DNA around it",
-    "Step 2 of 3 — endonucleases cut the damaged strand on both sides of the lesion, excising a ~24-32 nucleotide segment",
-    "Step 3 of 3 — DNA polymerase fills the gap using the undamaged strand as template, and ligase seals the nick"
-  ]
-};
-const ber = {
-  damageLabel: 'Oxidized base (small lesion)',
-  recogLabel: 'DNA glycosylase removes just the damaged base — leaves an abasic (AP) site',
-  excisionLabel: 'AP endonuclease nicks the backbone at the abasic site',
-  gapWidth: 12,
-  labels: [
-    "Step 0 of 3 — a damaged base (e.g. an oxidized guanine) barely distorts the helix",
-    "Step 1 of 3 — a DNA glycosylase recognizes and removes just the damaged base, leaving an abasic (AP) site",
-    "Step 2 of 3 — AP endonuclease nicks the DNA backbone at the abasic site",
-    "Step 3 of 3 — DNA polymerase fills the single-nucleotide gap, and ligase seals it"
-  ]
-};
-function setMode(m) {
-  mode = m; step = 0;
-  document.getElementById('btnNer').classList.toggle('active', m === 'ner');
-  document.getElementById('btnBer').classList.toggle('active', m === 'ber');
-  const cfg = m === 'ner' ? ner : ber;
-  document.getElementById('damageLabel').textContent = cfg.damageLabel;
-  document.getElementById('recogLabel').textContent = cfg.recogLabel;
-  document.getElementById('excisionLabel').textContent = cfg.excisionLabel;
-  const gx = 340 - cfg.gapWidth / 2;
-  document.getElementById('excisionGap').setAttribute('x', gx);
-  document.getElementById('excisionGap').setAttribute('width', cfg.gapWidth);
-  document.getElementById('resynth').setAttribute('x', gx);
-  document.getElementById('resynth').setAttribute('width', cfg.gapWidth);
-  render();
-}
-function render() {
-  const cfg = mode === 'ner' ? ner : ber;
-  document.getElementById('stepLabel').textContent = cfg.labels[step];
-  document.getElementById('damageLabel').style.opacity = step === 0 ? '1' : '0';
-  document.getElementById('recognition').classList.toggle('on', step === 1);
-  document.getElementById('damage').style.opacity = step >= 2 ? '0' : '1';
-  document.getElementById('excisionGap').classList.toggle('on', step === 2);
-  document.getElementById('resynth').classList.toggle('on', step >= 3);
-}
-function stepFwd() { if (step < 3) step++; render(); }
-function reset() { step = 0; render(); }
-setMode('ner');
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
-# EPIGENETIC_REGULATION_GENERAL  (source: epigenetics.html)
-# ---------------------------------------------------------------------------
-EPIGENETIC_REGULATION_GENERAL = '''
-<h2 class="sr-only">Interactive diagram comparing two epigenetic control mechanisms: DNA methylation, which compacts chromatin and silences a gene, against histone acetylation, which loosens chromatin and activates a gene, without changing the underlying DNA sequence.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #chromatinCoil { transition: transform 0.8s ease; }
-  .compact #chromatinCoil { transform: scaleX(0.55); }
-  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-
-<div class="rowbtns">
-  <button id="btnMeth" onclick="setMode('methylation')">DNA methylation (silencing)</button>
-  <button id="btnAcetyl" onclick="setMode('acetylation')">Histone acetylation (activation)</button>
-</div>
-
-<svg width="100%" viewBox="0 0 680 260" role="img">
-<title>Epigenetic regulation — DNA methylation vs histone acetylation</title>
-<desc>DNA methyltransferase adds methyl groups to cytosines in CpG islands near a gene's promoter. Methyl-binding proteins recognize the mark and recruit histone deacetylases and chromatin remodelers, compacting the chromatin so the promoter becomes inaccessible and the gene is silenced. Histone acetyltransferases instead add acetyl groups to histone tails, neutralizing their positive charge and loosening their grip on the negatively charged DNA, relaxing chromatin from heterochromatin to open euchromatin so the promoter becomes accessible and the gene is activated. Neither mechanism changes the underlying DNA sequence.</desc>
-
-<g id="chromatinCoil">
-<circle cx="150" cy="150" r="18" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1.5"/>
-<circle cx="195" cy="150" r="18" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1.5"/>
-<circle cx="240" cy="150" r="18" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1.5"/>
-<circle cx="285" cy="150" r="18" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1.5"/>
-<path d="M132,150 L303,150" stroke="#7F77DD" stroke-width="2" fill="none"/>
-</g>
-<text class="ts" x="215" y="115" text-anchor="middle">Histones (nucleosomes) + DNA</text>
-
-<rect x="400" y="140" width="60" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="430" y="130" text-anchor="middle">Promoter</text>
-<rect x="460" y="140" width="150" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="535" y="185" text-anchor="middle">Gene</text>
-
-<g id="mark" class="stg">
-<circle cx="150" cy="128" r="6" fill="#E24B4A"/>
-<circle cx="195" cy="128" r="6" fill="#E24B4A"/>
-<text class="ts" x="172" y="105" text-anchor="middle" id="markLabel">Methyl groups added (CpG)</text>
-</g>
-
-<g id="reader" class="stg">
-<text class="ts" x="215" y="200" text-anchor="middle" id="readerLabel"></text>
-</g>
-
-<g id="outcome" class="stg">
-<text class="th" x="480" y="220" text-anchor="middle" id="outcomeLabel"></text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-let mode = 'methylation';
-const methylation = {
-  markLabel: 'DNA methyltransferase adds methyl groups (CpG islands)',
-  readerLabel: 'Methyl-binding proteins recruit HDACs & remodelers',
-  outcomeLabel: 'Chromatin compacted — promoter inaccessible — gene silenced',
-  labels: [
-    "Step 0 of 3 — a gene's promoter sits in accessible chromatin, CpG sites unmethylated",
-    "Step 1 of 3 — DNA methyltransferase adds methyl groups to cytosines in CpG islands near the promoter",
-    "Step 2 of 3 — methyl-binding proteins recognize the mark and recruit histone deacetylases and chromatin remodelers",
-    "Step 3 of 3 — chromatin compacts, the promoter becomes inaccessible, and the gene is silenced"
-  ]
-};
-const acetylation = {
-  markLabel: 'Histone acetyltransferases (HATs) add acetyl groups',
-  readerLabel: 'Acetylation neutralizes histone charge — grip on DNA loosens',
-  outcomeLabel: 'Chromatin relaxes to euchromatin — promoter accessible — gene activated',
-  labels: [
-    "Step 0 of 3 — a gene's promoter sits in tightly packed heterochromatin",
-    "Step 1 of 3 — histone acetyltransferases (HATs) add acetyl groups to histone tails",
-    "Step 2 of 3 — acetylation neutralizes the histones' positive charge, loosening their grip on the negatively charged DNA",
-    "Step 3 of 3 — chromatin relaxes into open euchromatin, the promoter becomes accessible, and the gene is activated"
-  ]
-};
-function setMode(m) {
-  mode = m; step = 0;
-  document.getElementById('btnMeth').classList.toggle('active', m === 'methylation');
-  document.getElementById('btnAcetyl').classList.toggle('active', m === 'acetylation');
-  const cfg = m === 'methylation' ? methylation : acetylation;
-  document.getElementById('markLabel').textContent = cfg.markLabel;
-  document.getElementById('readerLabel').textContent = cfg.readerLabel;
-  document.getElementById('outcomeLabel').textContent = cfg.outcomeLabel;
-  render();
-}
-function render() {
-  const cfg = mode === 'methylation' ? methylation : acetylation;
-  document.getElementById('stepLabel').textContent = cfg.labels[step];
-  document.getElementById('mark').classList.toggle('on', step >= 1);
-  document.getElementById('reader').classList.toggle('on', step >= 2);
-  document.getElementById('outcome').classList.toggle('on', step >= 3);
-  document.querySelector('svg').classList.toggle('compact', mode === 'methylation' && step >= 3);
-}
-function stepFwd() { if (step < 3) step++; render(); }
-function reset() { step = 0; render(); }
-setMode('methylation');
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
-# TELOMERES_GENERAL  (source: telomeres.html)
-# ---------------------------------------------------------------------------
-TELOMERES_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of telomere shortening and telomerase: each replication cycle, the lagging strand cannot fully copy the chromosome end, so telomeres shorten in most somatic cells, while telomerase extends them in germline, stem, and many cancer cells.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #telomereCap { transition: width 0.8s ease; }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-<svg width="100%" viewBox="0 0 680 240" role="img">
-<title>Telomeres and telomerase</title>
-<desc>Chromosome ends contain telomeres, repetitive noncoding TTAGGG sequences. Because the lagging strand cannot fully replicate the very end of a linear chromosome, telomeres shorten with each cell division in most somatic cells, where telomerase is inactive; enough shortening triggers senescence. In germline, stem, and many cancer cells, telomerase, a reverse transcriptase carrying its own RNA template, extends the telomere and counteracts this shortening.</desc>
-
-<rect x="240" y="130" width="300" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="390" y="115" text-anchor="middle">Chromosome</text>
-<rect id="telomereCap" x="170" y="130" width="70" height="20" fill="#EF9F27"/>
-<text class="ts" x="205" y="160" text-anchor="middle">Telomere (TTAGGG repeats)</text>
-
-<g id="replicationNote" class="stg">
-<text class="ts" x="390" y="180" text-anchor="middle" id="replLabel"></text>
-</g>
-
-<g id="telomerase" class="stg">
-<circle cx="205" cy="130" r="12" class="c-teal"/>
-<text class="ts" x="205" y="200" text-anchor="middle">Telomerase extends the telomere (its own RNA template)</text>
-</g>
-
-<g id="outcome" class="stg">
-<text class="th" x="390" y="220" text-anchor="middle" id="outcomeLabel"></text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-let capWidth = 70;
-const labels = [
-  "Step 0 of 3 — linear chromosome ends are capped by telomeres, repetitive noncoding DNA",
-  "Step 1 of 3 — the lagging strand can't fully copy the very end of the chromosome (the end-replication problem)",
-  "Step 2 of 3 — in most somatic cells telomerase is inactive, so telomeres shorten a little with each division",
-  "Step 3 of 3 — in germline, stem, and many cancer cells, telomerase extends the telomere using its own RNA template, counteracting the shortening"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('replicationNote').classList.toggle('on', step === 1);
-  document.getElementById('replLabel').textContent = 'End-replication problem — the very tip can\\'t be copied';
-  if (step >= 2) {
-    document.getElementById('telomereCap').setAttribute('width', step === 2 ? 45 : (step === 3 ? 65 : 70));
-    document.getElementById('telomereCap').setAttribute('x', step === 2 ? 195 : (step === 3 ? 175 : 170));
-  } else {
-    document.getElementById('telomereCap').setAttribute('width', 70);
-    document.getElementById('telomereCap').setAttribute('x', 170);
-  }
-  document.getElementById('telomerase').classList.toggle('on', step === 3);
-  document.getElementById('outcome').classList.toggle('on', step >= 2);
-  document.getElementById('outcomeLabel').textContent = step === 2
-    ? 'Somatic cells: progressive shortening → eventual senescence'
-    : (step === 3 ? 'Germline / stem / cancer cells: telomerase counteracts shortening' : '');
-}
-function stepFwd() { if (step < 3) step++; render(); }
-function reset() { step = 0; render(); }
-render();
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
-# EUKARYOTIC_TF_REGULATION_GENERAL  (source: eukaryotic_tf.html)
-# ---------------------------------------------------------------------------
-EUKARYOTIC_TF_REGULATION_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of eukaryotic gene regulation by distal enhancers: activator transcription factors bind an enhancer far from the gene, DNA loops to bring them into contact with the Mediator complex at the promoter, and Mediator recruits RNA polymerase II.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #dnaLoop { transition: opacity 0.6s ease; }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-<svg width="100%" viewBox="0 0 680 260" role="img">
-<title>Distal enhancer regulation via DNA looping and Mediator</title>
-<desc>An enhancer is a regulatory DNA sequence that can sit far from the gene it controls — upstream, downstream, or even inside an intron. Activator transcription factors bind the enhancer, then the DNA loops so those activators contact the Mediator complex at the promoter. Mediator helps recruit and stabilize RNA polymerase II and the general transcription factors, boosting transcription.</desc>
-
-<line id="dnaLine" x1="30" y1="200" x2="650" y2="200" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
-<path id="dnaLoop" style="display:none" d="M110,200 C110,90 400,90 400,200" stroke="#378ADD" stroke-width="3" fill="none"/>
-
-<rect x="80" y="190" width="60" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="110" y="225" text-anchor="middle">Enhancer</text>
-
-<rect x="370" y="190" width="60" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="400" y="225" text-anchor="middle">Promoter</text>
-<rect x="430" y="190" width="180" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="520" y="225" text-anchor="middle">Gene</text>
-
-<g id="activators" class="stg">
-<circle cx="95" cy="180" r="9" class="c-coral"/>
-<circle cx="125" cy="180" r="9" class="c-coral"/>
-<text class="ts" x="110" y="160" text-anchor="middle">Activator TFs bind the enhancer</text>
-</g>
-
-<g id="mediator" class="stg">
-<ellipse cx="400" cy="160" rx="26" ry="16" class="c-purple"/>
-<text class="ts" x="400" y="160" text-anchor="middle" dominant-baseline="central" style="font-size:8px">Mediator</text>
-</g>
-
-<g id="rnaPolGroup" class="stg">
-<circle cx="440" cy="180" r="12" class="c-teal"/>
-<text class="th" x="480" y="245" text-anchor="middle">RNA polymerase II recruited — transcription boosted</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 3</span>
-</div>
-
-<script>
-let step = 0;
-const labels = [
-  "Step 0 of 3 — the enhancer sits far from the gene it will control (upstream here, but could be downstream or intronic)",
-  "Step 1 of 3 — activator transcription factors bind the enhancer",
-  "Step 2 of 3 — DNA loops, bringing the enhancer-bound activators into contact with the Mediator complex at the promoter",
-  "Step 3 of 3 — Mediator helps recruit and stabilize RNA polymerase II — transcription is boosted"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('activators').classList.toggle('on', step >= 1);
-  document.getElementById('dnaLine').style.display = step >= 2 ? 'none' : '';
-  document.getElementById('dnaLoop').style.display = step >= 2 ? '' : 'none';
-  document.getElementById('mediator').classList.toggle('on', step >= 2);
-  document.getElementById('rnaPolGroup').classList.toggle('on', step >= 3);
-}
-function stepFwd() { if (step < 3) step++; render(); }
-function reset() { step = 0; render(); }
-render();
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
-# PCR_GENERAL  (source: pcr.html)
-# ---------------------------------------------------------------------------
-PCR_GENERAL = '''
-<h2 class="sr-only">Interactive diagram of the polymerase chain reaction: repeated cycles of denaturation, primer annealing, and heat-stable polymerase extension exponentially amplify a target DNA sequence.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #strands { transition: transform 0.8s ease; }
-  .denatured #topStrand { transform: translateY(-14px); }
-  .denatured #botStrand { transform: translateY(14px); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-<svg width="100%" viewBox="0 0 680 300" role="img">
-<title>Polymerase chain reaction (PCR)</title>
-<desc>Each PCR cycle has three steps. Denaturation at around 95 degrees Celsius separates the double-stranded DNA template into single strands. Annealing at around 50 to 65 degrees lets short primers bind complementary sequences flanking the target region. Extension at around 72 degrees lets a heat-stable DNA polymerase, such as Taq polymerase, synthesize new complementary strands from the primers. Each cycle roughly doubles the amount of target DNA, so after n cycles there are approximately two to the n copies — repeating the three-step cycle around 30 times turns a single template into roughly a billion copies.</desc>
-
-<g id="strands">
-<line id="topStrand" x1="150" y1="120" x2="530" y2="120" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
-<line id="botStrand" x1="150" y1="130" x2="530" y2="130" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
-</g>
-<text class="ts" x="340" y="100" text-anchor="middle" id="phaseLabel">Double-stranded template</text>
-
-<g id="primers" class="stg">
-<rect x="190" y="106" width="30" height="8" fill="#EF9F27"/>
-<rect x="460" y="136" width="30" height="8" fill="#EF9F27"/>
-<text class="ts" x="340" y="160" text-anchor="middle">Primers anneal, flanking the target region</text>
-</g>
-
-<g id="extension" class="stg">
-<rect x="220" y="106" width="240" height="8" fill="#1D9E75" stroke-dasharray="4 3"/>
-<rect x="230" y="136" width="230" height="8" fill="#1D9E75" stroke-dasharray="4 3"/>
-<text class="ts" x="340" y="185" text-anchor="middle">Taq polymerase extends new strands</text>
-</g>
-
-<g id="cycleNote" class="stg">
-<text class="th" x="340" y="220" text-anchor="middle">Each cycle ~doubles the target — n cycles ≈ 2ⁿ copies</text>
-</g>
-
-<g id="ampChart" class="stg">
-<rect x="185" y="270" width="30" height="10" class="c-teal"/>
-<text class="ts" x="200" y="264" text-anchor="middle" style="font-size:9px">32</text>
-<text class="ts" x="200" y="295" text-anchor="middle" style="font-size:9px">Cycle 5</text>
-
-<rect x="285" y="245" width="30" height="35" class="c-teal"/>
-<text class="ts" x="300" y="239" text-anchor="middle" style="font-size:9px">32,768</text>
-<text class="ts" x="300" y="295" text-anchor="middle" style="font-size:9px">Cycle 15</text>
-
-<rect x="385" y="200" width="30" height="80" class="c-teal"/>
-<text class="ts" x="400" y="194" text-anchor="middle" style="font-size:9px">~33 million</text>
-<text class="ts" x="400" y="295" text-anchor="middle" style="font-size:9px">Cycle 25</text>
-
-<rect x="485" y="160" width="30" height="120" class="c-teal"/>
-<text class="ts" x="500" y="154" text-anchor="middle" style="font-size:9px">~1 billion</text>
-<text class="ts" x="500" y="295" text-anchor="middle" style="font-size:9px">Cycle 30</text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 4</span>
-</div>
-
-<script>
-let step = 0;
-const labels = [
-  "Step 0 of 4 — start with double-stranded template DNA containing the target region",
-  "Step 1 of 4 — denaturation (~95°C): heat separates the strands",
-  "Step 2 of 4 — annealing (~50-65°C): short primers bind complementary sequences flanking the target",
-  "Step 3 of 4 — extension (~72°C): heat-stable polymerase (e.g. Taq) synthesizes new strands, completing one cycle",
-  "Step 4 of 4 — repeat the cycle: doubling compounds fast — 30 cycles turns one template into roughly a billion copies"
-];
-function render() {
-  document.getElementById('stepLabel').textContent = labels[step];
-  document.querySelector('svg').classList.toggle('denatured', step >= 1 && step < 4);
-  document.getElementById('phaseLabel').textContent = step === 0 ? 'Double-stranded template' : (step === 1 || step === 2 || step === 3 ? 'Strands separated' : '');
-  document.getElementById('primers').classList.toggle('on', step >= 2 && step < 4);
-  document.getElementById('extension').classList.toggle('on', step === 3);
-  document.getElementById('cycleNote').classList.toggle('on', step >= 3);
-  document.getElementById('ampChart').classList.toggle('on', step === 4);
-  document.getElementById('strands').style.opacity = step === 4 ? '0.15' : '1';
-}
-function stepFwd() { if (step < 4) step++; render(); }
-function reset() { step = 0; render(); }
-render();
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
-# PCR_TECHNICAL  (source: pcr.html)
-# ---------------------------------------------------------------------------
-PCR_TECHNICAL = '''
-<h2 class="sr-only">Technical diagram comparing Taq and Pfu DNA polymerase in PCR: both synthesize 5' to 3' from a primer, but Taq lacks 3' to 5' proofreading exonuclease activity and is fast with a higher error rate, while Pfu has proofreading activity and is slower with a much lower error rate.</h2>
-<style>
-  .stg { opacity: 0.12; transition: opacity .5s ease; }
-  .stg.on { opacity: 1; }
-  .pulse { animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
-  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
-  #stepLabel { font-size:13px; color:var(--text-secondary); }
-</style>
-
-<div class="rowbtns">
-  <button id="btnTaq" onclick="setMode('taq')">Taq polymerase</button>
-  <button id="btnPfu" onclick="setMode('pfu')">Pfu polymerase</button>
-</div>
-
-<svg width="100%" viewBox="0 0 680 260" role="img">
-<title>Taq vs Pfu polymerase — speed and fidelity trade-off</title>
-<desc>Taq polymerase, from the thermophilic bacterium Thermus aquaticus, synthesizes new DNA 5' to 3' from a primer but has no 3' to 5' proofreading exonuclease activity, so mismatched nucleotides are not checked or removed, giving an error rate around one in ten thousand to one in a hundred thousand bases; it is fast and inexpensive, making it the default choice for routine and diagnostic PCR. Pfu polymerase, from the archaeon Pyrococcus furiosus, has 3' to 5' proofreading exonuclease activity that detects and excises a mismatched nucleotide before continuing synthesis, giving a much lower error rate around one in a million to one in ten million bases; it is slower, making it the choice when accuracy matters, such as cloning or sequencing applications.</desc>
-
-<line x1="60" y1="130" x2="500" y2="130" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
-<rect x="100" y="122" width="30" height="8" fill="#EF9F27"/>
-<text class="ts" x="115" y="110" text-anchor="middle">Primer (3'-OH)</text>
-
-<rect id="newStrand" x="130" y="122" width="180" height="8" fill="#1D9E75"/>
-<text class="ts" x="220" y="150" text-anchor="middle">Synthesis 5' → 3'</text>
-
-<g id="mismatch" class="stg">
-<circle cx="310" cy="126" r="7" fill="#E24B4A"/>
-<text class="ts" x="310" y="105" text-anchor="middle">Mismatched nucleotide incorporated</text>
-</g>
-
-<g id="noProofread" class="stg">
-<text class="th" x="310" y="185" text-anchor="middle">No proofreading — mismatch stays, synthesis continues</text>
-</g>
-
-<g id="proofreadCheck" class="stg">
-<circle cx="310" cy="126" r="16" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="3 3" class="pulse"/>
-<text class="ts" x="310" y="165" text-anchor="middle">3'→5' exonuclease checks the last base</text>
-</g>
-
-<g id="excised" class="stg">
-<text class="th" x="310" y="185" text-anchor="middle">Mismatch excised — correct base re-inserted</text>
-</g>
-
-<g id="outcome" class="stg">
-<text class="th" x="280" y="225" text-anchor="middle" id="outcomeLabel"></text>
-<text class="ts" x="280" y="245" text-anchor="middle" id="useLabel"></text>
-</g>
-</svg>
-
-<div class="btnrow">
-  <button onclick="stepFwd()">Next step ↗</button>
-  <button onclick="reset()">Reset</button>
-  <span id="stepLabel">Step 0 of 2</span>
-</div>
-
-<script>
-let step = 0;
-let mode = 'taq';
-const taq = {
-  labels: [
-    "Step 0 of 2 — Taq polymerase (from Thermus aquaticus) synthesizes new DNA 5' to 3' from the primer",
-    "Step 1 of 2 — a mismatched nucleotide is occasionally incorporated",
-    "Step 2 of 2 — no 3'→5' proofreading exonuclease activity — the mismatch stays, giving an error rate of roughly 1 in 10⁴-10⁵ bases; fast and cheap, the default for routine PCR"
-  ],
-  outcome: 'Error rate ≈ 1 in 10⁴-10⁵ bases',
-  use: 'Fast, inexpensive — routine & diagnostic PCR'
-};
-const pfu = {
-  labels: [
-    "Step 0 of 2 — Pfu polymerase (from Pyrococcus furiosus) synthesizes new DNA 5' to 3' from the primer",
-    "Step 1 of 2 — a mismatched nucleotide is occasionally incorporated",
-    "Step 2 of 2 — 3'→5' proofreading exonuclease activity detects and excises the mismatch, re-inserting the correct base — error rate roughly 1 in 10⁶-10⁷ bases; slower, used when accuracy matters"
-  ],
-  outcome: 'Error rate ≈ 1 in 10⁶-10⁷ bases',
-  use: 'Slower, higher fidelity — cloning & sequencing'
-};
-function setMode(m) {
-  mode = m; step = 0;
-  document.getElementById('btnTaq').classList.toggle('active', m === 'taq');
-  document.getElementById('btnPfu').classList.toggle('active', m === 'pfu');
-  render();
-}
-function render() {
-  const cfg = mode === 'taq' ? taq : pfu;
-  document.getElementById('stepLabel').textContent = cfg.labels[step];
-  document.getElementById('mismatch').classList.toggle('on', step >= 1);
-  document.getElementById('noProofread').classList.toggle('on', mode === 'taq' && step >= 2);
-  document.getElementById('proofreadCheck').classList.toggle('on', mode === 'pfu' && step === 2);
-  document.getElementById('mismatch').style.opacity = (mode === 'pfu' && step >= 2) ? '0' : (step >= 1 ? '1' : '0');
-  document.getElementById('excised').classList.toggle('on', mode === 'pfu' && step >= 2);
-  document.getElementById('outcome').classList.toggle('on', step >= 2);
-  document.getElementById('outcomeLabel').textContent = step >= 2 ? cfg.outcome : '';
-  document.getElementById('useLabel').textContent = step >= 2 ? cfg.use : '';
-}
-function stepFwd() { if (step < 2) step++; render(); }
-function reset() { step = 0; render(); }
-setMode('taq');
-</script>
-'''
-
-
-# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -6967,27 +5583,6 @@ REGISTRY = {
             ),
         },
     },
-    "RNA splicing": {
-        "General": {
-            "fragment": RNA_SPLICING_GENERAL,
-            "height": 440,
-            "blurb": (
-                "Pre-mRNA contains exons and introns; the spliceosome "
-                "removes each intron and joins the exons together, "
-                "producing mature mRNA ready for export and translation."
-            ),
-        },
-        "Technical": {
-            "fragment": RNA_SPLICING_TECHNICAL,
-            "height": 480,
-            "blurb": (
-                "U1 and U2 snRNPs mark the splice sites and branch point, "
-                "the tri-snRNP assembles the catalytic spliceosome, and "
-                "two transesterifications form a lariat then ligate the "
-                "exons — the same machinery enables alternative splicing."
-            ),
-        },
-    },
     "DNA mismatch repair": {
         "General": {
             "fragment": DNA_MISMATCH_REPAIR_GENERAL,
@@ -6996,16 +5591,6 @@ REGISTRY = {
                 "A replication error is detected, the faulty segment on "
                 "the new strand excised, correctly resynthesized from "
                 "the template, and sealed — proofreading after the fact."
-            ),
-        },
-        "Technical": {
-            "fragment": DNA_MISMATCH_REPAIR_TECHNICAL,
-            "height": 460,
-            "blurb": (
-                "MutS binds the mismatch, MutL joins and scans for a "
-                "GATC site to tell new strand from template, MutH nicks "
-                "the unmethylated new strand there, and exonuclease, "
-                "Pol III, and ligase restore it."
             ),
         },
     },
@@ -7019,17 +5604,6 @@ REGISTRY = {
                 "repairs it via error-prone NHEJ or precise HDR editing."
             ),
         },
-        "Technical": {
-            "fragment": CRISPR_CAS9_TECHNICAL,
-            "height": 480,
-            "blurb": (
-                "PAM recognition triggers unwinding; the sgRNA spacer "
-                "forms an R-loop starting at the PAM-proximal seed "
-                "sequence, activating the HNH and RuvC domains to cut a "
-                "blunt DSB 3 bp upstream of the PAM, resolved by NHEJ "
-                "(Ku70/80 + DNA-PKcs) or HDR (RAD51 + donor template)."
-            ),
-        },
     },
     "Lac operon": {
         "General": {
@@ -7041,16 +5615,6 @@ REGISTRY = {
                 "operator, letting RNA polymerase transcribe them."
             ),
         },
-        "Technical": {
-            "fragment": LAC_OPERON_TECHNICAL,
-            "height": 440,
-            "blurb": (
-                "A second, independent control layer: glucose sets cAMP "
-                "levels, which decide whether CAP binds upstream of the "
-                "promoter to strongly recruit RNA polymerase — basal vs "
-                "maximal transcription, layered on top of the repressor."
-            ),
-        },
     },
     "RNA interference": {
         "General": {
@@ -7060,16 +5624,6 @@ REGISTRY = {
                 "Dicer cleaves double-stranded RNA into siRNA; the guide "
                 "strand loads into RISC and directs it to cleave a "
                 "complementary target mRNA, silencing that gene."
-            ),
-        },
-        "Technical": {
-            "fragment": RNA_INTERFERENCE_TECHNICAL,
-            "height": 480,
-            "blurb": (
-                "Compare siRNA (exogenous dsRNA, Dicer in the cytoplasm, "
-                "perfect pairing, mRNA sliced) against miRNA (nuclear "
-                "hairpin, Drosha then Dicer, usually imperfect pairing, "
-                "translation repressed instead)."
             ),
         },
     },
@@ -7211,22 +5765,12 @@ REGISTRY = {
     "NK cell missing-self recognition": {
         "General": {
             "fragment": NK_CELL_MISSING_SELF_GENERAL,
-            "height": 460,
+            "height": 440,
             "blurb": (
                 "Switch between a healthy cell (MHC-I present — "
                 "inhibits killing) and an infected cell (MHC-I lost — "
                 "killing proceeds), the opposite detection strategy from "
                 "cytotoxic T cells."
-            ),
-        },
-        "Technical": {
-            "fragment": NK_CELL_MISSING_SELF_TECHNICAL,
-            "height": 460,
-            "blurb": (
-                "Compare the two receptor pathways underneath: inhibitory "
-                "KIR/NKG2A signal through ITIM motifs and SHP phosphatases, "
-                "while activating NKG2D signals through the DAP10 adaptor "
-                "and PI3K — the balance of these two decides the outcome."
             ),
         },
     },
@@ -7235,24 +5779,9 @@ REGISTRY = {
             "fragment": IMMUNOLOGICAL_MEMORY_GENERAL,
             "height": 440,
             "blurb": (
-                "Immunological memory is why the adaptive immune system "
-                "gets faster and stronger every time it meets the same "
-                "threat, and it's the entire basis for how vaccines work. "
-                "After a primary response, a small population of the B "
-                "and T cells that responded doesn't die off — they persist "
-                "for years to decades as long-lived memory B cells and "
-                "memory T cells, parked in lymph nodes and bone marrow "
-                "waiting for a rematch. Because these memory B cells "
-                "already went through affinity maturation and class "
-                "switching in the germinal center, they carry "
-                "higher-affinity, IgG-class receptors from the start, so "
-                "they don't need the one-to-two-week head start naive "
-                "cells require. On re-exposure they're activated within "
-                "days, expand faster, and produce more antibody at higher "
-                "affinity — the secondary response shown below. This is "
-                "also why booster shots work: each additional exposure to "
-                "a vaccine antigen re-engages the existing memory pool and "
-                "pushes the average antibody affinity even higher."
+                "Compare primary exposure (naive cells, slow, moderate) "
+                "against secondary exposure (memory cells, fast, much "
+                "stronger) — why vaccines and boosters work."
             ),
         },
     },
@@ -7395,9 +5924,7 @@ REGISTRY = {
             "blurb": (
                 "An action potential opens Ca2+ channels at the axon "
                 "terminal, triggering vesicle fusion and neurotransmitter "
-                "release, which crosses the cleft and binds receptors, "
-                "triggering a response — then gets cleared by reuptake "
-                "or enzymatic degradation so the synapse can reset."
+                "release, which crosses the cleft and binds receptors."
             ),
         },
         "Technical": {
@@ -7547,78 +6074,6 @@ REGISTRY = {
             ),
         },
     },
-    "DNA damage repair (NER vs BER)": {
-        "General": {
-            "fragment": DNA_DAMAGE_REPAIR_GENERAL,
-            "height": 440,
-            "blurb": (
-                "Switch between nucleotide excision repair (a bulky, "
-                "helix-distorting lesion like a UV thymine dimer, a whole "
-                "segment excised) and base excision repair (a single "
-                "damaged base, just that base removed) — different scale, "
-                "different machinery, same fill-and-seal ending."
-            ),
-        },
-    },
-    "Epigenetic regulation": {
-        "General": {
-            "fragment": EPIGENETIC_REGULATION_GENERAL,
-            "height": 440,
-            "blurb": (
-                "Switch between DNA methylation (compacts chromatin, "
-                "silences a gene) and histone acetylation (loosens "
-                "chromatin, activates a gene) — control without changing "
-                "the underlying DNA sequence."
-            ),
-        },
-    },
-    "Telomeres & telomerase": {
-        "General": {
-            "fragment": TELOMERES_GENERAL,
-            "height": 420,
-            "blurb": (
-                "The end-replication problem shortens telomeres with "
-                "every division in most somatic cells; telomerase, "
-                "active in germline, stem, and many cancer cells, "
-                "extends them back using its own RNA template."
-            ),
-        },
-    },
-    "Eukaryotic gene regulation (enhancers)": {
-        "General": {
-            "fragment": EUKARYOTIC_TF_REGULATION_GENERAL,
-            "height": 440,
-            "blurb": (
-                "Unlike the lac operon's adjacent operator, a eukaryotic "
-                "enhancer can sit far from its gene — DNA loops so "
-                "enhancer-bound activators reach the Mediator complex at "
-                "the promoter, recruiting RNA polymerase II."
-            ),
-        },
-    },
-    "PCR (polymerase chain reaction)": {
-        "General": {
-            "fragment": PCR_GENERAL,
-            "height": 460,
-            "blurb": (
-                "Denaturation, annealing, and extension, repeated: each "
-                "cycle roughly doubles the target DNA, so n cycles give "
-                "about 2ⁿ copies — the lab technique behind most modern "
-                "genetic testing. See the exponential growth after 30 "
-                "cycles in the final step."
-            ),
-        },
-        "Technical": {
-            "fragment": PCR_TECHNICAL,
-            "height": 440,
-            "blurb": (
-                "Compare Taq (fast, no proofreading, ~1 error per "
-                "10⁴-10⁵ bases — routine PCR) against Pfu (slower, 3'→5' "
-                "proofreading exonuclease, ~1 error per 10⁶-10⁷ bases — "
-                "cloning & sequencing)."
-            ),
-        },
-    },
 }
 
 st.title("Molecular Mechanisms — Interactive Explainers")
@@ -7660,16 +6115,10 @@ CATEGORIES = {
     ],
     "Molecular Biology & Genetics": [
         "CRISPR-Cas9 gene editing",
-        "DNA damage repair (NER vs BER)",
         "DNA mismatch repair",
         "DNA replication",
-        "Epigenetic regulation",
-        "Eukaryotic gene regulation (enhancers)",
         "Lac operon",
-        "PCR (polymerase chain reaction)",
         "RNA interference",
-        "RNA splicing",
-        "Telomeres & telomerase",
         "Transcription",
         "Translation",
     ],
