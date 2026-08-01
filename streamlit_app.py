@@ -5110,6 +5110,11 @@ SYNAPTIC_PLASTICITY_LTP_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #mgBlock { transition: transform 0.8s ease, opacity 0.5s ease; }
   .expelled #mgBlock { transform: translateY(-30px); opacity: 0; }
+  #glutamate1, #glutamate2 { transition: transform 0.7s ease; }
+  .bound #glutamate1 { transform: translate(10px, 85px); }
+  .bound #glutamate2 { transform: translate(5px, 85px); }
+  #postMembrane { transition: stroke 0.5s ease, stroke-width 0.5s ease; }
+  .depolarizing #postMembrane { stroke: var(--border-accent); stroke-width: 2.5; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -5124,8 +5129,9 @@ SYNAPTIC_PLASTICITY_LTP_GENERAL = '''
 <circle class="stg" id="glutamate2" cx="220" cy="70" r="6" fill="#7F77DD"/>
 <text class="ts" x="210" y="95" text-anchor="middle" id="glutamateLabel">Glutamate released</text>
 
-<rect x="80" y="140" width="600" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<rect id="postMembrane" x="80" y="140" width="600" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <text class="ts" x="110" y="130">Postsynaptic membrane</text>
+<text class="ts" x="450" y="130" text-anchor="middle" id="depolLabel"></text>
 
 <circle cx="220" cy="160" r="14" class="c-purple"/>
 <text class="ts" x="220" y="185" text-anchor="middle">NMDA receptor</text>
@@ -5175,6 +5181,10 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('glutamate1').classList.toggle('on', step >= 0);
   document.getElementById('glutamate2').classList.toggle('on', step >= 0);
+  document.querySelector('svg').classList.toggle('bound', step >= 1);
+  document.querySelector('svg').classList.toggle('depolarizing', step === 1);
+  document.getElementById('glutamateLabel').textContent = step === 0 ? 'Glutamate released' : 'Glutamate bound to NMDA receptor';
+  document.getElementById('depolLabel').textContent = step === 1 ? 'Membrane depolarizing...' : '';
   document.querySelector('svg').classList.toggle('expelled', step >= 2);
   document.getElementById('mgLabel').style.opacity = step >= 2 ? '0' : '1';
   document.getElementById('calcium').classList.toggle('on', step >= 2);
