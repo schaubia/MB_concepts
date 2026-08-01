@@ -5957,6 +5957,143 @@ setMode('sym');
 
 
 # ---------------------------------------------------------------------------
+# BLOOD_BRAIN_BARRIER_GENERAL
+# ---------------------------------------------------------------------------
+BLOOD_BRAIN_BARRIER_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the blood-brain barrier, comparing how small lipophilic molecules, transporter-dependent nutrients like glucose, and large or polar molecules each interact with the tight junctions between capillary endothelial cells.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  #molecule { transition: cx 0.6s ease, cy 0.6s ease, opacity 0.4s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnFree" onclick="setMode('free')">Freely permeable (lipophilic)</button>
+  <button id="btnTrans" onclick="setMode('trans')">Transporter-mediated (glucose)</button>
+  <button id="btnBlock" onclick="setMode('block')">Blocked (large/polar)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 320" role="img">
+<title>The blood-brain barrier</title>
+<desc>Capillary endothelial cells in the brain are sealed together by tight junctions, reinforced by astrocyte end-feet, blocking the gaps that let molecules leak between cells almost everywhere else in the body. Small lipophilic molecules like O2, CO2, and alcohol dissolve straight through the lipid membrane. Polar nutrients like glucose need a specific carrier protein such as GLUT1 to cross. Large, charged, or polar molecules — including most antibodies and many drugs — cannot cross either route and stay in the blood.</desc>
+
+<rect x="40" y="25" width="620" height="50" rx="8" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1"/>
+<text class="ts" x="60" y="20">Blood (capillary lumen)</text>
+
+<rect x="40" y="90" width="200" height="60" class="c-teal" fill-opacity="0.45"/>
+<rect x="260" y="90" width="180" height="60" class="c-teal" fill-opacity="0.45"/>
+<rect x="460" y="90" width="200" height="60" class="c-teal" fill-opacity="0.45"/>
+<path d="M240 90 L250 100 L240 110 L250 120 L240 130 L250 140 L240 150" stroke="#B91C1C" stroke-width="2" fill="none"/>
+<path d="M440 90 L450 100 L440 110 L450 120 L440 130 L450 140 L440 150" stroke="#B91C1C" stroke-width="2" fill="none"/>
+<text class="ts" x="245" y="170" text-anchor="middle">Tight junction</text>
+<text class="ts" x="445" y="170" text-anchor="middle">Tight junction</text>
+<text class="th" x="350" y="80" text-anchor="middle">Capillary endothelial cells</text>
+
+<rect id="glut1" x="335" y="98" width="30" height="44" rx="6" fill="none" stroke="#B45309" stroke-width="2" class="stg"/>
+<text class="ts" x="350" y="196" text-anchor="middle" id="glutLabel"></text>
+
+<ellipse cx="90" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<ellipse cx="180" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<ellipse cx="350" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<ellipse cx="520" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<ellipse cx="610" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<text class="ts" x="90" y="145" text-anchor="middle">Astrocyte end-feet</text>
+
+<rect x="40" y="180" width="620" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="60" y="295">Brain tissue (interstitial space)</text>
+
+<circle id="molecule" cx="350" cy="50" r="9" fill="#378ADD"/>
+<text id="blockMark" class="th" x="350" y="55" text-anchor="middle" fill="#DC2626" opacity="0">✕</text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'free';
+
+const free = {
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — small lipophilic molecule (e.g. O2, CO2, alcohol) circulating in blood",
+    "Step 1 of 3 — dissolves straight through the lipid bilayer of the endothelial cell — no channel or transporter needed",
+    "Step 2 of 3 — passes the astrocyte end-feet layer as well",
+    "Step 3 of 3 — reaches brain tissue by simple diffusion down its concentration gradient"
+  ],
+  path: [[350,50],[350,120],[350,165],[350,230]],
+  mark: [false,false,false,false],
+  glut: false
+};
+
+const trans = {
+  maxStep: 4,
+  labels: [
+    "Step 0 of 4 — glucose circulating in blood — too polar to cross the lipid membrane on its own",
+    "Step 1 of 4 — binds a GLUT1 transporter embedded in the endothelial cell membrane",
+    "Step 2 of 4 — the transporter changes shape, carrying glucose through the membrane",
+    "Step 3 of 4 — released on the brain-facing side, past the astrocyte end-feet",
+    "Step 4 of 4 — reaches brain tissue — glucose supply to the brain depends on functioning GLUT1 transporters"
+  ],
+  path: [[350,50],[350,110],[350,130],[350,165],[350,230]],
+  mark: [false,false,false,false,false],
+  glut: true
+};
+
+const block = {
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — a large or charged molecule (e.g. an antibody, most ionic drugs) circulating in blood",
+    "Step 1 of 3 — can't slip between endothelial cells — tight junctions seal that route off",
+    "Step 2 of 3 — also can't dissolve through the lipid membrane directly — too large or polar, and no transporter exists for it",
+    "Step 3 of 3 — stays in the blood — this is why the BBB protects the brain from circulating toxins, pathogens, and most large or charged drugs"
+  ],
+  path: [[350,50],[250,95],[350,110],[350,50]],
+  mark: [false,true,true,false],
+  glut: false
+};
+
+function getCfg() { return mode === 'free' ? free : mode === 'trans' ? trans : block; }
+
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnFree').classList.toggle('active', m === 'free');
+  document.getElementById('btnTrans').classList.toggle('active', m === 'trans');
+  document.getElementById('btnBlock').classList.toggle('active', m === 'block');
+  document.getElementById('glut1').classList.toggle('on', getCfg().glut);
+  render();
+}
+
+function render() {
+  const cfg = getCfg();
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('glutLabel').textContent = (cfg.glut && step >= 1) ? 'GLUT1 transporter' : '';
+  const [mx, my] = cfg.path[step];
+  document.getElementById('molecule').setAttribute('cx', mx);
+  document.getElementById('molecule').setAttribute('cy', my);
+  const marked = cfg.mark[step];
+  document.getElementById('blockMark').setAttribute('x', mx);
+  document.getElementById('blockMark').setAttribute('y', my + 5);
+  document.getElementById('blockMark').setAttribute('opacity', marked ? 1 : 0);
+  document.getElementById('molecule').setAttribute('opacity', marked ? 0.3 : 1);
+}
+function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('free');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -6382,6 +6519,19 @@ REGISTRY = {
             ),
         },
     },
+    "Blood-brain barrier": {
+        "General": {
+            "fragment": BLOOD_BRAIN_BARRIER_GENERAL,
+            "height": 620,
+            "blurb": (
+                "Tight junctions seal capillary endothelial cells "
+                "together in the brain. Small lipophilic molecules "
+                "diffuse straight through; polar nutrients like glucose "
+                "need a GLUT1 transporter; large or charged molecules — "
+                "most antibodies and many drugs — can't cross either way."
+            ),
+        },
+    },
     "Muscle contraction (skeletal)": {
         "General": {
             "fragment": MUSCLE_CONTRACTION_GENERAL,
@@ -6649,6 +6799,7 @@ CATEGORIES = {
         "Baroreceptor reflex",
         "Blood clotting (hemostasis)",
         "Blood glucose homeostasis",
+        "Blood-brain barrier",
         "Cardiac conduction system",
         "Dopamine reward pathway",
         "Electron transport chain & ATP synthase",
