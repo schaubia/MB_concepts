@@ -5822,6 +5822,141 @@ setMode('un');
 
 
 # ---------------------------------------------------------------------------
+# AUTONOMIC_NERVOUS_SYSTEM_GENERAL
+# ---------------------------------------------------------------------------
+AUTONOMIC_NERVOUS_SYSTEM_GENERAL = '''
+<h2 class="sr-only">Interactive diagram comparing the sympathetic and parasympathetic divisions of the autonomic nervous system: a two-neuron chain from the CNS through a ganglion to the target organ, with different ganglion locations, neurotransmitters, and effects.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  #dot1, #dot2 { transition: cx 0.7s ease, opacity 0.3s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+  #heart { transform-origin: 610px 150px; animation: beat 1s ease-in-out infinite; }
+  @keyframes beat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSym" onclick="setMode('sym')">Sympathetic (fight-or-flight)</button>
+  <button id="btnPara" onclick="setMode('para')">Parasympathetic (rest-and-digest)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 300" role="img">
+<title>Sympathetic vs. parasympathetic pathways</title>
+<desc>Both divisions use a two-neuron chain: a preganglionic neuron from the CNS synapses onto a postganglionic neuron at a ganglion, using acetylcholine on nicotinic receptors. Sympathetic ganglia sit close to the spinal cord, giving a short preganglionic and a long postganglionic neuron that releases norepinephrine at the target organ. Parasympathetic ganglia sit near or within the target organ, giving a long preganglionic and a short postganglionic neuron that releases acetylcholine at the target organ. The two divisions produce opposite effects on the same organs.</desc>
+
+<rect x="20" y="110" width="110" height="80" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="75" y="105" text-anchor="middle">Spinal cord (CNS)</text>
+
+<rect x="560" y="95" width="120" height="110" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="620" y="90" text-anchor="middle">Target organ (heart)</text>
+<circle id="heart" cx="610" cy="150" r="18" fill="#DC2626" fill-opacity="0.7"/>
+<text class="ts" x="620" y="220" text-anchor="middle" id="effectLabel"></text>
+
+<g id="symPath" class="stg">
+<line x1="130" y1="150" x2="215" y2="150" stroke="var(--t)" stroke-width="2"/>
+<circle cx="220" cy="150" r="13" class="c-amber"/>
+<text class="ts" x="220" y="130" text-anchor="middle">Ganglion (ACh)</text>
+<line x1="233" y1="150" x2="555" y2="150" stroke="var(--t)" stroke-width="2"/>
+<text class="ts" x="220" y="180" text-anchor="middle">Short preganglionic</text>
+<text class="ts" x="390" y="140" text-anchor="middle">Long postganglionic — releases NE</text>
+</g>
+
+<g id="paraPath" class="stg">
+<line x1="130" y1="150" x2="475" y2="150" stroke="var(--t)" stroke-width="2"/>
+<circle cx="480" cy="150" r="13" class="c-amber"/>
+<text class="ts" x="480" y="130" text-anchor="middle">Ganglion (ACh)</text>
+<line x1="493" y1="150" x2="555" y2="150" stroke="var(--t)" stroke-width="2"/>
+<text class="ts" x="300" y="140" text-anchor="middle">Long preganglionic</text>
+<text class="ts" x="480" y="180" text-anchor="middle">Short postganglionic — releases ACh</text>
+</g>
+
+<circle id="dot1" cx="130" cy="150" r="7" fill="#378ADD" opacity="0"/>
+<circle id="dot2" cx="233" cy="150" r="7" fill="#378ADD" opacity="0"/>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'sym';
+
+const sym = {
+  maxStep: 4,
+  ganglionX: 220,
+  targetX: 560,
+  labels: [
+    "Step 0 of 4 — signal starts in the spinal cord",
+    "Step 1 of 4 — short preganglionic neuron fires, releases ACh onto nicotinic receptors at the (nearby) ganglion",
+    "Step 2 of 4 — long postganglionic neuron fires, travels all the way to the target organ",
+    "Step 3 of 4 — releases norepinephrine (NE) onto adrenergic receptors on the heart",
+    "Step 4 of 4 — heart rate increases, pupils dilate, digestion is inhibited — fight-or-flight"
+  ],
+  effect: ["", "", "", "", "Heart rate ↑ (fight-or-flight)"],
+  beatSpeed: "0.5s"
+};
+
+const para = {
+  maxStep: 4,
+  ganglionX: 480,
+  targetX: 560,
+  labels: [
+    "Step 0 of 4 — signal starts in the spinal cord (or brainstem, via cranial nerves)",
+    "Step 1 of 4 — long preganglionic neuron fires, travels all the way to a ganglion near the target organ, releases ACh onto nicotinic receptors",
+    "Step 2 of 4 — short postganglionic neuron fires, right there next to the organ",
+    "Step 3 of 4 — releases acetylcholine (ACh) onto muscarinic receptors on the heart",
+    "Step 4 of 4 — heart rate decreases, digestion is stimulated — rest-and-digest"
+  ],
+  effect: ["", "", "", "", "Heart rate ↓ (rest-and-digest)"],
+  beatSpeed: "1.8s"
+};
+
+function getCfg() { return mode === 'sym' ? sym : para; }
+
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnSym').classList.toggle('active', m === 'sym');
+  document.getElementById('btnPara').classList.toggle('active', m === 'para');
+  document.getElementById('symPath').classList.toggle('on', m === 'sym');
+  document.getElementById('paraPath').classList.toggle('on', m === 'para');
+  render();
+}
+
+function render() {
+  const cfg = getCfg();
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('effectLabel').textContent = cfg.effect[step];
+  document.getElementById('heart').style.animationDuration = step >= 4 ? cfg.beatSpeed : '1s';
+
+  if (step === 0) {
+    document.getElementById('dot1').setAttribute('opacity', 0);
+    document.getElementById('dot2').setAttribute('opacity', 0);
+  } else if (step === 1) {
+    document.getElementById('dot1').setAttribute('cx', cfg.ganglionX - 5);
+    document.getElementById('dot1').setAttribute('opacity', 1);
+    document.getElementById('dot2').setAttribute('opacity', 0);
+  } else {
+    document.getElementById('dot1').setAttribute('opacity', 0);
+    document.getElementById('dot2').setAttribute('cx', cfg.targetX - 5);
+    document.getElementById('dot2').setAttribute('opacity', 1);
+  }
+}
+function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('sym');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -6234,6 +6369,19 @@ REGISTRY = {
             ),
         },
     },
+    "Autonomic nervous system (sympathetic vs. parasympathetic)": {
+        "General": {
+            "fragment": AUTONOMIC_NERVOUS_SYSTEM_GENERAL,
+            "height": 620,
+            "blurb": (
+                "Both divisions use a two-neuron chain through a ganglion "
+                "(ACh, nicotinic). Sympathetic ganglia sit close to the "
+                "spinal cord and release norepinephrine at the organ; "
+                "parasympathetic ganglia sit near the organ itself and "
+                "release ACh there instead — opposite effects, same organs."
+            ),
+        },
+    },
     "Muscle contraction (skeletal)": {
         "General": {
             "fragment": MUSCLE_CONTRACTION_GENERAL,
@@ -6497,6 +6645,7 @@ CATEGORIES = {
     ],
     "Physiology": [
         "Action potential",
+        "Autonomic nervous system (sympathetic vs. parasympathetic)",
         "Baroreceptor reflex",
         "Blood clotting (hemostasis)",
         "Blood glucose homeostasis",
