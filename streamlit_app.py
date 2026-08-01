@@ -5664,6 +5664,154 @@ setMode('exc');
 
 
 # ---------------------------------------------------------------------------
+# SALTATORY_CONDUCTION_GENERAL
+# ---------------------------------------------------------------------------
+SALTATORY_CONDUCTION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram comparing continuous conduction along an unmyelinated axon, saltatory conduction along a healthy myelinated axon, and conduction block or slowing along a demyelinated axon.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  #signal { transition: cx 0.6s ease, r 0.4s ease, opacity 0.4s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+  .dmg { stroke-dasharray: 4 3; }
+</style>
+
+<div class="rowbtns">
+  <button id="btnUn" onclick="setMode('un')">Unmyelinated</button>
+  <button id="btnMy" onclick="setMode('my')">Myelinated (healthy)</button>
+  <button id="btnDm" onclick="setMode('dm')">Demyelinated</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 260" role="img">
+<title>Continuous vs. saltatory conduction</title>
+<desc>Unmyelinated axons regenerate the action potential at every adjacent patch of membrane, since voltage-gated Na+ channels are spread evenly along the whole length — this continuous conduction is slow, around one meter per second. Myelinated axons insulate the internodes so current spreads passively and fast underneath the myelin, and the action potential only needs to regenerate at the exposed Nodes of Ranvier, where Na+ channels are densely clustered — this saltatory, node-to-node jumping conduction reaches up to one hundred meters per second. When myelin is damaged, as in multiple sclerosis, current leaks out through the newly exposed membrane between nodes, and the signal can decay below threshold before it reaches the next node, causing conduction to slow or fail entirely.</desc>
+
+<text class="ts" x="60" y="55" text-anchor="middle">Soma</text>
+<line x1="40" y1="150" x2="660" y2="150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<text class="ts" x="650" y="130" text-anchor="middle">Terminal</text>
+
+<g id="myelinGroup" class="stg">
+<rect id="seg1" x="170" y="135" width="110" height="30" rx="8" class="c-gray" fill-opacity="0.7"/>
+<rect id="seg2" x="320" y="135" width="110" height="30" rx="8" class="c-gray" fill-opacity="0.7"/>
+<rect id="seg3" x="470" y="135" width="110" height="30" rx="8" class="c-gray" fill-opacity="0.7"/>
+<circle cx="150" cy="150" r="7" class="c-amber"/>
+<circle cx="300" cy="150" r="7" class="c-amber"/>
+<circle cx="450" cy="150" r="7" class="c-amber"/>
+<circle cx="600" cy="150" r="7" class="c-amber"/>
+<text class="ts" x="150" y="195" text-anchor="middle">Node</text>
+<text class="ts" x="300" y="195" text-anchor="middle">Node</text>
+<text class="ts" x="450" y="195" text-anchor="middle">Node</text>
+<text class="ts" x="600" y="195" text-anchor="middle">Node</text>
+<text class="th" x="225" y="120" text-anchor="middle">Myelin sheath (insulates — no Na+ channels here)</text>
+</g>
+
+<g id="channelTicks" class="stg">
+<line x1="70" y1="145" x2="70" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="140" y1="145" x2="140" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="210" y1="145" x2="210" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="280" y1="145" x2="280" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="350" y1="145" x2="350" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="420" y1="145" x2="420" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="490" y1="145" x2="490" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="560" y1="145" x2="560" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="630" y1="145" x2="630" y2="155" stroke="#15803D" stroke-width="2"/>
+<text class="th" x="350" y="120" text-anchor="middle">Voltage-gated Na+ channels spread evenly along the whole membrane</text>
+</g>
+
+<circle id="signal" cx="60" cy="150" r="10" fill="#DC2626"/>
+
+<text class="ts" x="350" y="235" text-anchor="middle" id="speedLabel"></text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'un';
+
+const un = {
+  maxStep: 4,
+  positions: [60, 195, 330, 465, 600],
+  labels: [
+    "Step 0 of 4 — signal starts at the soma",
+    "Step 1 of 4 — Na+ channels open at the next patch of membrane, AP regenerates locally",
+    "Step 2 of 4 — regenerates again at the next adjacent patch — and the next, and the next",
+    "Step 3 of 4 — continuous, patch-by-patch regeneration along the entire length",
+    "Step 4 of 4 — signal reaches the terminal — continuous conduction, roughly 1 m/s"
+  ],
+  speed: "No myelin — every adjacent patch of membrane must regenerate the AP individually"
+};
+
+const my = {
+  maxStep: 4,
+  positions: [60, 150, 300, 450, 600],
+  labels: [
+    "Step 0 of 4 — signal starts at the soma",
+    "Step 1 of 4 — AP regenerates at Node 1 — current spreads passively (and fast) under the myelin to get here",
+    "Step 2 of 4 — jumps to Node 2 — the AP 'skips' the insulated internode entirely",
+    "Step 3 of 4 — jumps to Node 3 — same pattern repeats down the axon",
+    "Step 4 of 4 — jumps to Node 4 / terminal — saltatory conduction, up to ~100 m/s"
+  ],
+  speed: "Myelin insulates the internodes — Na+ channels are dense only at the Nodes of Ranvier"
+};
+
+const dm = {
+  maxStep: 4,
+  positions: [60, 150, 210, 210, 210],
+  labels: [
+    "Step 0 of 4 — signal starts at the soma",
+    "Step 1 of 4 — AP regenerates normally at Node 1 — myelin here is still intact",
+    "Step 2 of 4 — enters the demyelinated stretch — with no insulation, current leaks out through the exposed membrane",
+    "Step 3 of 4 — the signal decays below threshold before reaching Node 2 — conduction block",
+    "Step 4 of 4 — this is the basis of MS / Guillain-Barré symptoms: demyelination slows or blocks conduction, causing numbness, weakness, or vision changes depending which axons are affected"
+  ],
+  speed: "Demyelinated stretch (dashed) has lost its insulation but wasn't built with dense Na+ channels like a real node"
+};
+
+function getCfg() { return mode === 'un' ? un : mode === 'my' ? my : dm; }
+
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnUn').classList.toggle('active', m === 'un');
+  document.getElementById('btnMy').classList.toggle('active', m === 'my');
+  document.getElementById('btnDm').classList.toggle('active', m === 'dm');
+  document.getElementById('myelinGroup').classList.toggle('on', m === 'my' || m === 'dm');
+  document.getElementById('channelTicks').classList.toggle('on', m === 'un');
+  document.getElementById('seg1').classList.toggle('dmg', m === 'dm');
+  document.getElementById('seg1').setAttribute('fill-opacity', m === 'dm' ? '0.15' : '0.7');
+  render();
+}
+
+function render() {
+  const cfg = getCfg();
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('signal').setAttribute('cx', cfg.positions[step]);
+  document.getElementById('speedLabel').textContent = cfg.speed;
+  if (mode === 'dm' && step >= 3) {
+    document.getElementById('signal').setAttribute('r', 10 - (step - 2) * 2.5);
+    document.getElementById('signal').setAttribute('opacity', step >= 4 ? 0.3 : 1);
+  } else {
+    document.getElementById('signal').setAttribute('r', 10);
+    document.getElementById('signal').setAttribute('opacity', 1);
+  }
+}
+function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('un');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
 # string constant above with your SVG/JS animation, and (2) adding one entry
 # below. No existing entries need to change.
@@ -6063,6 +6211,19 @@ REGISTRY = {
             ),
         },
     },
+    "Saltatory conduction & demyelination": {
+        "General": {
+            "fragment": SALTATORY_CONDUCTION_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Unmyelinated axons regenerate the action potential at "
+                "every adjacent patch of membrane (~1 m/s). Myelin lets "
+                "the signal jump node to node instead (~100 m/s); when "
+                "myelin is damaged, current leaks out between nodes and "
+                "conduction slows or blocks entirely — the basis of MS."
+            ),
+        },
+    },
     "Muscle contraction (skeletal)": {
         "General": {
             "fragment": MUSCLE_CONTRACTION_GENERAL,
@@ -6340,6 +6501,7 @@ CATEGORIES = {
         "Muscle contraction (skeletal)",
         "Nephron filtration",
         "Reflex arc (patellar reflex)",
+        "Saltatory conduction & demyelination",
         "Sleep-wake regulation",
         "Synaptic plasticity (LTP)",
         "Synaptic transmission",
