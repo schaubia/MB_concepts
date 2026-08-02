@@ -1004,6 +1004,9 @@ APOPTOSIS_GENERAL = '''
   .engulfed #bodies { transform: translateX(120px) scale(0.3); opacity: 0; }
   #phagocyte { transition: transform 0.8s ease; }
   .approaching #phagocyte { transform: translateX(-40px); }
+  .digesting #phagocyte { animation: digest 1s ease-in-out infinite; }
+  @keyframes digest { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+  .fed #phagocyte { transform: scale(1.1); }
   #mitoOutline { transition: stroke-dasharray 0.6s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
@@ -1164,16 +1167,19 @@ function render() {
   const dmgThreshold = mode === 'extrinsic' ? 3 : 4;
   const bodiesThreshold = dmgThreshold;
   const phagoThreshold = mode === 'extrinsic' ? 4 : 5;
-  const engulfThreshold = mode === 'extrinsic' ? 5 : 6;
+  const digestThreshold = mode === 'extrinsic' ? 5 : 6;
+  const clearedThreshold = 6;
 
   document.getElementById('damage').classList.toggle('on', step >= dmgThreshold);
   document.getElementById('cellBody').style.opacity = step >= dmgThreshold ? '0.15' : '1';
-  document.getElementById('bodies').classList.toggle('on', step >= bodiesThreshold && step < engulfThreshold);
+  document.getElementById('bodies').classList.toggle('on', step >= bodiesThreshold && step < digestThreshold);
   document.getElementById('phagocyte').classList.toggle('on', step >= phagoThreshold);
   svg.classList.toggle('approaching', step === phagoThreshold);
-  svg.classList.toggle('engulfed', step >= engulfThreshold);
-  document.getElementById('phagocyteLabel').textContent = step >= engulfThreshold ? 'Phagocyte (fed)' : 'Phagocyte';
-  document.getElementById('engulfNote').classList.toggle('on', step >= engulfThreshold);
+  svg.classList.toggle('engulfed', step >= digestThreshold);
+  svg.classList.toggle('digesting', step === digestThreshold && digestThreshold !== clearedThreshold);
+  svg.classList.toggle('fed', step >= clearedThreshold);
+  document.getElementById('phagocyteLabel').textContent = step >= clearedThreshold ? 'Phagocyte (fed)' : 'Phagocyte';
+  document.getElementById('engulfNote').classList.toggle('on', step >= clearedThreshold);
 }
 function stepFwd() { if (step < 6) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
