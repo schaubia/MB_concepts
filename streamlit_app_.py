@@ -1078,7 +1078,7 @@ APOPTOSIS_GENERAL = '''
 <g id="caspase3" class="stg">
 <circle cx="260" cy="140" r="14" class="c-red"/>
 <text class="ts" x="260" y="140" text-anchor="middle" dominant-baseline="central">C3</text>
-<text class="ts" x="260" y="166" text-anchor="middle" id="executionerLabel">Executioner</text>
+<text class="ts" x="290" y="140" text-anchor="middle" id="executionerLabel">Executioner</text>
 </g>
 
 <g id="damage" class="stg">
@@ -5110,6 +5110,11 @@ SYNAPTIC_PLASTICITY_LTP_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #mgBlock { transition: transform 0.8s ease, opacity 0.5s ease; }
   .expelled #mgBlock { transform: translateY(-30px); opacity: 0; }
+  #glutamate1, #glutamate2 { transition: transform 0.7s ease; }
+  .bound #glutamate1 { transform: translate(10px, 85px); }
+  .bound #glutamate2 { transform: translate(5px, 85px); }
+  #postMembrane { transition: stroke 0.5s ease, stroke-width 0.5s ease; }
+  .depolarizing #postMembrane { stroke: var(--border-accent); stroke-width: 2.5; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -5124,8 +5129,9 @@ SYNAPTIC_PLASTICITY_LTP_GENERAL = '''
 <circle class="stg" id="glutamate2" cx="220" cy="70" r="6" fill="#7F77DD"/>
 <text class="ts" x="210" y="95" text-anchor="middle" id="glutamateLabel">Glutamate released</text>
 
-<rect x="80" y="140" width="600" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<rect id="postMembrane" x="80" y="140" width="600" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <text class="ts" x="110" y="130">Postsynaptic membrane</text>
+<text class="ts" x="450" y="130" text-anchor="middle" id="depolLabel"></text>
 
 <circle cx="220" cy="160" r="14" class="c-purple"/>
 <text class="ts" x="220" y="185" text-anchor="middle">NMDA receptor</text>
@@ -5175,6 +5181,10 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('glutamate1').classList.toggle('on', step >= 0);
   document.getElementById('glutamate2').classList.toggle('on', step >= 0);
+  document.querySelector('svg').classList.toggle('bound', step >= 1);
+  document.querySelector('svg').classList.toggle('depolarizing', step === 1);
+  document.getElementById('glutamateLabel').textContent = step === 0 ? 'Glutamate released' : 'Glutamate bound to NMDA receptor';
+  document.getElementById('depolLabel').textContent = step === 1 ? 'Membrane depolarizing...' : '';
   document.querySelector('svg').classList.toggle('expelled', step >= 2);
   document.getElementById('mgLabel').style.opacity = step >= 2 ? '0' : '1';
   document.getElementById('calcium').classList.toggle('on', step >= 2);
@@ -5468,6 +5478,617 @@ function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# EXCITATORY_INHIBITORY_GENERAL
+# ---------------------------------------------------------------------------
+EXCITATORY_INHIBITORY_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of excitatory and inhibitory synaptic integration: glutamate produces an EPSP, GABA produces an IPSP, and the axon hillock sums all inputs to decide whether an action potential fires.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .drift { animation: drift 1.4s ease-in-out infinite; }
+  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(60px)} }
+  #excVesicle { transition: transform 0.7s ease, opacity 0.5s ease; }
+  #inhVesicle { transition: transform 0.7s ease, opacity 0.5s ease; }
+  .excReleased #excVesicle { transform: translateX(18px); opacity: 0; }
+  .inhReleased #inhVesicle { transform: translateX(18px); opacity: 0; }
+  #trace { transition: d 0.7s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnExc" onclick="setMode('exc')">Excitatory (EPSP)</button>
+  <button id="btnInh" onclick="setMode('inh')">Inhibitory (IPSP)</button>
+  <button id="btnSum" onclick="setMode('sum')">Summation</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 340" role="img">
+<title>Excitatory and inhibitory synaptic integration</title>
+<desc>A glutamate synapse opens Na+ channels, producing a local excitatory postsynaptic potential (EPSP) that pushes the membrane toward threshold. A GABA synapse opens Cl- channels, producing an inhibitory postsynaptic potential (IPSP) that pushes the membrane away from threshold. The axon hillock algebraically sums every EPSP and IPSP arriving at that instant; only if the net result crosses threshold does an all-or-none action potential fire.</desc>
+
+<rect x="30" y="25" width="130" height="80" rx="14" class="c-green" fill-opacity="0.35"/>
+<text class="ts" x="95" y="18" text-anchor="middle">Excitatory terminal (glutamate)</text>
+<circle id="excVesicle" cx="120" cy="65" r="16" fill="none" stroke="#15803D" stroke-width="2"/>
+<circle cx="115" cy="61" r="2.5" fill="#15803D"/>
+<circle cx="125" cy="65" r="2.5" fill="#15803D"/>
+<circle cx="118" cy="71" r="2.5" fill="#15803D"/>
+
+<rect x="30" y="235" width="130" height="80" rx="14" class="c-amber" fill-opacity="0.35"/>
+<text class="ts" x="95" y="330" text-anchor="middle">Inhibitory terminal (GABA)</text>
+<circle id="inhVesicle" cx="120" cy="275" r="16" fill="none" stroke="#B45309" stroke-width="2"/>
+<circle cx="115" cy="271" r="2.5" fill="#B45309"/>
+<circle cx="125" cy="275" r="2.5" fill="#B45309"/>
+<circle cx="118" cy="281" r="2.5" fill="#B45309"/>
+
+<g id="excNT" class="stg">
+<circle class="drift" cx="150" cy="60" r="4" fill="#15803D"/>
+<circle class="drift" cx="150" cy="70" r="4" fill="#15803D" style="animation-delay:.2s"/>
+</g>
+<g id="inhNT" class="stg">
+<circle class="drift" cx="150" cy="270" r="4" fill="#B45309"/>
+<circle class="drift" cx="150" cy="280" r="4" fill="#B45309" style="animation-delay:.2s"/>
+</g>
+
+<rect x="230" y="40" width="110" height="260" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="285" y="30" text-anchor="middle">Dendrite → soma</text>
+
+<g id="excReceptor" class="stg">
+<rect x="222" y="52" width="16" height="26" rx="4" fill="var(--surface-1)" stroke="#15803D" stroke-width="2"/>
+<text class="ts" x="285" y="100" text-anchor="middle">AMPA receptor opens — Na+ in (depolarizing)</text>
+</g>
+<g id="inhReceptor" class="stg">
+<rect x="222" y="262" width="16" height="26" rx="4" fill="var(--surface-1)" stroke="#B45309" stroke-width="2"/>
+<text class="ts" x="285" y="245" text-anchor="middle">GABA-A receptor opens — Cl- in (hyperpolarizing)</text>
+</g>
+
+<text class="ts" x="285" y="175" text-anchor="middle" id="integrateLabel">Graded potentials spread passively toward the axon hillock</text>
+
+<line x1="400" y1="170" x2="670" y2="170" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="2 3"/>
+<text class="ts" x="405" y="182" fill="var(--text-secondary)">Resting: −70 mV</text>
+<line x1="400" y1="130" x2="670" y2="130" stroke="#DC2626" stroke-width="1" stroke-dasharray="2 3"/>
+<text class="ts" x="405" y="122" fill="#DC2626">Threshold: ~−55 mV</text>
+
+<path id="trace" d="M400 170 L670 170" stroke="#378ADD" stroke-width="2.5" fill="none"/>
+<text class="th" x="535" y="320" text-anchor="middle">Axon hillock membrane potential</text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'exc';
+
+const exc = {
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — resting membrane potential, no input yet",
+    "Step 1 of 3 — glutamate released from the excitatory terminal",
+    "Step 2 of 3 — glutamate binds AMPA receptors, Na+ channels open",
+    "Step 3 of 3 — local EPSP depolarizes the membrane — but one EPSP alone rarely reaches threshold"
+  ],
+  traces: [
+    "M400 170 L670 170",
+    "M400 170 L670 170",
+    "M400 170 L460 170 L500 145 L560 170 L670 170",
+    "M400 170 L460 170 L500 145 L560 170 L670 170"
+  ],
+  excRelease: [false, true, true, true],
+  excRec: [false, false, true, true],
+  inhRelease: [false, false, false, false],
+  inhRec: [false, false, false, false],
+  integrate: ["Graded potentials spread passively toward the axon hillock", "Graded potentials spread passively toward the axon hillock", "EPSP travels toward the hillock, decaying with distance", "EPSP travels toward the hillock, decaying with distance"]
+};
+
+const inh = {
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — resting membrane potential, no input yet",
+    "Step 1 of 3 — GABA released from the inhibitory terminal",
+    "Step 2 of 3 — GABA binds GABA-A receptors, Cl- channels open",
+    "Step 3 of 3 — local IPSP hyperpolarizes the membrane, moving it further from threshold"
+  ],
+  traces: [
+    "M400 170 L670 170",
+    "M400 170 L670 170",
+    "M400 170 L460 170 L500 195 L560 170 L670 170",
+    "M400 170 L460 170 L500 195 L560 170 L670 170"
+  ],
+  excRelease: [false, false, false, false],
+  excRec: [false, false, false, false],
+  inhRelease: [false, true, true, true],
+  inhRec: [false, false, true, true],
+  integrate: ["Graded potentials spread passively toward the axon hillock", "Graded potentials spread passively toward the axon hillock", "IPSP travels toward the hillock, decaying with distance", "IPSP travels toward the hillock, decaying with distance"]
+};
+
+const sum = {
+  maxStep: 4,
+  labels: [
+    "Step 0 of 4 — resting membrane potential, both synapses quiet",
+    "Step 1 of 4 — a single EPSP arrives — depolarizing, but subthreshold alone",
+    "Step 2 of 4 — an IPSP arrives too — it partially cancels the EPSP, net effect shrinks",
+    "Step 3 of 4 — repeated EPSPs add up (temporal summation) — net depolarization now crosses threshold",
+    "Step 4 of 4 — threshold crossed — an all-or-none action potential fires down the axon"
+  ],
+  traces: [
+    "M400 170 L670 170",
+    "M400 170 L450 170 L480 148 L510 170 L670 170",
+    "M400 170 L450 170 L480 156 L500 168 L520 170 L670 170",
+    "M400 170 L430 170 L450 150 L470 132 L490 122 L510 130 L670 130",
+    "M400 170 L430 170 L450 150 L470 120 L485 60 L500 200 L520 170 L670 170"
+  ],
+  excRelease: [false, true, true, true, true],
+  excRec: [false, true, true, true, true],
+  inhRelease: [false, false, true, true, true],
+  inhRec: [false, false, true, true, true],
+  integrate: [
+    "Both synapses quiet",
+    "One EPSP alone — subthreshold",
+    "EPSP + IPSP sum algebraically at the hillock",
+    "Temporal summation of EPSPs overcomes the IPSP",
+    "Net input exceeds threshold — the hillock fires"
+  ]
+};
+
+function getCfg() { return mode === 'exc' ? exc : mode === 'inh' ? inh : sum; }
+
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnExc').classList.toggle('active', m === 'exc');
+  document.getElementById('btnInh').classList.toggle('active', m === 'inh');
+  document.getElementById('btnSum').classList.toggle('active', m === 'sum');
+  render();
+}
+
+function render() {
+  const cfg = getCfg();
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('trace').setAttribute('d', cfg.traces[step]);
+  document.querySelector('svg').classList.toggle('excReleased', cfg.excRelease[step]);
+  document.querySelector('svg').classList.toggle('inhReleased', cfg.inhRelease[step]);
+  document.getElementById('excNT').classList.toggle('on', cfg.excRelease[step] && !cfg.excRec[step]);
+  document.getElementById('inhNT').classList.toggle('on', cfg.inhRelease[step] && !cfg.inhRec[step]);
+  document.getElementById('excReceptor').classList.toggle('on', cfg.excRec[step]);
+  document.getElementById('inhReceptor').classList.toggle('on', cfg.inhRec[step]);
+  document.getElementById('integrateLabel').textContent = cfg.integrate[step];
+}
+function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('exc');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# SALTATORY_CONDUCTION_GENERAL
+# ---------------------------------------------------------------------------
+SALTATORY_CONDUCTION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram comparing continuous conduction along an unmyelinated axon, saltatory conduction along a healthy myelinated axon, and conduction block or slowing along a demyelinated axon.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  #signal { transition: cx 0.6s ease, r 0.4s ease, opacity 0.4s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+  .dmg { stroke-dasharray: 4 3; }
+</style>
+
+<div class="rowbtns">
+  <button id="btnUn" onclick="setMode('un')">Unmyelinated</button>
+  <button id="btnMy" onclick="setMode('my')">Myelinated (healthy)</button>
+  <button id="btnDm" onclick="setMode('dm')">Demyelinated</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 260" role="img">
+<title>Continuous vs. saltatory conduction</title>
+<desc>Unmyelinated axons regenerate the action potential at every adjacent patch of membrane, since voltage-gated Na+ channels are spread evenly along the whole length — this continuous conduction is slow, around one meter per second. Myelinated axons insulate the internodes so current spreads passively and fast underneath the myelin, and the action potential only needs to regenerate at the exposed Nodes of Ranvier, where Na+ channels are densely clustered — this saltatory, node-to-node jumping conduction reaches up to one hundred meters per second. When myelin is damaged, as in multiple sclerosis, current leaks out through the newly exposed membrane between nodes, and the signal can decay below threshold before it reaches the next node, causing conduction to slow or fail entirely.</desc>
+
+<text class="ts" x="60" y="55" text-anchor="middle">Soma</text>
+<line x1="40" y1="150" x2="660" y2="150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<text class="ts" x="650" y="130" text-anchor="middle">Terminal</text>
+
+<g id="myelinGroup" class="stg">
+<rect id="seg1" x="170" y="135" width="110" height="30" rx="8" class="c-gray" fill-opacity="0.7"/>
+<rect id="seg2" x="320" y="135" width="110" height="30" rx="8" class="c-gray" fill-opacity="0.7"/>
+<rect id="seg3" x="470" y="135" width="110" height="30" rx="8" class="c-gray" fill-opacity="0.7"/>
+<circle cx="150" cy="150" r="7" class="c-amber"/>
+<circle cx="300" cy="150" r="7" class="c-amber"/>
+<circle cx="450" cy="150" r="7" class="c-amber"/>
+<circle cx="600" cy="150" r="7" class="c-amber"/>
+<text class="ts" x="150" y="195" text-anchor="middle">Node</text>
+<text class="ts" x="300" y="195" text-anchor="middle">Node</text>
+<text class="ts" x="450" y="195" text-anchor="middle">Node</text>
+<text class="ts" x="600" y="195" text-anchor="middle">Node</text>
+<text class="th" x="225" y="120" text-anchor="middle">Myelin sheath (insulates — no Na+ channels here)</text>
+</g>
+
+<g id="channelTicks" class="stg">
+<line x1="70" y1="145" x2="70" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="140" y1="145" x2="140" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="210" y1="145" x2="210" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="280" y1="145" x2="280" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="350" y1="145" x2="350" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="420" y1="145" x2="420" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="490" y1="145" x2="490" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="560" y1="145" x2="560" y2="155" stroke="#15803D" stroke-width="2"/>
+<line x1="630" y1="145" x2="630" y2="155" stroke="#15803D" stroke-width="2"/>
+<text class="th" x="350" y="120" text-anchor="middle">Voltage-gated Na+ channels spread evenly along the whole membrane</text>
+</g>
+
+<circle id="signal" cx="60" cy="150" r="10" fill="#DC2626"/>
+
+<text class="ts" x="350" y="235" text-anchor="middle" id="speedLabel"></text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'un';
+
+const un = {
+  maxStep: 4,
+  positions: [60, 195, 330, 465, 600],
+  labels: [
+    "Step 0 of 4 — signal starts at the soma",
+    "Step 1 of 4 — Na+ channels open at the next patch of membrane, AP regenerates locally",
+    "Step 2 of 4 — regenerates again at the next adjacent patch — and the next, and the next",
+    "Step 3 of 4 — continuous, patch-by-patch regeneration along the entire length",
+    "Step 4 of 4 — signal reaches the terminal — continuous conduction, roughly 1 m/s"
+  ],
+  speed: "No myelin — every adjacent patch of membrane must regenerate the AP individually"
+};
+
+const my = {
+  maxStep: 4,
+  positions: [60, 150, 300, 450, 600],
+  labels: [
+    "Step 0 of 4 — signal starts at the soma",
+    "Step 1 of 4 — AP regenerates at Node 1 — current spreads passively (and fast) under the myelin to get here",
+    "Step 2 of 4 — jumps to Node 2 — the AP 'skips' the insulated internode entirely",
+    "Step 3 of 4 — jumps to Node 3 — same pattern repeats down the axon",
+    "Step 4 of 4 — jumps to Node 4 / terminal — saltatory conduction, up to ~100 m/s"
+  ],
+  speed: "Myelin insulates the internodes — Na+ channels are dense only at the Nodes of Ranvier"
+};
+
+const dm = {
+  maxStep: 4,
+  positions: [60, 150, 210, 210, 210],
+  labels: [
+    "Step 0 of 4 — signal starts at the soma",
+    "Step 1 of 4 — AP regenerates normally at Node 1 — myelin here is still intact",
+    "Step 2 of 4 — enters the demyelinated stretch — with no insulation, current leaks out through the exposed membrane",
+    "Step 3 of 4 — the signal decays below threshold before reaching Node 2 — conduction block",
+    "Step 4 of 4 — this is the basis of MS / Guillain-Barré symptoms: demyelination slows or blocks conduction, causing numbness, weakness, or vision changes depending which axons are affected"
+  ],
+  speed: "Demyelinated stretch (dashed) has lost its insulation but wasn't built with dense Na+ channels like a real node"
+};
+
+function getCfg() { return mode === 'un' ? un : mode === 'my' ? my : dm; }
+
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnUn').classList.toggle('active', m === 'un');
+  document.getElementById('btnMy').classList.toggle('active', m === 'my');
+  document.getElementById('btnDm').classList.toggle('active', m === 'dm');
+  document.getElementById('myelinGroup').classList.toggle('on', m === 'my' || m === 'dm');
+  document.getElementById('channelTicks').classList.toggle('on', m === 'un');
+  document.getElementById('seg1').classList.toggle('dmg', m === 'dm');
+  document.getElementById('seg1').setAttribute('fill-opacity', m === 'dm' ? '0.15' : '0.7');
+  render();
+}
+
+function render() {
+  const cfg = getCfg();
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('signal').setAttribute('cx', cfg.positions[step]);
+  document.getElementById('speedLabel').textContent = cfg.speed;
+  if (mode === 'dm' && step >= 3) {
+    document.getElementById('signal').setAttribute('r', 10 - (step - 2) * 2.5);
+    document.getElementById('signal').setAttribute('opacity', step >= 4 ? 0.3 : 1);
+  } else {
+    document.getElementById('signal').setAttribute('r', 10);
+    document.getElementById('signal').setAttribute('opacity', 1);
+  }
+}
+function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('un');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# AUTONOMIC_NERVOUS_SYSTEM_GENERAL
+# ---------------------------------------------------------------------------
+AUTONOMIC_NERVOUS_SYSTEM_GENERAL = '''
+<h2 class="sr-only">Interactive diagram comparing the sympathetic and parasympathetic divisions of the autonomic nervous system: a two-neuron chain from the CNS through a ganglion to the target organ, with different ganglion locations, neurotransmitters, and effects.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  #dot1, #dot2 { transition: cx 0.7s ease, opacity 0.3s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+  #heart { transform-origin: 610px 150px; animation: beat 1s ease-in-out infinite; }
+  @keyframes beat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSym" onclick="setMode('sym')">Sympathetic (fight-or-flight)</button>
+  <button id="btnPara" onclick="setMode('para')">Parasympathetic (rest-and-digest)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 300" role="img">
+<title>Sympathetic vs. parasympathetic pathways</title>
+<desc>Both divisions use a two-neuron chain: a preganglionic neuron from the CNS synapses onto a postganglionic neuron at a ganglion, using acetylcholine on nicotinic receptors. Sympathetic ganglia sit close to the spinal cord, giving a short preganglionic and a long postganglionic neuron that releases norepinephrine at the target organ. Parasympathetic ganglia sit near or within the target organ, giving a long preganglionic and a short postganglionic neuron that releases acetylcholine at the target organ. The two divisions produce opposite effects on the same organs.</desc>
+
+<rect x="20" y="110" width="110" height="80" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="75" y="105" text-anchor="middle">Spinal cord (CNS)</text>
+
+<rect x="560" y="95" width="120" height="110" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="620" y="90" text-anchor="middle">Target organ (heart)</text>
+<circle id="heart" cx="610" cy="150" r="18" fill="#DC2626" fill-opacity="0.7"/>
+<text class="ts" x="620" y="220" text-anchor="middle" id="effectLabel"></text>
+
+<g id="symPath" class="stg">
+<line x1="130" y1="150" x2="215" y2="150" stroke="var(--t)" stroke-width="2"/>
+<circle cx="220" cy="150" r="13" class="c-amber"/>
+<text class="ts" x="220" y="130" text-anchor="middle">Ganglion (ACh)</text>
+<line x1="233" y1="150" x2="555" y2="150" stroke="var(--t)" stroke-width="2"/>
+<text class="ts" x="220" y="180" text-anchor="middle">Short preganglionic</text>
+<text class="ts" x="390" y="140" text-anchor="middle">Long postganglionic — releases NE</text>
+</g>
+
+<g id="paraPath" class="stg">
+<line x1="130" y1="150" x2="475" y2="150" stroke="var(--t)" stroke-width="2"/>
+<circle cx="480" cy="150" r="13" class="c-amber"/>
+<text class="ts" x="480" y="130" text-anchor="middle">Ganglion (ACh)</text>
+<line x1="493" y1="150" x2="555" y2="150" stroke="var(--t)" stroke-width="2"/>
+<text class="ts" x="300" y="140" text-anchor="middle">Long preganglionic</text>
+<text class="ts" x="480" y="180" text-anchor="middle">Short postganglionic — releases ACh</text>
+</g>
+
+<circle id="dot1" cx="130" cy="150" r="7" fill="#378ADD" opacity="0"/>
+<circle id="dot2" cx="233" cy="150" r="7" fill="#378ADD" opacity="0"/>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'sym';
+
+const sym = {
+  maxStep: 4,
+  ganglionX: 220,
+  targetX: 560,
+  labels: [
+    "Step 0 of 4 — signal starts in the spinal cord",
+    "Step 1 of 4 — short preganglionic neuron fires, releases ACh onto nicotinic receptors at the (nearby) ganglion",
+    "Step 2 of 4 — long postganglionic neuron fires, travels all the way to the target organ",
+    "Step 3 of 4 — releases norepinephrine (NE) onto adrenergic receptors on the heart",
+    "Step 4 of 4 — heart rate increases, pupils dilate, digestion is inhibited — fight-or-flight"
+  ],
+  effect: ["", "", "", "", "Heart rate ↑ (fight-or-flight)"],
+  beatSpeed: "0.5s"
+};
+
+const para = {
+  maxStep: 4,
+  ganglionX: 480,
+  targetX: 560,
+  labels: [
+    "Step 0 of 4 — signal starts in the spinal cord (or brainstem, via cranial nerves)",
+    "Step 1 of 4 — long preganglionic neuron fires, travels all the way to a ganglion near the target organ, releases ACh onto nicotinic receptors",
+    "Step 2 of 4 — short postganglionic neuron fires, right there next to the organ",
+    "Step 3 of 4 — releases acetylcholine (ACh) onto muscarinic receptors on the heart",
+    "Step 4 of 4 — heart rate decreases, digestion is stimulated — rest-and-digest"
+  ],
+  effect: ["", "", "", "", "Heart rate ↓ (rest-and-digest)"],
+  beatSpeed: "1.8s"
+};
+
+function getCfg() { return mode === 'sym' ? sym : para; }
+
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnSym').classList.toggle('active', m === 'sym');
+  document.getElementById('btnPara').classList.toggle('active', m === 'para');
+  document.getElementById('symPath').classList.toggle('on', m === 'sym');
+  document.getElementById('paraPath').classList.toggle('on', m === 'para');
+  render();
+}
+
+function render() {
+  const cfg = getCfg();
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('effectLabel').textContent = cfg.effect[step];
+  document.getElementById('heart').style.animationDuration = step >= 4 ? cfg.beatSpeed : '1s';
+
+  if (step === 0) {
+    document.getElementById('dot1').setAttribute('opacity', 0);
+    document.getElementById('dot2').setAttribute('opacity', 0);
+  } else if (step === 1) {
+    document.getElementById('dot1').setAttribute('cx', cfg.ganglionX - 5);
+    document.getElementById('dot1').setAttribute('opacity', 1);
+    document.getElementById('dot2').setAttribute('opacity', 0);
+  } else {
+    document.getElementById('dot1').setAttribute('opacity', 0);
+    document.getElementById('dot2').setAttribute('cx', cfg.targetX - 5);
+    document.getElementById('dot2').setAttribute('opacity', 1);
+  }
+}
+function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('sym');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# BLOOD_BRAIN_BARRIER_GENERAL
+# ---------------------------------------------------------------------------
+BLOOD_BRAIN_BARRIER_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of the blood-brain barrier, comparing how small lipophilic molecules, transporter-dependent nutrients like glucose, and large or polar molecules each interact with the tight junctions between capillary endothelial cells.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  #molecule { transition: cx 0.6s ease, cy 0.6s ease, opacity 0.4s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnFree" onclick="setMode('free')">Freely permeable (lipophilic)</button>
+  <button id="btnTrans" onclick="setMode('trans')">Transporter-mediated (glucose)</button>
+  <button id="btnBlock" onclick="setMode('block')">Blocked (large/polar)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 700 320" role="img">
+<title>The blood-brain barrier</title>
+<desc>Capillary endothelial cells in the brain are sealed together by tight junctions, reinforced by astrocyte end-feet, blocking the gaps that let molecules leak between cells almost everywhere else in the body. Small lipophilic molecules like O2, CO2, and alcohol dissolve straight through the lipid membrane. Polar nutrients like glucose need a specific carrier protein such as GLUT1 to cross. Large, charged, or polar molecules — including most antibodies and many drugs — cannot cross either route and stay in the blood.</desc>
+
+<rect x="40" y="25" width="620" height="50" rx="8" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1"/>
+<text class="ts" x="60" y="20">Blood (capillary lumen)</text>
+
+<rect x="40" y="90" width="200" height="60" class="c-teal" fill-opacity="0.45"/>
+<rect x="260" y="90" width="180" height="60" class="c-teal" fill-opacity="0.45"/>
+<rect x="460" y="90" width="200" height="60" class="c-teal" fill-opacity="0.45"/>
+<path d="M240 90 L250 100 L240 110 L250 120 L240 130 L250 140 L240 150" stroke="#B91C1C" stroke-width="2" fill="none"/>
+<path d="M440 90 L450 100 L440 110 L450 120 L440 130 L450 140 L440 150" stroke="#B91C1C" stroke-width="2" fill="none"/>
+<text class="ts" x="245" y="170" text-anchor="middle">Tight junction</text>
+<text class="ts" x="445" y="170" text-anchor="middle">Tight junction</text>
+<text class="th" x="350" y="80" text-anchor="middle">Capillary endothelial cells</text>
+
+<rect id="glut1" x="335" y="98" width="30" height="44" rx="6" fill="none" stroke="#B45309" stroke-width="2" class="stg"/>
+<text class="ts" x="350" y="196" text-anchor="middle" id="glutLabel"></text>
+
+<ellipse cx="90" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<ellipse cx="180" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<ellipse cx="350" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<ellipse cx="520" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<ellipse cx="610" cy="160" rx="26" ry="10" class="c-purple" fill-opacity="0.5"/>
+<text class="ts" x="90" y="145" text-anchor="middle">Astrocyte end-feet</text>
+
+<rect x="40" y="180" width="620" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="60" y="295">Brain tissue (interstitial space)</text>
+
+<circle id="molecule" cx="350" cy="50" r="9" fill="#378ADD"/>
+<text id="blockMark" class="th" x="350" y="55" text-anchor="middle" fill="#DC2626" opacity="0">✕</text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'free';
+
+const free = {
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — small lipophilic molecule (e.g. O2, CO2, alcohol) circulating in blood",
+    "Step 1 of 3 — dissolves straight through the lipid bilayer of the endothelial cell — no channel or transporter needed",
+    "Step 2 of 3 — passes the astrocyte end-feet layer as well",
+    "Step 3 of 3 — reaches brain tissue by simple diffusion down its concentration gradient"
+  ],
+  path: [[350,50],[350,120],[350,165],[350,230]],
+  mark: [false,false,false,false],
+  glut: false
+};
+
+const trans = {
+  maxStep: 4,
+  labels: [
+    "Step 0 of 4 — glucose circulating in blood — too polar to cross the lipid membrane on its own",
+    "Step 1 of 4 — binds a GLUT1 transporter embedded in the endothelial cell membrane",
+    "Step 2 of 4 — the transporter changes shape, carrying glucose through the membrane",
+    "Step 3 of 4 — released on the brain-facing side, past the astrocyte end-feet",
+    "Step 4 of 4 — reaches brain tissue — glucose supply to the brain depends on functioning GLUT1 transporters"
+  ],
+  path: [[350,50],[350,110],[350,130],[350,165],[350,230]],
+  mark: [false,false,false,false,false],
+  glut: true
+};
+
+const block = {
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — a large or charged molecule (e.g. an antibody, most ionic drugs) circulating in blood",
+    "Step 1 of 3 — can't slip between endothelial cells — tight junctions seal that route off",
+    "Step 2 of 3 — also can't dissolve through the lipid membrane directly — too large or polar, and no transporter exists for it",
+    "Step 3 of 3 — stays in the blood — this is why the BBB protects the brain from circulating toxins, pathogens, and most large or charged drugs"
+  ],
+  path: [[350,50],[250,95],[350,110],[350,50]],
+  mark: [false,true,true,false],
+  glut: false
+};
+
+function getCfg() { return mode === 'free' ? free : mode === 'trans' ? trans : block; }
+
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnFree').classList.toggle('active', m === 'free');
+  document.getElementById('btnTrans').classList.toggle('active', m === 'trans');
+  document.getElementById('btnBlock').classList.toggle('active', m === 'block');
+  document.getElementById('glut1').classList.toggle('on', getCfg().glut);
+  render();
+}
+
+function render() {
+  const cfg = getCfg();
+  document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('glutLabel').textContent = (cfg.glut && step >= 1) ? 'GLUT1 transporter' : '';
+  const [mx, my] = cfg.path[step];
+  document.getElementById('molecule').setAttribute('cx', mx);
+  document.getElementById('molecule').setAttribute('cy', my);
+  const marked = cfg.mark[step];
+  document.getElementById('blockMark').setAttribute('x', mx);
+  document.getElementById('blockMark').setAttribute('y', my + 5);
+  document.getElementById('blockMark').setAttribute('opacity', marked ? 1 : 0);
+  document.getElementById('molecule').setAttribute('opacity', marked ? 0.3 : 1);
+}
+function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('free');
 </script>
 '''
 
@@ -5859,6 +6480,58 @@ REGISTRY = {
             ),
         },
     },
+    "Excitatory/inhibitory synaptic integration (EPSP/IPSP)": {
+        "General": {
+            "fragment": EXCITATORY_INHIBITORY_GENERAL,
+            "height": 620,
+            "blurb": (
+                "Glutamate opens Na+ channels for a depolarizing EPSP; "
+                "GABA opens Cl- channels for a hyperpolarizing IPSP. The "
+                "axon hillock algebraically sums every input arriving at "
+                "that instant — only if the net result crosses threshold "
+                "does an all-or-none action potential fire."
+            ),
+        },
+    },
+    "Saltatory conduction & demyelination": {
+        "General": {
+            "fragment": SALTATORY_CONDUCTION_GENERAL,
+            "height": 460,
+            "blurb": (
+                "Unmyelinated axons regenerate the action potential at "
+                "every adjacent patch of membrane (~1 m/s). Myelin lets "
+                "the signal jump node to node instead (~100 m/s); when "
+                "myelin is damaged, current leaks out between nodes and "
+                "conduction slows or blocks entirely — the basis of MS."
+            ),
+        },
+    },
+    "Autonomic nervous system (sympathetic vs. parasympathetic)": {
+        "General": {
+            "fragment": AUTONOMIC_NERVOUS_SYSTEM_GENERAL,
+            "height": 620,
+            "blurb": (
+                "Both divisions use a two-neuron chain through a ganglion "
+                "(ACh, nicotinic). Sympathetic ganglia sit close to the "
+                "spinal cord and release norepinephrine at the organ; "
+                "parasympathetic ganglia sit near the organ itself and "
+                "release ACh there instead — opposite effects, same organs."
+            ),
+        },
+    },
+    "Blood-brain barrier": {
+        "General": {
+            "fragment": BLOOD_BRAIN_BARRIER_GENERAL,
+            "height": 620,
+            "blurb": (
+                "Tight junctions seal capillary endothelial cells "
+                "together in the brain. Small lipophilic molecules "
+                "diffuse straight through; polar nutrients like glucose "
+                "need a GLUT1 transporter; large or charged molecules — "
+                "most antibodies and many drugs — can't cross either way."
+            ),
+        },
+    },
     "Muscle contraction (skeletal)": {
         "General": {
             "fragment": MUSCLE_CONTRACTION_GENERAL,
@@ -6122,12 +6795,15 @@ CATEGORIES = {
     ],
     "Physiology": [
         "Action potential",
+        "Autonomic nervous system (sympathetic vs. parasympathetic)",
         "Baroreceptor reflex",
         "Blood clotting (hemostasis)",
         "Blood glucose homeostasis",
+        "Blood-brain barrier",
         "Cardiac conduction system",
         "Dopamine reward pathway",
         "Electron transport chain & ATP synthase",
+        "Excitatory/inhibitory synaptic integration (EPSP/IPSP)",
         "Gas exchange (alveoli)",
         "Labor (positive feedback)",
         "Medication mechanism of action",
@@ -6135,6 +6811,7 @@ CATEGORIES = {
         "Muscle contraction (skeletal)",
         "Nephron filtration",
         "Reflex arc (patellar reflex)",
+        "Saltatory conduction & demyelination",
         "Sleep-wake regulation",
         "Synaptic plasticity (LTP)",
         "Synaptic transmission",
