@@ -1604,9 +1604,12 @@ function render() {
   const svg = document.querySelector('svg');
   let x = 120;
   if (mode === 'active') {
-    x = step === 0 ? 120 : step === 1 ? 320 : step === 2 ? 340 : step === 3 ? 340 : 560;
-    document.getElementById('atp').setAttribute('opacity', step === 1 ? '1' : '0');
-    document.getElementById('atpLabel').setAttribute('opacity', step === 1 ? '1' : '0');
+    x = step === 0 ? 120 : step === 1 ? 320 : step === 2 ? 340 : step === 3 ? 360 : 560;
+    document.getElementById('atp').setAttribute('opacity', step === 1 || step === 3 ? '1' : '0');
+    document.getElementById('atpLabel').setAttribute('opacity', step === 1 || step === 3 ? '1' : '0');
+    document.getElementById('atp').setAttribute('cx', step === 3 ? '400' : '420');
+    document.getElementById('atpLabel').setAttribute('x', step === 3 ? '400' : '420');
+    document.getElementById('atpLabel').textContent = step === 3 ? 'ADP + Pi' : 'ATP';
   } else if (mode === 'ligand') {
     svg.classList.toggle('docked', step >= 1);
     svg.classList.toggle('gateopen', step >= 2 && step < 4);
