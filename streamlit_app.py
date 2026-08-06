@@ -120,6 +120,7 @@ GPCR_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 of 4</span>
 </div>
@@ -152,6 +153,7 @@ function render() {
   document.getElementById('s4').classList.toggle('on', step >= 4);
 }
 function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
 </script>
@@ -272,6 +274,7 @@ GPCR_TECHNICAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="hydrolyze()">Trigger GTPase (off-switch)</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 — resting</span>
@@ -314,6 +317,7 @@ function render() {
   document.getElementById('gtpaseNote').setAttribute('opacity','0');
 }
 function stepFwd() { if (step < maxStep()) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function hydrolyze() {
   document.getElementById('nucleotide').textContent = 'GDP';
   document.getElementById('gtpaseNote').setAttribute('opacity','1');
@@ -389,6 +393,7 @@ DNA_REPLICATION_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 — intact helix</span>
 </div>
@@ -411,6 +416,7 @@ function render() {
   document.getElementById('labelDaughters').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
 </script>
@@ -504,6 +510,7 @@ DNA_REPLICATION_TECHNICAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 — intact helix</span>
 </div>
@@ -534,6 +541,7 @@ function render() {
   document.getElementById('ligase').classList.toggle('pulse', step === 5);
 }
 function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
 </script>
@@ -1251,6 +1259,7 @@ ENDO_EXOCYTOSIS_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0</span>
 </div>
@@ -1301,6 +1310,7 @@ function render() {
   vc.setAttribute('r', cr); vc.setAttribute('cy', cy);
 }
 function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('endo');
 </script>
@@ -1374,6 +1384,7 @@ ENZYME_KINETICS_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 of 3</span>
 </div>
@@ -1446,6 +1457,7 @@ function render() {
   }
 }
 function stepFwd() { if (step < maxStep()) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('normal');
 </script>
@@ -1519,6 +1531,7 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 of 3</span>
 </div>
@@ -1598,6 +1611,7 @@ function render() {
   document.getElementById('molecule').style.transform = `translateX(${x - 120}px)`;
 }
 function stepFwd() { if (step < maxStep()) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('simple');
 </script>
@@ -2000,6 +2014,7 @@ ACTION_POTENTIAL_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 of 4</span>
 </div>
@@ -2092,6 +2107,7 @@ function render() {
   document.getElementById('specialNote').classList.toggle('on', step === cfg.maxStep && !!cfg.special);
 }
 function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('neuronal');
 </script>
@@ -2658,6 +2674,7 @@ BLOOD_GLUCOSE_HOMEOSTASIS_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0</span>
 </div>
@@ -2704,6 +2721,7 @@ function render() {
   document.getElementById('resultArrow').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('high');
 </script>
@@ -4148,6 +4166,7 @@ NK_CELL_MISSING_SELF_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 of 2</span>
 </div>
@@ -4195,6 +4214,7 @@ function render() {
   document.getElementById('targetCell').style.opacity = (mode === 'infected' && step >= 2) ? '0.25' : '1';
 }
 function stepFwd() { if (step < 2) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('healthy');
 </script>
@@ -4435,6 +4455,7 @@ IMMUNOLOGICAL_MEMORY_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0</span>
 </div>
@@ -4484,6 +4505,7 @@ function render() {
   document.getElementById('peakLabel').textContent = step >= 2 ? cfg.peakNote : '';
 }
 function stepFwd() { if (step < 2) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('primary');
 </script>
@@ -4872,6 +4894,7 @@ LAC_OPERON_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0</span>
 </div>
@@ -4911,6 +4934,7 @@ function render() {
   document.getElementById('mrnaOut').classList.toggle('on', mode === 'present' && step >= 2);
 }
 function stepFwd() { if (step < maxStep()) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('absent');
 </script>
@@ -5057,6 +5081,7 @@ SYNAPSE_TYPES_TECHNICAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 of 3</span>
 </div>
@@ -5095,6 +5120,7 @@ function render() {
   document.getElementById('delayLabel').textContent = step === 3 ? cfg.labels[3].split('— ')[1] : '';
 }
 function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('chemical');
 </script>
@@ -5329,6 +5355,7 @@ MEDICATION_MECHANISM_GENERAL = '''
 
 <div class="btnrow">
   <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
   <button onclick="reset()">Reset</button>
   <span id="stepLabel">Step 0 of 3</span>
 </div>
@@ -5379,6 +5406,7 @@ function render() {
   document.getElementById('effectLabel').textContent = step >= 3 ? cfg.labels[3].split('— ').slice(1).join('— ') : '';
 }
 function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('ssri');
 </script>
