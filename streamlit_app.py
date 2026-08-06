@@ -1279,10 +1279,10 @@ function setMode(m) {
 function render() {
   const labels = mode === 'endo' ? labelsEndo : labelsExo;
   document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('cargoOutside').classList.toggle('on', mode === 'endo' ? step <= 1 : step === 3);
+  document.getElementById('cargoOutside').classList.toggle('on', mode === 'endo' && step <= 1);
   document.getElementById('coat').classList.toggle('on', mode === 'endo' && step >= 1 && step <= 2);
   document.getElementById('snare').classList.toggle('on', mode === 'exo' && step === 1);
-  document.getElementById('released').classList.toggle('on', mode === 'exo' && step >= 2);
+  document.getElementById('released').classList.toggle('on', mode === 'exo' && step === 3);
 
   const v = document.getElementById('vesicle');
   const vc = document.getElementById('vcargo');
