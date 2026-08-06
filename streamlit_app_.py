@@ -970,30 +970,24 @@ function render() {
     m.matB_c1=[-15,-15]; m.matB_c2=[-15,-15]; m.patB_c1=[15,15]; m.patB_c2=[15,15];
   } else if (step >= 3 && step < 4) {
     // metaphase I: base positions
-  } else if (step === 4) {
-    // Telophase I: homologs separated into two cells (cx 220 / 460), sisters still joined
-    m.matA_c1=[-92.5,0]; m.matA_c2=[-92.5,0]; m.patA_c1=[112.5,0]; m.patA_c2=[112.5,0];
-    m.matB_c1=[-132.5,0]; m.matB_c2=[-132.5,0]; m.patB_c1=[72.5,0]; m.patB_c2=[72.5,0];
-  } else if (step === 5) {
-    // Meiosis II: sister chromatids begin separating, still inside the same two cells
-    m.matA_c1=[-125,0]; m.matA_c2=[-40,0]; m.patA_c1=[80,0]; m.patA_c2=[165,0];
-    m.matB_c1=[-185,0]; m.matB_c2=[-100,0]; m.patB_c1=[20,0]; m.patB_c2=[105,0];
-  } else if (step >= 6) {
-    // Cytokinesis II complete: four separate haploid cells (cx 130/270/410/550)
-    m.matA_c1=[-170,165]; m.matA_c2=[-45,165]; m.patA_c1=[75,165]; m.patA_c2=[200,165];
-    m.matB_c1=[-220,165]; m.matB_c2=[-95,165]; m.patB_c1=[25,165]; m.patB_c2=[150,165];
+  } else if (step >= 4 && step < 5) {
+    m.matA_c1=[-165,0]; m.matA_c2=[-165,0]; m.patA_c1=[195,0]; m.patA_c2=[195,0];
+    m.matB_c1=[-215,0]; m.matB_c2=[-215,0]; m.patB_c1=[145,0]; m.patB_c2=[145,0];
+  } else if (step >= 5) {
+    m.matA_c1=[-195,140]; m.matA_c2=[-135,140]; m.patA_c1=[165,140]; m.patA_c2=[225,140];
+    m.matB_c1=[-245,140]; m.matB_c2=[-185,140]; m.patB_c1=[115,140]; m.patB_c2=[175,140];
   }
   ids.forEach(id => {
     document.getElementById(id).style.transform = `translate(${m[id][0]}px, ${m[id][1]}px)`;
   });
-  const linksVisible = step < 5;
+  const linksVisible = step < 4;
   document.getElementById('linkMatA').style.opacity = linksVisible ? '1' : '0';
   document.getElementById('linkPatA').style.opacity = linksVisible ? '1' : '0';
-  document.getElementById('linkMatB').style.opacity = linksVisible ? '1' : '0';
-  document.getElementById('linkPatB').style.opacity = linksVisible ? '1' : '0';
+  document.getElementById('linkMatB').style.opacity = (step < 5) ? '1' : '0';
+  document.getElementById('linkPatB').style.opacity = (step < 5) ? '1' : '0';
 
-  document.getElementById('twoCells').classList.toggle('on', step === 4 || step === 5);
-  document.getElementById('fourCells').classList.toggle('on', step >= 6);
+  document.getElementById('twoCells').classList.toggle('on', step === 4);
+  document.getElementById('fourCells').classList.toggle('on', step >= 5);
   document.getElementById('cellOutline').style.opacity = step >= 4 ? '0' : '1';
 }
 function stepFwd() { if (step < 6) step++; render(); }
