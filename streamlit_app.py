@@ -968,8 +968,12 @@ function render() {
   if (step === 1) {
     m.matA_c1=[-15,-15]; m.matA_c2=[-15,-15]; m.patA_c1=[15,15]; m.patA_c2=[15,15];
     m.matB_c1=[-15,-15]; m.matB_c2=[-15,-15]; m.patB_c1=[15,15]; m.patB_c2=[15,15];
-  } else if (step >= 3 && step < 4) {
-    // metaphase I: base positions
+  } else if (step === 2) {
+    // metaphase I: base positions (tetrads aligned at the equator, not yet separating)
+  } else if (step === 3) {
+    // anaphase I: maternal and paternal homologs migrate toward opposite poles, sisters remain paired
+    m.matA_c1=[-152.5,0]; m.matA_c2=[-152.5,0]; m.patA_c1=[172.5,0]; m.patA_c2=[172.5,0];
+    m.matB_c1=[-192.5,0]; m.matB_c2=[-192.5,0]; m.patB_c1=[132.5,0]; m.patB_c2=[132.5,0];
   } else if (step === 4) {
     // Telophase I: homologs separated into two cells (cx 220 / 460), sisters still joined
     m.matA_c1=[-92.5,0]; m.matA_c2=[-92.5,0]; m.patA_c1=[112.5,0]; m.patA_c2=[112.5,0];
