@@ -1527,8 +1527,8 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 <g id="ligandChannel" class="stg">
 <rect x="320" y="60" width="40" height="180" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <circle id="receptorSite" cx="340" cy="75" r="10" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
-<rect id="gateTop" x="330" y="120" width="20" height="20" fill="var(--t)" opacity="0.5"/>
-<rect id="gateBottom" x="330" y="120" width="20" height="20" fill="var(--t)" opacity="0.5"/>
+<rect id="gateTop" x="330" y="140" width="20" height="20" fill="var(--t)" opacity="0.5"/>
+<rect id="gateBottom" x="330" y="140" width="20" height="20" fill="var(--t)" opacity="0.5"/>
 <text class="ts" x="340" y="255" text-anchor="middle">Ligand-gated channel</text>
 <g id="ligandGroup">
 <circle id="ligand" cx="340" cy="65" r="9" fill="#EF9F27"/>
