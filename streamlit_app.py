@@ -639,9 +639,12 @@ function render() {
     ax1=ax2=-12; ay1=ay2=-8; bx1=bx2=10; by1=by2=6;
   } else if (step === 3) {
     ax1=ax2=0; ay1=ay2=0; bx1=bx2=0; by1=by2=0;
-  } else if (step >= 4) {
+  } else if (step === 4) {
     ax1=-165; ay1=0; ax2=215; ay2=0;
     bx1=-215; by1=0; bx2=165; by2=0;
+  } else if (step >= 5) {
+    ax1=-110; ay1=20; ax2=110; ay2=20;
+    bx1=-110; by1=20; bx2=110; by2=20;
   }
   document.getElementById('chrA_c1').style.transform = `translate(${ax1}px, ${ay1}px)`;
   document.getElementById('chrA_c2').style.transform = `translate(${ax2}px, ${ay2}px)`;
@@ -1004,9 +1007,6 @@ APOPTOSIS_GENERAL = '''
   .engulfed #bodies { transform: translateX(120px) scale(0.3); opacity: 0; }
   #phagocyte { transition: transform 0.8s ease; }
   .approaching #phagocyte { transform: translateX(-40px); }
-  .digesting #phagocyte { animation: digest 1s ease-in-out infinite; }
-  @keyframes digest { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
-  .fed #phagocyte { transform: scale(1.1); }
   #mitoOutline { transition: stroke-dasharray 0.6s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
@@ -1081,7 +1081,7 @@ APOPTOSIS_GENERAL = '''
 <g id="caspase3" class="stg">
 <circle cx="260" cy="140" r="14" class="c-red"/>
 <text class="ts" x="260" y="140" text-anchor="middle" dominant-baseline="central">C3</text>
-<text class="ts" x="260" y="166" text-anchor="middle" id="executionerLabel">Executioner</text>
+<text class="ts" x="290" y="140" text-anchor="middle" id="executionerLabel">Executioner</text>
 </g>
 
 <g id="damage" class="stg">
@@ -1167,19 +1167,16 @@ function render() {
   const dmgThreshold = mode === 'extrinsic' ? 3 : 4;
   const bodiesThreshold = dmgThreshold;
   const phagoThreshold = mode === 'extrinsic' ? 4 : 5;
-  const digestThreshold = mode === 'extrinsic' ? 5 : 6;
-  const clearedThreshold = 6;
+  const engulfThreshold = mode === 'extrinsic' ? 5 : 6;
 
   document.getElementById('damage').classList.toggle('on', step >= dmgThreshold);
   document.getElementById('cellBody').style.opacity = step >= dmgThreshold ? '0.15' : '1';
-  document.getElementById('bodies').classList.toggle('on', step >= bodiesThreshold && step < digestThreshold);
+  document.getElementById('bodies').classList.toggle('on', step >= bodiesThreshold && step < engulfThreshold);
   document.getElementById('phagocyte').classList.toggle('on', step >= phagoThreshold);
   svg.classList.toggle('approaching', step === phagoThreshold);
-  svg.classList.toggle('engulfed', step >= digestThreshold);
-  svg.classList.toggle('digesting', step === digestThreshold && digestThreshold !== clearedThreshold);
-  svg.classList.toggle('fed', step >= clearedThreshold);
-  document.getElementById('phagocyteLabel').textContent = step >= clearedThreshold ? 'Phagocyte (fed)' : 'Phagocyte';
-  document.getElementById('engulfNote').classList.toggle('on', step >= clearedThreshold);
+  svg.classList.toggle('engulfed', step >= engulfThreshold);
+  document.getElementById('phagocyteLabel').textContent = step >= engulfThreshold ? 'Phagocyte (fed)' : 'Phagocyte';
+  document.getElementById('engulfNote').classList.toggle('on', step >= engulfThreshold);
 }
 function stepFwd() { if (step < 6) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
