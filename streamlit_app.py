@@ -1482,11 +1482,13 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  #channelProt, #pump, #ligandChannel { opacity: 0; }
+  #channelProt.on, #pump.on, #ligandChannel.on { opacity: 1; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #molecule { transition: transform 1s ease, opacity .4s ease; }
   #ligandGroup { transition: transform .8s ease, opacity .4s ease; }
-  .docked #ligandGroup { transform: translateY(45px); }
+  .docked #ligandGroup { transform: translateY(10px); }
   #gateTop, #gateBottom { transition: transform 0.8s ease; }
   .gateopen #gateTop { transform: translateY(-14px); }
   .gateopen #gateBottom { transform: translateY(14px); }
