@@ -1484,8 +1484,6 @@ MEMBRANE_TRANSPORT_GENERAL = '''
   .stg.on { opacity: 1; }
   #channelProt, #pump, #ligandChannel { opacity: 0; }
   #channelProt.on, #pump.on, #ligandChannel.on { opacity: 1; }
-  #pumpFunnel { transition: transform .8s cubic-bezier(.3,0,.2,1); transform-origin: 340px 150px; }
-  .flip #pumpFunnel { transform: scaleY(-1); }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #molecule { transition: transform 1s ease, opacity .4s ease; }
@@ -1522,8 +1520,7 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 </g>
 
 <g id="pump" class="stg">
-<path d="M340,60 C300,60 300,120 322,150 C300,180 300,240 340,240 C380,240 380,180 358,150 C380,120 380,60 340,60 Z" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1.5"/>
-<path id="pumpFunnel" d="M320,85 L360,85 L340,148 Z" fill="#FDE68A" stroke="#B45309" stroke-width="1" opacity="0.85"/>
+<rect x="310" y="60" width="60" height="180" rx="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <text class="ts" x="340" y="255" text-anchor="middle">Pump</text>
 <circle id="atp" cx="420" cy="150" r="12" class="c-amber" opacity="0"/>
 <text class="ts" x="420" y="150" text-anchor="middle" dominant-baseline="central" id="atpLabel" opacity="0">ATP</text>
@@ -1615,7 +1612,6 @@ function render() {
     document.getElementById('atp').setAttribute('cx', step === 3 ? '400' : '420');
     document.getElementById('atpLabel').setAttribute('x', step === 3 ? '400' : '420');
     document.getElementById('atpLabel').textContent = step === 3 ? 'ADP + Pi' : 'ATP';
-    document.getElementById('pump').classList.toggle('flip', step >= 2);
   } else if (mode === 'ligand') {
     svg.classList.toggle('docked', step >= 1);
     svg.classList.toggle('gateopen', step >= 2 && step < 4);
