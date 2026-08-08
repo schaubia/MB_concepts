@@ -1941,6 +1941,10 @@ GASTRULATION_GENERAL = '''
 <text class="ts" x="340" y="190" text-anchor="middle" dominant-baseline="central">Archenteron</text>
 </g>
 
+<g id="mesoderm" class="stg">
+<circle cx="340" cy="160" r="80" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="5 4"/>
+</g>
+
 <g id="layers" class="stg">
 <circle cx="460" cy="90" r="5" fill="#378ADD"/>
 <text class="ts" x="475" y="90" dominant-baseline="central">Ectoderm (outer)</text>
@@ -1979,6 +1983,7 @@ function render() {
   document.getElementById('innerFold').classList.toggle('on', step >= 1);
   document.getElementById('innerFold').setAttribute('d', folds[step]);
   document.getElementById('archenteron').classList.toggle('on', step >= 2);
+  document.getElementById('mesoderm').classList.toggle('on', step >= 3);
   document.getElementById('layers').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
