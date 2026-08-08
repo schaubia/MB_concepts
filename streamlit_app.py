@@ -1942,12 +1942,12 @@ GASTRULATION_GENERAL = '''
 </g>
 
 <g id="layers" class="stg">
-<circle cx="450" cy="90" r="5" fill="#378ADD"/>
-<text class="ts" x="465" y="90" dominant-baseline="central">Ectoderm (outer)</text>
-<circle cx="450" cy="160" r="5" fill="#7F77DD"/>
-<text class="ts" x="465" y="160" dominant-baseline="central">Mesoderm (middle)</text>
-<circle cx="450" cy="230" r="5" fill="#D85A30"/>
-<text class="ts" x="465" y="230" dominant-baseline="central">Endoderm (inner)</text>
+<circle cx="460" cy="90" r="5" fill="#378ADD"/>
+<text class="ts" x="475" y="90" dominant-baseline="central">Ectoderm (outer)</text>
+<circle cx="460" cy="160" r="5" fill="#7F77DD"/>
+<text class="ts" x="475" y="160" dominant-baseline="central">Mesoderm (middle)</text>
+<circle cx="460" cy="230" r="5" fill="#D85A30"/>
+<text class="ts" x="475" y="230" dominant-baseline="central">Endoderm (inner)</text>
 </g>
 </svg>
 
