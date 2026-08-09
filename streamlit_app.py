@@ -4043,6 +4043,158 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# COMPLEMENT_SYSTEM_TECHNICAL  (source: complement_technical.html)
+# ---------------------------------------------------------------------------
+COMPLEMENT_SYSTEM_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of the three complement pathways — classical, lectin, and alternative — converging on a shared C3 and C5 convertase cascade that assembles the membrane attack complex.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #pathogenCell { transition: opacity 0.8s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnClassical" onclick="setMode('classical')">Classical pathway</button>
+  <button id="btnLectin" onclick="setMode('lectin')">Lectin pathway</button>
+  <button id="btnAlternative" onclick="setMode('alternative')">Alternative pathway</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Complement system, technical view</title>
+<desc>The three complement pathways each generate a C3 convertase through different initiating molecules: the classical pathway via antibody-bound C1q, the lectin pathway via mannose-binding lectin and MASP-2, and the alternative pathway via spontaneous C3 hydrolysis stabilized by properdin. All three converge on cleaving C3 into C3b, an opsonin that tags the pathogen, and C3a, an anaphylatoxin. The C3 convertase combines with C3b to form a C5 convertase, which cleaves C5 into C5b, initiating assembly of the C5b-C9 membrane attack complex that lyses the pathogen, and C5a, a potent anaphylatoxin.</desc>
+
+<circle id="pathogenCell" cx="250" cy="160" r="65" class="c-coral"/>
+<text class="th" x="250" y="160" text-anchor="middle" dominant-baseline="central">Pathogen</text>
+
+<g id="initiation" class="stg">
+<circle cx="120" cy="100" r="8" class="c-purple"/>
+<text class="ts" x="120" y="82" text-anchor="middle" id="initLabel"></text>
+</g>
+
+<g id="convertase3" class="stg">
+<circle cx="120" cy="170" r="9" class="c-teal"/>
+<text class="ts" x="120" y="192" text-anchor="middle" id="convertase3Label"></text>
+</g>
+
+<g id="c3split" class="stg">
+<circle cx="205" cy="215" r="7" class="c-amber"/>
+<text class="ts" x="205" y="238" text-anchor="middle">C3b opsonizes</text>
+<circle cx="70" cy="240" r="6" class="c-red"/>
+<text class="ts" x="70" y="262" text-anchor="middle">C3a (anaphylatoxin)</text>
+</g>
+
+<g id="convertase5" class="stg">
+<circle cx="390" cy="100" r="9" class="c-teal"/>
+<text class="ts" x="390" y="82" text-anchor="middle" id="convertase5Label"></text>
+</g>
+
+<g id="mac" class="stg">
+<rect x="320" y="130" width="8" height="60" fill="#B91C1C"/>
+<rect x="332" y="130" width="8" height="60" fill="#B91C1C"/>
+<rect x="344" y="130" width="8" height="60" fill="#B91C1C"/>
+<rect x="356" y="130" width="8" height="60" fill="#B91C1C"/>
+<text class="ts" x="342" y="115" text-anchor="middle">C5b-9 (MAC)</text>
+</g>
+
+<g id="c5split" class="stg">
+<circle cx="420" cy="250" r="6" class="c-red"/>
+<text class="ts" x="420" y="270" text-anchor="middle">C5a (anaphylatoxin)</text>
+</g>
+
+<g id="lysis" class="stg">
+<path d="M370 160 L420 160" stroke="#B91C1C" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="th" x="250" y="295" text-anchor="middle">Pore forms — pathogen lyses</text>
+</g>
+
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'classical';
+
+const MODES = {
+  classical: {
+    initTag: "IgG/IgM + C1q",
+    c3Tag: "C4b2a (C3 convertase)",
+    c5Tag: "C4b2a3b (C5 convertase)",
+    labels: [
+      "Step 0 of 4 — pathogen present; classical pathway not yet triggered",
+      "Step 1 of 4 — IgG or IgM antibody binds the pathogen; C1q recognizes the bound Fc region, activating C1r and C1s",
+      "Step 2 of 4 — C1s cleaves C4 and C2; C4b2a assembles on the surface as the classical C3 convertase",
+      "Step 3 of 4 — C3 convertase cleaves C3 — C3b opsonizes the pathogen, C3a diffuses away as an anaphylatoxin",
+      "Step 4 of 4 — C4b2a3b (C5 convertase) cleaves C5 — C5b seeds C5b-C9 (MAC) assembly, forming a lethal pore; C5a is released as a potent anaphylatoxin"
+    ]
+  },
+  lectin: {
+    initTag: "MBL + MASP-2",
+    c3Tag: "C4b2a (C3 convertase)",
+    c5Tag: "C4b2a3b (C5 convertase)",
+    labels: [
+      "Step 0 of 4 — pathogen present; lectin pathway not yet triggered",
+      "Step 1 of 4 — mannose-binding lectin (MBL) binds repeating sugars on the pathogen surface, activating MASP-2 — no antibody needed",
+      "Step 2 of 4 — MASP-2 cleaves C4 and C2, just like C1s does; C4b2a assembles as the C3 convertase — identical from here on",
+      "Step 3 of 4 — C3 convertase cleaves C3 — C3b opsonizes the pathogen, C3a diffuses away as an anaphylatoxin",
+      "Step 4 of 4 — C4b2a3b (C5 convertase) cleaves C5 — C5b seeds C5b-C9 (MAC) assembly, forming a lethal pore; C5a is released as a potent anaphylatoxin"
+    ]
+  },
+  alternative: {
+    initTag: "Factor B, D + properdin",
+    c3Tag: "C3bBb (C3 convertase)",
+    c5Tag: "C3bBb3b (C5 convertase)",
+    labels: [
+      "Step 0 of 4 — pathogen present; the alternative pathway idles continuously at low level, independent of antibodies",
+      "Step 1 of 4 — spontaneous C3(H2O) hydrolysis plus Factor B and D generate trace C3b; on a pathogen surface, properdin stabilizes it against inactivation",
+      "Step 2 of 4 — C3bBb assembles as the alternative C3 convertase, rapidly amplifying C3b deposition in a positive feedback loop",
+      "Step 3 of 4 — C3 convertase cleaves more C3 — C3b opsonizes the pathogen, C3a diffuses away as an anaphylatoxin",
+      "Step 4 of 4 — C3bBb3b (C5 convertase) cleaves C5 — C5b seeds C5b-C9 (MAC) assembly, forming a lethal pore; C5a is released as a potent anaphylatoxin"
+    ]
+  }
+};
+
+function render() {
+  const m = MODES[mode];
+  document.getElementById('stepLabel').textContent = m.labels[step];
+  document.getElementById('initLabel').textContent = m.initTag;
+  document.getElementById('convertase3Label').textContent = m.c3Tag;
+  document.getElementById('convertase5Label').textContent = m.c5Tag;
+  document.getElementById('initiation').classList.toggle('on', step >= 1);
+  document.getElementById('convertase3').classList.toggle('on', step >= 2);
+  document.getElementById('c3split').classList.toggle('on', step >= 3);
+  document.getElementById('convertase5').classList.toggle('on', step >= 4);
+  document.getElementById('mac').classList.toggle('on', step >= 4);
+  document.getElementById('c5split').classList.toggle('on', step >= 4);
+  document.getElementById('lysis').classList.toggle('on', step >= 4);
+  document.getElementById('pathogenCell').style.opacity = step >= 4 ? '0.25' : '1';
+  document.getElementById('btnClassical').classList.toggle('active', mode === 'classical');
+  document.getElementById('btnLectin').classList.toggle('active', mode === 'lectin');
+  document.getElementById('btnAlternative').classList.toggle('active', mode === 'alternative');
+}
+function setMode(newMode) { mode = newMode; step = 0; render(); }
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # INNATE_IMMUNE_RECOGNITION_GENERAL  (source: innate_immunity.html)
 # ---------------------------------------------------------------------------
 INNATE_IMMUNE_RECOGNITION_GENERAL = '''
@@ -5800,6 +5952,16 @@ REGISTRY = {
                 "A cascade of proteins opsonizes a pathogen for "
                 "phagocytosis, then assembles a membrane attack complex "
                 "that punches a lethal pore in its membrane."
+            ),
+        },
+        "Technical": {
+            "fragment": COMPLEMENT_SYSTEM_TECHNICAL,
+            "height": 480,
+            "blurb": (
+                "Adds the classical, lectin, and alternative pathway "
+                "selector, showing how each generates its own C3 "
+                "convertase before converging on a shared C5 convertase "
+                "and membrane attack complex, with C3a/C5a anaphylatoxins."
             ),
         },
     },
