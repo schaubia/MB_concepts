@@ -1832,8 +1832,7 @@ FERTILIZATION_GENERAL = '''
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #spermGroup { transition: transform 1s ease; }
-  .fused #spermGroup { transform: translateX(70px); opacity: 0; }
+  #spermGroup { transition: transform 1s ease, opacity .6s ease; }
   #zonaLayer { transition: stroke 0.6s ease, stroke-width 0.6s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
@@ -1851,11 +1850,10 @@ FERTILIZATION_GENERAL = '''
 <path d="M150 150 L200 150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
 <circle cx="145" cy="150" r="10" fill="#378ADD"/>
 <text class="ts" x="145" y="130" text-anchor="middle">Sperm</text>
-</g>
-
 <g id="acrosome" class="stg">
 <circle cx="200" cy="150" r="5" fill="#EF9F27"/>
 <text class="ts" x="200" y="185" text-anchor="middle">Acrosomal enzymes penetrate zona</text>
+</g>
 </g>
 
 <g id="corticalReaction" class="stg">
@@ -1896,7 +1894,8 @@ const labels = [
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('acrosome').classList.toggle('on', step === 1);
-  document.querySelector('svg').classList.toggle('fused', step >= 2);
+  document.getElementById('spermGroup').style.transform = step === 0 ? 'translateX(0px)' : step === 1 ? 'translateX(100px)' : 'translateX(180px)';
+  document.getElementById('spermGroup').style.opacity = step >= 2 ? '0' : '1';
   document.getElementById('corticalReaction').classList.toggle('on', step === 3);
   document.getElementById('zonaLayer').setAttribute('stroke-width', step >= 3 ? '4' : '1.5');
   document.getElementById('pronuclei').classList.toggle('on', step >= 2 && step < 4);
