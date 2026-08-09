@@ -3719,7 +3719,7 @@ FERTILIZATION_TECHNICAL = '''
 
 <g id="cortical" class="stg">
 <circle cx="380" cy="160" r="100" fill="none" stroke="#B91C1C" stroke-width="4"/>
-<text class="ts" x="380" y="260" text-anchor="middle">Slow block — cortical granules harden the zona</text>
+<text class="ts" x="380" y="285" text-anchor="middle">Slow block — cortical granules harden the zona</text>
 </g>
 
 <g id="polarBody" class="stg">
