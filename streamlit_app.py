@@ -1649,6 +1649,8 @@ HUMORAL_IMMUNE_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 2s ease-in-out infinite; }
   @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  #antigen { transition: transform 0.8s ease; }
+  .docked #antigen { transform: translateY(30px); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -1718,6 +1720,7 @@ const labels = [
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
+  document.querySelector('svg').classList.toggle('docked', step >= 1);
   document.getElementById('antigen').classList.toggle('on', step <= 1);
   document.getElementById('mhcPresent').classList.toggle('on', step >= 1 && step <= 2);
   document.getElementById('helperT').classList.toggle('on', step >= 2);
