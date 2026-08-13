@@ -1788,7 +1788,12 @@ TCELL_ACTIVATION_GENERAL = '''
 
 <g id="activated" class="stg">
 <circle cx="440" cy="160" r="60" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="4 3"/>
-<text class="th" x="440" y="240" text-anchor="middle">Activated — proliferates into helper T cells</text>
+<text class="ts" x="440" y="225" text-anchor="middle">Activated</text>
+<circle cx="560" cy="110" r="28" class="c-purple"/>
+<text class="ts" x="560" y="110" text-anchor="middle" dominant-baseline="central">Helper T</text>
+<circle cx="560" cy="210" r="28" class="c-purple"/>
+<text class="ts" x="560" y="210" text-anchor="middle" dominant-baseline="central">Helper T</text>
+<text class="th" x="560" y="255" text-anchor="middle">Proliferates into helper T cells</text>
 </g>
 </svg>
 
