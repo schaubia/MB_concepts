@@ -4718,14 +4718,14 @@ TYPE1_HYPERSENSITIVITY_GENERAL = '''
 <text class="th" x="340" y="170" text-anchor="middle" dominant-baseline="central">Mast cell</text>
 
 <g id="ige" class="stg">
-<path d="M270 108 L285 93 M285 108 L270 93" stroke="#7F77DD" stroke-width="2"/>
-<path d="M410 108 L425 93 M425 108 L410 93" stroke="#7F77DD" stroke-width="2"/>
-<text class="ts" x="340" y="82" text-anchor="middle">IgE bound to Fc receptors — sensitized</text>
+<path d="M263 133 L277 119 M277 133 L263 119" stroke="#7F77DD" stroke-width="2"/>
+<path d="M403 133 L417 119 M417 133 L403 119" stroke="#7F77DD" stroke-width="2"/>
+<text class="ts" x="340" y="58" text-anchor="middle">IgE bound to Fc receptors — sensitized</text>
 </g>
 
 <g id="allergen" class="stg">
-<circle cx="277" cy="56" r="8" fill="#EF9F27"/>
-<circle cx="417" cy="56" r="8" fill="#EF9F27"/>
+<circle cx="270" cy="112" r="8" fill="#EF9F27"/>
+<circle cx="410" cy="112" r="8" fill="#EF9F27"/>
 <text class="ts" x="340" y="40" text-anchor="middle">Allergen cross-links IgE</text>
 </g>
 
