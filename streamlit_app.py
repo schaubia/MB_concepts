@@ -340,8 +340,7 @@ DNA_REPLICATION_GENERAL = '''
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #forkGroup, #topStrand, #botStrand, #newTop, #newBot { transition: transform 1s ease; }
-  .open #forkGroup { transform: translateX(90px); }
+  #helicase { transition: transform 1s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -368,7 +367,7 @@ DNA_REPLICATION_GENERAL = '''
 <text class="ts" x="235" y="160" text-anchor="middle" dominant-baseline="central">Helicase</text>
 </g>
 
-<g id="forkGroup">
+<g id="forkGroup" class="stg">
 <path id="topStrand" d="M250 158 Q300 130 480 100" stroke="#378ADD" stroke-width="3" fill="none" stroke-linecap="round"/>
 <path id="botStrand" d="M250 162 Q300 190 480 220" stroke="#D85A30" stroke-width="3" fill="none" stroke-linecap="round"/>
 
@@ -410,7 +409,7 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('helicase').classList.toggle('on', step >= 1);
   document.getElementById('helicase').classList.toggle('pulse', step === 1);
-  document.querySelector('svg').classList.toggle('open', step >= 1);
+  document.getElementById('forkGroup').classList.toggle('on', step >= 1);
   document.getElementById('polTop').classList.toggle('on', step >= 2);
   document.getElementById('polBot').classList.toggle('on', step >= 2);
   document.getElementById('labelDaughters').classList.toggle('on', step >= 3);
