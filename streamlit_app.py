@@ -431,8 +431,7 @@ DNA_REPLICATION_TECHNICAL = '''
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #forkGroup { transition: transform 1s ease; }
-  .open #forkGroup { transform: translateX(60px); }
+  #helicase { transition: transform 1s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -460,7 +459,7 @@ DNA_REPLICATION_TECHNICAL = '''
 <text class="ts" x="180" y="150" text-anchor="middle" dominant-baseline="central">Helicase</text>
 </g>
 
-<g id="forkGroup">
+<g id="forkGroup" class="stg">
 <path d="M198 148 Q260 115 480 90" stroke="#378ADD" stroke-width="3" fill="none" stroke-linecap="round"/>
 <path d="M198 152 Q260 185 480 220" stroke="#D85A30" stroke-width="3" fill="none" stroke-linecap="round"/>
 
@@ -529,7 +528,7 @@ function render() {
   document.getElementById('topo').classList.toggle('on', step >= 1);
   document.getElementById('topo').classList.toggle('pulse', step === 1);
   document.getElementById('helicase').classList.toggle('on', step >= 2);
-  document.querySelector('svg').classList.toggle('open', step >= 2);
+  document.getElementById('forkGroup').classList.toggle('on', step >= 2);
   document.getElementById('ssb').classList.toggle('on', step >= 2);
   document.getElementById('primerLead').classList.toggle('on', step >= 3);
   document.getElementById('primerLag').classList.toggle('on', step >= 3);
