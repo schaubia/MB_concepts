@@ -683,6 +683,7 @@ TRANSCRIPTION_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #rnapGroup { transition: transform 1.2s ease; }
+  .unbound #rnapGroup { transform: translateX(-65px); }
   .elongating #rnapGroup { transform: translateX(180px); }
   .terminated #rnapGroup { transform: translateX(340px); opacity: 0; }
   #mrnaTail { transition: stroke-dasharray 1.2s ease; }
@@ -758,6 +759,7 @@ function render() {
   document.getElementById('mrnaTail').style.strokeDashoffset = step >= 2 ? '0' : '1000';
   document.getElementById('released').classList.toggle('on', step >= 4);
   const svg = document.querySelector('svg');
+  svg.classList.toggle('unbound', step === 0);
   svg.classList.toggle('elongating', step === 3);
   svg.classList.toggle('terminated', step >= 4);
 }

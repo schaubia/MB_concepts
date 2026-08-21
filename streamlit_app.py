@@ -2978,6 +2978,11 @@ TRANSLATION_TECHNICAL = '''
 <rect x="185" y="222" width="18" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5"/>
 <rect x="215" y="222" width="18" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5"/>
 <text class="ts" x="200" y="185" text-anchor="middle">Ribosome</text>
+
+<g id="srp" class="stg">
+<path d="M180 130 L200 110 L220 130" stroke="#B91C1C" stroke-width="2" fill="none"/>
+<text class="ts" x="200" y="95" text-anchor="middle">SRP recognizes signal sequence</text>
+</g>
 </g>
 
 <g id="efTu" class="stg">
@@ -2996,11 +3001,6 @@ TRANSLATION_TECHNICAL = '''
 <circle cx="230" cy="230" r="12" class="c-teal"/>
 <text class="ts" x="230" y="230" text-anchor="middle" dominant-baseline="central">EF-G</text>
 <text class="ts" x="230" y="255" text-anchor="middle">Drives translocation (ratchet)</text>
-</g>
-
-<g id="srp" class="stg">
-<path d="M280 130 L300 110 L320 130" stroke="#B91C1C" stroke-width="2" fill="none"/>
-<text class="ts" x="300" y="95" text-anchor="middle">SRP recognizes signal sequence</text>
 </g>
 
 <g id="erMembrane" class="stg">
