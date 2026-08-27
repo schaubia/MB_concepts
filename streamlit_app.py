@@ -2012,6 +2012,8 @@ ACTION_POTENTIAL_GENERAL = '''
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #traceLine { transition: d 0.8s ease; }
+  #channel0, #channel1, #channel2 { transition: transform 0.6s ease; }
+  #channel0Rect, #channel1Rect, #channel2Rect { transition: fill 0.4s ease, stroke-width 0.4s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -2030,6 +2032,16 @@ ACTION_POTENTIAL_GENERAL = '''
 
 <line x1="30" y1="140" x2="650" y2="140" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
 <text class="ts" x="60" y="125" id="cellLabel">Neuron axon membrane</text>
+
+<g id="channel0" transform="translate(140,140)">
+<rect id="channel0Rect" x="-7" y="-7" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+</g>
+<g id="channel1" transform="translate(175,140)">
+<rect id="channel1Rect" x="-7" y="-7" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+</g>
+<g id="channel2" transform="translate(450,140)">
+<rect id="channel2Rect" x="-7" y="-7" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+</g>
 
 <path id="traceLine" d="M30 200 L650 200" stroke="#378ADD" stroke-width="2.5" fill="none"/>
 <text class="ts" x="60" y="245" id="voltageLabel">Resting potential: −70 mV</text>
@@ -2073,7 +2085,12 @@ const neuronal = {
   ],
   voltage: ["Resting: −70 mV", "Depolarizing toward +30 mV", "Peak reached", "Repolarizing", "Wave moving on"],
   channel: "Voltage-gated Na+ then K+ channels",
-  special: ""
+  special: "",
+  channels: [
+    { x: 140, color: "#378ADD" },
+    { x: 175, color: "#2DAA6D" }
+  ],
+  channelOpen: [[], [0], [1], [1], []]
 };
 
 const cardiac = {
@@ -2093,7 +2110,13 @@ const cardiac = {
   ],
   voltage: ["Resting: −90 mV", "Rapid upstroke", "Plateau — sustained depolarization", "Repolarized, refractory period ends"],
   channel: "Fast Na+ (upstroke) then L-type Ca2+ (plateau) then K+",
-  special: "This plateau is why heart muscle can't be tetanized like skeletal muscle"
+  special: "This plateau is why heart muscle can't be tetanized like skeletal muscle",
+  channels: [
+    { x: 110, color: "#378ADD" },
+    { x: 140, color: "#7F77DD" },
+    { x: 450, color: "#2DAA6D" }
+  ],
+  channelOpen: [[], [0], [1, 2], [2]]
 };
 
 const pacemaker = {
@@ -2113,7 +2136,13 @@ const pacemaker = {
   ],
   voltage: ["~ −60 mV, drifting", "Slow spontaneous depolarization", "Ca2+-driven upstroke", "Repolarized — cycle repeats"],
   channel: "Funny current (If) then T/L-type Ca2+ then K+ — NO fast Na+ channels",
-  special: "This spontaneous, self-repeating cycle is the origin of your heartbeat's rhythm"
+  special: "This spontaneous, self-repeating cycle is the origin of your heartbeat's rhythm",
+  channels: [
+    { x: 250, color: "#EF9F27" },
+    { x: 605, color: "#7F77DD" },
+    { x: 640, color: "#2DAA6D" }
+  ],
+  channelOpen: [[], [0], [1], [2]]
 };
 
 function getCfg() { return mode === 'neuronal' ? neuronal : mode === 'cardiac' ? cardiac : pacemaker; }
@@ -2125,6 +2154,16 @@ function setMode(m) {
   document.getElementById('btnPacemaker').classList.toggle('active', m === 'pacemaker');
   document.getElementById('cellLabel').textContent = getCfg().cellLabel;
   document.getElementById('channelLabel').textContent = getCfg().channel;
+  const chCfg = getCfg().channels;
+  for (let i = 0; i < 3; i++) {
+    const g = document.getElementById('channel' + i);
+    if (chCfg[i]) {
+      g.style.display = '';
+      g.setAttribute('transform', `translate(${chCfg[i].x},140)`);
+    } else {
+      g.style.display = 'none';
+    }
+  }
   render();
 }
 
@@ -2136,6 +2175,13 @@ function render() {
   document.getElementById('channelNote').classList.toggle('on', step >= 1);
   document.getElementById('specialLabel').textContent = (step === cfg.maxStep && cfg.special) ? cfg.special : '';
   document.getElementById('specialNote').classList.toggle('on', step === cfg.maxStep && !!cfg.special);
+  const openSet = new Set((cfg.channelOpen && cfg.channelOpen[step]) || []);
+  cfg.channels.forEach((ch, i) => {
+    const rect = document.getElementById('channel' + i + 'Rect');
+    const isOpen = openSet.has(i);
+    rect.setAttribute('fill', isOpen ? ch.color : 'var(--surface-2)');
+    rect.setAttribute('stroke-width', isOpen ? '2' : '1');
+  });
 }
 function stepFwd() { if (step < getCfg().maxStep) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
