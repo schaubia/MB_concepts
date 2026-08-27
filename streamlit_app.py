@@ -2084,7 +2084,7 @@ const neuronal = {
     "M340 200 L360 90 L380 215 L400 200 L650 200 M30 200 L340 200"
   ],
   voltage: ["Resting: −70 mV", "Depolarizing toward +30 mV", "Peak reached", "Repolarizing", "Wave moving on"],
-  channel: "Voltage-gated Na+ then K+ channels",
+  channel: "Na+ channels open first and drive the fast upstroke; K+ channels open after to repolarize the membrane",
   special: "",
   channels: [
     { x: 140, color: "#378ADD" },
@@ -2109,7 +2109,7 @@ const cardiac = {
     "M30 200 L100 200 L120 90 L140 120 L450 120 L480 200 L650 200"
   ],
   voltage: ["Resting: −90 mV", "Rapid upstroke", "Plateau — sustained depolarization", "Repolarized, refractory period ends"],
-  channel: "Fast Na+ (upstroke) then L-type Ca2+ (plateau) then K+",
+  channel: "Na+ channels drive the fast upstroke; Ca2+ channels then hold the plateau against K+ efflux; K+ alone repolarizes",
   special: "This plateau is why heart muscle can't be tetanized like skeletal muscle",
   channels: [
     { x: 110, color: "#378ADD" },
@@ -2135,7 +2135,7 @@ const pacemaker = {
     "M30 170 Q250 170 450 150 Q550 140 600 135 L615 105 L640 170 L650 170"
   ],
   voltage: ["~ −60 mV, drifting", "Slow spontaneous depolarization", "Ca2+-driven upstroke", "Repolarized — cycle repeats"],
-  channel: "Funny current (If) then T/L-type Ca2+ then K+ — NO fast Na+ channels",
+  channel: "HCN 'funny current' channels drive the slow spontaneous drift; Ca2+ channels trigger the upstroke; K+ repolarizes — no fast Na+ channels here",
   special: "This spontaneous, self-repeating cycle is the origin of your heartbeat's rhythm",
   channels: [
     { x: 250, color: "#EF9F27" },
