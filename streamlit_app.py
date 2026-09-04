@@ -5514,7 +5514,7 @@ const labels = [
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('stimulus').classList.toggle('pulse', step === 0);
-  document.getElementById('dopamineRelease').classList.toggle('on', step >= 1 && step < 4);
+  document.getElementById('dopamineRelease').classList.toggle('on', step >= 2 && step < 4);
   document.getElementById('reinforcement').classList.toggle('on', step >= 2 && step < 4);
   document.getElementById('reuptake').classList.toggle('on', step >= 4);
   document.getElementById('hijack').classList.toggle('on', step >= 4);
