@@ -2364,14 +2364,18 @@ GAS_EXCHANGE_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
-  .drift { animation: drift 1.8s ease-in-out infinite; }
-  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  .gasdot { transition: transform 1.3s ease-in-out, opacity 1.3s ease-in-out; }
+  .gasarrow { transition: opacity .5s ease; opacity: 0; }
+  .gasarrow.on { opacity: 1; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Gas exchange in the alveoli</title>
 <desc>Oxygen-rich air in the alveolus diffuses down its concentration gradient into the adjacent capillary, where it binds hemoglobin in red blood cells, while carbon dioxide diffuses the opposite direction from blood into the alveolus to be exhaled.</desc>
+<defs>
+<marker id="gxArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
 
 <circle cx="220" cy="150" r="110" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1.5"/>
 <text class="th" x="220" y="90" text-anchor="middle">Alveolus</text>
@@ -2382,16 +2386,20 @@ GAS_EXCHANGE_GENERAL = '''
 <text class="ts" x="440" y="215" text-anchor="middle">Deoxygenated blood in</text>
 <text class="ts" x="580" y="215" text-anchor="middle" id="outLabel">→</text>
 
+<path id="o2Arrow" class="gasarrow" d="M300 128 L400 128" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#gxArrow)"/>
+<text class="ts" x="350" y="118" text-anchor="middle">O2</text>
+
+<path id="co2Arrow" class="gasarrow" d="M400 182 L300 182" stroke="#639922" stroke-width="2" fill="none" marker-end="url(#gxArrow)"/>
+<text class="ts" x="350" y="200" text-anchor="middle">CO2</text>
+
 <g id="o2" class="stg">
-<circle class="drift" cx="260" cy="140" r="7" fill="#378ADD"/>
-<circle class="drift" cx="280" cy="160" r="7" fill="#378ADD" style="animation-delay:.3s"/>
-<text class="ts" x="270" y="120" text-anchor="middle">O2</text>
+<circle id="o2a" class="gasdot" cx="285" cy="135" r="7" fill="#378ADD"/>
+<circle id="o2b" class="gasdot" cx="300" cy="165" r="7" fill="#378ADD"/>
 </g>
 
 <g id="co2" class="stg">
-<circle class="drift" cx="400" cy="145" r="7" fill="#639922"/>
-<circle class="drift" cx="420" cy="165" r="7" fill="#639922" style="animation-delay:.4s"/>
-<text class="ts" x="410" y="185" text-anchor="middle">CO2</text>
+<circle id="co2a" class="gasdot" cx="405" cy="140" r="7" fill="#639922"/>
+<circle id="co2b" class="gasdot" cx="420" cy="165" r="7" fill="#639922"/>
 </g>
 
 <g id="hemoglobin" class="stg">
@@ -2402,6 +2410,10 @@ GAS_EXCHANGE_GENERAL = '''
 
 <g id="oxygenated" class="stg">
 <text class="th" x="600" y="150" text-anchor="middle">Oxygenated blood out</text>
+</g>
+
+<g id="exhaled" class="stg">
+<text class="ts" x="220" y="60" text-anchor="middle">CO2 exhaled ↑</text>
 </g>
 </svg>
 
@@ -2420,12 +2432,33 @@ const labels = [
   "Step 2 of 3 — CO2 diffuses the opposite direction, from blood into alveolus",
   "Step 3 of 3 — O2 binds hemoglobin, oxygenated blood leaves via the pulmonary vein"
 ];
+function setDot(id, dx, dy, visible) {
+  const el = document.getElementById(id);
+  el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+  el.style.opacity = visible ? '1' : '0';
+}
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
+
+  // O2: starts in the alveolus, crosses into the capillary at step 1,
+  // then slides into hemoglobin and disappears (bound) at step 3.
   document.getElementById('o2').classList.toggle('on', step >= 1);
+  document.getElementById('o2Arrow').classList.toggle('on', step === 1);
+  if (step < 1) { setDot('o2a', 0, 0, false); setDot('o2b', 0, 0, false); }
+  else if (step < 3) { setDot('o2a', 130, 0, true); setDot('o2b', 130, 0, true); }
+  else { setDot('o2a', 187, 9, false); setDot('o2b', 188, -9, false); }
+
+  // CO2: starts in the capillary, crosses into the alveolus at step 2,
+  // then drifts further up and fades — exhaled — at step 3.
   document.getElementById('co2').classList.toggle('on', step >= 2);
+  document.getElementById('co2Arrow').classList.toggle('on', step === 2);
+  if (step < 2) { setDot('co2a', 0, 0, false); setDot('co2b', 0, 0, false); }
+  else if (step < 3) { setDot('co2a', -150, 5, true); setDot('co2b', -145, 5, true); }
+  else { setDot('co2a', -150, -50, false); setDot('co2b', -145, -55, false); }
+
   document.getElementById('hemoglobin').classList.toggle('on', step >= 3);
   document.getElementById('oxygenated').classList.toggle('on', step >= 3);
+  document.getElementById('exhaled').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
