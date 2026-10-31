@@ -556,7 +556,7 @@ MITOSIS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #chrA_c1, #chrA_c2, #chrB_c1, #chrB_c2 { transition: transform 1s cubic-bezier(.3,0,.2,1); }
-  #linkA, #linkB { transition: opacity 0.5s ease; }
+  #linkA, #linkB, #labelA, #labelB { transition: opacity 0.5s ease, transform 1s cubic-bezier(.3,0,.2,1); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -579,13 +579,13 @@ MITOSIS_GENERAL = '''
 <line id="chrA_c1" x1="305" y1="145" x2="305" y2="195" stroke="#378ADD" stroke-width="7" stroke-linecap="round"/>
 <line id="chrA_c2" x1="325" y1="145" x2="325" y2="195" stroke="#378ADD" stroke-width="7" stroke-linecap="round"/>
 <line id="linkA" x1="305" y1="170" x2="325" y2="170" stroke="#378ADD" stroke-width="3"/>
-<text class="ts" x="315" y="130" text-anchor="middle">Chromosome A</text>
+<text class="ts" x="315" y="130" text-anchor="middle" id="labelA">Chromosome A</text>
 
 <!-- Chromosome B (red) -->
 <line id="chrB_c1" x1="355" y1="145" x2="355" y2="195" stroke="#D85A30" stroke-width="7" stroke-linecap="round"/>
 <line id="chrB_c2" x1="375" y1="145" x2="375" y2="195" stroke="#D85A30" stroke-width="7" stroke-linecap="round"/>
 <line id="linkB" x1="355" y1="170" x2="375" y2="170" stroke="#D85A30" stroke-width="3"/>
-<text class="ts" x="365" y="215" text-anchor="middle">Chromosome B</text>
+<text class="ts" x="365" y="215" text-anchor="middle" id="labelB">Chromosome B</text>
 </g>
 
 <g id="spindle" class="stg">
@@ -598,6 +598,11 @@ MITOSIS_GENERAL = '''
 <g id="newNuclei" class="stg">
 <ellipse cx="220" cy="190" rx="60" ry="48" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
 <ellipse cx="460" cy="190" rx="60" ry="48" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+</g>
+
+<g id="daughterCells" style="opacity:0;transition:opacity .5s ease">
+<ellipse cx="225" cy="190" rx="112" ry="125" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<ellipse cx="455" cy="190" rx="112" ry="125" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 </g>
 
 <g id="furrow" class="stg">
@@ -640,14 +645,14 @@ function render() {
 
   let ax1=0, ay1=0, ax2=0, ay2=0, bx1=0, by1=0, bx2=0, by2=0;
   if (step === 1) {
-    ax1=ax2=-30; ay1=ay2=-20; bx1=bx2=25; by1=by2=15;
+    ax1=ax2=-20; ay1=ay2=-5; bx1=bx2=20; by1=by2=5;
   } else if (step === 2) {
     ax1=ax2=-12; ay1=ay2=-8; bx1=bx2=10; by1=by2=6;
   } else if (step === 3) {
     ax1=ax2=0; ay1=ay2=0; bx1=bx2=0; by1=by2=0;
   } else if (step === 4) {
-    ax1=-165; ay1=0; ax2=215; ay2=0;
-    bx1=-215; by1=0; bx2=165; by2=0;
+    ax1=-140; ay1=0; ax2=170; ay2=0;
+    bx1=-170; by1=0; bx2=140; by2=0;
   } else if (step >= 5) {
     ax1=-110; ay1=20; ax2=110; ay2=20;
     bx1=-110; by1=20; bx2=110; by2=20;
@@ -656,6 +661,13 @@ function render() {
   document.getElementById('chrA_c2').style.transform = `translate(${ax2}px, ${ay2}px)`;
   document.getElementById('chrB_c1').style.transform = `translate(${bx1}px, ${by1}px)`;
   document.getElementById('chrB_c2').style.transform = `translate(${bx2}px, ${by2}px)`;
+  // centromere bars and labels travel with their (still-joined) chromosome until anaphase
+  document.getElementById('linkA').style.transform = step < 4 ? `translate(${ax1}px, ${ay1}px)` : '';
+  document.getElementById('linkB').style.transform = step < 4 ? `translate(${bx1}px, ${by1}px)` : '';
+  document.getElementById('labelA').style.transform = step < 4 ? `translate(${ax1}px, ${ay1}px)` : '';
+  document.getElementById('labelB').style.transform = step < 4 ? `translate(${bx1}px, ${by1}px)` : '';
+  document.getElementById('labelA').style.opacity = step >= 4 ? '0' : '1';
+  document.getElementById('labelB').style.opacity = step >= 4 ? '0' : '1';
   document.getElementById('linkA').style.opacity = step >= 4 ? '0' : (step >= 1 ? '1' : '0');
   document.getElementById('linkB').style.opacity = step >= 4 ? '0' : (step >= 1 ? '1' : '0');
 
@@ -664,6 +676,7 @@ function render() {
   document.getElementById('furrow').classList.toggle('on', step >= 6);
   document.getElementById('daughterLabels').classList.toggle('on', step >= 6);
   document.getElementById('cellOutline').style.opacity = step >= 6 ? '0' : '1';
+  document.getElementById('daughterCells').style.opacity = step >= 6 ? '1' : '0';
 }
 function stepFwd() { if (step < 6) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
@@ -2856,7 +2869,10 @@ MITOSIS_TECHNICAL = '''
   #chromLeft, #chromRight { transition: transform 1s ease; }
   .separated #chromLeft { transform: translateX(-70px); }
   .separated #chromRight { transform: translateX(70px); }
-  #furrow { transition: transform 1s ease; }
+  #kinL, #kinR { transition: transform 1s ease; }
+  .separated #kinL { transform: translateX(-70px); }
+  .separated #kinR { transform: translateX(70px); }
+  #furrow { transition: transform 1s ease; transform-box: fill-box; transform-origin: center; }
   .constricted #furrow { transform: scaleY(0.3); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
@@ -2868,31 +2884,32 @@ MITOSIS_TECHNICAL = '''
 <ellipse cx="340" cy="170" rx="220" ry="130" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 
 <g id="chromLeft">
-<path d="M320 150 L340 170 M340 150 L320 170" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
-<circle id="cohesinL" cx="330" cy="160" r="3" fill="#EF9F27"/>
+<line x1="332" y1="138" x2="332" y2="182" stroke="#378ADD" stroke-width="6" stroke-linecap="round"/>
+<circle id="cohesinL" cx="335" cy="160" r="3" fill="#EF9F27"/>
 </g>
 <g id="chromRight">
-<path d="M340 150 L360 170 M360 150 L340 170" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
-<circle id="cohesinR" cx="350" cy="160" r="3" fill="#EF9F27"/>
+<line x1="348" y1="138" x2="348" y2="182" stroke="#378ADD" stroke-width="6" stroke-linecap="round"/>
+<circle id="cohesinR" cx="345" cy="160" r="3" fill="#EF9F27"/>
 </g>
-<line id="cohesinLink" x1="330" y1="160" x2="350" y2="160" stroke="#EF9F27" stroke-width="2"/>
+<line id="cohesinLink" x1="335" y1="160" x2="345" y2="160" stroke="#EF9F27" stroke-width="2"/>
+<text class="ts" x="340" y="240" text-anchor="middle">Sister chromatids (identical)</text>
 
 <g id="kinetochores" class="stg">
-<circle cx="330" cy="145" r="4" class="c-purple"/>
-<circle cx="350" cy="145" r="4" class="c-purple"/>
+<circle id="kinL" cx="325" cy="160" r="4" class="c-purple"/>
+<circle id="kinR" cx="355" cy="160" r="4" class="c-purple"/>
 <text class="ts" x="340" y="128" text-anchor="middle">Kinetochores</text>
 </g>
 
 <g id="spindleSearching" class="stg">
-<line x1="140" y1="170" x2="325" y2="150" stroke="var(--t)" stroke-width="0.75" stroke-dasharray="3 3" opacity="0.5"/>
-<line x1="540" y1="170" x2="355" y2="150" stroke="var(--t)" stroke-width="0.75" stroke-dasharray="3 3" opacity="0.5"/>
+<line x1="140" y1="170" x2="321" y2="160" stroke="var(--t)" stroke-width="0.75" stroke-dasharray="3 3" opacity="0.5"/>
+<line x1="540" y1="170" x2="359" y2="160" stroke="var(--t)" stroke-width="0.75" stroke-dasharray="3 3" opacity="0.5"/>
 <text class="ts" x="340" y="90" text-anchor="middle" id="sacLabel">SAC active — anaphase blocked</text>
 </g>
 
 <g id="spindleAttached" class="stg">
-<line x1="140" y1="170" x2="325" y2="150" stroke="var(--t)" stroke-width="1"/>
-<line x1="540" y1="170" x2="355" y2="150" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="340" y="90" text-anchor="middle">Bi-oriented, under tension — SAC satisfied</text>
+<line x1="140" y1="170" x2="321" y2="160" stroke="var(--t)" stroke-width="1"/>
+<line x1="540" y1="170" x2="359" y2="160" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="340" y="90" text-anchor="middle" id="attachedLabel">Bi-oriented, under tension — SAC satisfied</text>
 </g>
 
 <g id="separaseNote" class="stg">
@@ -2927,6 +2944,8 @@ function render() {
   document.getElementById('kinetochores').classList.toggle('on', step >= 1);
   document.getElementById('spindleSearching').classList.toggle('on', step === 2);
   document.getElementById('spindleAttached').classList.toggle('on', step >= 3 && step < 4);
+  document.getElementById('sacLabel').style.opacity = step === 2 ? '1' : '0';
+  document.getElementById('attachedLabel').style.opacity = step === 3 ? '1' : '0';
   document.getElementById('separaseNote').classList.toggle('on', step === 4);
   document.getElementById('cohesinLink').style.opacity = step >= 4 ? '0' : '1';
   document.querySelector('svg').classList.toggle('separated', step >= 4);

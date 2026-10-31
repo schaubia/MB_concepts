@@ -1019,10 +1019,10 @@ APOPTOSIS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 1.6s ease-in-out infinite; }
-  @keyframes drift { 0%{transform:translateY(0)} 100%{transform:translateY(-40px)} }
+  @keyframes drift { 0%{transform:translate(0,0)} 100%{transform:translate(40px,-32px)} }
   #cellBody { transition: d 0.8s ease, opacity .6s ease; }
-  #bodies { transition: transform 1s ease, opacity .8s ease; }
-  .engulfed #bodies { transform: translateX(120px) scale(0.3); opacity: 0; }
+  #bodies { transition: transform 1s ease, opacity .8s ease; transform-box: fill-box; transform-origin: center; }
+  .engulfed #bodies { transform: translateX(89px) scale(0.3); opacity: 0; }
   #phagocyte { transition: transform 0.8s ease; }
   .approaching #phagocyte { transform: translateX(-40px); }
   #mitoOutline { transition: stroke-dasharray 0.6s ease; }
@@ -1046,7 +1046,7 @@ APOPTOSIS_GENERAL = '''
 
 <ellipse id="cellBody" cx="200" cy="170" rx="90" ry="80" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 <circle cx="200" cy="170" r="28" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
-<text class="ts" x="200" y="270" text-anchor="middle">Nucleus intact</text>
+<text class="ts" x="200" y="270" text-anchor="middle" id="nucleusLabel">Nucleus intact</text>
 
 <!-- Extrinsic-only elements -->
 <g id="ligand" class="stg">
@@ -1067,22 +1067,22 @@ APOPTOSIS_GENERAL = '''
 </g>
 
 <g id="bh3" class="stg">
-<circle cx="130" cy="100" r="8" class="c-amber pulse"/>
-<text class="ts" x="130" y="120" text-anchor="middle">BH3-only proteins tip Bcl-2 balance</text>
+<circle cx="165" cy="112" r="8" class="c-amber pulse"/>
+<text class="ts" x="150" y="103" text-anchor="end">BH3-only proteins</text>
 </g>
 
-<ellipse id="mitoOutline" cx="130" cy="150" rx="45" ry="30" fill="none" stroke="var(--t)" stroke-width="1.5" class="stg"/>
+<ellipse id="mitoOutline" cx="152" cy="142" rx="30" ry="20" fill="none" stroke="var(--t)" stroke-width="1.5" class="stg"/>
 <text class="ts" x="130" y="112" text-anchor="middle" id="mitoLabel" class="stg"></text>
 
 <g id="baxbak" class="stg">
-<circle cx="115" cy="150" r="5" fill="#E24B4A"/>
-<circle cx="130" cy="160" r="5" fill="#E24B4A"/>
-<text class="ts" x="130" y="192" text-anchor="middle">Bax/Bak — MOMP</text>
+<circle cx="140" cy="138" r="5" fill="#E24B4A"/>
+<circle cx="164" cy="146" r="5" fill="#E24B4A"/>
+<text class="ts" x="110" y="146" text-anchor="end">Bax/Bak — MOMP</text>
 </g>
 
 <g id="cytc" class="stg">
-<circle class="drift" cx="130" cy="150" r="4" fill="#EF9F27"/>
-<circle class="drift" cx="140" cy="160" r="4" fill="#EF9F27" style="animation-delay:.3s"/>
+<circle class="drift" cx="150" cy="140" r="4" fill="#EF9F27"/>
+<circle class="drift" cx="158" cy="148" r="4" fill="#EF9F27" style="animation-delay:.3s"/>
 </g>
 
 <g id="apoptosome" class="stg">
@@ -1099,7 +1099,7 @@ APOPTOSIS_GENERAL = '''
 <g id="caspase3" class="stg">
 <circle cx="260" cy="140" r="14" class="c-red"/>
 <text class="ts" x="260" y="140" text-anchor="middle" dominant-baseline="central">C3</text>
-<text class="ts" x="290" y="140" text-anchor="middle" id="executionerLabel">Executioner</text>
+<text class="ts" x="279" y="140" text-anchor="start" dominant-baseline="central" id="executionerLabel">Executioner</text>
 </g>
 
 <g id="damage" class="stg">
@@ -1163,6 +1163,8 @@ function render() {
   const labels = mode === 'extrinsic' ? extrinsicLabels : intrinsicLabels;
   document.getElementById('stepLabel').textContent = labels[step];
   const svg = document.querySelector('svg');
+  ['ligand','caspase8'].forEach(id => document.getElementById(id).style.display = mode === 'extrinsic' ? '' : 'none');
+  ['stressSignal','bh3','mitoOutline','baxbak','cytc','apoptosome','caspase9'].forEach(id => document.getElementById(id).style.display = mode === 'intrinsic' ? '' : 'none');
 
   document.getElementById('ligand').classList.toggle('on', mode === 'extrinsic' && step >= 1);
   document.getElementById('caspase8').classList.toggle('on', mode === 'extrinsic' && step >= 1);
@@ -1186,15 +1188,18 @@ function render() {
   const bodiesThreshold = dmgThreshold;
   const phagoThreshold = mode === 'extrinsic' ? 4 : 5;
   const engulfThreshold = mode === 'extrinsic' ? 5 : 6;
+  const clearedThreshold = 6;
 
   document.getElementById('damage').classList.toggle('on', step >= dmgThreshold);
   document.getElementById('cellBody').style.opacity = step >= dmgThreshold ? '0.15' : '1';
+  document.getElementById('nucleusLabel').textContent = step >= dmgThreshold ? 'Nucleus fragmented' : 'Nucleus intact';
   document.getElementById('bodies').classList.toggle('on', step >= bodiesThreshold && step < engulfThreshold);
   document.getElementById('phagocyte').classList.toggle('on', step >= phagoThreshold);
-  svg.classList.toggle('approaching', step === phagoThreshold);
+  svg.classList.toggle('approaching', step >= phagoThreshold);
   svg.classList.toggle('engulfed', step >= engulfThreshold);
-  document.getElementById('phagocyteLabel').textContent = step >= engulfThreshold ? 'Phagocyte (fed)' : 'Phagocyte';
-  document.getElementById('engulfNote').classList.toggle('on', step >= engulfThreshold);
+  document.getElementById('phagocyte').classList.toggle('pulse', step === engulfThreshold && step < clearedThreshold);
+  document.getElementById('phagocyteLabel').textContent = step >= clearedThreshold ? 'Phagocyte (fed)' : step >= engulfThreshold ? 'Engulfing…' : 'Phagocyte';
+  document.getElementById('engulfNote').classList.toggle('on', step >= clearedThreshold);
 }
 function stepFwd() { if (step < 6) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
