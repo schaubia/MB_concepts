@@ -345,6 +345,7 @@ DNA_REPLICATION_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #helicase { transition: transform 1s ease; }
+  #newTop, #newBot { transition: stroke-dasharray .6s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -383,7 +384,7 @@ DNA_REPLICATION_GENERAL = '''
 <g id="polBot" class="stg">
 <circle cx="330" cy="205" r="16" class="c-teal"/>
 <text class="ts" x="330" y="205" text-anchor="middle" dominant-baseline="central">Pol</text>
-<path id="newBot" d="M260 162 Q300 178 440 210" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-dasharray="6 4" stroke-linecap="round"/>
+<path id="newBot" d="M260 162 Q300 178 440 210" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-dasharray="18 7" stroke-linecap="round"/>
 <text class="ts" x="400" y="255" text-anchor="middle">Okazaki fragments (lagging strand)</text>
 </g>
 
@@ -391,7 +392,7 @@ DNA_REPLICATION_GENERAL = '''
 </g>
 
 <text class="ts" x="130" y="310" text-anchor="middle" id="labelParent">Original DNA</text>
-<text class="ts" x="470" y="310" text-anchor="middle" id="labelDaughters" class="stg">Two identical daughter helices</text>
+<text class="ts stg" x="470" y="310" text-anchor="middle" id="labelDaughters">Two identical daughter helices</text>
 </svg>
 
 <div class="btnrow">
@@ -417,6 +418,8 @@ function render() {
   document.getElementById('polTop').classList.toggle('on', step >= 2);
   document.getElementById('polBot').classList.toggle('on', step >= 2);
   document.getElementById('labelDaughters').classList.toggle('on', step >= 3);
+  document.getElementById('newTop').style.strokeDasharray = step >= 3 ? 'none' : '6 4';
+  document.getElementById('newBot').style.strokeDasharray = step >= 3 ? 'none' : '18 7';
 }
 function stepFwd() { if (step < 3) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
@@ -460,7 +463,7 @@ DNA_REPLICATION_TECHNICAL = '''
 
 <g id="helicase" class="stg">
 <circle cx="180" cy="150" r="18" class="c-amber"/>
-<text class="ts" x="180" y="150" text-anchor="middle" dominant-baseline="central">Helicase</text>
+<text class="ts" x="180" y="150" text-anchor="middle" dominant-baseline="central" style="font-size:8px">Helicase</text>
 </g>
 
 <g id="forkGroup" class="stg">
@@ -472,40 +475,46 @@ DNA_REPLICATION_TECHNICAL = '''
 <circle cx="250" cy="122" r="5" fill="#8B5CF6"/>
 <circle cx="230" cy="170" r="5" fill="#8B5CF6"/>
 <circle cx="255" cy="180" r="5" fill="#8B5CF6"/>
-<text class="ts" x="245" y="100" text-anchor="middle">SSB proteins</text>
+<text class="ts" x="240" y="200" text-anchor="middle">SSB proteins</text>
 </g>
 
 <g id="primerLead" class="stg">
-<rect x="270" y="98" width="28" height="8" rx="3" fill="#EF9F27"/>
-<text class="ts" x="284" y="118" text-anchor="middle">RNA primer</text>
+<path d="M422.4 104.1 L426.4 103.6 L430.4 103.1 L434.4 102.5 L438.5 102.0 L442.5 101.5 L446.7 101.0 L450.8 100.5 L455.0 100.0" stroke="#EF9F27" stroke-width="6" fill="none" stroke-linecap="round"/>
+<text class="ts" x="436" y="81" text-anchor="middle">RNA primer</text>
 </g>
 
 <g id="polLead" class="stg">
-<circle cx="360" cy="98" r="7" class="c-teal"/>
-<circle cx="360" cy="98" r="13" fill="none" stroke="#0F6E56" stroke-width="1.5" stroke-dasharray="2 2"/>
-<text class="ts" x="360" y="80" text-anchor="middle">Pol III + clamp</text>
-<path id="newLead" d="M298 103 Q330 95 470 92" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-<text class="ts" x="450" y="78" text-anchor="middle">Leading (continuous)</text>
+<path id="newLead" d="M274.5 129.7 L281.8 128.0 L289.3 126.3 L297.1 124.7 L305.1 123.0 L313.5 121.4 L322.1 119.7 L330.9 118.1 L340.0 116.5 L349.4 114.9 L359.0 113.3 L368.9 111.7 L379.1 110.2 L389.5 108.6 L400.2 107.1 L411.2 105.6 L422.4 104.1" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<circle cx="269.6" cy="130.9" r="7" class="c-teal"/>
+<circle cx="269.6" cy="130.9" r="13" fill="none" stroke="#0F6E56" stroke-width="1.5" stroke-dasharray="2 2"/>
+<text class="ts" x="285" y="100" text-anchor="middle">Pol III + clamp</text>
+<text class="ts" x="488" y="94" text-anchor="start">Leading (continuous)</text>
 </g>
 
 <g id="primerLag" class="stg">
-<rect x="300" y="188" width="22" height="7" rx="3" fill="#EF9F27"/>
-<rect x="360" y="200" width="22" height="7" rx="3" fill="#EF9F27"/>
-<rect x="410" y="210" width="22" height="7" rx="3" fill="#EF9F27"/>
+<path d="M274.7 172.0 L278.0 172.9 L281.4 173.8 L284.9 174.6" stroke="#EF9F27" stroke-width="6" fill="none" stroke-linecap="round"/>
+<path d="M324.6 184.1 L328.7 185.0 L332.9 185.9 L337.1 186.8" stroke="#EF9F27" stroke-width="6" fill="none" stroke-linecap="round"/>
+<path d="M384.8 196.4 L389.7 197.4 L394.6 198.3 L399.6 199.2" stroke="#EF9F27" stroke-width="6" fill="none" stroke-linecap="round"/>
 </g>
 <g id="polLag" class="stg">
-<circle cx="330" cy="196" r="6" class="c-teal"/>
-<circle cx="390" cy="207" r="6" class="c-teal"/>
-<text class="ts" x="360" y="235" text-anchor="middle">Lagging (Okazaki fragments)</text>
+<circle cx="317.0" cy="182.4" r="6" class="c-teal"/>
+<circle cx="375.8" cy="194.7" r="6" class="c-teal"/>
 </g>
 <g id="fragments" class="stg">
-<path d="M300 195 Q315 190 328 197" stroke="#1D9E75" stroke-width="2" fill="none" stroke-linecap="round"/>
-<path d="M360 207 Q375 202 388 208" stroke="#1D9E75" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M284.9 174.6 L289.0 175.7 L293.2 176.8 L297.5 177.8 L301.8 178.9 L306.3 179.9 L310.8 181.0 L315.4 182.0 L320.0 183.1" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M337.1 186.8 L342.1 187.9 L347.2 189.0 L352.4 190.0 L357.6 191.1 L362.9 192.2 L368.3 193.3 L373.8 194.3 L379.4 195.4" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<text class="ts" x="488" y="224" text-anchor="start">Lagging (Okazaki fragments)</text>
+</g>
+<g id="gapFill" style="opacity:0;transition:opacity .5s ease">
+<path d="M274.7 172.0 L278.0 172.9 L281.4 173.8 L284.9 174.6" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M320.0 183.1 L324.6 184.1 L328.7 185.0 L332.9 185.9 L337.1 186.8" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M379.4 195.4 L384.8 196.4 L389.7 197.4 L394.6 198.3 L399.6 199.2" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M422.4 104.1 L426.4 103.6 L430.4 103.1 L434.4 102.5 L438.5 102.0 L442.5 101.5 L446.7 101.0 L450.8 100.5 L455.0 100.0" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
 </g>
 
 <g id="ligase" class="stg">
-<circle cx="345" cy="200" r="9" class="c-coral"/>
-<text class="ts" x="345" y="180" text-anchor="middle">Ligase seals nicks</text>
+<circle cx="322.2" cy="183.6" r="7" class="c-coral"/>
+<text class="ts" x="322" y="214" text-anchor="middle">Ligase seals nicks</text>
 </g>
 </g>
 </svg>
@@ -536,8 +545,11 @@ function render() {
   document.getElementById('ssb').classList.toggle('on', step >= 2);
   document.getElementById('primerLead').classList.toggle('on', step >= 3);
   document.getElementById('primerLag').classList.toggle('on', step >= 3);
+  document.getElementById('primerLead').style.opacity = step >= 5 ? '0' : '';
+  document.getElementById('primerLag').style.opacity = step >= 5 ? '0' : '';
+  document.getElementById('gapFill').style.opacity = step >= 5 ? '1' : '0';
   document.getElementById('polLead').classList.toggle('on', step >= 4);
-  document.getElementById('polLag').classList.toggle('on', step >= 4);
+  document.getElementById('polLag').classList.toggle('on', step === 4);
   document.getElementById('fragments').classList.toggle('on', step >= 4);
   document.getElementById('ligase').classList.toggle('on', step >= 5);
   document.getElementById('ligase').classList.toggle('pulse', step === 5);
