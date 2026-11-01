@@ -66,7 +66,7 @@ GPCR_GENERAL = '''
 </defs>
 
 <rect x="40" y="150" width="600" height="60" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="52" y="145">Plasma membrane</text>
+<text class="ts" x="214" y="145">Plasma membrane</text>
 
 <rect id="receptorBody" x="120" y="140" width="60" height="80" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <circle id="pocket" cx="150" cy="158" r="14" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="3 3"/>
@@ -100,22 +100,22 @@ GPCR_GENERAL = '''
 </g>
 
 <g id="s3" class="stg">
-<rect x="420" y="350" width="90" height="40" rx="8" class="c-teal" stroke-width="0.5"/>
+<rect x="395" y="350" width="140" height="40" rx="8" class="c-teal" stroke-width="0.5"/>
 <text class="th" x="465" y="365" text-anchor="middle" dominant-baseline="central">PKA</text>
 <text class="ts" x="465" y="382" text-anchor="middle" dominant-baseline="central">catalytic subunit released</text>
 </g>
 
 <g id="s4" class="stg">
-<rect x="420" y="420" width="90" height="36" rx="8" class="c-coral" stroke-width="0.5"/>
+<rect x="405" y="420" width="120" height="36" rx="8" class="c-coral" stroke-width="0.5"/>
 <text class="th" x="465" y="434" text-anchor="middle" dominant-baseline="central">Target</text>
 <text class="ts" x="465" y="450" text-anchor="middle" dominant-baseline="central">phosphorylated (P)</text>
 </g>
-<line id="pkaarrow" x1="465" y1="391" x2="465" y2="418" stroke="var(--t)" stroke-width="1" marker-end="url(#arrow)" class="stg" opacity="0"/>
+<line id="pkaarrow" x1="465" y1="391" x2="465" y2="418" stroke="var(--t)" stroke-width="1" marker-end="url(#arrow)" class="stg"/>
 
-<line id="gtoAC0" x1="180" y1="260" x2="196" y2="258" stroke="var(--t)" stroke-width="1" marker-end="url(#arrow)"/>
-<line id="atoAC" x1="290" y1="260" x2="468" y2="260" stroke="var(--t)" stroke-width="1" class="stg" opacity="0" marker-end="url(#arrow)"/>
-<line id="ACtocamp" x1="505" y1="220" x2="505" y2="255" stroke="var(--t)" stroke-width="1" class="stg" opacity="0" marker-end="url(#arrow)"/>
-<line id="camptopka" x1="500" y1="330" x2="475" y2="348" stroke="var(--t)" stroke-width="1" class="stg" opacity="0" marker-end="url(#arrow)"/>
+<line id="gtoAC0" x1="165" y1="222" x2="199" y2="243" stroke="var(--t)" stroke-width="1" marker-end="url(#arrow)"/>
+<line id="atoAC" x1="236" y1="234" x2="466" y2="205" stroke="var(--t)" stroke-width="1" class="stg" marker-end="url(#arrow)"/>
+<line id="ACtocamp" x1="505" y1="220" x2="505" y2="255" stroke="var(--t)" stroke-width="1" class="stg" marker-end="url(#arrow)"/>
+<line id="camptopka" x1="500" y1="330" x2="475" y2="348" stroke="var(--t)" stroke-width="1" class="stg" marker-end="url(#arrow)"/>
 </svg>
 
 <div class="btnrow">
@@ -144,12 +144,12 @@ function render() {
   document.getElementById('receptorBody').setAttribute('stroke-width', step >= 1 ? '2' : '1');
   document.getElementById('galpha').classList.toggle('pulse', step === 1);
   document.getElementById('gdpgtp').textContent = step >= 1 ? 'GTP' : 'GDP';
-  document.getElementById('atoAC').setAttribute('opacity', step >= 2 ? '1' : '0');
-  document.getElementById('ACtocamp').setAttribute('opacity', step >= 2 ? '1' : '0');
+  document.getElementById('atoAC').classList.toggle('on', step >= 2);
+  document.getElementById('ACtocamp').classList.toggle('on', step >= 2);
   document.getElementById('s2').classList.toggle('on', step >= 2);
-  document.getElementById('camptopka').setAttribute('opacity', step >= 3 ? '1' : '0');
+  document.getElementById('camptopka').classList.toggle('on', step >= 3);
   document.getElementById('s3').classList.toggle('on', step >= 3);
-  document.getElementById('pkaarrow').setAttribute('opacity', step >= 4 ? '1' : '0');
+  document.getElementById('pkaarrow').classList.toggle('on', step >= 4);
   document.getElementById('s4').classList.toggle('on', step >= 4);
 }
 function stepFwd() { if (step < 4) step++; render(); }
@@ -175,8 +175,8 @@ GPCR_TECHNICAL = '''
   #ligandGroup { transition: transform .7s cubic-bezier(.3,0,.2,1); }
   #ligandGroup.docked { transform: translateY(72px); }
   #Cunit1, #Cunit2 { transition: transform .8s ease; }
-  .split #Cunit1 { transform: translate(-34px, 20px); }
-  .split #Cunit2 { transform: translate(34px, 20px); }
+  .split #Cunit1 { transform: translate(-40px, 36px); }
+  .split #Cunit2 { transform: translate(40px, 36px); }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -197,7 +197,7 @@ GPCR_TECHNICAL = '''
 </defs>
 
 <rect x="30" y="120" width="620" height="55" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="42" y="115">Plasma membrane</text>
+<text class="ts" x="184" y="115">Plasma membrane</text>
 
 <rect id="receptorBody" x="100" y="110" width="56" height="76" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <circle id="pocket" cx="128" cy="128" r="12" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="3 3" opacity="0"/>
@@ -221,7 +221,7 @@ GPCR_TECHNICAL = '''
 <g id="gsPath">
 <rect x="360" y="110" width="66" height="76" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <text class="ts" x="393" y="200" text-anchor="middle">Adenylyl cyclase</text>
-<line id="toAC_s" x1="222" y1="225" x2="358" y2="180" stroke="#639922" stroke-width="1.2" class="stg" marker-end="url(#arrow)"/>
+<line id="toAC_s" x1="214" y1="208" x2="358" y2="180" stroke="#639922" stroke-width="1.2" class="stg" marker-end="url(#arrow)"/>
 <g id="campUp" class="stg">
 <circle class="drift" cx="410" cy="215" r="4" fill="#378ADD"/>
 <circle class="drift" cx="425" cy="230" r="4" fill="#378ADD" style="animation-delay:.3s"/>
@@ -231,14 +231,14 @@ GPCR_TECHNICAL = '''
 </g>
 
 <g id="giPath" class="stg">
-<line id="toAC_i" x1="222" y1="225" x2="358" y2="180" stroke="#E24B4A" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<line id="toAC_i" x1="214" y1="208" x2="358" y2="180" stroke="#E24B4A" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
 <text class="ts" x="393" y="260" text-anchor="middle">cAMP ↓ (inhibited)</text>
 </g>
 
 <g id="gqPath" class="stg">
 <rect x="500" y="110" width="66" height="76" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
 <text class="ts" x="533" y="200" text-anchor="middle">Phospholipase C</text>
-<line x1="222" y1="228" x2="498" y2="180" stroke="#0F6E56" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M214 208 Q400 240 498 178" fill="none" stroke="#0F6E56" stroke-width="1.2" marker-end="url(#arrow)"/>
 <text class="ts" x="533" y="220" text-anchor="middle">IP3 + DAG</text>
 <circle class="drift" cx="515" cy="235" r="4" fill="#1D9E75"/>
 <circle class="drift" cx="550" cy="235" r="4" fill="#1D9E75" style="animation-delay:.4s"/>
@@ -246,20 +246,20 @@ GPCR_TECHNICAL = '''
 
 <g id="pkaBlock" class="stg">
 <g id="pkaGroup" transform="translate(393,320)">
-  <rect x="-70" y="-24" width="60" height="48" rx="8" class="c-teal" stroke-width="0.5"/>
-  <text class="ts" x="-40" y="0" text-anchor="middle" dominant-baseline="central">R</text>
-  <rect x="10" y="-24" width="60" height="48" rx="8" class="c-teal" stroke-width="0.5"/>
-  <text class="ts" x="40" y="0" text-anchor="middle" dominant-baseline="central">R</text>
+  <rect x="-62" y="-24" width="60" height="24" rx="6" class="c-teal" stroke-width="0.5"/>
+  <text class="ts" x="-32" y="-12" text-anchor="middle" dominant-baseline="central">R</text>
+  <rect x="2" y="-24" width="60" height="24" rx="6" class="c-teal" stroke-width="0.5"/>
+  <text class="ts" x="32" y="-12" text-anchor="middle" dominant-baseline="central">R</text>
   <g id="Cunit1">
-    <rect x="-34" y="-24" width="60" height="48" rx="8" class="c-coral" stroke-width="0.5"/>
-    <text class="ts" x="-4" y="0" text-anchor="middle" dominant-baseline="central">C</text>
+    <rect x="-62" y="2" width="60" height="24" rx="6" class="c-coral" stroke-width="0.5"/>
+    <text class="ts" x="-32" y="14" text-anchor="middle" dominant-baseline="central">C</text>
   </g>
   <g id="Cunit2">
-    <rect x="-26" y="-24" width="60" height="48" rx="8" class="c-coral" stroke-width="0.5"/>
-    <text class="ts" x="4" y="0" text-anchor="middle" dominant-baseline="central">C</text>
+    <rect x="2" y="2" width="60" height="24" rx="6" class="c-coral" stroke-width="0.5"/>
+    <text class="ts" x="32" y="14" text-anchor="middle" dominant-baseline="central">C</text>
   </g>
 </g>
-<text class="ts" x="393" y="360" text-anchor="middle">PKA holoenzyme (R2C2)</text>
+<text class="ts" x="322" y="310" text-anchor="end">PKA holoenzyme (R2C2)</text>
 <line id="camptopka" x1="405" y1="265" x2="400" y2="296" stroke="var(--t)" stroke-width="1" opacity="0" marker-end="url(#arrow)"/>
 </g>
 
@@ -305,9 +305,13 @@ function render() {
   document.getElementById('receptorBody').setAttribute('stroke-width', step >= 1 ? '2' : '1');
   document.getElementById('nucleotide').textContent = step >= 1 ? 'GTP' : 'GDP';
   document.getElementById('galphaC').classList.toggle('pulse', step === 1);
-  document.getElementById('gsPath').classList.toggle('on', path==='Gs' && step>=1);
-  document.getElementById('giPath').classList.toggle('on', path==='Gi' && step>=1);
-  document.getElementById('gqPath').classList.toggle('on', path==='Gq' && step>=1);
+  ['toAC_s','campUp','pkaBlock','targetBlock'].forEach(id => document.getElementById(id).style.display = path==='Gs' ? '' : 'none');
+  document.getElementById('giPath').style.display = path==='Gi' ? '' : 'none';
+  document.getElementById('gqPath').style.display = path==='Gq' ? '' : 'none';
+  // effector is engaged at step 2 (matches the step labels); step 1 = ligand docks + GTP exchange only
+  document.getElementById('toAC_s').classList.toggle('on', path==='Gs' && step>=2);
+  document.getElementById('giPath').classList.toggle('on', path==='Gi' && step>=2);
+  document.getElementById('gqPath').classList.toggle('on', path==='Gq' && step>=2);
   document.getElementById('campUp').classList.toggle('on', path==='Gs' && step>=2);
   document.getElementById('pkaBlock').classList.toggle('on', path==='Gs' && step>=3);
   document.getElementById('pkaGroup').classList.toggle('split', path==='Gs' && step>=3);
