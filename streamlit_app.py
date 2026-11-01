@@ -1251,7 +1251,7 @@ ENDO_EXOCYTOSIS_GENERAL = '''
   .stg.on { opacity: 1; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #vesicleGroup { transition: transform 1s ease; }
+  #vesicle, #vcargo, #coat circle { transition: cy .9s ease, cx .9s ease, r .5s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -1280,12 +1280,14 @@ ENDO_EXOCYTOSIS_GENERAL = '''
 <text class="ts" x="200" y="62" text-anchor="middle">Cargo</text>
 </g>
 
-<path id="membraneDip" d="M150 150 Q200 150 200 150 Q200 150 250 150" stroke="var(--t)" stroke-width="2" fill="none"/>
+<path id="membraneDip" d="M150 150 L250 150" stroke="var(--t)" stroke-width="2" fill="none"/>
 <g id="coat" class="stg">
-<circle cx="170" cy="145" r="4" class="c-purple"/>
-<circle cx="230" cy="145" r="4" class="c-purple"/>
-<circle cx="200" cy="130" r="4" class="c-purple"/>
-<text class="ts" x="200" y="115" text-anchor="middle">Clathrin coat</text>
+<circle id="coat0" cx="178" cy="160" r="4" class="c-purple"/>
+<circle id="coat1" cx="184" cy="172" r="4" class="c-purple"/>
+<circle id="coat2" cx="200" cy="178" r="4" class="c-purple"/>
+<circle id="coat3" cx="216" cy="172" r="4" class="c-purple"/>
+<circle id="coat4" cx="222" cy="160" r="4" class="c-purple"/>
+<text class="ts" x="236" y="196" text-anchor="start">Clathrin coat (cytoplasmic side)</text>
 </g>
 
 <g id="vesicleGroup">
@@ -1294,7 +1296,7 @@ ENDO_EXOCYTOSIS_GENERAL = '''
 </g>
 
 <g id="snare" class="stg">
-<rect x="185" y="140" width="30" height="14" rx="4" class="c-teal"/>
+<rect x="186" y="146" width="28" height="8" rx="3" class="c-teal"/>
 <text class="ts" x="200" y="127" text-anchor="middle">SNARE docking</text>
 </g>
 
@@ -1335,26 +1337,37 @@ function setMode(m) {
 function render() {
   const labels = mode === 'endo' ? labelsEndo : labelsExo;
   document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('cargoOutside').classList.toggle('on', mode === 'endo' && step <= 1);
+  // each mode shows only its own parts (ghosts of the other mode overprinted each other)
+  ['cargoOutside','coat'].forEach(id => document.getElementById(id).style.display = mode === 'endo' ? '' : 'none');
+  ['snare','released'].forEach(id => document.getElementById(id).style.display = mode === 'exo' ? '' : 'none');
+  document.getElementById('cargoOutside').classList.toggle('on', mode === 'endo' && step === 0);
   document.getElementById('coat').classList.toggle('on', mode === 'endo' && step >= 1 && step <= 2);
   document.getElementById('snare').classList.toggle('on', mode === 'exo' && step === 1);
   document.getElementById('released').classList.toggle('on', mode === 'exo' && step === 3);
 
-  const v = document.getElementById('vesicle');
-  const vc = document.getElementById('vcargo');
-  let r = 0, cy = 150, cr = 0;
+  // membrane shape: flat / coated pit dipping into the cytoplasm / fusion pore (omega) opening outward
+  const FLAT = 'M150 150 L250 150';
+  const PIT  = 'M150 150 L178 150 A22 22 0 0 0 222 150 L250 150';
+  const PORE = 'M150 150 L190 150 C190 156 178 158 178 170 A22 22 0 0 0 222 170 C222 158 210 156 210 150 L250 150';
+  let d = FLAT, r = 0, cy = 150, cr = 0, ccy = 150, coatC = 150;
   if (mode === 'endo') {
-    if (step === 1) { r = 18; cy = 150; cr = 8; }
-    else if (step === 2) { r = 18; cy = 150; cr = 8; }
-    else if (step === 3) { r = 18; cy = 220; cr = 8; }
+    if (step === 1)      { d = PIT; cr = 8; ccy = 160; coatC = 150; }          // cargo sits in the coated pit
+    else if (step === 2) { r = 18; cy = 178; cr = 8; ccy = 178; coatC = 178; } // pinched-off coated vesicle just under the membrane
+    else if (step === 3) { r = 18; cy = 230; cr = 8; ccy = 230; coatC = 178; } // moves inward; coat is shed where it pinched off and fades
   } else {
-    if (step === 0) { r = 18; cy = 220; cr = 8; }
-    else if (step === 1) { r = 18; cy = 150; cr = 8; }
-    else if (step === 2) { r = 18; cy = 150; cr = 8; }
-    else { r = 0; cr = 0; }
+    if (step === 0)      { r = 18; cy = 230; cr = 8; ccy = 230; }
+    else if (step === 1) { r = 18; cy = 172; cr = 8; ccy = 172; }              // docked just under the membrane via SNAREs
+    else if (step === 2) { d = PORE; cr = 8; ccy = 168; }                       // vesicle membrane merges, pore opens outward
   }
-  v.setAttribute('r', r); v.setAttribute('cy', cy);
-  vc.setAttribute('r', cr); vc.setAttribute('cy', cy);
+  document.getElementById('membraneDip').setAttribute('d', d);
+  const set = (el, k, v) => { el.setAttribute(k, v); el.style[k] = v + 'px'; };
+  const v = document.getElementById('vesicle'), vc = document.getElementById('vcargo');
+  set(v, 'r', r); set(v, 'cy', cy); set(vc, 'r', cr); set(vc, 'cy', ccy);
+  const R = coatC === 150 ? 26 : 22;                                            // coat hugs the pit / the vesicle from the cytoplasm side
+  [20, 55, 90, 125, 160].forEach((deg, i) => {
+    const el = document.getElementById('coat' + i), t = deg * Math.PI / 180;
+    set(el, 'cx', +(200 + R * Math.cos(t)).toFixed(1)); set(el, 'cy', +(coatC + R * Math.sin(t)).toFixed(1));
+  });
 }
 function stepFwd() { if (step < 3) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
