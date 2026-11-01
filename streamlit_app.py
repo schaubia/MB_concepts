@@ -715,8 +715,9 @@ TRANSCRIPTION_GENERAL = '''
   .unbound #rnapGroup { transform: translateX(-65px); }
   .elongating #rnapGroup { transform: translateX(180px); }
   .terminated #rnapGroup { transform: translateX(340px); opacity: 0; }
-  #mrnaTail { transition: stroke-dasharray 1.2s ease; }
-  #bubbleTop, #bubbleBot { transition: d 1s ease; }
+  #mrnaTail { transition: stroke-dashoffset 1.2s ease; }
+  #bubble { transition: opacity .5s ease, transform 1.2s ease; }
+  .elongating #bubble { transform: translateX(180px); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -741,11 +742,11 @@ TRANSCRIPTION_GENERAL = '''
 </g>
 
 <rect id="promoterBox" x="90" y="140" width="50" height="40" fill="none" stroke="#EF9F27" stroke-width="1.5" stroke-dasharray="3 3"/>
-<text class="ts" x="115" y="132" text-anchor="middle">Promoter</text>
+<text class="ts" x="115" y="198" text-anchor="middle">Promoter</text>
 
 <g id="bubble" class="stg">
-<path id="bubbleTop" d="M115 150 Q160 128 205 150" stroke="#378ADD" stroke-width="3" fill="none" stroke-linecap="round"/>
-<path id="bubbleBot" d="M115 170 Q160 192 205 170" stroke="#D85A30" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path id="bubbleTop" d="M70 150 Q115 128 160 150" stroke="#378ADD" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path id="bubbleBot" d="M70 170 Q115 192 160 170" stroke="#D85A30" stroke-width="3" fill="none" stroke-linecap="round"/>
 </g>
 
 <g id="rnapGroup">
@@ -754,8 +755,8 @@ TRANSCRIPTION_GENERAL = '''
 </g>
 
 <g id="mrna" class="stg">
-<path id="mrnaTail" d="M115 128 Q160 105 290 100" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="1000 1000" stroke-dashoffset="1000"/>
-<text class="ts" x="290" y="85" text-anchor="middle">mRNA (growing 5'→3')</text>
+<path id="mrnaTail" d="M86 112 Q98 134 116 136 C175 100 240 100 294 136" pathLength="100" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="100 100" stroke-dashoffset="100"/>
+<text class="ts" x="205" y="92" text-anchor="middle">mRNA (growing 5'→3')</text>
 </g>
 
 <g id="released" class="stg">
@@ -784,8 +785,10 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('promoterBox').setAttribute('stroke-width', step === 1 ? '2.5' : '1.5');
   document.getElementById('bubble').classList.toggle('on', step >= 2);
+  document.getElementById('bubble').style.opacity = step >= 4 ? '0' : '';   // DNA reanneals at termination
   document.getElementById('mrna').classList.toggle('on', step >= 2);
-  document.getElementById('mrnaTail').style.strokeDashoffset = step >= 2 ? '0' : '1000';
+  document.getElementById('mrna').style.opacity = step >= 4 ? '0' : '';     // transcript leaves (shown as "released")
+  document.getElementById('mrnaTail').style.strokeDashoffset = step >= 3 ? '0' : step === 2 ? '82.5' : '100';
   document.getElementById('released').classList.toggle('on', step >= 4);
   const svg = document.querySelector('svg');
   svg.classList.toggle('unbound', step === 0);
@@ -2988,7 +2991,9 @@ TRANSCRIPTION_TECHNICAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #rnapGroup { transition: transform 1.2s ease; }
   .elongating #rnapGroup { transform: translateX(160px); }
-  #mrnaTail { transition: stroke-dasharray 1s ease; }
+  #mrnaTail { transition: stroke-dashoffset 1.2s ease; }
+  #bubble { transition: opacity .5s ease, transform 1.2s ease; }
+  .elongating #bubble { transform: translateX(160px); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -3000,7 +3005,7 @@ TRANSCRIPTION_TECHNICAL = '''
 <line x1="30" y1="200" x2="630" y2="200" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
 
 <rect id="tataBox" x="90" y="170" width="40" height="40" fill="none" stroke="#EF9F27" stroke-width="1.5" stroke-dasharray="3 3"/>
-<text class="ts" x="110" y="162" text-anchor="middle">TATA box</text>
+<text class="ts" x="86" y="172" text-anchor="end">TATA box</text>
 
 <g id="tfiid" class="stg">
 <circle cx="110" cy="150" r="14" class="c-purple"/>
@@ -3020,18 +3025,18 @@ TRANSCRIPTION_TECHNICAL = '''
 <g id="bubble" class="stg">
 <path d="M110 180 Q150 160 190 180" stroke="#378ADD" stroke-width="3" fill="none"/>
 <path d="M110 200 Q150 220 190 200" stroke="#D85A30" stroke-width="3" fill="none"/>
-<text class="ts" x="150" y="240" text-anchor="middle">TFIIH unwinds DNA — transcription bubble</text>
+<text class="ts" x="150" y="262" text-anchor="middle">TFIIH unwinds DNA — transcription bubble</text>
 </g>
 
-<g id="rnapGroup">
+<g id="rnapGroup" class="stg">
 <circle cx="150" cy="190" r="18" class="c-purple"/>
 <text class="ts" x="150" y="190" text-anchor="middle" dominant-baseline="central">Pol II</text>
 </g>
 
 <g id="mrna" class="stg">
-<path id="mrnaTail" d="M150 158 Q200 140 350 135" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-<circle id="capG" cx="150" cy="158" r="6" fill="#B91C1C" opacity="0"/>
-<text class="ts" x="150" y="140" text-anchor="middle" id="capLabel" opacity="0">5' cap</text>
+<path id="mrnaTail" d="M118 240 Q130 214 152 212 C210 236 260 236 308 212" pathLength="100" stroke="#1D9E75" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="100 100" stroke-dashoffset="77.7"/>
+<circle id="capG" cx="118" cy="240" r="6" fill="#B91C1C" opacity="0"/>
+<text class="ts" x="106" y="244" text-anchor="end" id="capLabel" opacity="0">5' cap</text>
 </g>
 </svg>
 
@@ -3056,6 +3061,8 @@ function render() {
   document.getElementById('tfiid').classList.toggle('on', step >= 0);
   document.getElementById('tfiid').classList.toggle('pulse', step === 0);
   document.getElementById('pic').classList.toggle('on', step >= 1);
+  document.getElementById('rnapGroup').classList.toggle('on', step >= 1);
+  document.getElementById('mrnaTail').style.strokeDashoffset = step >= 4 ? '0' : '77.7';
   document.getElementById('bubble').classList.toggle('on', step >= 2);
   document.getElementById('mrna').classList.toggle('on', step >= 3);
   document.getElementById('capG').setAttribute('opacity', step >= 3 ? '1' : '0');
