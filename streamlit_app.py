@@ -1577,10 +1577,11 @@ MEMBRANE_TRANSPORT_GENERAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #molecule { transition: transform 1s ease, opacity .4s ease; }
   #ligandGroup { transition: transform .8s ease, opacity .4s ease; }
-  .docked #ligandGroup { transform: translateY(10px); }
+  .docked #ligandGroup { transform: translate(90px, 25px); }   /* ligand 230,80 -> receptor site on the outer face 320,105 */
   #gateTop, #gateBottom { transition: transform 0.8s ease; }
-  .gateopen #gateTop { transform: translateY(-14px); }
-  .gateopen #gateBottom { transform: translateY(14px); }
+  .gateopen #gateTop { transform: translateY(-16px); }          /* opens a 32px passage — wider than the molecule */
+  .gateopen #gateBottom { transform: translateY(16px); }
+  #atp { transition: r .4s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -1599,9 +1600,9 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 <desc>Each transport mode is shown as a sequence: a molecule approaches the membrane, crosses it by a different mechanism depending on the mode, and arrives on the other side. Simple diffusion passes directly through the lipid bilayer. Facilitated diffusion passes through an always-open channel protein. Active transport is pumped through against its gradient, consuming ATP. A ligand-gated channel stays closed until a ligand binds a receptor site, opening the pore only while the ligand remains bound.</desc>
 
 <rect x="280" y="40" width="120" height="220" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="340" y="30">Membrane</text>
-<text class="ts" x="80" y="30" id="outsideLabel">Outside — high concentration</text>
-<text class="ts" x="500" y="30" id="insideLabel">Inside — low concentration</text>
+<text class="ts" x="340" y="30" text-anchor="middle">Membrane</text>
+<text class="ts" x="140" y="30" text-anchor="middle" id="outsideLabel">Outside — high concentration</text>
+<text class="ts" x="540" y="30" text-anchor="middle" id="insideLabel">Inside — low concentration</text>
 
 <g id="channelProt" class="stg">
 <rect x="320" y="60" width="40" height="180" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
@@ -1618,13 +1619,13 @@ MEMBRANE_TRANSPORT_GENERAL = '''
 
 <g id="ligandChannel" class="stg">
 <rect x="320" y="60" width="40" height="180" rx="16" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<circle id="receptorSite" cx="340" cy="75" r="10" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
-<rect id="gateTop" x="330" y="140" width="20" height="20" fill="var(--t)" opacity="0.5"/>
-<rect id="gateBottom" x="330" y="140" width="20" height="20" fill="var(--t)" opacity="0.5"/>
+<circle id="receptorSite" cx="320" cy="105" r="10" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<rect id="gateTop" x="330" y="140" width="20" height="10" fill="var(--t)" opacity="0.5"/>
+<rect id="gateBottom" x="330" y="150" width="20" height="10" fill="var(--t)" opacity="0.5"/>
 <text class="ts" x="340" y="255" text-anchor="middle">Ligand-gated channel</text>
 <g id="ligandGroup">
-<circle id="ligand" cx="340" cy="65" r="9" fill="#EF9F27"/>
-<text id="ligandLabel" class="ts" x="340" y="45" text-anchor="middle">Ligand</text>
+<circle id="ligand" cx="230" cy="80" r="9" fill="#EF9F27"/>
+<text id="ligandLabel" class="ts" x="218" y="84" text-anchor="end">Ligand</text>
 </g>
 </g>
 
@@ -1687,7 +1688,8 @@ function setMode(m) {
   document.getElementById('channelProt').classList.toggle('on', m === 'facil');
   document.getElementById('pump').classList.toggle('on', m === 'active');
   document.getElementById('ligandChannel').classList.toggle('on', m === 'ligand');
-  document.getElementById('insideLabel').textContent = m === 'active' ? 'Inside — becomes higher concentration' : 'Inside — low concentration';
+  document.getElementById('outsideLabel').textContent = m === 'active' ? 'Outside — low concentration' : 'Outside — high concentration';
+  document.getElementById('insideLabel').textContent = m === 'active' ? 'Inside — high concentration' : 'Inside — low concentration';
   render();
 }
 function render() {
@@ -1696,19 +1698,20 @@ function render() {
   const svg = document.querySelector('svg');
   let x = 120;
   if (mode === 'active') {
-    x = step === 0 ? 120 : step === 1 ? 320 : step === 2 ? 340 : step === 3 ? 360 : 560;
+    x = step === 0 ? 308 : step === 1 ? 320 : step === 2 ? 340 : step === 3 ? 360 : 560;   // step 0: bound at the pump's open face
     document.getElementById('atp').setAttribute('opacity', step === 1 || step === 3 ? '1' : '0');
     document.getElementById('atpLabel').setAttribute('opacity', step === 1 || step === 3 ? '1' : '0');
     document.getElementById('atp').setAttribute('cx', step === 3 ? '400' : '420');
     document.getElementById('atpLabel').setAttribute('x', step === 3 ? '400' : '420');
     document.getElementById('atpLabel').textContent = step === 3 ? 'ADP + Pi' : 'ATP';
+    document.getElementById('atp').setAttribute('r', step === 3 ? '26' : '12');   // fit the longer "ADP + Pi" text
     document.getElementById('pump').classList.toggle('flip', step >= 2);
   } else if (mode === 'ligand') {
-    svg.classList.toggle('docked', step >= 1);
+    svg.classList.toggle('docked', step >= 1 && step < 4);   // step 4: ligand unbinds and leaves the site
     svg.classList.toggle('gateopen', step >= 2 && step < 4);
-    document.getElementById('receptorSite').setAttribute('stroke', step >= 1 ? '#EF9F27' : 'var(--border-strong)');
-    document.getElementById('receptorSite').setAttribute('stroke-width', step >= 1 ? '2.5' : '1');
-    document.getElementById('ligandGroup').style.opacity = step >= 4 ? '0' : '1';
+    document.getElementById('receptorSite').setAttribute('stroke', step >= 1 && step < 4 ? '#EF9F27' : 'var(--border-strong)');
+    document.getElementById('receptorSite').setAttribute('stroke-width', step >= 1 && step < 4 ? '2.5' : '1');
+    document.getElementById('ligandGroup').style.opacity = '1';
     document.getElementById('ligandLabel').textContent = step >= 1 && step < 4 ? 'Ligand (bound)' : 'Ligand';
     x = step === 3 ? 340 : step >= 4 ? 560 : 120;
   } else {
