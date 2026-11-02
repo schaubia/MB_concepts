@@ -916,7 +916,8 @@ MEIOSIS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #matA_c1, #matA_c2, #patA_c1, #patA_c2, #matB_c1, #matB_c2, #patB_c1, #patB_c2 { transition: transform 1s cubic-bezier(.3,0,.2,1); }
-  #linkMatA, #linkPatA, #linkMatB, #linkPatB { transition: opacity 0.5s ease; }
+  #linkMatA, #linkPatA, #linkMatB, #linkPatB { transition: opacity 0.5s ease, transform 1s cubic-bezier(.3,0,.2,1); }
+  #tipMatA2, #tipPatA1 { transition: opacity .5s ease, transform 1s cubic-bezier(.3,0,.2,1); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -934,6 +935,8 @@ MEIOSIS_GENERAL = '''
 <line id="patA_c1" x1="325" y1="145" x2="325" y2="185" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
 <line id="patA_c2" x1="340" y1="145" x2="340" y2="185" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
 <line id="linkPatA" x1="325" y1="165" x2="340" y2="165" stroke="#85B7EB" stroke-width="2.5"/>
+<line id="tipMatA2" x1="305" y1="145" x2="305" y2="157" stroke="#85B7EB" stroke-width="6" stroke-linecap="round" style="opacity:0"/>
+<line id="tipPatA1" x1="325" y1="145" x2="325" y2="157" stroke="#378ADD" stroke-width="6" stroke-linecap="round" style="opacity:0"/>
 
 <line id="matB_c1" x1="360" y1="145" x2="360" y2="185" stroke="#D85A30" stroke-width="6" stroke-linecap="round"/>
 <line id="matB_c2" x1="375" y1="145" x2="375" y2="185" stroke="#D85A30" stroke-width="6" stroke-linecap="round"/>
@@ -998,18 +1001,20 @@ function render() {
   ids.forEach(id => m[id] = [0,0]);
 
   if (step === 1) {
-    m.matA_c1=[-15,-15]; m.matA_c2=[-15,-15]; m.patA_c1=[15,15]; m.patA_c2=[15,15];
-    m.matB_c1=[-15,-15]; m.matB_c2=[-15,-15]; m.patB_c1=[15,15]; m.patB_c2=[15,15];
+    // synapsis: each maternal homolog pairs tightly with its paternal partner
+    m.matA_c1=[5,0]; m.matA_c2=[5,0]; m.patA_c1=[-5,0]; m.patA_c2=[-5,0];
+    m.matB_c1=[5,0]; m.matB_c2=[5,0]; m.patB_c1=[-5,0]; m.patB_c2=[-5,0];
   } else if (step === 2) {
     // metaphase I: base positions (tetrads aligned at the equator, not yet separating)
   } else if (step === 3) {
     // anaphase I: maternal and paternal homologs migrate toward opposite poles, sisters remain paired
-    m.matA_c1=[-152.5,0]; m.matA_c2=[-152.5,0]; m.patA_c1=[172.5,0]; m.patA_c2=[172.5,0];
-    m.matB_c1=[-192.5,0]; m.matB_c2=[-192.5,0]; m.patB_c1=[132.5,0]; m.patB_c2=[132.5,0];
+    // (each joined pair kept as a visible group, clear of the pole markers at x=140 / 540)
+    m.matA_c1=[-115,0]; m.matA_c2=[-115,0]; m.patA_c1=[130,0]; m.patA_c2=[130,0];
+    m.matB_c1=[-150,0]; m.matB_c2=[-150,0]; m.patB_c1=[95,0]; m.patB_c2=[95,0];
   } else if (step === 4) {
     // Telophase I: homologs separated into two cells (cx 220 / 460), sisters still joined
-    m.matA_c1=[-92.5,0]; m.matA_c2=[-92.5,0]; m.patA_c1=[112.5,0]; m.patA_c2=[112.5,0];
-    m.matB_c1=[-132.5,0]; m.matB_c2=[-132.5,0]; m.patB_c1=[72.5,0]; m.patB_c2=[72.5,0];
+    m.matA_c1=[-100,0]; m.matA_c2=[-100,0]; m.patA_c1=[105,0]; m.patA_c2=[105,0];
+    m.matB_c1=[-125,0]; m.matB_c2=[-125,0]; m.patB_c1=[80,0]; m.patB_c2=[80,0];
   } else if (step === 5) {
     // Meiosis II: sister chromatids begin separating, still inside the same two cells
     m.matA_c1=[-125,0]; m.matA_c2=[-40,0]; m.patA_c1=[80,0]; m.patA_c2=[165,0];
@@ -1022,6 +1027,12 @@ function render() {
   ids.forEach(id => {
     document.getElementById(id).style.transform = `translate(${m[id][0]}px, ${m[id][1]}px)`;
   });
+  // centromere links and recombinant tips travel with their chromatids
+  const tr = id => `translate(${m[id][0]}px, ${m[id][1]}px)`;
+  [['linkMatA','matA_c1'],['linkPatA','patA_c1'],['linkMatB','matB_c1'],['linkPatB','patB_c1'],
+   ['tipMatA2','matA_c2'],['tipPatA1','patA_c1']].forEach(([el, ch]) => document.getElementById(el).style.transform = tr(ch));
+  document.getElementById('tipMatA2').style.opacity = step >= 1 ? '1' : '0';
+  document.getElementById('tipPatA1').style.opacity = step >= 1 ? '1' : '0';
   const linksVisible = step < 5;
   document.getElementById('linkMatA').style.opacity = linksVisible ? '1' : '0';
   document.getElementById('linkPatA').style.opacity = linksVisible ? '1' : '0';
