@@ -1388,7 +1388,10 @@ ENZYME_KINETICS_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #substrateGroup { transition: transform 1s ease, opacity .5s ease; }
-  .bound #substrateGroup { transform: translate(15px, 5px); }
+  .bound #substrateGroup { transform: translate(157px, 0px); }   /* substrate centre 113,150 -> active site 270,150 */
+  #product { transition: transform 1s ease, opacity .5s ease; }
+  .inSite #product { transform: translate(-160px, 2px); }        /* product formed in the active site, then released */
+  #excessSubstrate rect { transition: transform 1s ease; }
   #activeSite { transition: r 0.6s ease, stroke 0.6s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
@@ -1417,9 +1420,16 @@ ENZYME_KINETICS_GENERAL = '''
 </g>
 
 <g id="competitiveInhibitor" class="stg">
-<rect x="270" y="140" width="24" height="18" rx="4" fill="#B91C1C"/>
-<text class="ts" x="282" y="122" text-anchor="middle">Lookalike inhibitor</text>
+<rect x="258" y="141" width="24" height="18" rx="4" fill="#B91C1C"/>
+<text class="ts" x="270" y="94" text-anchor="middle">Lookalike inhibitor</text>
 <text class="ts" x="330" y="260" text-anchor="middle">Blocks the same site — beaten by more substrate</text>
+</g>
+
+<g id="excessSubstrate" style="opacity:0;transition:opacity .5s ease">
+<rect x="96" y="176" width="26" height="20" rx="4" fill="#EF9F27"/>
+<rect x="130" y="196" width="26" height="20" rx="4" fill="#EF9F27"/>
+<rect x="66" y="196" width="26" height="20" rx="4" fill="#EF9F27"/>
+<text class="ts" x="112" y="236" text-anchor="middle">More substrate added</text>
 </g>
 
 <g id="product" class="stg">
@@ -1487,30 +1497,46 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   const svg = document.querySelector('svg');
 
+  // each mode shows only its own parts (other modes' ghost notes overprinted each other)
+  const show = (id, yes) => document.getElementById(id).style.display = yes ? '' : 'none';
+  show('competitiveInhibitor', mode === 'competitive');
+  show('allostericSite', mode === 'alloInhibit' || mode === 'alloActivate');
+  show('inhibitor', mode === 'alloInhibit');
+  show('activator', mode === 'alloActivate');
+  show('product', mode === 'normal');
   document.getElementById('competitiveInhibitor').classList.toggle('on', mode === 'competitive' && step >= 1);
   document.getElementById('allostericSite').classList.toggle('on', (mode === 'alloInhibit' || mode === 'alloActivate') && step >= 0);
   document.getElementById('inhibitor').classList.toggle('on', mode === 'alloInhibit' && step >= 1);
   document.getElementById('activator').classList.toggle('on', mode === 'alloActivate' && step >= 1);
+  // reset shared state so nothing leaks from the previous mode
+  svg.classList.remove('bound', 'inSite');
+  document.getElementById('substrateLabel').textContent = 'Substrate';
+  document.getElementById('excessSubstrate').style.opacity = '0';
 
   if (mode === 'normal') {
-    svg.classList.toggle('bound', step >= 1 && step < 3);
-    document.getElementById('substrateLabel').textContent = step >= 1 ? 'Bound substrate' : 'Substrate';
-    document.getElementById('substrateGroup').style.opacity = step >= 3 ? '0' : '1';
+    svg.classList.toggle('bound', step >= 1);
+    svg.classList.toggle('inSite', step === 2);
+    document.getElementById('substrateLabel').textContent = step === 1 ? 'Bound substrate' : 'Substrate';
+    document.getElementById('substrateGroup').style.opacity = step >= 2 ? '0' : '1';   // converted into product
     document.getElementById('activeSite').setAttribute('stroke', '#EF9F27');
     document.getElementById('activeSite').setAttribute('r', '16');
     document.getElementById('product').classList.toggle('on', step >= 2);
   } else if (mode === 'competitive') {
-    document.getElementById('substrateGroup').style.opacity = step >= 1 ? '0.15' : '1';
+    document.getElementById('substrateGroup').style.opacity = step === 1 ? '0.15' : '1';
+    document.getElementById('excessSubstrate').style.opacity = step >= 2 ? '1' : '0';   // step 2: substrate concentration raised
     document.getElementById('activeSite').setAttribute('stroke', '#EF9F27');
     document.getElementById('activeSite').setAttribute('r', '16');
     document.getElementById('product').classList.toggle('on', false);
   } else if (mode === 'alloInhibit') {
-    document.getElementById('substrateGroup').style.opacity = step >= 1 ? '0.15' : '1';
-    document.getElementById('activeSite').setAttribute('stroke', step >= 1 ? '#E24B4A' : '#EF9F27');
-    document.getElementById('activeSite').setAttribute('r', step >= 1 ? '10' : '16');
+    // step 1: inhibitor binds; step 2: the active site distorts and substrate can't fit
+    document.getElementById('substrateGroup').style.opacity = step >= 2 ? '0.15' : '1';
+    document.getElementById('activeSite').setAttribute('stroke', step >= 2 ? '#E24B4A' : '#EF9F27');
+    document.getElementById('activeSite').setAttribute('r', step >= 2 ? '10' : '16');
     document.getElementById('product').classList.toggle('on', false);
   } else if (mode === 'alloActivate') {
     document.getElementById('substrateGroup').style.opacity = '1';
+    svg.classList.toggle('bound', step >= 2);                                   // step 2: substrate binds the improved site
+    if (step >= 2) document.getElementById('substrateLabel').textContent = 'Bound substrate';
     document.getElementById('activeSite').setAttribute('stroke', step >= 1 ? '#1D9E75' : '#EF9F27');
     document.getElementById('activeSite').setAttribute('r', step >= 1 ? '22' : '16');
     document.getElementById('product').classList.toggle('on', false);
