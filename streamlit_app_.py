@@ -1941,22 +1941,22 @@ FERTILIZATION_GENERAL = '''
 
 <circle cx="380" cy="150" r="90" class="c-amber"/>
 <circle id="zonaLayer" cx="380" cy="150" r="90" fill="none" stroke="var(--t)" stroke-width="1.5"/>
-<text class="th" x="380" y="150" text-anchor="middle" dominant-baseline="central">Egg</text>
+<text class="th" x="380" y="112" text-anchor="middle" dominant-baseline="central">Egg</text>
 <text class="ts" x="380" y="255" text-anchor="middle">Zona pellucida</text>
 
 <g id="spermGroup">
-<path d="M150 150 L200 150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
-<circle cx="145" cy="150" r="10" fill="#378ADD"/>
-<text class="ts" x="145" y="130" text-anchor="middle">Sperm</text>
+<path d="M140 150 L190 150" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<circle cx="200" cy="150" r="10" fill="#378ADD"/>
+<text class="ts" x="196" y="132" text-anchor="end">Sperm</text>
 <g id="acrosome" class="stg">
-<circle cx="200" cy="150" r="5" fill="#EF9F27"/>
-<text class="ts" x="200" y="185" text-anchor="middle">Acrosomal enzymes penetrate zona</text>
+<circle cx="210" cy="150" r="5" fill="#EF9F27"/>
+<text class="ts" x="205" y="185" text-anchor="end">Acrosomal enzymes penetrate zona</text>
 </g>
 </g>
 
 <g id="corticalReaction" class="stg">
 <circle cx="330" cy="100" r="4" fill="#B91C1C"/>
-<circle cx="350" cy="200" r="4" fill="#B91C1C"/>
+<circle cx="330" cy="215" r="4" fill="#B91C1C"/>
 <circle cx="410" cy="90" r="4" fill="#B91C1C"/>
 <text class="ts" x="380" y="60" text-anchor="middle">Cortical granules released — zona hardens</text>
 </g>
@@ -1992,7 +1992,7 @@ const labels = [
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('acrosome').classList.toggle('on', step === 1);
-  document.getElementById('spermGroup').style.transform = step === 0 ? 'translateX(0px)' : step === 1 ? 'translateX(100px)' : 'translateX(180px)';
+  document.getElementById('spermGroup').style.transform = step === 0 ? 'translateX(0px)' : step === 1 ? 'translateX(80px)' : 'translateX(160px)';
   document.getElementById('spermGroup').style.opacity = step >= 2 ? '0' : '1';
   document.getElementById('corticalReaction').classList.toggle('on', step === 3);
   document.getElementById('zonaLayer').setAttribute('stroke-width', step >= 3 ? '4' : '1.5');
@@ -3876,6 +3876,8 @@ FERTILIZATION_TECHNICAL = '''
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #calciumWave { transition: r 1.2s ease, opacity 0.6s ease; }
+  #calciumWave.stg { opacity: 0; }
+  #calciumWave.stg.on { opacity: 1; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -3883,6 +3885,7 @@ FERTILIZATION_TECHNICAL = '''
 <title>Fertilization, technical view</title>
 <desc>The egg is arrested at metaphase II of meiosis. Sperm-egg recognition and membrane fusion trigger a fast electrical block via membrane depolarization, then a calcium wave sweeps across the egg by calcium-induced calcium release, triggering the slow cortical granule block that hardens the zona pellucida. The same calcium wave activates the egg, allowing it to complete meiosis II and extrude a second polar body, after which the male and female pronuclei form and fuse into a diploid zygote.</desc>
 
+<defs><clipPath id="eggClip"><circle cx="380" cy="160" r="100"/></clipPath></defs>
 <circle cx="380" cy="160" r="100" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 <g id="meiosisArrest">
 <path d="M370 130 L390 130 M380 120 L380 140" stroke="#7F77DD" stroke-width="2"/>
@@ -3890,23 +3893,24 @@ FERTILIZATION_TECHNICAL = '''
 </g>
 
 <g id="spermGroup" class="stg">
-<circle cx="180" cy="160" r="10" fill="#378ADD"/>
-<text class="ts" x="180" y="140" text-anchor="middle">Sperm — ZP3 binding, acrosome reaction</text>
+<circle cx="266" cy="160" r="10" fill="#378ADD"/>
+<path d="M216 160 L256 160" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<text class="ts" x="258" y="138" text-anchor="end">Sperm — ZP3 binding, acrosome reaction</text>
 </g>
 
 <g id="fastBlock" class="stg">
 <circle cx="380" cy="160" r="105" fill="none" stroke="#EF9F27" stroke-width="3"/>
-<text class="ts" x="380" y="280" text-anchor="middle">Fast block — membrane depolarizes (Na+ influx)</text>
+<text class="ts" x="380" y="276" text-anchor="middle">Fast block — membrane depolarizes (Na+ influx)</text>
 </g>
 
-<circle id="calciumWave" cx="280" cy="160" r="0" fill="none" stroke="#B91C1C" stroke-width="2" class="stg"/>
+<circle id="calciumWave" cx="280" cy="160" r="0" fill="#B91C1C" fill-opacity="0.12" stroke="#B91C1C" stroke-width="2" class="stg" clip-path="url(#eggClip)"/>
 <g id="calciumLabel" class="stg">
 <text class="ts" x="380" y="240" text-anchor="middle">Ca2+ wave — calcium-induced calcium release</text>
 </g>
 
 <g id="cortical" class="stg">
 <circle cx="380" cy="160" r="100" fill="none" stroke="#B91C1C" stroke-width="4"/>
-<text class="ts" x="380" y="285" text-anchor="middle">Slow block — cortical granules harden the zona</text>
+<text class="ts" x="380" y="298" text-anchor="middle">Slow block — cortical granules harden the zona</text>
 </g>
 
 <g id="polarBody" class="stg">
@@ -3944,10 +3948,11 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('spermGroup').classList.toggle('on', step === 0);
   document.getElementById('fastBlock').classList.toggle('on', step >= 1 && step < 2);
-  document.getElementById('calciumWave').setAttribute('r', step === 2 ? '100' : '0');
-  document.getElementById('calciumWave').setAttribute('opacity', step === 2 ? '1' : '0');
+  const wave = document.getElementById('calciumWave');
+  wave.setAttribute('r', step === 2 ? '200' : '0'); wave.style.r = step === 2 ? '200px' : '0px';   // sweeps from entry point across the whole egg
+  wave.classList.toggle('on', step === 2);   // the opacity attribute was overridden by .stg, so the wave never showed
   document.getElementById('calciumLabel').classList.toggle('on', step >= 2 && step < 3);
-  document.getElementById('cortical').classList.toggle('on', step >= 3);
+  document.getElementById('cortical').classList.toggle('on', step >= 2);   // slow block is triggered by the step-2 Ca2+ wave
   document.getElementById('polarBody').classList.toggle('on', step >= 3 && step < 4);
   document.getElementById('meiosisArrest').style.opacity = step >= 3 ? '0' : '1';
   document.getElementById('pronuclei').classList.toggle('on', step === 3);
