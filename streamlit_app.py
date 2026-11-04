@@ -2334,6 +2334,193 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# IMPLANTATION_GENERAL  (new)
+# ---------------------------------------------------------------------------
+IMPLANTATION_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of implantation: the blastocyst hatches from the zona pellucida, attaches to the uterine lining with its inner cell mass facing the wall, its trophoblast splits into cytotrophoblast and an invading syncytiotrophoblast, it sinks fully into the endometrium, and the syncytiotrophoblast releases hCG.</h2>
+<style>
+  .reveal { opacity: 0; transition: opacity .5s ease; }
+  .reveal.on { opacity: 1; }
+  #blasto { transition: transform 1.1s cubic-bezier(.3,0,.2,1); transform-box: view-box; transform-origin: 0 0; }
+  #zonaWhole, #zonaBroken { transition: opacity .5s ease; }
+  .hcg { animation: hcgUp 2.4s ease-in infinite; }
+  @keyframes hcgUp { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-34px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .hcg { animation: none; } }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Implantation</title>
+<desc>Around day 5 the blastocyst, still inside its zona pellucida, floats in the uterine cavity. It hatches out of the zona and attaches to the endometrium with its inner cell mass, the embryonic pole, facing the uterine wall. At the contact site the trophoblast splits into an inner layer of dividing cytotrophoblast cells and an outer syncytiotrophoblast, a fused mass with many nuclei that digests its way into the endometrium. By around day 10 the embryo has sunk completely into the uterine lining, which closes over it. The syncytiotrophoblast releases the hormone hCG, which keeps the corpus luteum producing progesterone so the uterine lining is maintained, and maternal blood begins to fill spaces called lacunae, the first step toward the placenta. hCG is the hormone that pregnancy tests detect.</desc>
+<defs>
+<marker id="arrowI" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<text class="ts" x="40" y="40">Uterine cavity</text>
+<text class="th" x="40" y="62" id="dayLabelI">Day 5</text>
+
+<!-- endometrium (uterine lining) with glands and maternal vessels -->
+<rect x="30" y="210" width="620" height="110" fill="#FBCFE8" fill-opacity="0.55"/>
+<line x1="30" y1="210" x2="650" y2="210" stroke="#BE185D" stroke-width="2"/>
+<path d="M60 211 Q60 262 74 262 Q88 262 88 211" fill="none" stroke="#BE185D" stroke-width="1.2" stroke-opacity="0.6"/>
+<path d="M110 211 Q110 270 124 270 Q138 270 138 211" fill="none" stroke="#BE185D" stroke-width="1.2" stroke-opacity="0.6"/>
+<path d="M560 211 Q560 266 574 266 Q588 266 588 211" fill="none" stroke="#BE185D" stroke-width="1.2" stroke-opacity="0.6"/>
+<path d="M610 211 Q610 258 624 258 Q638 258 638 211" fill="none" stroke="#BE185D" stroke-width="1.2" stroke-opacity="0.6"/>
+<path id="vesselL" d="M170 320 C158 296 182 284 170 262 C160 244 182 236 176 222" fill="none" stroke="#B91C1C" stroke-width="3" stroke-opacity="0.75"/>
+<path id="vesselR" d="M520 320 C532 296 508 284 520 262 C530 244 508 236 514 222" fill="none" stroke="#B91C1C" stroke-width="3" stroke-opacity="0.75"/>
+<text class="ts" x="40" y="312">Endometrium (uterine lining)</text>
+
+<!-- zona pellucida: whole (step 0), then the empty broken shell left behind after hatching -->
+<circle id="zonaWhole" cx="200" cy="112" r="49" fill="none" stroke="#B45309" stroke-width="2.5" stroke-opacity="0.65"/>
+<path id="zonaBroken" d="M236 145 A49 49 0 1 1 245 132" fill="none" stroke="#B45309" stroke-width="2.5" stroke-opacity="0.65" style="opacity:0"/>
+
+<!-- syncytiotrophoblast: small invading front (step 3), then a large shell around the embedded embryo (step 4-5) -->
+<path id="synct3" class="reveal" d="M324 200 Q360 246 396 200 Q360 222 324 200 Z" fill="#9D174D" fill-opacity="0.55"/>
+<path id="synct4" class="reveal" d="M314 252 Q312 316 360 316 Q408 316 406 252 Q394 300 360 300 Q326 300 314 252 Z" fill="#9D174D" fill-opacity="0.55"/>
+<g id="lacunae" class="reveal">
+<ellipse cx="334" cy="300" rx="7" ry="4" fill="#B91C1C"/>
+<ellipse cx="360" cy="308" rx="8" ry="4" fill="#B91C1C"/>
+<ellipse cx="386" cy="300" rx="7" ry="4" fill="#B91C1C"/>
+</g>
+
+<!-- blastocyst, drawn around (0,0) so it can move and turn -->
+<g id="blasto">
+<circle r="34" fill="#378ADD" fill-opacity="0.12"/>
+<circle r="38" fill="none" stroke="#0F6E56" stroke-width="7" stroke-opacity="0.55"/>
+<circle cx="0" cy="-28" r="8" class="c-purple"/>
+<circle cx="-13" cy="-23" r="7" class="c-purple"/>
+<circle cx="13" cy="-23" r="7" class="c-purple"/>
+<circle cx="-6" cy="-15" r="6" class="c-purple"/>
+<circle cx="6" cy="-15" r="6" class="c-purple"/>
+</g>
+
+<!-- endometrium closes over the embedded embryo (step 4-5) -->
+<path id="sealed" class="reveal" d="M316 210 Q360 204 404 210" fill="none" stroke="#BE185D" stroke-width="3" stroke-linecap="round"/>
+
+<g id="hcgGroup" class="reveal">
+<circle class="hcg" cx="330" cy="292" r="3.5" fill="#F59E0B"/>
+<circle class="hcg" cx="350" cy="300" r="3.5" fill="#F59E0B" style="animation-delay:.6s"/>
+<circle class="hcg" cx="372" cy="300" r="3.5" fill="#F59E0B" style="animation-delay:1.2s"/>
+<circle class="hcg" cx="392" cy="292" r="3.5" fill="#F59E0B" style="animation-delay:1.8s"/>
+<line x1="410" y1="290" x2="510" y2="268" stroke="#B45309" stroke-width="1.2" marker-end="url(#arrowI)"/>
+<text class="ts" x="536" y="292" text-anchor="start" font-weight="600" fill="#B45309">hCG → maternal blood</text>
+</g>
+
+<!-- structure labels, one set per step -->
+<g id="lab0" class="reveal">
+<text class="ts" x="200" y="52" text-anchor="middle">Zona pellucida</text>
+<text class="ts" x="140" y="90" text-anchor="end">Inner cell mass</text>
+<text class="ts" x="140" y="138" text-anchor="end">Trophoblast</text>
+</g>
+<g id="lab1" class="reveal">
+<text class="ts" x="140" y="84" text-anchor="end">Empty zona</text>
+<text class="ts" x="140" y="98" text-anchor="end">left behind</text>
+</g>
+<g id="lab2" class="reveal">
+<text class="ts" x="300" y="150" text-anchor="end">Inner cell mass</text>
+<text class="ts" x="300" y="164" text-anchor="end">faces the wall</text>
+</g>
+<g id="lab3" class="reveal">
+<line x1="322" y1="176" x2="288" y2="160" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="284" y="156" text-anchor="end">Cytotrophoblast</text>
+<line x1="336" y1="214" x2="288" y2="232" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="284" y="240" text-anchor="end">Syncytiotrophoblast</text>
+</g>
+<g id="lab4" class="reveal">
+<line x1="323" y1="246" x2="304" y2="234" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="300" y="236" text-anchor="end">Cytotrophoblast</text>
+<line x1="318" y1="280" x2="304" y2="266" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="300" y="268" text-anchor="end">Syncytiotrophoblast</text>
+</g>
+<g id="lab5" class="reveal">
+<line x1="326" y1="302" x2="304" y2="296" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="300" y="298" text-anchor="end">Maternal blood (lacunae)</text>
+</g>
+
+<!-- explanation panel -->
+<g id="note0" class="reveal">
+<text class="ts" x="430" y="70">Day 5: the blastocyst floats in</text>
+<text class="ts" x="430" y="86">the uterus, still inside its zona</text>
+</g>
+<g id="note1" class="reveal">
+<text class="ts" x="430" y="70"><tspan font-weight="600">Hatching:</tspan> the blastocyst breaks</text>
+<text class="ts" x="430" y="86">out of the zona — it cannot attach</text>
+<text class="ts" x="430" y="102">to the uterus while still inside</text>
+</g>
+<g id="note2" class="reveal">
+<text class="ts" x="430" y="70"><tspan font-weight="600">Attachment:</tspan> it sticks to the</text>
+<text class="ts" x="430" y="86">uterine lining with the inner cell</text>
+<text class="ts" x="430" y="102">mass side (embryonic pole) first</text>
+</g>
+<g id="note3" class="reveal">
+<text class="ts" x="430" y="70">The trophoblast splits in two:</text>
+<text class="ts" x="430" y="90"><tspan fill="#0F6E56" font-weight="600">Cytotrophoblast</tspan> — inner layer</text>
+<text class="ts" x="430" y="106">of dividing cells</text>
+<text class="ts" x="430" y="126"><tspan fill="#9D174D" font-weight="600">Syncytiotrophoblast</tspan> — fused cells,</text>
+<text class="ts" x="430" y="142">many nuclei, invades the lining</text>
+</g>
+<g id="note4" class="reveal">
+<text class="ts" x="430" y="70"><tspan font-weight="600">Invasion:</tspan> the syncytiotrophoblast</text>
+<text class="ts" x="430" y="86">digests its way in; the embryo sinks</text>
+<text class="ts" x="430" y="102">completely into the lining, which</text>
+<text class="ts" x="430" y="118">then closes over it</text>
+</g>
+<g id="note5" class="reveal">
+<text class="ts" x="430" y="70"><tspan fill="#B45309" font-weight="600">hCG</tspan> keeps the corpus luteum</text>
+<text class="ts" x="430" y="86">making progesterone → the lining</text>
+<text class="ts" x="430" y="102">is kept (no period)</text>
+<text class="ts" x="430" y="122">hCG is what pregnancy tests detect</text>
+<text class="ts" x="430" y="142">Maternal blood fills lacunae — the</text>
+<text class="ts" x="430" y="158">first step toward the placenta</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+// blastocyst position and turn per step: [x, y, rotation°] — ICM starts at the top, turns to face the wall
+const POS = [[200, 112, 0], [256, 140, 60], [360, 170, 180], [360, 170, 180], [360, 254, 180], [360, 254, 180]];
+const days = ['Day 5', 'Day 5–6', 'Day 6–7', 'Day 7–8', 'Day 8–10', 'Day 10–12'];
+const labels = [
+  "Step 0 of 5 — day 5: the blastocyst, still inside its zona pellucida, floats in the uterine cavity",
+  "Step 1 of 5 — hatching: the blastocyst breaks out of the zona pellucida, leaving the empty shell behind",
+  "Step 2 of 5 — attachment: the blastocyst sticks to the uterine lining (endometrium) with its inner cell mass side facing the wall",
+  "Step 3 of 5 — the trophoblast splits into cytotrophoblast (inner, dividing cells) and syncytiotrophoblast (outer, fused, many nuclei), which begins to invade",
+  "Step 4 of 5 — invasion: the syncytiotrophoblast digests its way in and the embryo sinks completely into the endometrium, which closes over it",
+  "Step 5 of 5 — the syncytiotrophoblast releases hCG, keeping progesterone high so the lining is maintained; maternal blood fills lacunae — the start of the placenta"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('dayLabelI').textContent = days[step];
+  const [x, y, rot] = POS[step];
+  document.getElementById('blasto').style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+  document.getElementById('zonaWhole').style.opacity = step === 0 ? '1' : '0';
+  document.getElementById('zonaBroken').style.opacity = step === 1 ? '1' : step === 2 ? '0.35' : '0';
+  document.getElementById('synct3').classList.toggle('on', step === 3);
+  document.getElementById('synct4').classList.toggle('on', step >= 4);
+  document.getElementById('sealed').classList.toggle('on', step >= 4);
+  document.getElementById('lacunae').classList.toggle('on', step >= 5);
+  document.getElementById('hcgGroup').classList.toggle('on', step >= 5);
+  for (let k = 0; k <= 5; k++) {
+    document.getElementById('note' + k).classList.toggle('on', k === step);
+    document.getElementById('lab' + k).classList.toggle('on', k === step);
+  }
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # GASTRULATION_GENERAL  (source: gastrulation.html)
 # ---------------------------------------------------------------------------
 GASTRULATION_GENERAL = '''
@@ -6586,6 +6773,18 @@ REGISTRY = {
             ),
         },
     },
+    "Implantation": {
+        "General": {
+            "fragment": IMPLANTATION_GENERAL,
+            "height": 480,
+            "blurb": (
+                "The blastocyst hatches from the zona, attaches to the uterine "
+                "lining with its inner cell mass facing the wall, and its "
+                "trophoblast splits into cytotrophoblast and an invading "
+                "syncytiotrophoblast that buries the embryo and releases hCG."
+            ),
+        },
+    },
     "Gastrulation": {
         "General": {
             "fragment": GASTRULATION_GENERAL,
@@ -6847,6 +7046,15 @@ st.caption(
 # REGISTRY entries and mechanism constants are untouched by this.
 # ---------------------------------------------------------------------------
 CATEGORIES = {
+    "Molecular Biology & Genetics": [
+        "DNA replication",
+        "DNA mismatch repair",
+        "Transcription",
+        "Translation",
+        "Lac operon",
+        "RNA interference",
+        "CRISPR-Cas9 gene editing",
+    ],
     "Cell Biology": [
         "Enzyme kinetics & allosteric regulation",
         "Membrane transport",
@@ -6859,27 +7067,8 @@ CATEGORIES = {
     "Embryology": [
         "Fertilization",
         "Cleavage & blastocyst formation",
+        "Implantation",
         "Gastrulation",
-    ],
-    "Immunology": [
-        "Innate immune recognition",
-        "Complement system",
-        "NK cell missing-self recognition",
-        "T cell activation",
-        "Humoral immune response",
-        "Cytotoxic T cell killing",
-        "Immunological memory",
-        "Immune checkpoint (PD-1/PD-L1)",
-        "Type I hypersensitivity",
-    ],
-    "Molecular Biology & Genetics": [
-        "DNA replication",
-        "DNA mismatch repair",
-        "Transcription",
-        "Translation",
-        "Lac operon",
-        "RNA interference",
-        "CRISPR-Cas9 gene editing",
     ],
     "Physiology": [
         "Action potential",
@@ -6900,11 +7089,22 @@ CATEGORIES = {
         "Labor (positive feedback)",
         "Medication mechanism of action",
     ],
+    "Immunology": [
+        "Innate immune recognition",
+        "Complement system",
+        "NK cell missing-self recognition",
+        "T cell activation",
+        "Humoral immune response",
+        "Cytotoxic T cell killing",
+        "Immunological memory",
+        "Immune checkpoint (PD-1/PD-L1)",
+        "Type I hypersensitivity",
+    ],
 }
 
 with st.sidebar:
     st.header("Choose a mechanism")
-    category = st.selectbox("Category", sorted(CATEGORIES.keys()))
+    category = st.selectbox("Category", list(CATEGORIES.keys()))   # molecules -> cells -> development -> body systems -> immunity
     topic = st.radio("Mechanism", CATEGORIES[category])   # listed in the order the processes happen, not alphabetically
     levels_available = list(REGISTRY[topic].keys())
     level = st.radio("Detail level", levels_available)
