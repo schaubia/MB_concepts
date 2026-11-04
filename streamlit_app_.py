@@ -2031,15 +2031,15 @@ GASTRULATION_GENERAL = '''
 <text class="ts" x="340" y="295" text-anchor="middle">Blastopore</text>
 </g>
 
-<path id="innerFold" d="M340 270 Q340 270 340 270" fill="none" stroke="#D85A30" stroke-width="3" class="stg"/>
+<path id="innerFold" d="M340 270 C340 270 340 270 340 270 C340 270 340 270 340 270" fill="none" stroke="#D85A30" stroke-width="3" stroke-linecap="round" class="stg"/>
 
 <g id="archenteron" class="stg">
-<ellipse cx="340" cy="190" rx="45" ry="60" fill="none" stroke="#D85A30" stroke-width="2"/>
-<text class="ts" x="340" y="190" text-anchor="middle" dominant-baseline="central">Archenteron</text>
+<path d="M324 266 C324 212 326 152 340 152 C354 152 356 212 356 266 Z" fill="#D85A30" fill-opacity="0.12" stroke="none"/>
+<text class="ts" x="340" y="130" text-anchor="middle" dominant-baseline="central">Archenteron (gut)</text>
 </g>
 
 <g id="mesoderm" class="stg">
-<circle cx="340" cy="160" r="80" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="5 4"/>
+<path d="M297.5 233.6 A85 85 0 1 1 382.5 233.6" fill="none" stroke="#7F77DD" stroke-width="2" stroke-dasharray="5 4"/>
 </g>
 
 <g id="layers" class="stg">
@@ -2067,18 +2067,20 @@ const labels = [
   "Cells migrate inward, forming the archenteron (primitive gut)",
   "Three germ layers established: ectoderm, mesoderm, endoderm"
 ];
+// the wall folds inward at the blastopore: flat -> shallow dent -> deep tube (archenteron wall = endoderm)
 const folds = [
-  "M340 270 Q340 270 340 270",
-  "M340 270 Q340 240 340 220",
-  "M340 270 Q300 220 320 180 Q340 150 340 190",
-  "M340 270 Q300 220 320 180 Q340 150 340 190"
+  "M340 270 C340 270 340 270 340 270 C340 270 340 270 340 270",
+  "M316 268 C322 250 330 238 340 238 C350 238 358 250 364 268",
+  "M318 268 C318 210 322 144 340 144 C358 144 362 210 362 268",
+  "M318 268 C318 210 322 144 340 144 C358 144 362 210 362 268"
 ];
 function render() {
   document.getElementById('stageLabel').textContent = labels[step];
   document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 3';
   document.getElementById('blastopore').classList.toggle('on', step >= 1);
   document.getElementById('innerFold').classList.toggle('on', step >= 1);
-  document.getElementById('innerFold').setAttribute('d', folds[step]);
+  const fold = document.getElementById('innerFold');
+  fold.setAttribute('d', folds[step]); fold.style.d = `path("${folds[step]}")`;   // animates where CSS d is supported
   document.getElementById('archenteron').classList.toggle('on', step >= 2);
   document.getElementById('mesoderm').classList.toggle('on', step >= 3);
   document.getElementById('layers').classList.toggle('on', step >= 3);
@@ -3981,7 +3983,7 @@ GASTRULATION_TECHNICAL = '''
 </style>
 <svg width="100%" viewBox="0 0 680 340" role="img">
 <title>Gastrulation, technical view</title>
-<desc>The Spemann organizer at the dorsal blastopore lip secretes BMP antagonists, creating a gradient that patterns the dorsal-ventral axis of the ectoderm. Cells move by involution, rolling inward around the blastopore lip, and by convergent extension, intercalating to narrow and elongate the embryo. A separate Nodal signaling gradient specifies the three germ layers: high Nodal produces mesoderm, moderate Nodal produces endoderm, and the absence of Nodal leaves ectoderm.</desc>
+<desc>The Spemann organizer at the dorsal blastopore lip secretes BMP antagonists, creating a gradient that patterns the dorsal-ventral axis of the ectoderm. Cells move by involution, rolling inward around the blastopore lip, and by convergent extension, intercalating to narrow and elongate the embryo. A separate Nodal signaling gradient specifies the three germ layers: the highest Nodal levels produce endoderm, lower levels produce mesoderm, and the absence of Nodal leaves ectoderm.</desc>
 
 <circle cx="340" cy="160" r="120" fill="none" stroke="var(--t)" stroke-width="1.5"/>
 
@@ -3991,19 +3993,19 @@ GASTRULATION_TECHNICAL = '''
 </g>
 
 <g id="bmpGradient" class="stg">
-<path d="M260 250 Q340 230 420 250" stroke="#7F77DD" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-<path d="M260 250 Q340 270 420 250" stroke="#7F77DD" stroke-width="2" fill="none" marker-start="url(#arrow)"/>
-<text class="ts" x="340" y="225" text-anchor="middle">BMP antagonist gradient (Noggin, Chordin)</text>
+<defs><linearGradient id="bmpFade" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#7F77DD" stop-opacity="0.85"/><stop offset="1" stop-color="#7F77DD" stop-opacity="0.05"/></linearGradient></defs>
+<polygon points="326,266 354,266 342,86 338,86" fill="url(#bmpFade)"/>
+<text class="ts" x="362" y="296" text-anchor="start">← BMP antagonists (Noggin, Chordin)</text>
 </g>
 
 <g id="dvPattern" class="stg">
-<text class="ts" x="220" y="100" text-anchor="middle">Low BMP → neural</text>
-<text class="ts" x="460" y="100" text-anchor="middle">High BMP → epidermis</text>
+<text class="ts" x="350" y="208" text-anchor="start">Low BMP → neural</text>
+<text class="ts" x="340" y="70" text-anchor="middle">High BMP → epidermis (far side)</text>
 </g>
 
 <g id="involution" class="stg">
-<path d="M300 265 Q320 230 300 200" stroke="#B91C1C" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
-<text class="ts" x="260" y="220" text-anchor="middle">Involution</text>
+<path d="M300 270 Q318 240 300 212" stroke="#B91C1C" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="294" y="206" text-anchor="end">Involution</text>
 </g>
 
 <g id="convExt" class="stg">
@@ -4014,8 +4016,8 @@ GASTRULATION_TECHNICAL = '''
 <g id="nodalGradient" class="stg">
 <circle cx="340" cy="180" r="30" fill="#E24B4A" opacity="0.5"/>
 <circle cx="340" cy="180" r="55" fill="#E24B4A" opacity="0.25"/>
-<text class="ts" x="340" y="185" text-anchor="middle">High Nodal — mesoderm</text>
-<text class="ts" x="340" y="240" text-anchor="middle">Moderate Nodal — endoderm</text>
+<text class="ts" x="340" y="185" text-anchor="middle">Highest Nodal — endoderm</text>
+<text class="ts" x="340" y="248" text-anchor="middle">Lower Nodal — mesoderm</text>
 </g>
 
 <defs>
@@ -4037,7 +4039,7 @@ const labels = [
   "Step 1 of 4 — it secretes BMP antagonists (Noggin, Chordin), forming a gradient",
   "Step 2 of 4 — the gradient patterns the dorsal-ventral axis: low BMP specifies neural tissue, high BMP specifies epidermis",
   "Step 3 of 4 — cells move by involution (rolling inward) and convergent extension (narrowing and elongating the embryo)",
-  "Step 4 of 4 — a separate Nodal gradient specifies the germ layers: high Nodal → mesoderm, moderate → endoderm, none → ectoderm"
+  "Step 4 of 4 — a separate Nodal gradient specifies the germ layers: highest Nodal → endoderm, lower → mesoderm, none → ectoderm"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];

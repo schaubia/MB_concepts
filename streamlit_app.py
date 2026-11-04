@@ -4172,8 +4172,8 @@ COMPLEMENT_SYSTEM_GENERAL = '''
 <text class="th" x="200" y="150" text-anchor="middle" dominant-baseline="central">Pathogen</text>
 
 <g id="cascade1" class="stg">
-<circle cx="130" cy="90" r="8" class="c-purple"/>
-<text class="ts" x="130" y="72" text-anchor="middle">C1, C4, C2 activate</text>
+<circle cx="150.5" cy="100.5" r="8" class="c-purple"/>
+<text class="ts" x="140" y="90" text-anchor="end">C1, C4, C2 activate</text>
 </g>
 
 <g id="opsonize" class="stg">
@@ -4183,13 +4183,16 @@ COMPLEMENT_SYSTEM_GENERAL = '''
 </g>
 
 <g id="cascadeLate" class="stg">
-<text class="ts" x="200" y="60" text-anchor="middle">C5-C9 assemble</text>
+<circle cx="292" cy="128" r="5" fill="#B91C1C"/>
+<circle cx="302" cy="146" r="5" fill="#B91C1C"/>
+<circle cx="300" cy="166" r="5" fill="#B91C1C"/>
+<circle cx="288" cy="180" r="5" fill="#B91C1C"/>
+<text class="ts" x="312" y="190" text-anchor="start">C5-C9 assemble at the membrane</text>
 </g>
 
 <g id="mac" class="stg">
-<rect x="260" y="120" width="14" height="60" fill="#B91C1C"/>
-<rect x="280" y="120" width="14" height="60" fill="#B91C1C"/>
-<rect x="300" y="120" width="14" height="60" fill="#B91C1C"/>
+<rect x="261" y="134" width="6" height="32" rx="2" fill="#B91C1C"/>
+<rect x="275" y="134" width="6" height="32" rx="2" fill="#B91C1C"/>
 <text class="ts" x="280" y="105" text-anchor="middle">Membrane attack complex</text>
 </g>
 
@@ -4267,13 +4270,13 @@ COMPLEMENT_SYSTEM_TECHNICAL = '''
 <text class="th" x="250" y="160" text-anchor="middle" dominant-baseline="central">Pathogen</text>
 
 <g id="initiation" class="stg">
-<circle cx="120" cy="100" r="8" class="c-purple"/>
-<text class="ts" x="120" y="82" text-anchor="middle" id="initLabel"></text>
+<circle cx="193.7" cy="127.5" r="8" class="c-purple"/>
+<text class="ts" x="182" y="118" text-anchor="end" id="initLabel"></text>
 </g>
 
 <g id="convertase3" class="stg">
-<circle cx="120" cy="170" r="9" class="c-teal"/>
-<text class="ts" x="120" y="192" text-anchor="middle" id="convertase3Label"></text>
+<circle cx="186" cy="171.3" r="9" class="c-teal"/>
+<text class="ts" x="173" y="175" text-anchor="end" id="convertase3Label"></text>
 </g>
 
 <g id="c3split" class="stg">
@@ -4284,16 +4287,14 @@ COMPLEMENT_SYSTEM_TECHNICAL = '''
 </g>
 
 <g id="convertase5" class="stg">
-<circle cx="390" cy="100" r="9" class="c-teal"/>
-<text class="ts" x="390" y="82" text-anchor="middle" id="convertase5Label"></text>
+<circle cx="299.8" cy="118.2" r="9" class="c-teal"/>
+<text class="ts" x="312" y="108" text-anchor="start" id="convertase5Label"></text>
 </g>
 
 <g id="mac" class="stg">
-<rect x="320" y="130" width="8" height="60" fill="#B91C1C"/>
-<rect x="332" y="130" width="8" height="60" fill="#B91C1C"/>
-<rect x="344" y="130" width="8" height="60" fill="#B91C1C"/>
-<rect x="356" y="130" width="8" height="60" fill="#B91C1C"/>
-<text class="ts" x="342" y="115" text-anchor="middle">C5b-9 (MAC)</text>
+<rect x="306" y="144" width="6" height="32" rx="2" fill="#B91C1C"/>
+<rect x="320" y="144" width="6" height="32" rx="2" fill="#B91C1C"/>
+<text class="ts" x="334" y="192" text-anchor="start">C5b-9 (MAC) pore</text>
 </g>
 
 <g id="c5split" class="stg">
@@ -4302,7 +4303,7 @@ COMPLEMENT_SYSTEM_TECHNICAL = '''
 </g>
 
 <g id="lysis" class="stg">
-<path d="M370 160 L420 160" stroke="#B91C1C" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M300 160 L390 160" stroke="#B91C1C" stroke-width="1.5" marker-end="url(#arrow)"/>
 <text class="th" x="250" y="295" text-anchor="middle">Pore forms — pathogen lyses</text>
 </g>
 
