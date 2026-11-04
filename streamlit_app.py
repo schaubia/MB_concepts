@@ -2521,6 +2521,233 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# IMPLANTATION_TECHNICAL  (new)
+# ---------------------------------------------------------------------------
+IMPLANTATION_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of implantation: the progesterone-primed window of implantation, L-selectin apposition, integrin and osteopontin adhesion, syncytiotrophoblast invasion with syncytin and matrix metalloproteinases, decidualization with uterine NK cells, and hCG rescuing the corpus luteum.</h2>
+<style>
+  .reveal { opacity: 0; transition: opacity .5s ease; }
+  .reveal.on { opacity: 1; }
+  #blastoT { transition: transform 1.1s cubic-bezier(.3,0,.2,1); transform-box: view-box; transform-origin: 0 0; }
+  .hcgT { animation: hcgUpT 2.4s ease-in infinite; }
+  @keyframes hcgUpT { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-34px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .hcgT { animation: none; } }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Implantation, technical view</title>
+<desc>Implantation is only possible during a short window of implantation, about 6 to 10 days after ovulation, when progesterone from the corpus luteum has made the endometrium receptive: the epithelium grows pinopodes and secretes LIF. After hatching, the blastocyst makes loose contact as L-selectin on the trophoblast binds sugar ligands on the uterine epithelium, then firm adhesion forms as alpha-v beta-3 integrins on both surfaces are bridged by osteopontin. Trophoblast cells fuse, using syncytin, into an invasive syncytiotrophoblast that secretes matrix metalloproteinases to digest the extracellular matrix and push into the stroma. Around the embryo, progesterone turns stromal cells into swollen, glycogen-rich decidual cells, and uterine natural killer cells gather; together they nourish the embryo and keep invasion controlled. The syncytiotrophoblast then secretes hCG, which binds the LH/hCG receptor on the corpus luteum and keeps it producing progesterone, maintaining the decidua, while eroded maternal vessels fill lacunae with blood, beginning the uteroplacental circulation.</desc>
+<defs>
+<marker id="arrowIT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<text class="ts" x="40" y="40">Uterine cavity</text>
+<text class="th" x="40" y="62" id="dayLabelIT">Day 6</text>
+
+<rect x="30" y="210" width="620" height="110" fill="#FBCFE8" fill-opacity="0.55"/>
+<line x1="30" y1="210" x2="650" y2="210" stroke="#BE185D" stroke-width="2"/>
+<path d="M60 211 Q60 262 74 262 Q88 262 88 211" fill="none" stroke="#BE185D" stroke-width="1.2" stroke-opacity="0.6"/>
+<path d="M110 211 Q110 270 124 270 Q138 270 138 211" fill="none" stroke="#BE185D" stroke-width="1.2" stroke-opacity="0.6"/>
+<path d="M560 211 Q560 266 574 266 Q588 266 588 211" fill="none" stroke="#BE185D" stroke-width="1.2" stroke-opacity="0.6"/>
+<path d="M610 211 Q610 258 624 258 Q638 258 638 211" fill="none" stroke="#BE185D" stroke-width="1.2" stroke-opacity="0.6"/>
+<path d="M170 320 C158 296 182 284 170 262 C160 244 182 236 176 222" fill="none" stroke="#B91C1C" stroke-width="3" stroke-opacity="0.75"/>
+<path d="M520 320 C532 296 508 284 520 262 C530 244 508 236 514 222" fill="none" stroke="#B91C1C" stroke-width="3" stroke-opacity="0.75"/>
+<text class="ts" x="40" y="312">Endometrium</text>
+
+<g id="pinopodes" class="reveal">
+<path d="M270 210 Q276 199 282 210" fill="#FBCFE8" stroke="#BE185D" stroke-width="1.2"/>
+<path d="M292 210 Q298 199 304 210" fill="#FBCFE8" stroke="#BE185D" stroke-width="1.2"/>
+<path d="M314 210 Q320 199 326 210" fill="#FBCFE8" stroke="#BE185D" stroke-width="1.2"/>
+<path d="M336 210 Q342 199 348 210" fill="#FBCFE8" stroke="#BE185D" stroke-width="1.2"/>
+<path d="M358 210 Q364 199 370 210" fill="#FBCFE8" stroke="#BE185D" stroke-width="1.2"/>
+<path d="M380 210 Q386 199 392 210" fill="#FBCFE8" stroke="#BE185D" stroke-width="1.2"/>
+<path d="M402 210 Q408 199 414 210" fill="#FBCFE8" stroke="#BE185D" stroke-width="1.2"/>
+<path d="M424 210 Q430 199 436 210" fill="#FBCFE8" stroke="#BE185D" stroke-width="1.2"/>
+</g>
+<circle id="zonaWT" cx="200" cy="112" r="49" fill="none" stroke="#B45309" stroke-width="2.5" stroke-opacity="0.65"/>
+<path id="zonaBT" d="M236 145 A49 49 0 1 1 245 132" fill="none" stroke="#B45309" stroke-width="2.5" stroke-opacity="0.65" style="opacity:0;transition:opacity .5s ease"/>
+
+<path id="synctA" class="reveal" d="M322 214 Q360 266 398 214 Q360 240 322 214 Z" fill="#9D174D" fill-opacity="0.55"/>
+<path id="synctB" class="reveal" d="M314 252 Q312 316 360 316 Q408 316 406 252 Q394 300 360 300 Q326 300 314 252 Z" fill="#9D174D" fill-opacity="0.55"/>
+<g id="mmp" class="reveal">
+<circle cx="330" cy="246" r="4" fill="#EA580C"/><circle cx="360" cy="262" r="4" fill="#EA580C"/><circle cx="390" cy="246" r="4" fill="#EA580C"/>
+<path d="M318 252 l-8 6 M402 252 l8 6 M360 270 l0 9" stroke="#EA580C" stroke-width="1.5" stroke-dasharray="2 2"/>
+</g>
+<g id="decidua" class="reveal">
+<circle cx="429.5" cy="244.5" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+<circle cx="429.5" cy="271.5" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+<circle cx="410.9" cy="294.8" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+<circle cx="378.6" cy="308.2" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+<circle cx="341.4" cy="308.2" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+<circle cx="309.1" cy="294.8" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+<circle cx="290.5" cy="271.5" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+<circle cx="290.5" cy="244.5" r="9" fill="#FEF3C7" stroke="#D97706" stroke-width="1"/>
+<circle cx="300" cy="300" r="4" class="c-purple"/><circle cx="420" cy="303" r="4" class="c-purple"/><circle cx="440" cy="244" r="4" class="c-purple"/>
+</g>
+<g id="lacunaeT" class="reveal">
+<ellipse cx="334" cy="300" rx="7" ry="4" fill="#B91C1C"/><ellipse cx="360" cy="308" rx="8" ry="4" fill="#B91C1C"/><ellipse cx="386" cy="300" rx="7" ry="4" fill="#B91C1C"/>
+</g>
+
+<g id="blastoT">
+<circle r="34" fill="#378ADD" fill-opacity="0.12"/>
+<circle r="38" fill="none" stroke="#0F6E56" stroke-width="7" stroke-opacity="0.55"/>
+<circle cx="0" cy="-28" r="8" class="c-purple"/><circle cx="-13" cy="-23" r="7" class="c-purple"/><circle cx="13" cy="-23" r="7" class="c-purple"/>
+<circle cx="-6" cy="-15" r="6" class="c-purple"/><circle cx="6" cy="-15" r="6" class="c-purple"/>
+</g>
+<g id="selectin" class="reveal">
+<line x1="334" y1="201" x2="334" y2="205" stroke="#0F6E56" stroke-width="1.5"/><path d="M331 208 L334 205 L337 208" fill="none" stroke="#0F6E56" stroke-width="1.5"/><circle cx="334" cy="209.5" r="2.4" fill="#F59E0B"/>
+<line x1="347" y1="201" x2="347" y2="205" stroke="#0F6E56" stroke-width="1.5"/><path d="M344 208 L347 205 L350 208" fill="none" stroke="#0F6E56" stroke-width="1.5"/><circle cx="347" cy="209.5" r="2.4" fill="#F59E0B"/>
+<line x1="360" y1="201" x2="360" y2="205" stroke="#0F6E56" stroke-width="1.5"/><path d="M357 208 L360 205 L363 208" fill="none" stroke="#0F6E56" stroke-width="1.5"/><circle cx="360" cy="209.5" r="2.4" fill="#F59E0B"/>
+<line x1="373" y1="201" x2="373" y2="205" stroke="#0F6E56" stroke-width="1.5"/><path d="M370 208 L373 205 L376 208" fill="none" stroke="#0F6E56" stroke-width="1.5"/><circle cx="373" cy="209.5" r="2.4" fill="#F59E0B"/>
+<line x1="386" y1="201" x2="386" y2="205" stroke="#0F6E56" stroke-width="1.5"/><path d="M383 208 L386 205 L389 208" fill="none" stroke="#0F6E56" stroke-width="1.5"/><circle cx="386" cy="209.5" r="2.4" fill="#F59E0B"/>
+</g>
+<g id="integrins" class="reveal">
+<rect x="335" y="203" width="2.5" height="10" fill="#0F6E56"/><rect x="338.5" y="203" width="2.5" height="10" fill="#BE185D"/><circle cx="338" cy="208" r="2" fill="#7C3AED"/>
+<rect x="349" y="203" width="2.5" height="10" fill="#0F6E56"/><rect x="352.5" y="203" width="2.5" height="10" fill="#BE185D"/><circle cx="352" cy="208" r="2" fill="#7C3AED"/>
+<rect x="365" y="203" width="2.5" height="10" fill="#0F6E56"/><rect x="368.5" y="203" width="2.5" height="10" fill="#BE185D"/><circle cx="368" cy="208" r="2" fill="#7C3AED"/>
+<rect x="379" y="203" width="2.5" height="10" fill="#0F6E56"/><rect x="382.5" y="203" width="2.5" height="10" fill="#BE185D"/><circle cx="382" cy="208" r="2" fill="#7C3AED"/>
+</g>
+<path id="sealedT" class="reveal" d="M316 210 Q360 204 404 210" fill="none" stroke="#BE185D" stroke-width="3" stroke-linecap="round"/>
+
+<g id="hcgT" class="reveal">
+<circle class="hcgT" cx="330" cy="292" r="3.5" fill="#F59E0B"/><circle class="hcgT" cx="350" cy="300" r="3.5" fill="#F59E0B" style="animation-delay:.6s"/>
+<circle class="hcgT" cx="372" cy="300" r="3.5" fill="#F59E0B" style="animation-delay:1.2s"/><circle class="hcgT" cx="392" cy="292" r="3.5" fill="#F59E0B" style="animation-delay:1.8s"/>
+<line x1="410" y1="290" x2="510" y2="268" stroke="#B45309" stroke-width="1.2" marker-end="url(#arrowIT)"/>
+<text class="ts" x="536" y="292" font-weight="600" fill="#B45309">hCG → blood</text>
+<rect x="40" y="84" width="200" height="92" rx="10" fill="#FFFBEB" stroke="#D97706" stroke-width="1"/>
+<circle cx="76" cy="130" r="20" fill="#FDE68A" stroke="#B45309" stroke-width="1.2"/>
+<path d="M60 116 l-4 -4 M92 116 l4 -4 M60 144 l-4 4 M92 144 l4 4" stroke="#B45309" stroke-width="2"/>
+<text class="ts" x="104" y="104" font-weight="600">Corpus luteum (ovary)</text>
+<text class="ts" x="104" y="122">hCG binds LH/hCG</text>
+<text class="ts" x="104" y="138">receptor → keeps making</text>
+<text class="ts" x="104" y="154">progesterone</text>
+<text class="ts" x="104" y="170">→ decidua maintained</text>
+</g>
+
+<g id="labIT0" class="reveal">
+<text class="ts" x="270" y="196" text-anchor="end">Pinopodes</text>
+<text class="ts" x="200" y="52" text-anchor="middle">Zona pellucida</text>
+</g>
+<g id="labIT1" class="reveal">
+<text class="ts" x="324" y="194" text-anchor="end">L-selectin ↔ sugar ligands</text>
+</g>
+<g id="labIT2" class="reveal">
+<text class="ts" x="316" y="200" text-anchor="end">αvβ3 integrins + osteopontin</text>
+</g>
+<g id="labIT3" class="reveal">
+<line x1="322" y1="180" x2="296" y2="168" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="292" y="166" text-anchor="end">Cytotrophoblast</text>
+<line x1="332" y1="226" x2="296" y2="236" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="292" y="240" text-anchor="end">Syncytiotrophoblast</text>
+<text class="ts" x="410" y="262" font-weight="600" fill="#EA580C">MMPs</text>
+</g>
+<g id="labIT4" class="reveal">
+<line x1="281" y1="271" x2="266" y2="266" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="262" y="268" text-anchor="end">Decidual cells</text>
+<line x1="297" y1="303" x2="288" y2="310" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="284" y="316" text-anchor="end">uNK cells</text>
+</g>
+<g id="labIT5" class="reveal">
+<line x1="327" y1="303" x2="300" y2="313" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="296" y="317" text-anchor="end">Blood-filled lacunae</text>
+</g>
+
+<g id="noteIT0" class="reveal">
+<text class="ts" x="430" y="56"><tspan font-weight="600">Window of implantation</tspan></text>
+<text class="ts" x="430" y="72">~6–10 days after ovulation only</text>
+<text class="ts" x="430" y="92">Progesterone (corpus luteum)</text>
+<text class="ts" x="430" y="108">makes the lining receptive:</text>
+<text class="ts" x="430" y="124">pinopodes + LIF secretion</text>
+</g>
+<g id="noteIT1" class="reveal">
+<text class="ts" x="430" y="56"><tspan font-weight="600">Hatching + apposition</tspan></text>
+<text class="ts" x="430" y="72">Proteases free it from the zona;</text>
+<text class="ts" x="430" y="88"><tspan fill="#0F6E56" font-weight="600">L-selectin</tspan> on trophoblast binds</text>
+<text class="ts" x="430" y="104"><tspan fill="#B45309" font-weight="600">sugar ligands</tspan> on the epithelium</text>
+<text class="ts" x="430" y="120">— loose, reversible contact</text>
+</g>
+<g id="noteIT2" class="reveal">
+<text class="ts" x="430" y="56"><tspan font-weight="600">Adhesion</tspan></text>
+<text class="ts" x="430" y="72"><tspan fill="#0F6E56" font-weight="600">αvβ3</tspan> integrins on trophoblast</text>
+<text class="ts" x="430" y="88">and <tspan fill="#BE185D" font-weight="600">αvβ3</tspan> on the epithelium,</text>
+<text class="ts" x="430" y="104">bridged by <tspan fill="#7C3AED" font-weight="600">osteopontin</tspan></text>
+<text class="ts" x="430" y="120">— firm attachment</text>
+</g>
+<g id="noteIT3" class="reveal">
+<text class="ts" x="430" y="56"><tspan font-weight="600">Invasion</tspan></text>
+<text class="ts" x="430" y="72">Trophoblast cells fuse (syncytin,</text>
+<text class="ts" x="430" y="88">a retroviral gene) into the</text>
+<text class="ts" x="430" y="104"><tspan fill="#9D174D" font-weight="600">syncytiotrophoblast</tspan>, which</text>
+<text class="ts" x="430" y="120">secretes <tspan fill="#EA580C" font-weight="600">MMPs</tspan> to digest the matrix</text>
+</g>
+<g id="noteIT4" class="reveal">
+<text class="ts" x="430" y="56"><tspan font-weight="600">Decidualization</tspan></text>
+<text class="ts" x="430" y="72">Progesterone turns stromal cells</text>
+<text class="ts" x="430" y="88">into swollen, glycogen-rich</text>
+<text class="ts" x="430" y="104"><tspan fill="#B45309" font-weight="600">decidual cells</tspan>; <tspan fill="#6D28D9" font-weight="600">uNK cells</tspan> gather</text>
+<text class="ts" x="430" y="120">— nourish the embryo and</text>
+<text class="ts" x="430" y="136">keep invasion under control</text>
+</g>
+<g id="noteIT5" class="reveal">
+<text class="ts" x="430" y="56"><tspan font-weight="600">Maternal recognition</tspan></text>
+<text class="ts" x="430" y="72"><tspan fill="#B45309" font-weight="600">hCG</tspan> rescues the corpus luteum,</text>
+<text class="ts" x="430" y="88">so progesterone stays high</text>
+<text class="ts" x="430" y="104">Eroded maternal vessels fill</text>
+<text class="ts" x="430" y="120">lacunae — the uteroplacental</text>
+<text class="ts" x="430" y="136">circulation begins</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+// [x, y, rotation°]: in the zona -> just above the epithelium (loose) -> touching (firm) -> half sunk -> fully embedded
+const POS = [[200, 112, 0], [360, 160, 180], [360, 169, 180], [360, 192, 180], [360, 254, 180], [360, 254, 180]];
+const days = ['Day 6', 'Day 6–7', 'Day 7', 'Day 7–8', 'Day 8–10', 'Day 10–12'];
+const labels = [
+  "Step 0 of 5 — window of implantation: progesterone from the corpus luteum makes the endometrium receptive (pinopodes, LIF) for only a few days",
+  "Step 1 of 5 — hatching and apposition: proteases free the blastocyst from the zona; L-selectin on the trophoblast binds sugar ligands on the epithelium — a loose, reversible contact",
+  "Step 2 of 5 — adhesion: αvβ3 integrins on trophoblast and epithelium are bridged by osteopontin, firmly attaching the embryonic pole",
+  "Step 3 of 5 — invasion: trophoblast cells fuse via syncytin into the syncytiotrophoblast, which secretes matrix metalloproteinases (MMPs) and digests its way into the stroma",
+  "Step 4 of 5 — decidualization: progesterone turns the surrounding stromal cells into glycogen-rich decidual cells, and uterine NK cells gather — nourishing the embryo and limiting invasion",
+  "Step 5 of 5 — hCG from the syncytiotrophoblast binds the LH/hCG receptor on the corpus luteum, keeping progesterone high; lacunae fill with maternal blood as the uteroplacental circulation begins"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('dayLabelIT').textContent = days[step];
+  const [x, y, rot] = POS[step];
+  document.getElementById('blastoT').style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+  document.getElementById('zonaWT').style.opacity = step === 0 ? '1' : '0';
+  document.getElementById('zonaBT').style.opacity = step === 1 ? '0.4' : '0';
+  const on = (id, v) => document.getElementById(id).classList.toggle('on', v);
+  on('pinopodes', step <= 2);
+  on('selectin', step === 1);
+  on('integrins', step === 2);
+  on('synctA', step === 3);
+  on('mmp', step === 3);
+  on('synctB', step >= 4);
+  on('sealedT', step >= 4);
+  on('decidua', step >= 4);
+  on('lacunaeT', step >= 5);
+  on('hcgT', step >= 5);
+  for (let k = 0; k <= 5; k++) { on('noteIT' + k, k === step); on('labIT' + k, k === step); }
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # GASTRULATION_GENERAL  (source: gastrulation.html)
 # ---------------------------------------------------------------------------
 GASTRULATION_GENERAL = '''
@@ -6782,6 +7009,16 @@ REGISTRY = {
                 "lining with its inner cell mass facing the wall, and its "
                 "trophoblast splits into cytotrophoblast and an invading "
                 "syncytiotrophoblast that buries the embryo and releases hCG."
+            ),
+        },
+        "Technical": {
+            "fragment": IMPLANTATION_TECHNICAL,
+            "height": 480,
+            "blurb": (
+                "A progesterone-primed window of implantation (pinopodes, LIF); "
+                "L-selectin apposition then αvβ3 integrin/osteopontin adhesion; "
+                "syncytin-driven syncytiotrophoblast invades with MMPs; "
+                "decidualization and uNK cells; hCG rescues the corpus luteum."
             ),
         },
     },
