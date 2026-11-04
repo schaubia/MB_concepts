@@ -2008,6 +2008,119 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# CLEAVAGE_BLASTOCYST_GENERAL  (new)
+# ---------------------------------------------------------------------------
+CLEAVAGE_BLASTOCYST_GENERAL = '''
+<h2 class="sr-only">Interactive diagram of cleavage and blastocyst formation: the zygote divides into 2, 4, 8 and then 16 ever-smaller cells inside the zona pellucida, compacts into a morula, and hollows out into a blastocyst with an inner cell mass, a trophoblast layer and a fluid-filled blastocoel.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .reveal { opacity: 0; transition: opacity .5s ease; }
+  .reveal.on { opacity: 1; }
+  .cell { transition: cx .9s cubic-bezier(.3,0,.2,1), cy .9s cubic-bezier(.3,0,.2,1), r .9s cubic-bezier(.3,0,.2,1), fill .6s ease, stroke .6s ease; }
+  #blastocoel, #troLayer, #morulaSurface { transition: opacity .6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Cleavage and blastocyst formation</title>
+<desc>After fertilization the zygote divides repeatedly without growing: 2 cells, then 4, then 8, each half the size of the one before, all inside the same zona pellucida. Around day 3 to 4 the 16-cell embryo compacts into a tight ball called the morula, in which outer and inner cells begin to differ. By day 5 fluid collects in a central cavity, the blastocoel, turning the morula into a blastocyst: the outer cells form the trophoblast, which will become the placenta, and an inner cell mass clustered at one side will form the embryo itself.</desc>
+
+<text class="ts" x="340" y="26" text-anchor="middle" id="stageLabel">Zygote</text>
+
+<circle id="blastocoel" cx="340" cy="150" r="66" fill="#378ADD" fill-opacity="0.12" style="opacity:0"/>
+<circle id="troLayer" cx="340" cy="150" r="74" fill="none" stroke="#0F6E56" stroke-width="9" stroke-opacity="0.35" style="opacity:0"/>
+<circle id="morulaSurface" cx="340" cy="150" r="80" fill="none" stroke="var(--t)" stroke-width="1" stroke-dasharray="3 3" style="opacity:0"/>
+<circle id="cell0" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell1" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell2" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell3" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell4" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell5" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell6" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell7" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell8" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell9" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell10" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell11" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell12" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell13" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell14" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="cell15" class="cell c-amber" cx="340" cy="150" r="0"/>
+<circle id="zona" cx="340" cy="150" r="88" fill="none" stroke="#B45309" stroke-width="2.5" stroke-opacity="0.6"/>
+<text class="ts" x="340" y="256" text-anchor="middle">Zona pellucida — the embryo does not grow yet</text>
+
+<text class="th" x="60" y="120" id="dayLabel">Day 0–1</text>
+<text class="ts" x="60" y="140" id="countLabel">1 cell</text>
+<text class="ts" x="60" y="158" id="sizeLabel">full-size cell</text>
+
+<g id="morulaNote" class="reveal">
+<text class="ts" x="452" y="118" text-anchor="start">Cells pack tightly (compaction)</text>
+<text class="ts" x="452" y="150" text-anchor="start"><tspan fill="#0F6E56" font-weight="600">Outer cells</tspan> → trophoblast</text>
+<text class="ts" x="452" y="168" text-anchor="start"><tspan fill="#6D28D9" font-weight="600">Inner cells</tspan> → inner cell mass</text>
+</g>
+
+<g id="blastoLabels" class="reveal">
+<line x1="370" y1="98" x2="448" y2="78" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="452" y="74" text-anchor="start">Inner cell mass → the embryo</text>
+<line x1="410" y1="168" x2="448" y2="190" stroke="var(--t)" stroke-width="0.75"/>
+<text class="ts" x="452" y="196" text-anchor="start">Trophoblast → placenta</text>
+<text class="ts" x="340" y="174" text-anchor="middle">Blastocoel</text>
+<text class="ts" x="340" y="188" text-anchor="middle">(fluid-filled cavity)</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const LAYOUT = [[[0,0,74],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[-40,0,40],[40,0,40],[-40,0,0],[40,0,0],[-40,0,0],[40,0,0],[-40,0,0],[40,0,0],[-40,0,0],[40,0,0],[-40,0,0],[40,0,0],[-40,0,0],[40,0,0],[-40,0,0],[40,0,0]],[[-29,-29,30],[29,-29,30],[-29,29,30],[29,29,30],[-29,-29,0],[29,-29,0],[-29,29,0],[29,29,0],[-29,-29,0],[29,-29,0],[-29,29,0],[29,29,0],[-29,-29,0],[29,-29,0],[-29,29,0],[29,29,0]],[[-41.7,-19.4,22],[27.7,-36.7,22],[-41.0,20.9,22],[29.6,35.2,22],[0,0,22],[-11.1,-44.6,22],[-8.8,45.2,22],[46.0,-0.8,22],[-41.7,-19.4,0],[27.7,-36.7,0],[-41.0,20.9,0],[29.6,35.2,0],[0,0,0],[-11.1,-44.6,0],[-8.8,45.2,0],[46.0,-0.8,0]],[[-52.7,-21.8,22],[21.8,-52.7,22],[-52.7,21.8,22],[52.7,21.8,22],[-21.8,-52.7,22],[52.7,-21.8,22],[-21.8,52.7,22],[21.8,52.7,22],[-26.3,-12.3,14],[17.5,-23.2,14],[-25.8,13.2,14],[18.6,22.2,14],[0,0,14],[-7.0,-28.1,14],[-5.5,28.5,14],[29.0,-0.5,14]],[[-68.4,-28.3,11],[28.3,-68.4,11],[-68.4,28.3,11],[68.4,28.3,11],[-28.3,-68.4,11],[68.4,-28.3,11],[-28.3,68.4,11],[28.3,68.4,11],[-22,-52,11],[0,-55,11],[22,-52,11],[-24,-32,11],[0,-34,11],[24,-32,11],[-12,-14,11],[12,-14,11]]];
+const stages = ['Zygote', '2-cell stage', '4-cell stage', '8-cell stage', 'Morula (compacted)', 'Blastocyst'];
+const days   = ['Day 0–1', 'Day 1–2', 'Day 2', 'Day 3', 'Day 3–4', 'Day 5'];
+const counts = ['1 cell', '2 cells', '4 cells', '8 cells', '16+ cells', '~60–100 cells'];
+const sizes  = ['full-size cell', 'each ½ the size', 'each ¼ the size', 'each ⅛ the size', 'smaller still', 'two cell types'];
+const labels = [
+  "Step 0 of 5 — the zygote: one large cell inside the zona pellucida",
+  "Step 1 of 5 — first cleavage: the zygote divides into 2 cells (blastomeres) — the embryo does not get bigger",
+  "Step 2 of 5 — second cleavage: 4 cells, each smaller again; total size is still the same",
+  "Step 3 of 5 — third cleavage: 8 cells — each division just splits the same volume into more, smaller cells",
+  "Step 4 of 5 — compaction: the 16+ cells pack tightly into a morula; outer and inner cells start to take different fates",
+  "Step 5 of 5 — blastocyst: fluid fills a central cavity (blastocoel); outer cells form the trophoblast (future placenta), the inner cell mass will form the embryo"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('stageLabel').textContent = stages[step];
+  document.getElementById('dayLabel').textContent = days[step];
+  document.getElementById('countLabel').textContent = counts[step];
+  document.getElementById('sizeLabel').textContent = sizes[step];
+  LAYOUT[step].forEach(([dx, dy, r], i) => {
+    const c = document.getElementById('cell' + i);
+    const cx = 340 + dx, cy = 150 + dy;
+    c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', r);
+    c.style.cx = cx + 'px'; c.style.cy = cy + 'px'; c.style.r = r + 'px';
+    // from compaction on, outer cells (0-7) and inner cells (8-15) take different fates
+    c.setAttribute('class', 'cell ' + (step >= 4 ? (i < 8 ? 'c-teal' : 'c-purple') : 'c-amber'));
+  });
+  document.getElementById('morulaSurface').style.opacity = step === 4 ? '1' : '0';
+  document.getElementById('morulaNote').classList.toggle('on', step === 4);
+  document.getElementById('blastocoel').style.opacity = step >= 5 ? '1' : '0';
+  document.getElementById('troLayer').style.opacity = step >= 5 ? '1' : '0';
+  document.getElementById('blastoLabels').classList.toggle('on', step >= 5);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # GASTRULATION_GENERAL  (source: gastrulation.html)
 # ---------------------------------------------------------------------------
 GASTRULATION_GENERAL = '''
@@ -6237,6 +6350,18 @@ REGISTRY = {
             ),
         },
     },
+    "Cleavage & blastocyst formation": {
+        "General": {
+            "fragment": CLEAVAGE_BLASTOCYST_GENERAL,
+            "height": 460,
+            "blurb": (
+                "The zygote divides into 2, 4, 8 and 16 ever-smaller cells "
+                "without growing, compacts into a morula, then hollows into "
+                "a blastocyst: trophoblast (future placenta) around a "
+                "fluid-filled cavity, with an inner cell mass (future embryo)."
+            ),
+        },
+    },
     "Gastrulation": {
         "General": {
             "fragment": GASTRULATION_GENERAL,
@@ -6508,6 +6633,7 @@ CATEGORIES = {
         "Membrane transport",
     ],
     "Embryology": [
+        "Cleavage & blastocyst formation",
         "Fertilization",
         "Gastrulation",
     ],
