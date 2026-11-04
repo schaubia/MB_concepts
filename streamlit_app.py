@@ -6848,64 +6848,64 @@ st.caption(
 # ---------------------------------------------------------------------------
 CATEGORIES = {
     "Cell Biology": [
-        "Apoptosis",
-        "Cell division (mitosis)",
-        "Cell signaling (GPCR → cAMP → PKA)",
-        "Endocytosis / exocytosis",
         "Enzyme kinetics & allosteric regulation",
-        "Meiosis",
         "Membrane transport",
+        "Endocytosis / exocytosis",
+        "Cell signaling (GPCR → cAMP → PKA)",
+        "Cell division (mitosis)",
+        "Meiosis",
+        "Apoptosis",
     ],
     "Embryology": [
-        "Cleavage & blastocyst formation",
         "Fertilization",
+        "Cleavage & blastocyst formation",
         "Gastrulation",
     ],
     "Immunology": [
-        "Complement system",
-        "Cytotoxic T cell killing",
-        "Humoral immune response",
-        "Immune checkpoint (PD-1/PD-L1)",
-        "Immunological memory",
         "Innate immune recognition",
+        "Complement system",
         "NK cell missing-self recognition",
         "T cell activation",
+        "Humoral immune response",
+        "Cytotoxic T cell killing",
+        "Immunological memory",
+        "Immune checkpoint (PD-1/PD-L1)",
         "Type I hypersensitivity",
     ],
     "Molecular Biology & Genetics": [
-        "CRISPR-Cas9 gene editing",
-        "DNA mismatch repair",
         "DNA replication",
-        "Lac operon",
-        "RNA interference",
+        "DNA mismatch repair",
         "Transcription",
         "Translation",
+        "Lac operon",
+        "RNA interference",
+        "CRISPR-Cas9 gene editing",
     ],
     "Physiology": [
         "Action potential",
+        "Synaptic transmission",
+        "Synaptic plasticity (LTP)",
+        "Reflex arc (patellar reflex)",
+        "Dopamine reward pathway",
+        "Sleep-wake regulation",
+        "Muscle contraction (skeletal)",
+        "Muscle contraction (cardiac)",
+        "Cardiac conduction system",
         "Baroreceptor reflex",
         "Blood clotting (hemostasis)",
-        "Blood glucose homeostasis",
-        "Cardiac conduction system",
-        "Dopamine reward pathway",
-        "Electron transport chain & ATP synthase",
         "Gas exchange (alveoli)",
+        "Electron transport chain & ATP synthase",
+        "Nephron filtration",
+        "Blood glucose homeostasis",
         "Labor (positive feedback)",
         "Medication mechanism of action",
-        "Muscle contraction (cardiac)",
-        "Muscle contraction (skeletal)",
-        "Nephron filtration",
-        "Reflex arc (patellar reflex)",
-        "Sleep-wake regulation",
-        "Synaptic plasticity (LTP)",
-        "Synaptic transmission",
     ],
 }
 
 with st.sidebar:
     st.header("Choose a mechanism")
     category = st.selectbox("Category", sorted(CATEGORIES.keys()))
-    topic = st.radio("Mechanism", sorted(CATEGORIES[category]))
+    topic = st.radio("Mechanism", CATEGORIES[category])   # listed in the order the processes happen, not alphabetically
     levels_available = list(REGISTRY[topic].keys())
     level = st.radio("Detail level", levels_available)
 
