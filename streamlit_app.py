@@ -2121,6 +2121,219 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# CLEAVAGE_BLASTOCYST_TECHNICAL  (new)
+# ---------------------------------------------------------------------------
+CLEAVAGE_BLASTOCYST_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of preimplantation development: compaction by E-cadherin and apical polarity, outer versus inner cells, Hippo and YAP signalling switching on Cdx2 or Oct4, cavitation driven by Na/K pumps and tight junctions, and the split of the inner cell mass into epiblast and primitive endoderm.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .reveal { opacity: 0; transition: opacity .5s ease; }
+  .reveal.on { opacity: 1; }
+  .tcell, .tnuc { transition: cx .9s cubic-bezier(.3,0,.2,1), cy .9s cubic-bezier(.3,0,.2,1), r .9s cubic-bezier(.3,0,.2,1), fill .6s ease, stroke .6s ease; }
+  .tnuc { stroke-width: 1; }
+  .cap { transition: opacity .5s ease; }
+  #ballBg, #blastocoelT { transition: opacity .6s ease, r .9s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Cleavage and blastocyst formation, technical view</title>
+<desc>At the 8-cell stage the blastomeres compact: E-cadherin adherens junctions flatten them against each other and each cell forms an apical domain of Par3, Par6 and aPKC on its outer face. At the 8 to 16 cell divisions, daughters that keep the apical domain stay outside and become polar, while daughters without it are pushed inside and are apolar. In outer cells the Hippo pathway is off, so YAP enters the nucleus, binds TEAD4 and switches on Cdx2, making trophectoderm. In inner cells Hippo is on, LATS kinases keep YAP out of the nucleus, and Oct4 and Nanog remain on, making the inner cell mass. Tight junctions then seal the trophectoderm and Na/K ATPases on its inner face pump sodium inward; water follows through aquaporins and inflates the blastocoel. In the blastocyst the inner cell mass separates into Nanog-positive epiblast, the future embryo, and a Gata6-positive primitive endoderm layer facing the cavity, driven by FGF4 and ERK signalling.</desc>
+<defs>
+<marker id="arrowT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<clipPath id="ballClip"><circle id="ballClipC" cx="290" cy="165" r="200"/></clipPath>
+</defs>
+
+<text class="ts" x="290" y="22" text-anchor="middle" id="stageLabelT">8-cell embryo</text>
+<text class="th" x="20" y="60" id="dayLabelT">Day 3</text>
+
+<circle id="blastocoelT" cx="290" cy="165" r="64" fill="#378ADD" fill-opacity="0.12" style="opacity:0"/>
+<circle id="ballBg" cx="290" cy="165" r="66" fill="#FDE68A" style="opacity:0"/>
+<circle id="teLayer" cx="290" cy="165" r="77" fill="none" stroke="#0F6E56" stroke-width="12" stroke-opacity="0.3" style="opacity:0;transition:opacity .6s ease"/>
+<g clip-path="url(#ballClip)">
+<circle id="tc0" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc1" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc2" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc3" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc4" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc5" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc6" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc7" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc8" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc9" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc10" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc11" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc12" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc13" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc14" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tc15" class="tcell c-amber" cx="290" cy="165" r="0"/>
+<circle id="tn0" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn1" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn2" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn3" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn4" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn5" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn6" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn7" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn8" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn9" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn10" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn11" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn12" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn13" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn14" class="tnuc" cx="290" cy="165" r="0"/>
+<circle id="tn15" class="tnuc" cx="290" cy="165" r="0"/>
+</g>
+<path id="cap0" class="cap" d="M0 0" fill="none" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+<path id="cap1" class="cap" d="M0 0" fill="none" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+<path id="cap2" class="cap" d="M0 0" fill="none" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+<path id="cap3" class="cap" d="M0 0" fill="none" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+<path id="cap4" class="cap" d="M0 0" fill="none" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+<path id="cap5" class="cap" d="M0 0" fill="none" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+<path id="cap6" class="cap" d="M0 0" fill="none" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+<path id="cap7" class="cap" d="M0 0" fill="none" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+<g id="ecad" class="reveal">
+<line x1="297.1" y1="172.1" x2="333.8" y2="208.8" stroke="#6D28D9" stroke-width="2.5" stroke-dasharray="3 3"/>
+<line x1="290.0" y1="175.0" x2="290.0" y2="227.0" stroke="#6D28D9" stroke-width="2.5" stroke-dasharray="3 3"/>
+<line x1="282.9" y1="172.1" x2="246.2" y2="208.8" stroke="#6D28D9" stroke-width="2.5" stroke-dasharray="3 3"/>
+<line x1="280.0" y1="165.0" x2="228.0" y2="165.0" stroke="#6D28D9" stroke-width="2.5" stroke-dasharray="3 3"/>
+<line x1="282.9" y1="157.9" x2="246.2" y2="121.2" stroke="#6D28D9" stroke-width="2.5" stroke-dasharray="3 3"/>
+<line x1="290.0" y1="155.0" x2="290.0" y2="103.0" stroke="#6D28D9" stroke-width="2.5" stroke-dasharray="3 3"/>
+<line x1="297.1" y1="157.9" x2="333.8" y2="121.2" stroke="#6D28D9" stroke-width="2.5" stroke-dasharray="3 3"/>
+<line x1="300.0" y1="165.0" x2="352.0" y2="165.0" stroke="#6D28D9" stroke-width="2.5" stroke-dasharray="3 3"/>
+</g>
+<g id="tightJ" class="reveal">
+<circle cx="348.0" cy="223.0" r="2.6" fill="#1F2937"/>
+<circle cx="290.0" cy="247.0" r="2.6" fill="#1F2937"/>
+<circle cx="232.0" cy="223.0" r="2.6" fill="#1F2937"/>
+<circle cx="208.0" cy="165.0" r="2.6" fill="#1F2937"/>
+<circle cx="232.0" cy="107.0" r="2.6" fill="#1F2937"/>
+<circle cx="290.0" cy="83.0" r="2.6" fill="#1F2937"/>
+<circle cx="348.0" cy="107.0" r="2.6" fill="#1F2937"/>
+<circle cx="372.0" cy="165.0" r="2.6" fill="#1F2937"/>
+</g>
+<g id="pumps" class="reveal">
+<rect x="227.8" y="136.9" width="8" height="8" rx="1.5" fill="#F59E0B" stroke="#B45309" stroke-width="0.8"/><line x1="236.4" y1="142.8" x2="249.3" y2="148.2" stroke="#B45309" stroke-width="1.2" marker-end="url(#arrowT)"/>
+<rect x="227.8" y="185.1" width="8" height="8" rx="1.5" fill="#F59E0B" stroke="#B45309" stroke-width="0.8"/><line x1="236.4" y1="187.2" x2="249.3" y2="181.8" stroke="#B45309" stroke-width="1.2" marker-end="url(#arrowT)"/>
+<rect x="344.2" y="185.1" width="8" height="8" rx="1.5" fill="#F59E0B" stroke="#B45309" stroke-width="0.8"/><line x1="343.6" y1="187.2" x2="330.7" y2="181.8" stroke="#B45309" stroke-width="1.2" marker-end="url(#arrowT)"/>
+<rect x="344.2" y="136.9" width="8" height="8" rx="1.5" fill="#F59E0B" stroke="#B45309" stroke-width="0.8"/><line x1="343.6" y1="142.8" x2="330.7" y2="148.2" stroke="#B45309" stroke-width="1.2" marker-end="url(#arrowT)"/>
+<rect x="261.9" y="219.2" width="8" height="8" rx="1.5" fill="#F59E0B" stroke="#B45309" stroke-width="0.8"/><line x1="267.8" y1="218.6" x2="273.2" y2="205.7" stroke="#B45309" stroke-width="1.2" marker-end="url(#arrowT)"/>
+<rect x="310.1" y="219.2" width="8" height="8" rx="1.5" fill="#F59E0B" stroke="#B45309" stroke-width="0.8"/><line x1="312.2" y1="218.6" x2="306.8" y2="205.7" stroke="#B45309" stroke-width="1.2" marker-end="url(#arrowT)"/>
+</g>
+<circle cx="290" cy="165" r="100" fill="none" stroke="#B45309" stroke-width="2.5" stroke-opacity="0.55"/>
+<text class="ts" x="290" y="282" text-anchor="middle">Zona pellucida</text>
+
+<g id="note0" class="reveal">
+<text class="ts" x="420" y="120">Blastomeres round and loosely attached</text>
+<text class="ts" x="420" y="138">— every cell still touches the outside</text>
+</g>
+<g id="note1" class="reveal">
+<text class="ts" x="420" y="110"><tspan fill="#6D28D9" font-weight="600">E-cadherin</tspan> junctions pull cells flat</text>
+<text class="ts" x="420" y="128">against each other (compaction)</text>
+<text class="ts" x="420" y="156"><tspan fill="#EA580C" font-weight="600">Apical domain</tspan> (Par3 / Par6 / aPKC)</text>
+<text class="ts" x="420" y="174">forms on each cell's outer face</text>
+</g>
+<g id="note2" class="reveal">
+<text class="ts" x="420" y="104">8 → 16 cells</text>
+<text class="ts" x="420" y="126">Keeps the <tspan fill="#EA580C" font-weight="600">apical domain</tspan></text>
+<text class="ts" x="420" y="144">→ stays outside (polar)</text>
+<text class="ts" x="420" y="170">No apical domain</text>
+<text class="ts" x="420" y="188">→ pushed inside (apolar)</text>
+</g>
+<g id="note3" class="reveal">
+<text class="ts" x="420" y="92"><tspan fill="#0F6E56" font-weight="600">Outer (polar) cells</tspan></text>
+<text class="ts" x="420" y="110">Hippo OFF → YAP enters nucleus</text>
+<text class="ts" x="420" y="128">+ TEAD4 → <tspan font-weight="600">Cdx2</tspan> → trophectoderm</text>
+<text class="ts" x="420" y="160"><tspan fill="#6D28D9" font-weight="600">Inner (apolar) cells</tspan></text>
+<text class="ts" x="420" y="178">Hippo ON → LATS keeps YAP out</text>
+<text class="ts" x="420" y="196">of nucleus → <tspan font-weight="600">Oct4 / Nanog</tspan> → ICM</text>
+</g>
+<g id="note4" class="reveal">
+<text class="ts" x="420" y="100"><tspan fill="#1F2937" font-weight="600">●</tspan> Tight junctions seal the</text>
+<text class="ts" x="420" y="118">trophectoderm into a barrier</text>
+<text class="ts" x="420" y="148"><tspan fill="#B45309" font-weight="600">■</tspan> Na⁺/K⁺-ATPase on the inner</text>
+<text class="ts" x="420" y="166">face pumps Na⁺ inward →</text>
+<text class="ts" x="420" y="184">water follows (aquaporins)</text>
+<text class="ts" x="420" y="202">→ blastocoel inflates</text>
+</g>
+<g id="note5" class="reveal">
+<text class="ts" x="420" y="92"><tspan fill="#6D28D9" font-weight="600">Epiblast</tspan> (Nanog) → the embryo</text>
+<text class="ts" x="420" y="112"><tspan fill="#B45309" font-weight="600">Primitive endoderm</tspan> (Gata6)</text>
+<text class="ts" x="420" y="130">→ yolk sac; lines the cavity</text>
+<text class="ts" x="420" y="148">(sorted by FGF4 → ERK)</text>
+<text class="ts" x="420" y="178"><tspan fill="#0F6E56" font-weight="600">Trophectoderm</tspan> → placenta</text>
+<text class="ts" x="420" y="208">Next: hatches from the zona</text>
+<text class="ts" x="420" y="226">and implants (day 6–7)</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const CX = 290, CY = 165;
+const LAYOUT = [[[-40.7,-16.8,21],[16.8,-40.7,21],[-40.7,16.8,21],[40.7,16.8,21],[-16.8,-40.7,21],[40.7,-16.8,21],[-16.8,40.7,21],[16.8,40.7,21],[-40.7,-16.8,0],[16.8,-40.7,0],[-40.7,16.8,0],[40.7,16.8,0],[-16.8,-40.7,0],[40.7,-16.8,0],[-16.8,40.7,0],[16.8,40.7,0]],[[-33.3,-13.8,31],[13.8,-33.3,31],[-33.3,13.8,31],[33.3,13.8,31],[-13.8,-33.3,31],[33.3,-13.8,31],[-13.8,33.3,31],[13.8,33.3,31],[-33.3,-13.8,0],[13.8,-33.3,0],[-33.3,13.8,0],[33.3,13.8,0],[-13.8,-33.3,0],[33.3,-13.8,0],[-13.8,33.3,0],[13.8,33.3,0]],[[-49.9,-20.7,21],[20.7,-49.9,21],[-49.9,20.7,21],[49.9,20.7,21],[-20.7,-49.9,21],[49.9,-20.7,21],[-20.7,49.9,21],[20.7,49.9,21],[-22.2,-9.2,13],[9.2,-22.2,13],[-22.2,9.2,13],[22.2,9.2,13],[-9.2,-22.2,13],[22.2,-9.2,13],[-9.2,22.2,13],[9.2,22.2,13]],[[-49.9,-20.7,21],[20.7,-49.9,21],[-49.9,20.7,21],[49.9,20.7,21],[-20.7,-49.9,21],[49.9,-20.7,21],[-20.7,49.9,21],[20.7,49.9,21],[-22.2,-9.2,13],[9.2,-22.2,13],[-22.2,9.2,13],[22.2,9.2,13],[-9.2,-22.2,13],[22.2,-9.2,13],[-9.2,22.2,13],[9.2,22.2,13]],[[-71.1,-29.5,13],[29.5,-71.1,13],[-71.1,29.5,13],[71.1,29.5,13],[-29.5,-71.1,13],[71.1,-29.5,13],[-29.5,71.1,13],[29.5,71.1,13],[-22,-53,11],[0,-56,11],[22,-53,11],[-24,-33,11],[0,-35,11],[24,-33,11],[-12,-15,11],[12,-15,11]],[[-71.1,-29.5,13],[29.5,-71.1,13],[-71.1,29.5,13],[71.1,29.5,13],[-29.5,-71.1,13],[71.1,-29.5,13],[-29.5,71.1,13],[29.5,71.1,13],[-22,-53,11],[0,-56,11],[22,-53,11],[-24,-33,11],[0,-35,11],[24,-33,11],[-12,-15,11],[12,-15,11]]];
+const CAPS = [["M0 0","M0 0","M0 0","M0 0","M0 0","M0 0","M0 0","M0 0"],["M224.3 158.7 A66 66 0 0 1 239.1 123.0","M296.3 99.3 A66 66 0 0 1 332.0 114.1","M239.1 207.0 A66 66 0 0 1 224.3 171.3","M355.7 171.3 A66 66 0 0 1 340.9 207.0","M248.0 114.1 A66 66 0 0 1 283.7 99.3","M340.9 123.0 A66 66 0 0 1 355.7 158.7","M283.7 230.7 A66 66 0 0 1 248.0 215.9","M332.0 215.9 A66 66 0 0 1 296.3 230.7"],["M215.3 157.8 A75 75 0 0 1 232.1 117.3","M297.2 90.3 A75 75 0 0 1 337.7 107.1","M232.1 212.7 A75 75 0 0 1 215.3 172.2","M364.7 172.2 A75 75 0 0 1 347.9 212.7","M242.3 107.1 A75 75 0 0 1 282.8 90.3","M347.9 117.3 A75 75 0 0 1 364.7 157.8","M282.8 239.7 A75 75 0 0 1 242.3 222.9","M337.7 222.9 A75 75 0 0 1 297.2 239.7"],["M215.3 157.8 A75 75 0 0 1 232.1 117.3","M297.2 90.3 A75 75 0 0 1 337.7 107.1","M232.1 212.7 A75 75 0 0 1 215.3 172.2","M364.7 172.2 A75 75 0 0 1 347.9 212.7","M242.3 107.1 A75 75 0 0 1 282.8 90.3","M347.9 117.3 A75 75 0 0 1 364.7 157.8","M282.8 239.7 A75 75 0 0 1 242.3 222.9","M337.7 222.9 A75 75 0 0 1 297.2 239.7"],["M0 0","M0 0","M0 0","M0 0","M0 0","M0 0","M0 0","M0 0"],["M0 0","M0 0","M0 0","M0 0","M0 0","M0 0","M0 0","M0 0"]];
+const BALL = [0, 66, 75, 75, 0, 0];
+const PRE = [11, 13, 14, 15];   // ICM cells on the side facing the cavity
+const stages = ['8-cell embryo', 'Compaction', '16-cell: outer vs inner cells', 'Cell-fate decision', 'Cavitation', 'Blastocyst'];
+const days   = ['Day 3', 'Day 3', 'Day 3–4', 'Day 3–4', 'Day 4', 'Day 5–6'];
+const labels = [
+  "Step 0 of 5 — 8-cell embryo (day 3): blastomeres are round and loosely attached; every cell still touches the outside",
+  "Step 1 of 5 — compaction: E-cadherin adherens junctions flatten the cells against each other, and each cell polarizes — an apical domain (Par3/Par6/aPKC) forms on its outer face",
+  "Step 2 of 5 — 8 → 16 cells: in asymmetric divisions the daughter that keeps the apical domain stays outside (polar), while the daughter without it is pushed inside (apolar)",
+  "Step 3 of 5 — Hippo signalling decides fate: outer cells have Hippo OFF, so YAP enters the nucleus with TEAD4 and switches on Cdx2 (trophectoderm); inner cells have Hippo ON, so YAP stays out and Oct4/Nanog stay on (inner cell mass)",
+  "Step 4 of 5 — cavitation: tight junctions seal the trophectoderm; Na⁺/K⁺-ATPases on its inner face pump Na⁺ inward and water follows by osmosis through aquaporins, inflating the blastocoel",
+  "Step 5 of 5 — blastocyst: the inner cell mass splits into epiblast (Nanog, future embryo) and a primitive endoderm layer (Gata6) facing the cavity, sorted by FGF4 → ERK signalling; next the blastocyst hatches and implants"
+];
+const set = (el, k, v) => { el.setAttribute(k, v); el.style[k] = v + 'px'; };
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('stageLabelT').textContent = stages[step];
+  document.getElementById('dayLabelT').textContent = days[step];
+  const ball = BALL[step];
+  document.getElementById('ballClipC').setAttribute('r', ball || 200);
+  document.getElementById('ballBg').style.opacity = ball ? '1' : '0';
+  document.getElementById('ballBg').setAttribute('r', ball || 66);
+  document.getElementById('blastocoelT').style.opacity = step >= 4 ? '1' : '0';
+  document.getElementById('teLayer').style.opacity = step >= 4 ? '1' : '0';   // trophectoderm is one continuous epithelium
+  LAYOUT[step].forEach(([dx, dy, r], i) => {
+    const c = document.getElementById('tc' + i), n = document.getElementById('tn' + i);
+    const x = CX + dx, y = CY + dy;
+    set(c, 'cx', x); set(c, 'cy', y); set(c, 'r', r);
+    let cls = 'c-amber';
+    if (step >= 3) cls = i < 8 ? 'c-teal' : (step >= 5 && PRE.includes(i) ? 'c-amber' : 'c-purple');
+    c.setAttribute('class', 'tcell ' + cls);
+    // nuclei appear when the fate decision is shown: outer = Cdx2 on, inner = Oct4 on (epiblast) / Gata6 (primitive endoderm)
+    const nr = step >= 3 && r > 0 ? (i < 8 ? 5 : 4) : 0;
+    set(n, 'cx', x); set(n, 'cy', y); set(n, 'r', nr);
+    n.setAttribute('fill', i < 8 ? '#0F6E56' : (step >= 5 && PRE.includes(i) ? '#B45309' : '#6D28D9'));
+    n.setAttribute('stroke', '#ffffff');
+  });
+  CAPS[step].forEach((d, i) => {
+    const cap = document.getElementById('cap' + i);
+    cap.setAttribute('d', d); cap.style.opacity = d === 'M0 0' ? '0' : '1';
+  });
+  document.getElementById('ecad').classList.toggle('on', step === 1);
+  document.getElementById('tightJ').classList.toggle('on', step >= 4);
+  document.getElementById('pumps').classList.toggle('on', step === 4);
+  for (let k = 0; k <= 5; k++) document.getElementById('note' + k).classList.toggle('on', k === step);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # GASTRULATION_GENERAL  (source: gastrulation.html)
 # ---------------------------------------------------------------------------
 GASTRULATION_GENERAL = '''
@@ -6359,6 +6572,17 @@ REGISTRY = {
                 "without growing, compacts into a morula, then hollows into "
                 "a blastocyst: trophoblast (future placenta) around a "
                 "fluid-filled cavity, with an inner cell mass (future embryo)."
+            ),
+        },
+        "Technical": {
+            "fragment": CLEAVAGE_BLASTOCYST_TECHNICAL,
+            "height": 480,
+            "blurb": (
+                "Compaction (E-cadherin) and apical polarity (Par/aPKC) create "
+                "outer polar and inner apolar cells; Hippo-YAP-TEAD4 switches on "
+                "Cdx2 outside (trophectoderm) while Oct4/Nanog stay on inside; "
+                "Na+/K+ pumps and tight junctions inflate the blastocoel; the ICM "
+                "splits into epiblast and primitive endoderm (FGF4-ERK)."
             ),
         },
     },
