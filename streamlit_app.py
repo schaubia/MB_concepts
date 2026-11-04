@@ -2748,6 +2748,177 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# NEURULATION_GENERAL  (new)
+# ---------------------------------------------------------------------------
+NEURULATION_GENERAL = '''
+<h2 class="sr-only">Interactive cross-section of neurulation: the notochord induces the ectoderm above it to form the neural plate, the plate edges rise as neural folds around a neural groove, the folds fuse into the neural tube beneath the surface ectoderm, and neural crest cells from the fold tips migrate away.</h2>
+<style>
+  .reveal { opacity: 0; transition: opacity .5s ease; }
+  .reveal.on { opacity: 1; }
+  .sheet { fill: none; stroke-linecap: round; transition: d 1s cubic-bezier(.3,0,.2,1), stroke .6s ease, stroke-width .6s ease; }
+  .crest { transition: cx 1s cubic-bezier(.3,0,.2,1), cy 1s cubic-bezier(.3,0,.2,1), r .6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 330" role="img">
+<title>Neurulation, cross-section</title>
+<desc>Seen in cross-section, the embryo after gastrulation is a flat sheet of three layers: ectoderm on top, mesoderm in the middle with the rod-shaped notochord along the midline, and endoderm below. Signals from the notochord make the ectoderm above it thicken into the neural plate. The edges of the plate rise as neural folds, leaving a neural groove in the middle, and curl toward each other; cells at the tips of the folds become neural crest cells. The folds fuse into a hollow neural tube that sinks beneath the surface ectoderm, which seals over the top. The neural tube becomes the brain and spinal cord, the neural crest cells migrate away to form peripheral nerves, pigment cells and parts of the face, and the mesoderm beside the tube forms somites. If the tube fails to close, anencephaly or spina bifida results; folic acid lowers the risk.</desc>
+<defs>
+<marker id="arrowN" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<text class="th" x="30" y="30" id="dayLabelN">Day 17–18</text>
+<text class="ts" x="30" y="48" id="stageLabelN">Three-layered embryo</text>
+
+<!-- mesoderm on each side, notochord at the midline, endoderm below -->
+<rect x="64" y="140" width="176" height="46" rx="14" fill="#C4B5FD" fill-opacity="0.55" stroke="#6D28D9" stroke-width="1"/>
+<rect x="360" y="140" width="176" height="46" rx="14" fill="#C4B5FD" fill-opacity="0.55" stroke="#6D28D9" stroke-width="1"/>
+<circle cx="300" cy="190" r="12" fill="#FDBA74" stroke="#C2410C" stroke-width="1.2"/>
+<line x1="60" y1="222" x2="540" y2="222" stroke="#D85A30" stroke-width="8" stroke-linecap="round" stroke-opacity="0.85"/>
+
+<!-- ectoderm: two surface halves (future skin) and the central neural plate, reshaped step by step -->
+<path id="surfL" class="sheet" d="M60 120 C150 120 200 120 230 120" stroke="#378ADD" stroke-width="10"/>
+<path id="surfR" class="sheet" d="M370 120 C400 120 450 120 540 120" stroke="#378ADD" stroke-width="10"/>
+<path id="plate" class="sheet" d="M230 120 C260 120 270 120 300 120 C330 120 340 120 370 120" stroke="#378ADD" stroke-width="10"/>
+
+<circle id="crestL" class="crest" cx="230" cy="120" r="0" fill="#16A34A" stroke="#14532D" stroke-width="1"/>
+<circle id="crestR" class="crest" cx="370" cy="120" r="0" fill="#16A34A" stroke="#14532D" stroke-width="1"/>
+
+<g id="signals" class="reveal">
+<line x1="284" y1="178" x2="276" y2="134" stroke="#C2410C" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrowN)"/>
+<line x1="300" y1="176" x2="300" y2="134" stroke="#C2410C" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrowN)"/>
+<line x1="316" y1="178" x2="324" y2="134" stroke="#C2410C" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrowN)"/>
+</g>
+<g id="migrate" class="reveal">
+<path d="M262 104 Q236 126 226 160" fill="none" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrowN)"/>
+<path d="M338 104 Q364 126 374 160" fill="none" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arrowN)"/>
+</g>
+
+<!-- layer labels (always) -->
+<text class="ts" x="550" y="124">Ectoderm</text>
+<text class="ts" x="550" y="167">Mesoderm</text>
+<text class="ts" x="550" y="226">Endoderm</text>
+<text class="ts" x="300" y="212" text-anchor="middle">Notochord</text>
+
+<!-- step-specific structure labels -->
+<g id="labN1" class="reveal"><text class="ts" x="300" y="104" text-anchor="middle" font-weight="600" fill="#4338CA">Neural plate</text></g>
+<g id="labN2" class="reveal">
+<text class="ts" x="300" y="96" text-anchor="middle">Neural groove</text>
+<text class="ts" x="214" y="94" text-anchor="middle">Neural fold</text>
+<text class="ts" x="386" y="94" text-anchor="middle">Neural fold</text>
+</g>
+<g id="labN3" class="reveal"><text class="ts" x="300" y="50" text-anchor="middle" font-weight="600" fill="#15803D">Neural crest cells</text></g>
+<g id="labN4" class="reveal">
+<text class="ts" x="300" y="128" text-anchor="middle" font-weight="600" fill="#4338CA">Neural</text>
+<text class="ts" x="300" y="142" text-anchor="middle" font-weight="600" fill="#4338CA">tube</text>
+<text class="ts" x="300" y="64" text-anchor="middle" fill="#15803D">Neural crest</text>
+<text class="ts" x="60" y="96" text-anchor="start">Surface ectoderm (skin)</text>
+</g>
+<g id="labN5" class="reveal">
+<text class="ts" x="300" y="128" text-anchor="middle" font-weight="600" fill="#4338CA">Neural</text>
+<text class="ts" x="300" y="142" text-anchor="middle" font-weight="600" fill="#4338CA">tube</text>
+<text class="ts" x="392" y="132" text-anchor="start" font-weight="600" fill="#4338CA">← brain &amp; spinal cord</text>
+<text class="ts" x="152" y="167" text-anchor="middle">Somites</text>
+<text class="ts" x="448" y="167" text-anchor="middle">Somites</text>
+<text class="ts" x="300" y="64" text-anchor="middle" fill="#15803D">Neural crest migrates out</text>
+</g>
+
+<!-- explanation under the diagram -->
+<g id="noteN0" class="reveal">
+<text class="ts" x="30" y="262">After gastrulation the embryo is a flat sheet of three layers.</text>
+<text class="ts" x="30" y="278">The notochord, a rod of mesoderm, runs along the midline.</text>
+</g>
+<g id="noteN1" class="reveal">
+<text class="ts" x="30" y="262"><tspan font-weight="600">Induction:</tspan> signals from the notochord make the ectoderm above it</text>
+<text class="ts" x="30" y="278">thicken into the <tspan fill="#4338CA" font-weight="600">neural plate</tspan> — the future nervous system.</text>
+</g>
+<g id="noteN2" class="reveal">
+<text class="ts" x="30" y="262">The edges of the plate rise as <tspan font-weight="600">neural folds</tspan>,</text>
+<text class="ts" x="30" y="278">leaving a <tspan font-weight="600">neural groove</tspan> down the middle.</text>
+</g>
+<g id="noteN3" class="reveal">
+<text class="ts" x="30" y="262">The folds curl toward each other. Cells at their tips become</text>
+<text class="ts" x="30" y="278"><tspan fill="#15803D" font-weight="600">neural crest cells</tspan>.</text>
+</g>
+<g id="noteN4" class="reveal">
+<text class="ts" x="30" y="262">The folds fuse into the hollow <tspan fill="#4338CA" font-weight="600">neural tube</tspan>, which sinks below the</text>
+<text class="ts" x="30" y="278">surface ectoderm; the surface (future skin) seals over the top.</text>
+</g>
+<g id="noteN5" class="reveal">
+<text class="ts" x="30" y="262">The tube becomes the brain and spinal cord; <tspan fill="#15803D" font-weight="600">neural crest</tspan> cells form nerves, pigment</text>
+<text class="ts" x="30" y="278">cells and facial bones. Closure ends by ~day 28 — if it fails: anencephaly (head end)</text>
+<text class="ts" x="30" y="294">or spina bifida (lower spine). <tspan font-weight="600">Folic acid</tspan> before and in early pregnancy lowers the risk.</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+// ectoderm shapes per step (same path structure in every step so the sheet can morph smoothly)
+const SURF_L = [
+  "M60 120 C150 120 200 120 230 120", "M60 120 C150 120 200 120 230 120",
+  "M60 120 C150 120 200 112 226 104", "M60 120 C170 120 240 100 276 70",
+  "M60 120 C170 120 240 80 300 80",   "M60 120 C170 120 240 80 300 80"
+];
+const SURF_R = [
+  "M370 120 C400 120 450 120 540 120", "M370 120 C400 120 450 120 540 120",
+  "M374 104 C400 112 450 120 540 120", "M324 70 C360 100 430 120 540 120",
+  "M300 80 C360 80 430 120 540 120",   "M300 80 C360 80 430 120 540 120"
+];
+const PLATE = [
+  "M230 120 C260 120 270 120 300 120 C330 120 340 120 370 120",
+  "M230 120 C260 120 270 120 300 120 C330 120 340 120 370 120",
+  "M226 104 C240 112 268 164 300 164 C332 164 360 112 374 104",
+  "M276 70 C236 84 256 168 300 168 C344 168 364 84 324 70",
+  "M300 100 C262 100 262 160 300 160 C338 160 338 100 300 100",
+  "M300 100 C262 100 262 160 300 160 C338 160 338 100 300 100"
+];
+// neural crest cells: [xL, yL, xR, yR, r]
+const CREST = [[230,120,370,120,0],[230,120,370,120,0],[226,104,374,104,6],[276,70,324,70,6],[285,92,315,92,6],[240,132,360,132,6]];
+const days   = ['Day 17–18', 'Day 18', 'Day 19–20', 'Day 20–21', 'Day 21–22', 'Day 22–28'];
+const stages = ['Three-layered embryo', 'Neural plate', 'Neural folds and groove', 'Folds curl together', 'Neural tube', 'Tube and neural crest'];
+const labels = [
+  "Step 0 of 5 — after gastrulation: ectoderm on top, mesoderm with the notochord in the middle, endoderm below",
+  "Step 1 of 5 — induction: the notochord signals the ectoderm above it, which thickens into the neural plate",
+  "Step 2 of 5 — the plate's edges rise as neural folds, leaving a neural groove in the middle",
+  "Step 3 of 5 — the folds curl toward each other; cells at their tips become neural crest cells",
+  "Step 4 of 5 — the folds fuse into the neural tube, which sinks under the surface ectoderm as it seals over",
+  "Step 5 of 5 — the tube becomes the brain and spinal cord, neural crest cells migrate away, and somites form beside the tube"
+];
+function setD(id, d) { const el = document.getElementById(id); el.setAttribute('d', d); el.style.d = `path("${d}")`; }
+function setC(id, x, y, r) { const el = document.getElementById(id);
+  el.setAttribute('cx', x); el.setAttribute('cy', y); el.setAttribute('r', r);
+  el.style.cx = x + 'px'; el.style.cy = y + 'px'; el.style.r = r + 'px'; }
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('dayLabelN').textContent = days[step];
+  document.getElementById('stageLabelN').textContent = stages[step];
+  setD('surfL', SURF_L[step]); setD('surfR', SURF_R[step]); setD('plate', PLATE[step]);
+  const plate = document.getElementById('plate');
+  plate.setAttribute('stroke', step >= 1 ? '#4338CA' : '#378ADD');        // neural ectoderm once induced
+  plate.setAttribute('stroke-width', step >= 1 ? '14' : '10');            // thickened plate
+  const [xl, yl, xr, yr, r] = CREST[step];
+  setC('crestL', xl, yl, r); setC('crestR', xr, yr, r);
+  const on = (id, v) => document.getElementById(id).classList.toggle('on', v);
+  on('signals', step === 1);
+  on('migrate', step === 5);
+  for (let k = 0; k <= 5; k++) { on('noteN' + k, k === step); if (k >= 1) on('labN' + k, k === step); }
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # GASTRULATION_GENERAL  (source: gastrulation.html)
 # ---------------------------------------------------------------------------
 GASTRULATION_GENERAL = '''
@@ -7043,6 +7214,18 @@ REGISTRY = {
             ),
         },
     },
+    "Neurulation": {
+        "General": {
+            "fragment": NEURULATION_GENERAL,
+            "height": 480,
+            "blurb": (
+                "The notochord induces the neural plate; its edges rise as "
+                "neural folds and fuse into the neural tube (future brain and "
+                "spinal cord) while neural crest cells migrate away. Failed "
+                "closure causes spina bifida or anencephaly."
+            ),
+        },
+    },
     "Action potential": {
         "General": {
             "fragment": ACTION_POTENTIAL_GENERAL,
@@ -7306,6 +7489,7 @@ CATEGORIES = {
         "Cleavage & blastocyst formation",
         "Implantation",
         "Gastrulation",
+        "Neurulation",
     ],
     "Physiology": [
         "Action potential",
