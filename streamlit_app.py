@@ -2919,6 +2919,205 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# NEURULATION_TECHNICAL  (new)
+# ---------------------------------------------------------------------------
+NEURULATION_TECHNICAL = '''
+<h2 class="sr-only">Technical cross-section of neurulation: BMP antagonists induce the neural plate, convergent extension narrows it, hinge points bend it by apical constriction, a switch from E-cadherin to N-cadherin separates the fused tube from the surface ectoderm, neural crest cells undergo an epithelial-to-mesenchymal transition, and opposing Shh and BMP gradients pattern the tube from ventral to dorsal.</h2>
+<style>
+  .reveal { opacity: 0; transition: opacity .5s ease; }
+  .reveal.on { opacity: 1; }
+  .sheetT { fill: none; stroke-linecap: round; transition: d 1s cubic-bezier(.3,0,.2,1), stroke .6s ease, stroke-width .6s ease; }
+  .crestT { transition: cx 1s cubic-bezier(.3,0,.2,1), cy 1s cubic-bezier(.3,0,.2,1), r .6s ease, stroke-width .4s ease; }
+  #layerLabelsT { transition: opacity .5s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Neurulation, technical view</title>
+<desc>BMP signalling in the ectoderm promotes epidermis; the organizer and notochord secrete the BMP antagonists Noggin, Chordin and Follistatin, and where BMP is blocked the ectoderm becomes neural plate by default. Plate cells elongate and intercalate by convergent extension, driven by planar cell polarity, so the plate narrows and lengthens. At the medial hinge point above the notochord and at paired dorsolateral hinge points, apical actomyosin constriction makes the cells wedge-shaped and the folds rise. When the folds meet, the neural plate has switched from E-cadherin to N-cadherin, letting the tube separate from the E-cadherin surface ectoderm. Neural crest cells at the border, specified by intermediate BMP plus Wnt, express Snail and Slug, FoxD3 and Sox10, lose their junctions in an epithelial-to-mesenchymal transition and migrate. Finally Sonic hedgehog from the notochord induces the floor plate, which also secretes Sonic hedgehog and patterns ventral motor neurons, while BMP and Wnt from the roof plate and surface ectoderm pattern dorsal sensory interneurons.</desc>
+<defs>
+<marker id="arrowNT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<linearGradient id="dvGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38BDF8" stop-opacity="0.85"/><stop offset="0.5" stop-color="#ffffff" stop-opacity="0.2"/><stop offset="1" stop-color="#EA580C" stop-opacity="0.75"/></linearGradient>
+</defs>
+
+<text class="th" x="30" y="30" id="dayLabelNT">Day 17–18</text>
+<text class="ts" x="30" y="48" id="stageLabelNT">Neural induction</text>
+
+<rect x="64" y="140" width="176" height="46" rx="14" fill="#C4B5FD" fill-opacity="0.55" stroke="#6D28D9" stroke-width="1"/>
+<rect x="360" y="140" width="176" height="46" rx="14" fill="#C4B5FD" fill-opacity="0.55" stroke="#6D28D9" stroke-width="1"/>
+<circle cx="300" cy="190" r="12" fill="#FDBA74" stroke="#C2410C" stroke-width="1.2"/>
+<line x1="60" y1="222" x2="540" y2="222" stroke="#D85A30" stroke-width="8" stroke-linecap="round" stroke-opacity="0.85"/>
+<text class="ts" x="300" y="212" text-anchor="middle">Notochord</text>
+
+<ellipse id="dvFill" class="reveal" cx="300" cy="130" rx="26" ry="26" fill="url(#dvGrad)"/>
+<path id="surfLT" class="sheetT" d="M60 120 C150 120 200 120 230 120" stroke="#378ADD" stroke-width="10"/>
+<path id="surfRT" class="sheetT" d="M370 120 C400 120 450 120 540 120" stroke="#378ADD" stroke-width="10"/>
+<path id="plateT" class="sheetT" d="M230 120 C260 120 270 120 300 120 C330 120 340 120 370 120" stroke="#4338CA" stroke-width="14"/>
+<path id="roofP" class="reveal" d="M284 103 Q300 95 316 103" fill="none" stroke="#38BDF8" stroke-width="7" stroke-linecap="round"/>
+<path id="floorP" class="reveal" d="M286 157 Q300 164 314 157" fill="none" stroke="#EA580C" stroke-width="6" stroke-linecap="round"/>
+
+<circle id="crestLT" class="crestT" cx="230" cy="120" r="0" fill="#16A34A" stroke="#14532D" stroke-width="1"/>
+<circle id="crestRT" class="crestT" cx="370" cy="120" r="0" fill="#16A34A" stroke="#14532D" stroke-width="1"/>
+
+<!-- step 0: BMP on the lateral ectoderm vs antagonists from the notochord -->
+<g id="bmpT" class="reveal">
+<line x1="110" y1="80" x2="110" y2="108" stroke="#1D4ED8" stroke-width="1.6" marker-end="url(#arrowNT)"/>
+<line x1="170" y1="80" x2="170" y2="108" stroke="#1D4ED8" stroke-width="1.6" marker-end="url(#arrowNT)"/>
+<line x1="430" y1="80" x2="430" y2="108" stroke="#1D4ED8" stroke-width="1.6" marker-end="url(#arrowNT)"/>
+<line x1="490" y1="80" x2="490" y2="108" stroke="#1D4ED8" stroke-width="1.6" marker-end="url(#arrowNT)"/>
+<text class="ts" x="140" y="72" text-anchor="middle" font-weight="600" fill="#1D4ED8">BMP → epidermis</text>
+<text class="ts" x="460" y="72" text-anchor="middle" font-weight="600" fill="#1D4ED8">BMP → epidermis</text>
+<line x1="284" y1="178" x2="276" y2="134" stroke="#C2410C" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrowNT)"/>
+<line x1="300" y1="176" x2="300" y2="134" stroke="#C2410C" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrowNT)"/>
+<line x1="316" y1="178" x2="324" y2="134" stroke="#C2410C" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrowNT)"/>
+<text class="ts" x="300" y="96" text-anchor="middle" font-weight="600" fill="#4338CA">Neural plate (BMP blocked)</text>
+</g>
+<!-- step 1: convergent extension -->
+<g id="ceT" class="reveal">
+<line x1="222" y1="100" x2="252" y2="100" stroke="#4338CA" stroke-width="1.6" marker-end="url(#arrowNT)"/>
+<line x1="378" y1="100" x2="348" y2="100" stroke="#4338CA" stroke-width="1.6" marker-end="url(#arrowNT)"/>
+<text class="ts" x="300" y="88" text-anchor="middle" font-weight="600" fill="#4338CA">Narrows and lengthens</text>
+</g>
+<!-- step 2: hinge points -->
+<g id="hingeT" class="reveal">
+<path d="M294 156 L306 156 L300 167 Z" fill="#F59E0B" stroke="#B45309" stroke-width="1"/>
+<path d="M240 119 L251 119 L245.5 130 Z" fill="#F59E0B" stroke="#B45309" stroke-width="1"/>
+<path d="M349 119 L360 119 L354.5 130 Z" fill="#F59E0B" stroke="#B45309" stroke-width="1"/>
+<text class="ts" x="300" y="148" text-anchor="middle" font-weight="600" fill="#B45309">MHP</text>
+<text class="ts" x="236" y="136" text-anchor="end" font-weight="600" fill="#B45309">DLHP</text>
+<text class="ts" x="364" y="136" text-anchor="start" font-weight="600" fill="#B45309">DLHP</text>
+</g>
+<!-- step 3: cadherin switch -->
+<g id="cadT" class="reveal">
+<text class="ts" x="120" y="104" text-anchor="middle" font-weight="600" fill="#1D4ED8">E-cadherin</text>
+<text class="ts" x="480" y="104" text-anchor="middle" font-weight="600" fill="#1D4ED8">E-cadherin</text>
+<text class="ts" x="300" y="128" text-anchor="middle" font-weight="600" fill="#4338CA">N-cadherin</text>
+</g>
+<!-- step 4: neural crest EMT -->
+<g id="emtT" class="reveal">
+<text class="ts" x="300" y="56" text-anchor="middle" font-weight="600" fill="#15803D">Neural crest EMT: Snail/Slug, FoxD3, Sox10</text>
+<text class="ts" x="300" y="70" text-anchor="middle" fill="#15803D">junctions lost → migratory</text>
+<text class="ts" x="300" y="128" text-anchor="middle" font-weight="600" fill="#4338CA">Neural</text>
+<text class="ts" x="300" y="142" text-anchor="middle" font-weight="600" fill="#4338CA">tube</text>
+</g>
+<!-- step 5: dorsal-ventral patterning -->
+<g id="dvT" class="reveal">
+<line x1="300" y1="177" x2="300" y2="168" stroke="#EA580C" stroke-width="1.6" marker-end="url(#arrowNT)"/>
+<rect x="556" y="76" width="10" height="92" rx="3" fill="url(#dvGrad)"/>
+<text class="ts" x="572" y="84" font-weight="600" fill="#0284C7">Roof plate</text>
+<text class="ts" x="572" y="98" fill="#0284C7">BMP, Wnt</text>
+<text class="ts" x="572" y="112">→ dorsal sensory</text>
+<text class="ts" x="572" y="124">interneurons</text>
+<text class="ts" x="572" y="146" font-weight="600" fill="#EA580C">Floor plate</text>
+<text class="ts" x="572" y="160" fill="#EA580C">Shh</text>
+<text class="ts" x="572" y="174">→ ventral motor</text>
+<text class="ts" x="572" y="186">neurons</text>
+</g>
+<g id="layerLabelsT">
+<text class="ts" x="550" y="124">Ectoderm</text>
+<text class="ts" x="550" y="167">Mesoderm</text>
+<text class="ts" x="550" y="226">Endoderm</text>
+</g>
+
+<g id="noteNT0" class="reveal">
+<text class="ts" x="30" y="262"><tspan font-weight="600">Neural induction:</tspan> BMP signalling in the ectoderm makes epidermis. The organizer and notochord</text>
+<text class="ts" x="30" y="278">secrete BMP antagonists (<tspan font-weight="600">Noggin, Chordin, Follistatin</tspan>); where BMP is blocked,</text>
+<text class="ts" x="30" y="294">ectoderm becomes neural plate by default.</text>
+</g>
+<g id="noteNT1" class="reveal">
+<text class="ts" x="30" y="262">Plate cells grow tall (apicobasal elongation) and intercalate by <tspan font-weight="600">convergent extension</tspan></text>
+<text class="ts" x="30" y="278">(planar cell polarity pathway), so the plate narrows and lengthens along the head–tail axis.</text>
+</g>
+<g id="noteNT2" class="reveal">
+<text class="ts" x="30" y="262"><tspan font-weight="600">Bending:</tspan> cells at the medial hinge point (MHP, anchored over the notochord) and the dorsolateral</text>
+<text class="ts" x="30" y="278">hinge points (DLHP) become wedge-shaped by <tspan font-weight="600">apical actomyosin constriction</tspan>, lifting the folds.</text>
+</g>
+<g id="noteNT3" class="reveal">
+<text class="ts" x="30" y="262"><tspan font-weight="600">Fusion:</tspan> the folds meet at the dorsal midline. The plate has switched from <tspan fill="#1D4ED8" font-weight="600">E-cadherin</tspan></text>
+<text class="ts" x="30" y="278">to <tspan fill="#4338CA" font-weight="600">N-cadherin</tspan>, so the tube can separate from the E-cadherin surface ectoderm.</text>
+</g>
+<g id="noteNT4" class="reveal">
+<text class="ts" x="30" y="262"><tspan fill="#15803D" font-weight="600">Neural crest EMT:</tspan> border cells (intermediate BMP + Wnt) switch on Snail/Slug, FoxD3 and Sox10,</text>
+<text class="ts" x="30" y="278">lose N-cadherin and tight junctions, and become migratory mesenchyme.</text>
+</g>
+<g id="noteNT5" class="reveal">
+<text class="ts" x="30" y="262"><tspan font-weight="600">Dorsal–ventral patterning:</tspan> <tspan fill="#EA580C" font-weight="600">Shh</tspan> from the notochord induces the floor plate, which makes more</text>
+<text class="ts" x="30" y="278">Shh → ventral motor neurons. <tspan fill="#1D4ED8" font-weight="600">BMP/Wnt</tspan> from the roof plate and ectoderm → dorsal sensory</text>
+<text class="ts" x="30" y="294">interneurons. The opposing gradients give each position along the tube its identity.</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const SURF_L = [
+  "M60 120 C150 120 200 120 230 120", "M60 120 C150 120 200 120 250 120",
+  "M60 120 C150 120 200 112 226 104", "M60 120 C170 120 240 100 276 70",
+  "M60 120 C170 120 240 80 300 80",   "M60 120 C170 120 240 80 300 80"
+];
+const SURF_R = [
+  "M370 120 C400 120 450 120 540 120", "M350 120 C400 120 450 120 540 120",
+  "M374 104 C400 112 450 120 540 120", "M324 70 C360 100 430 120 540 120",
+  "M300 80 C360 80 430 120 540 120",   "M300 80 C360 80 430 120 540 120"
+];
+const PLATE = [
+  "M230 120 C260 120 270 120 300 120 C330 120 340 120 370 120",
+  "M250 120 C270 120 280 120 300 120 C320 120 330 120 350 120",
+  "M226 104 C240 112 268 164 300 164 C332 164 360 112 374 104",
+  "M276 70 C236 84 256 168 300 168 C344 168 364 84 324 70",
+  "M300 100 C262 100 262 160 300 160 C338 160 338 100 300 100",
+  "M300 100 C262 100 262 160 300 160 C338 160 338 100 300 100"
+];
+const CREST = [[230,120,370,120,0],[250,120,350,120,0],[226,104,374,104,6],[276,70,324,70,6],[285,92,315,92,6],[240,132,360,132,6]];
+const days   = ['Day 17–18', 'Day 18–19', 'Day 19–20', 'Day 20–21', 'Day 21–22', 'Day 22–28'];
+const stages = ['Neural induction', 'Convergent extension', 'Hinge points bend the plate', 'Fusion and cadherin switch', 'Neural crest EMT', 'Dorsal–ventral patterning'];
+const labels = [
+  "Step 0 of 5 — neural induction: BMP makes epidermis; BMP antagonists from the organizer and notochord let the ectoderm above become neural plate",
+  "Step 1 of 5 — convergent extension: plate cells elongate and intercalate (planar cell polarity), narrowing and lengthening the plate",
+  "Step 2 of 5 — hinge points: apical actomyosin constriction makes wedge-shaped cells at the medial and dorsolateral hinge points, lifting the folds",
+  "Step 3 of 5 — fusion: the folds meet; the plate's switch from E-cadherin to N-cadherin lets the tube separate from the surface ectoderm",
+  "Step 4 of 5 — neural crest EMT: Snail/Slug, FoxD3 and Sox10 make border cells lose their junctions and become migratory",
+  "Step 5 of 5 — dorsal–ventral patterning: Shh from notochord and floor plate (ventral, motor neurons) opposes BMP/Wnt from the roof plate (dorsal, sensory interneurons)"
+];
+function setD(id, d) { const el = document.getElementById(id); el.setAttribute('d', d); el.style.d = `path("${d}")`; }
+function setC(id, x, y, r) { const el = document.getElementById(id);
+  el.setAttribute('cx', x); el.setAttribute('cy', y); el.setAttribute('r', r);
+  el.style.cx = x + 'px'; el.style.cy = y + 'px'; el.style.r = r + 'px'; }
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('dayLabelNT').textContent = days[step];
+  document.getElementById('stageLabelNT').textContent = stages[step];
+  setD('surfLT', SURF_L[step]); setD('surfRT', SURF_R[step]); setD('plateT', PLATE[step]);
+  document.getElementById('plateT').setAttribute('stroke-width', step === 1 ? '17' : '14');   // taller cells during convergent extension
+  const [xl, yl, xr, yr, r] = CREST[step];
+  setC('crestLT', xl, yl, r); setC('crestRT', xr, yr, r);
+  ['crestLT', 'crestRT'].forEach(id => {                        // spiky outline = mesenchymal after EMT
+    const c = document.getElementById(id);
+    c.setAttribute('stroke-width', step >= 4 ? '3' : '1');
+    c.setAttribute('stroke-dasharray', step >= 4 ? '2 2' : 'none');
+  });
+  const on = (id, v) => document.getElementById(id).classList.toggle('on', v);
+  on('bmpT', step === 0); on('ceT', step === 1); on('hingeT', step === 2);
+  on('cadT', step === 3); on('emtT', step === 4); on('dvT', step === 5);
+  on('dvFill', step === 5); on('roofP', step === 5); on('floorP', step === 5);
+  document.getElementById('layerLabelsT').style.opacity = step === 5 ? '0' : '1';   // column reused for the D–V legend
+  for (let k = 0; k <= 5; k++) on('noteNT' + k, k === step);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # GASTRULATION_GENERAL  (source: gastrulation.html)
 # ---------------------------------------------------------------------------
 GASTRULATION_GENERAL = '''
@@ -7223,6 +7422,16 @@ REGISTRY = {
                 "neural folds and fuse into the neural tube (future brain and "
                 "spinal cord) while neural crest cells migrate away. Failed "
                 "closure causes spina bifida or anencephaly."
+            ),
+        },
+        "Technical": {
+            "fragment": NEURULATION_TECHNICAL,
+            "height": 490,
+            "blurb": (
+                "BMP antagonists (Noggin, Chordin) induce the neural plate; "
+                "convergent extension narrows it; hinge points bend it by apical "
+                "constriction; an E- to N-cadherin switch frees the tube; neural "
+                "crest undergoes EMT; Shh vs BMP/Wnt gradients pattern the tube."
             ),
         },
     },
