@@ -6456,10 +6456,12 @@ CRISPR_CAS9_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }   /* faint previews keep their shape, not their overlapping captions */
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #cas9Group { transition: transform 1s ease; }
-  .docked #cas9Group { transform: translateY(20px); }
+  #gRNA, #topL { transition: d .8s ease; }
+  #dnaL, #dnaR { transition: transform .6s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -6467,38 +6469,61 @@ CRISPR_CAS9_GENERAL = '''
 <title>CRISPR-Cas9 gene editing, general view</title>
 <desc>A guide RNA loaded into Cas9 protein scans DNA for a matching sequence next to a PAM site, base-pairs with the target strand to confirm the match, and Cas9 cuts both DNA strands. The cell then repairs the break either through error-prone non-homologous end joining, which disrupts the gene, or through homology-directed repair using a donor template, which precisely edits the sequence.</desc>
 
-<line x1="30" y1="150" x2="650" y2="150" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
-<line x1="30" y1="170" x2="650" y2="170" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
-<rect x="320" y="145" width="30" height="10" fill="#EF9F27"/>
-<text class="ts" x="335" y="135" text-anchor="middle">PAM</text>
-
-<g id="cas9Group">
-<circle cx="300" cy="110" r="30" class="c-purple"/>
-<text class="th" x="300" y="110" text-anchor="middle" dominant-baseline="central">Cas9</text>
-<path d="M300 140 L300 150" stroke="#7F77DD" stroke-width="3"/>
+<!-- DNA drawn in two halves so the ends can part at the double-strand break (x = 370, 3 bp upstream of the PAM) -->
+<g id="dnaL">
+<path id="topL" d="M30 150 L290 150 Q330 150 370 150" fill="none" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="30" y1="170" x2="370" y2="170" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
 </g>
-
-<g id="grna" class="stg">
-<text class="ts" x="300" y="70" text-anchor="middle">Guide RNA finds matching sequence</text>
+<g id="dnaR">
+<line x1="370" y1="150" x2="650" y2="150" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="370" y1="170" x2="650" y2="170" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<rect x="375" y="145" width="30" height="10" fill="#EF9F27"/>
+<text class="ts" x="410" y="140">PAM</text>
 </g>
 
 <g id="basePairing" class="stg">
-<path d="M260 150 Q280 130 300 150" stroke="#639922" stroke-width="2" fill="none"/>
-<text class="ts" x="260" y="200" text-anchor="middle">gRNA base-pairs — match confirmed</text>
+<line x1="295" y1="163" x2="295" y2="169" stroke="#639922" stroke-width="1.5"/>
+<line x1="307" y1="163" x2="307" y2="169" stroke="#639922" stroke-width="1.5"/>
+<line x1="319" y1="163" x2="319" y2="169" stroke="#639922" stroke-width="1.5"/>
+<line x1="331" y1="163" x2="331" y2="169" stroke="#639922" stroke-width="1.5"/>
+<line x1="343" y1="163" x2="343" y2="169" stroke="#639922" stroke-width="1.5"/>
+<line x1="355" y1="163" x2="355" y2="169" stroke="#639922" stroke-width="1.5"/>
+<line x1="365" y1="163" x2="365" y2="169" stroke="#639922" stroke-width="1.5"/>
+<text class="ts" x="220" y="200" text-anchor="middle">gRNA base-pairs — match confirmed</text>
+</g>
+
+<g id="cas9Group">
+<ellipse cx="340" cy="95" rx="62" ry="28" class="c-purple"/>
+<text class="th" x="340" y="88" text-anchor="middle" dominant-baseline="central">Cas9</text>
+<path id="gRNA" d="M285 115 L370 115 L388 100" fill="none" stroke="#639922" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+
+<g id="grna" class="stg">
+<text class="ts" x="150" y="52" text-anchor="middle">Guide RNA finds matching sequence</text>
 </g>
 
 <g id="cut" class="stg">
-<line x1="290" y1="145" x2="290" y2="175" stroke="#E24B4A" stroke-width="3"/>
-<text class="ts" x="290" y="195" text-anchor="middle">Double-strand break</text>
+<path d="M372 140 L364 152 L376 158 L368 180" fill="none" stroke="#E24B4A" stroke-width="2.5" stroke-linejoin="round"/>
+<text class="ts" x="370" y="203" text-anchor="middle">Double-strand break</text>
 </g>
 
 <g id="nhej" class="stg">
-<text class="ts" x="180" y="240" text-anchor="middle">NHEJ — error-prone, disrupts gene</text>
+<text class="ts" x="180" y="226" text-anchor="middle">NHEJ — error-prone, disrupts gene</text>
+<line x1="70" y1="242" x2="290" y2="242" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="70" y1="254" x2="290" y2="254" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<rect x="174" y="238" width="12" height="20" rx="2" fill="#E24B4A"/>
+<text class="ts" x="180" y="278" text-anchor="middle">ends rejoined with a small indel</text>
 </g>
 
 <g id="hdr" class="stg">
-<rect x="380" y="140" width="60" height="20" rx="4" fill="#1D9E75" opacity="0.5"/>
-<text class="ts" x="410" y="240" text-anchor="middle">HDR — donor template, precise edit</text>
+<text class="ts" x="500" y="222" text-anchor="middle">HDR — donor template, precise edit</text>
+<line x1="440" y1="234" x2="480" y2="234" stroke="#888780" stroke-width="2" stroke-linecap="round"/>
+<rect x="480" y="230" width="40" height="8" rx="2" fill="#1D9E75"/>
+<line x1="520" y1="234" x2="560" y2="234" stroke="#888780" stroke-width="2" stroke-linecap="round"/>
+<line x1="390" y1="248" x2="610" y2="248" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="390" y1="260" x2="610" y2="260" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<rect x="480" y="244" width="40" height="20" rx="2" fill="#1D9E75"/>
+<text class="ts" x="500" y="282" text-anchor="middle">new sequence copied in from the donor</text>
 </g>
 </svg>
 
@@ -6520,8 +6545,17 @@ const labels = [
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
+  const paired = step === 2 || step === 3;          // gRNA leaves Cas9's groove and pairs with the target strand
+  const cas = document.getElementById('cas9Group');
+  cas.style.transform = step === 0 ? 'translateX(-190px)' : step >= 4 ? 'translateX(230px)' : 'none';
+  const g = paired ? "M285 162 L370 162 L388 100" : "M285 115 L370 115 L388 100";
+  const t = paired ? "M30 150 L290 150 Q330 114 370 150" : "M30 150 L290 150 Q330 150 370 150";
+  const gEl = document.getElementById('gRNA'), tEl = document.getElementById('topL');
+  gEl.setAttribute('d', g); gEl.style.d = 'path("' + g + '")';
+  tEl.setAttribute('d', t); tEl.style.d = 'path("' + t + '")';
+  document.getElementById('dnaL').style.transform = step >= 3 ? 'translateX(-8px)' : 'none';
+  document.getElementById('dnaR').style.transform = step >= 3 ? 'translateX(8px)' : 'none';
   document.getElementById('grna').classList.toggle('on', step === 0);
-  document.querySelector('svg').classList.toggle('docked', step >= 1);
   document.getElementById('basePairing').classList.toggle('on', step >= 2 && step < 3);
   document.getElementById('cut').classList.toggle('on', step >= 3);
   document.getElementById('nhej').classList.toggle('on', step >= 4);
