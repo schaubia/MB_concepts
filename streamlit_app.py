@@ -6667,11 +6667,17 @@ RNA_INTERFERENCE_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #riscGroup { transition: transform 1s ease; }
-  .docked #riscGroup { transform: translateX(120px); }
-  #targetMrna { transition: opacity 0.6s ease; }
+  .docked #riscGroup { transform: translateX(270px); }   /* RISC centre 140 -> 410: guide strand lies on the target */
+  #targetMrna, #targetMrnaR { transition: opacity 0.6s ease, transform .8s ease; }
+  .cut #targetMrna { transform: translateX(-10px); opacity: .35; }
+  .cut #targetMrnaR { transform: translateX(10px); opacity: .35; }
+  #dsTop, #dsBot { transition: stroke-dasharray .6s ease; }
+  #passenger { transition: transform 1s ease, opacity .8s ease; }
+  .loaded #passenger { transform: translate(-50px, 40px); opacity: .7; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -6679,12 +6685,16 @@ RNA_INTERFERENCE_GENERAL = '''
 <title>RNA interference, general view</title>
 <desc>Double-stranded RNA is cleaved by the enzyme Dicer into short interfering RNA fragments. One strand is loaded into the RNA-induced silencing complex, RISC, as a guide. The RISC-siRNA complex scans mRNA molecules in the cell, and when the guide strand base-pairs with a complementary target mRNA, RISC cleaves it, degrading the message and silencing that gene.</desc>
 
-<path d="M100 100 L180 100" stroke="#378ADD" stroke-width="4" stroke-linecap="round"/>
-<path d="M100 115 L180 115" stroke="#D85A30" stroke-width="4" stroke-linecap="round"/>
-<text class="ts" x="140" y="85" text-anchor="middle">Double-stranded RNA</text>
+<path id="dsTop" d="M100 100 L180 100" stroke="#378ADD" stroke-width="4" stroke-linecap="butt"/>
+<path id="dsBot" d="M100 115 L180 115" stroke="#D85A30" stroke-width="4" stroke-linecap="butt"/>
+<text class="ts" x="140" y="85" text-anchor="middle" id="dsLabel">Double-stranded RNA</text>
+<g id="passengerG" style="opacity:0;transition:opacity .4s ease">
+<path id="passenger" d="M120 168 L160 168" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<text class="ts" x="60" y="226" id="passengerLbl">passenger strand discarded</text>
+</g>
 
 <g id="dicer" class="stg">
-<circle cx="140" cy="107" r="16" class="c-amber pulse"/>
+<circle cx="198" cy="107" r="14" class="c-amber pulse"/>
 <text class="ts" x="140" y="140" text-anchor="middle">Dicer cleaves into siRNA</text>
 </g>
 
@@ -6694,15 +6704,16 @@ RNA_INTERFERENCE_GENERAL = '''
 <path id="guideStrand" d="M120 175 L160 175" stroke="#D85A30" stroke-width="3" stroke-linecap="round" opacity="0"/>
 </g>
 
-<line x1="300" y1="180" x2="600" y2="180" id="targetMrna" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/>
-<text class="ts" x="450" y="200" text-anchor="middle">Target mRNA</text>
+<line x1="300" y1="180" x2="410" y2="180" id="targetMrna" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/>
+<line x1="410" y1="180" x2="600" y2="180" id="targetMrnaR" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/>
+<text class="ts" x="560" y="200" text-anchor="middle">Target mRNA</text>
 
 <g id="basePairing" class="stg">
-<text class="ts" x="380" y="160" text-anchor="middle">Guide strand base-pairs with target</text>
+<text class="ts" x="410" y="150" text-anchor="middle">Guide strand base-pairs with target</text>
 </g>
 
 <g id="cleavage" class="stg">
-<path d="M400 172 L400 188 M420 172 L420 188" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<path d="M410 166 L410 194" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round"/>
 <text class="th" x="450" y="230" text-anchor="middle">mRNA cleaved — gene silenced</text>
 </g>
 </svg>
@@ -6731,7 +6742,15 @@ function render() {
   document.querySelector('svg').classList.toggle('docked', step >= 3);
   document.getElementById('basePairing').classList.toggle('on', step === 3);
   document.getElementById('cleavage').classList.toggle('on', step >= 4);
-  document.getElementById('targetMrna').style.opacity = step >= 4 ? '0.2' : '1';
+  const svg = document.querySelector('svg');
+  svg.classList.toggle('cut', step >= 4);                                     // mRNA cut in two at the guide's centre, then degraded
+  // Dicer chops the long dsRNA into short ~21-nt siRNA duplexes
+  document.getElementById('dsTop').style.strokeDasharray = step >= 1 ? '24 4' : 'none';
+  document.getElementById('dsBot').style.strokeDasharray = step >= 1 ? '24 4' : 'none';
+  document.getElementById('dsLabel').textContent = step >= 1 ? 'siRNA pieces (~21 nt each)' : 'Double-stranded RNA';
+  // only the guide strand stays in RISC; the passenger strand is thrown out
+  document.getElementById('passengerG').style.opacity = step === 2 ? '1' : '0';
+  svg.classList.toggle('loaded', step >= 2);
 }
 function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
