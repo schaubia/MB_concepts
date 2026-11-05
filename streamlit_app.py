@@ -813,8 +813,7 @@ TRANSLATION_GENERAL = '''
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #ribosomeGroup { transition: transform 1s ease; }
-  #chain { transition: transform 1s ease, opacity .6s ease; }
-  .released #chain { transform: translateY(-60px); opacity: 0; }
+  #chain, #trnaP, #trnaA { transition: transform 1s ease, opacity .6s ease; }
   #largeSub { transition: opacity .5s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
@@ -837,10 +836,13 @@ TRANSLATION_GENERAL = '''
 <g id="ribosomeGroup">
 <ellipse id="largeSub" cx="150" cy="180" rx="55" ry="26" class="c-purple" opacity="0"/>
 <ellipse id="smallSub" cx="150" cy="212" rx="50" ry="18" class="c-gray"/>
-<rect id="siteE" x="105" y="200" width="20" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5" opacity="0"/>
+<rect id="siteE" x="90" y="200" width="20" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5" opacity="0"/>
 <rect id="siteP" x="140" y="200" width="20" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5"/>
-<rect id="siteA" x="175" y="200" width="20" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5" opacity="0"/>
-<text class="ts" x="150" y="165" text-anchor="middle">Ribosome</text>
+<rect id="siteA" x="190" y="200" width="20" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5" opacity="0"/>
+<text class="ts" x="150" y="186" text-anchor="middle">Ribosome</text>
+<text class="ts" x="100" y="198" text-anchor="middle" font-size="9" id="lblE" opacity="0">E</text>
+<text class="ts" x="150" y="198" text-anchor="middle" font-size="9" id="lblP" opacity="0">P</text>
+<text class="ts" x="200" y="198" text-anchor="middle" font-size="9" id="lblA" opacity="0">A</text>
 </g>
 
 <g id="trnaP" class="stg">
@@ -848,14 +850,14 @@ TRANSLATION_GENERAL = '''
 <text class="ts" x="150" y="135" text-anchor="middle">tRNA</text>
 </g>
 <g id="trnaA" class="stg">
-<circle cx="195" cy="150" r="9" class="c-amber"/>
+<circle cx="200" cy="150" r="9" class="c-amber"/>
 </g>
 
 <g id="chain" class="stg">
 <circle cx="150" cy="105" r="7" class="c-coral"/>
 <circle id="aa2" cx="168" cy="95" r="7" class="c-coral" opacity="0"/>
 <circle id="aa3" cx="186" cy="90" r="7" class="c-coral" opacity="0"/>
-<text class="ts" x="168" y="75" text-anchor="middle">Polypeptide chain</text>
+<text class="ts" x="168" y="75" text-anchor="middle" id="chainLbl">Polypeptide chain</text>
 </g>
 
 <g id="releaseFactor" class="stg">
@@ -878,8 +880,8 @@ const labels = [
   "Step 1 of 5 — small subunit binds, initiator tRNA pairs with start codon",
   "Step 2 of 5 — large subunit joins, forming the complete ribosome",
   "Step 3 of 5 — tRNA delivers next amino acid into the A site, peptide bond forms",
-  "Step 4 of 5 — translocation: ribosome shifts one codon, chain grows",
-  "Step 5 of 5 — stop codon reached, release factor binds, polypeptide released"
+  "Step 4 of 5 — translocation: the ribosome shifts one codon; the empty tRNA moves to the E site and leaves, freeing the A site for the next tRNA",
+  "Step 5 of 5 — many cycles later the stop codon reaches the A site; a release factor binds and the finished polypeptide is released"
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
@@ -891,11 +893,19 @@ function render() {
   document.getElementById('siteE').setAttribute('opacity', step >= 4 ? '1' : '0');
   document.getElementById('chain').classList.toggle('on', step >= 3);
   document.getElementById('aa2').setAttribute('opacity', step >= 3 ? '1' : '0');
-  document.getElementById('aa3').setAttribute('opacity', step >= 4 ? '1' : '0');
+  document.getElementById('aa3').setAttribute('opacity', step >= 5 ? '1' : '0');
   document.getElementById('releaseFactor').classList.toggle('on', step >= 5);
   document.getElementById('releaseFactor').classList.toggle('pulse', step === 5);
-  document.querySelector('svg').classList.toggle('released', step >= 5);
-  document.getElementById('ribosomeGroup').style.transform = step >= 5 ? 'translateX(200px)' : (step >= 4 ? 'translateX(50px)' : 'translateX(0)');
+  ['lblE','lblP','lblA'].forEach(id => document.getElementById(id).setAttribute('opacity', step >= 2 ? '1' : '0'));
+  // ribosome moves along the mRNA one codon (50 px) per translocation; at step 5 its A site sits on the stop codon (x=350)
+  document.getElementById('ribosomeGroup').style.transform = step >= 5 ? 'translateX(150px)' : (step >= 4 ? 'translateX(50px)' : 'translateX(0)');
+  // tRNAs stay on their codons: the first tRNA ends up in the E site and leaves; the A-site tRNA becomes the P-site tRNA
+  document.getElementById('trnaP').style.opacity = step === 4 ? '0.45' : (step >= 5 ? '0' : '');
+  document.getElementById('trnaA').style.transform = step >= 5 ? 'translateX(100px)' : 'none';
+  // peptide bond (step 3) moves the chain onto the A-site tRNA; at step 5 it is released and drifts away
+  const chain = document.getElementById('chain');
+  chain.style.transform = step >= 5 ? 'translate(330px, -20px)' : (step >= 3 ? 'translateX(50px)' : 'none');   // released, drifts free
+  document.getElementById('chainLbl').textContent = step >= 5 ? 'Released polypeptide' : 'Polypeptide chain';
 }
 function stepFwd() { if (step < 5) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
@@ -4250,15 +4260,20 @@ TRANSLATION_TECHNICAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .trna, .aa { transition: cx .9s ease, cy .9s ease, opacity .5s ease; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #ribosomeGroup { transition: transform 1s ease; }
-  .translocated #ribosomeGroup { transform: translateX(40px); }
+  .translocated #ribosomeGroup { transform: translateX(30px); }   /* one codon = one site width (30 px) */
+  #efTu { transition: transform .9s ease, opacity .5s ease; }
+  .tuGone #efTu { transform: translate(70px, -40px); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
 <svg width="100%" viewBox="0 0 680 340" role="img">
 <title>Translation elongation, technical view</title>
+<defs><marker id="arrowTT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 <desc>EF-Tu bound to GTP delivers aminoacyl-tRNA to the ribosome's A site, where codon-anticodon pairing is checked, including wobble pairing at the third codon position. After GTP hydrolysis and accommodation, the ribozyme peptidyl transferase forms a peptide bond, and EF-G bound to GTP drives translocation, ratcheting the ribosome one codon forward. If a signal sequence emerges, the signal recognition particle targets the whole complex to the ER membrane.</desc>
 
 <line x1="30" y1="240" x2="650" y2="240" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
@@ -4266,9 +4281,13 @@ TRANSLATION_TECHNICAL = '''
 <g id="ribosomeGroup">
 <ellipse cx="200" cy="230" rx="55" ry="20" class="c-gray"/>
 <ellipse cx="200" cy="200" rx="55" ry="26" class="c-purple"/>
+<rect x="155" y="222" width="18" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5"/>
 <rect x="185" y="222" width="18" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5"/>
 <rect x="215" y="222" width="18" height="16" rx="3" fill="none" stroke="var(--t)" stroke-width="0.5"/>
-<text class="ts" x="200" y="185" text-anchor="middle">Ribosome</text>
+<text class="ts" x="164" y="234" text-anchor="middle" font-size="8">E</text>
+<text class="ts" x="194" y="234" text-anchor="middle" font-size="8">P</text>
+<text class="ts" x="224" y="234" text-anchor="middle" font-size="8">A</text>
+<text class="ts" x="140" y="196" text-anchor="end">Ribosome</text>
 
 <g id="srp" class="stg">
 <path d="M180 130 L200 110 L220 130" stroke="#B91C1C" stroke-width="2" fill="none"/>
@@ -4276,22 +4295,30 @@ TRANSLATION_TECHNICAL = '''
 </g>
 </g>
 
+<circle id="tP" class="trna c-teal" cx="194" cy="212" r="7"/>
+<circle id="tA" class="trna c-amber" cx="246" cy="170" r="7"/>
+<circle id="aaA" class="aa c-coral" cx="246" cy="156" r="5"/>
+<circle id="c1" class="aa c-coral" cx="194" cy="198" r="5"/>
+<circle id="c2" class="aa c-coral" cx="186" cy="188" r="5"/>
+<circle id="c3" class="aa c-coral" cx="180" cy="177" r="5"/>
+<text class="ts" x="160" y="280" text-anchor="middle" id="tPlbl">peptidyl-tRNA</text>
+
 <g id="efTu" class="stg">
-<circle cx="260" cy="150" r="12" class="c-amber"/>
-<text class="ts" x="260" y="150" text-anchor="middle" dominant-baseline="central">EF-Tu</text>
-<text class="ts" x="260" y="130" text-anchor="middle" id="wobbleLabel">Checking codon-anticodon (wobble at position 3)</text>
+<circle cx="264" cy="150" r="15" class="c-amber"/>
+<text class="ts" x="264" y="150" text-anchor="middle" dominant-baseline="central" font-size="9">EF-Tu</text>
+<text class="ts" x="264" y="128" text-anchor="middle" id="wobbleLabel">Checking codon-anticodon (wobble at position 3)</text>
+<text class="ts" x="300" y="150" text-anchor="start" id="gdpLabel" opacity="0">GTP → GDP, leaves</text>
 </g>
 
 <g id="peptideBond" class="stg">
-<circle cx="185" cy="175" r="6" class="c-coral"/>
-<circle cx="200" cy="165" r="6" class="c-coral"/>
+<circle cx="214" cy="194" r="9" fill="none" stroke="#EA580C" stroke-width="2" class="pulse"/>
 <text class="ts" x="192" y="150" text-anchor="middle">Peptidyl transferase (rRNA ribozyme)</text>
 </g>
 
 <g id="efG" class="stg">
-<circle cx="230" cy="230" r="12" class="c-teal"/>
-<text class="ts" x="230" y="230" text-anchor="middle" dominant-baseline="central">EF-G</text>
-<text class="ts" x="230" y="255" text-anchor="middle">Drives translocation (ratchet)</text>
+<circle cx="256" cy="206" r="12" class="c-teal"/>
+<text class="ts" x="256" y="206" text-anchor="middle" dominant-baseline="central" font-size="9">EF-G</text>
+<text class="ts" x="256" y="262" text-anchor="middle">Drives translocation (ratchet)</text>
 </g>
 
 <g id="erMembrane" class="stg">
@@ -4299,6 +4326,8 @@ TRANSLATION_TECHNICAL = '''
 <text class="ts" x="460" y="50" text-anchor="middle">ER membrane</text>
 <circle cx="460" cy="200" r="10" fill="none" stroke="#B91C1C" stroke-width="1.5"/>
 <text class="ts" x="460" y="225" text-anchor="middle">Translocon</text>
+<path d="M290 150 Q380 130 444 192" fill="none" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowTT)"/>
+<text class="ts" x="380" y="122" text-anchor="middle" fill="#B91C1C">SRP brings the ribosome to the ER</text>
 </g>
 </svg>
 
@@ -4325,6 +4354,21 @@ function render() {
   document.getElementById('efG').classList.toggle('on', step === 3);
   document.querySelector('svg').classList.toggle('translocated', step >= 3);
   document.getElementById('srp').classList.toggle('on', step >= 4);
+  const svg = document.querySelector('svg');
+  svg.classList.toggle('tuGone', step >= 1);                                  // EF-Tu-GDP leaves after GTP hydrolysis
+  document.getElementById('efTu').style.opacity = step === 1 ? '0.5' : '';
+  document.getElementById('gdpLabel').setAttribute('opacity', step === 1 ? '1' : '0');
+  const set = (id, x, y) => { const e = document.getElementById(id); e.setAttribute('cx', x); e.setAttribute('cy', y); e.style.cx = x + 'px'; e.style.cy = y + 'px'; };
+  // aminoacyl-tRNA: held by EF-Tu (step 0), accommodated in the A site (step 1 on)
+  if (step === 0) { set('tA', 246, 170); set('aaA', 246, 156); } else { set('tA', 224, 212); set('aaA', 224, 198); }
+  // peptide bond (step 2): the chain is transferred from the P-site tRNA onto the A-site amino acid
+  const chainOnA = step >= 2;
+  set('c1', chainOnA ? 216 : 194, chainOnA ? 186 : 198);
+  set('c2', chainOnA ? 210 : 186, chainOnA ? 175 : 188);
+  set('c3', chainOnA ? 206 : 180, chainOnA ? 163 : 177);
+  // after translocation the old P-site tRNA is in the E site (now empty) and exits
+  document.getElementById('tP').style.opacity = step === 3 ? '0.45' : (step >= 4 ? '0' : '1');
+  document.getElementById('tPlbl').textContent = step === 3 ? 'empty tRNA in E site → exits' : (step >= 4 ? '' : 'peptidyl-tRNA');
   document.getElementById('erMembrane').classList.toggle('on', step >= 4);
 }
 function stepFwd() { if (step < 4) step++; render(); }
