@@ -6240,6 +6240,171 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# DNA_MISMATCH_REPAIR_TECHNICAL  (new)
+# ---------------------------------------------------------------------------
+DNA_MISMATCH_REPAIR_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of human DNA mismatch repair: MutS-alpha clamps a mismatch, MutL-alpha and PCNA nick only the new strand, EXO1 excises it, Pol delta and ligase I restore it, and loss of mismatch repair causes microsatellite instability in Lynch syndrome.</h2>
+<style>
+  .reveal { opacity: 0; transition: opacity .5s ease; }
+  .reveal.on { opacity: 1; }
+  #mutSa { transition: transform .9s ease, opacity .5s ease; }
+  .slide #mutSa { transform: translateX(-26px); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>DNA mismatch repair, technical view</title>
+<desc>After replication a G-T mismatch sits in the newly made strand, which still carries a nick where PCNA is loaded. MutS-alpha, made of MSH2 and MSH6, clamps onto the mismatch and, on binding ATP, becomes a sliding clamp. It recruits MutL-alpha, made of MLH1 and PMS2; PCNA activates the PMS2 endonuclease so that only the new strand is nicked. In E. coli the same job is done by MutH, which nicks the new strand at GATC sites that are not yet methylated. EXO1 then removes the new strand from the nick past the mismatch while RPA protects the single-stranded template. DNA polymerase delta with PCNA fills the gap using the template, and DNA ligase I seals the strand. Inherited loss of MLH1, MSH2, MSH6 or PMS2 causes Lynch syndrome: slippage errors in short repeats are not corrected, producing microsatellite instability and a high risk of colorectal and endometrial cancer; such tumours carry many neoantigens and respond well to PD-1 checkpoint inhibitors.</desc>
+
+<text class="ts" x="30" y="92">Template (parental)</text>
+<text class="ts" x="30" y="138" id="newLblT">New strand</text>
+<line x1="30" y1="100" x2="650" y2="100" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="30" y1="120" x2="196" y2="120" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<line id="newExcised" x1="204" y1="120" x2="430" y2="120" stroke="#D85A30" stroke-width="3" stroke-linecap="round" style="transition:opacity .6s ease"/>
+<line x1="430" y1="120" x2="650" y2="120" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<line id="newFill" x1="196" y1="120" x2="430" y2="120" stroke="#1D9E75" stroke-width="3" stroke-linecap="round" style="opacity:0;transition:opacity .6s ease"/>
+
+<circle id="mmDot" cx="400" cy="110" r="6" fill="#E24B4A" style="transition:opacity .5s ease"/>
+<line id="okPair" x1="400" y1="102" x2="400" y2="118" stroke="#1D9E75" stroke-width="3" stroke-linecap="round" style="opacity:0;transition:opacity .5s ease"/>
+
+<g id="mmLbl" class="reveal"><text class="ts" x="400" y="72" text-anchor="middle" font-weight="600" fill="#B91C1C">G·T mismatch</text></g>
+<g id="nickLbl" class="reveal">
+<text class="ts" x="200" y="150" text-anchor="middle">nick in new strand</text>
+</g>
+<g id="pcna" class="reveal">
+<ellipse cx="214" cy="110" rx="7" ry="22" fill="none" stroke="#0F6E56" stroke-width="3"/>
+<text class="ts" x="214" y="80" text-anchor="middle" font-weight="600" fill="#0F6E56">PCNA</text>
+</g>
+
+<g id="mutSg" class="reveal">
+<g id="mutSa">
+<rect x="378" y="84" width="44" height="52" rx="12" fill="#C4B5FD" fill-opacity="0.75" stroke="#6D28D9" stroke-width="1.5"/>
+</g>
+<text class="ts" x="400" y="152" text-anchor="middle" font-weight="600" fill="#6D28D9" id="mutSLbl">MutSα (MSH2–MSH6)</text>
+<text class="ts" x="400" y="72" text-anchor="middle" fill="#6D28D9" id="atpLbl">+ ATP → sliding clamp</text>
+</g>
+<g id="mutLg" class="reveal">
+<rect x="310" y="86" width="40" height="48" rx="12" fill="#FDE68A" fill-opacity="0.85" stroke="#B45309" stroke-width="1.5"/>
+<text class="ts" x="300" y="152" text-anchor="end" font-weight="600" fill="#B45309">MutLα (MLH1–PMS2)</text>
+<line x1="294" y1="113" x2="294" y2="127" stroke="#ffffff" stroke-width="4"/>
+<text class="ts" x="294" y="168" text-anchor="middle" fill="#B45309">✂ PMS2 nicks the new strand only</text>
+</g>
+<g id="exo1" class="reveal">
+<path d="M441 120 A10 10 0 1 1 437.1 112.1 L431 120 L437.1 127.9 A10 10 0 0 1 441 120" fill="#FDBA74" stroke="#C2410C" stroke-width="1.2" transform="translate(-2 0)"/>
+<text class="ts" x="440" y="150" text-anchor="middle" font-weight="600" fill="#C2410C">EXO1</text>
+<text class="ts" x="320" y="150" text-anchor="middle" fill="#15803D" font-weight="600">RPA coats the template</text>
+<path d="M240 136 L400 136" stroke="#C2410C" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arrowMT)"/>
+<ellipse cx="220" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="236" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="252" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="268" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="284" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="300" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="316" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="332" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="348" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="364" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="380" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="396" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+<ellipse cx="412" cy="106" rx="5" ry="3.2" fill="#16A34A"/>
+</g>
+<g id="polD" class="reveal">
+<circle cx="420" cy="120" r="9" class="c-teal"/>
+<ellipse cx="420" cy="110" rx="6" ry="20" fill="none" stroke="#0F6E56" stroke-width="2"/>
+<path d="M432 113 l6 7 l-6 7 l-6 -7 z" fill="#EF9F27" stroke="#B45309" stroke-width="1"/>
+<text class="ts" x="420" y="150" text-anchor="middle" font-weight="600" fill="#0F6E56">Pol δ + PCNA fill · ligase I seals</text>
+<text class="ts" x="400" y="72" text-anchor="middle" font-weight="600" fill="#15803D">C·G — corrected</text>
+</g>
+
+<defs><marker id="arrowMT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<!-- step 5: what happens without mismatch repair -->
+<g id="msiT" class="reveal">
+<line x1="40" y1="200" x2="290" y2="200" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<line x1="40" y1="220" x2="160" y2="220" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<path d="M160 220 Q172 252 184 220" fill="none" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<line x1="184" y1="220" x2="290" y2="220" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<text class="ts" x="165" y="190" text-anchor="middle" font-family="monospace" letter-spacing="2">CACACACACACA</text>
+<text class="ts" x="196" y="250" font-weight="600" fill="#B91C1C">extra "CA" repeat</text>
+<text class="ts" x="196" y="264">(slippage loop) not repaired</text>
+<text class="ts" x="360" y="194" font-weight="600">Lynch syndrome</text>
+<text class="ts" x="360" y="210">Inherited loss of MLH1, MSH2, MSH6 or PMS2</text>
+<text class="ts" x="360" y="226">→ repeat-slippage errors pile up</text>
+<text class="ts" x="360" y="242">→ <tspan font-weight="600">microsatellite instability (MSI)</tspan></text>
+<text class="ts" x="360" y="258">→ colorectal &amp; endometrial cancer</text>
+<text class="ts" x="360" y="278">MSI-high tumours carry many neoantigens</text>
+<text class="ts" x="360" y="294">→ respond well to <tspan font-weight="600">PD-1 checkpoint inhibitors</tspan></text>
+</g>
+
+<g id="noteMT0" class="reveal">
+<text class="ts" x="30" y="200">After replication a G·T mismatch sits in the new strand. The new strand is recognisable:</text>
+<text class="ts" x="30" y="216">it still has a <tspan font-weight="600">nick</tspan> (an Okazaki-fragment end), and <tspan fill="#0F6E56" font-weight="600">PCNA</tspan> stays loaded there.</text>
+</g>
+<g id="noteMT1" class="reveal">
+<text class="ts" x="30" y="200"><tspan fill="#6D28D9" font-weight="600">MutSα (MSH2–MSH6)</tspan> clamps onto the mismatch; binding ATP turns it into a</text>
+<text class="ts" x="30" y="216">sliding clamp that can move along the DNA.</text>
+</g>
+<g id="noteMT2" class="reveal">
+<text class="ts" x="30" y="200">MutSα recruits <tspan fill="#B45309" font-weight="600">MutLα (MLH1–PMS2)</tspan>. PCNA, oriented by the existing nick, activates PMS2's</text>
+<text class="ts" x="30" y="216">endonuclease so <tspan font-weight="600">only the new strand</tspan> is cut.</text>
+<text class="ts" x="30" y="236" fill="var(--text-secondary)">In E. coli, MutH does this: it nicks the new strand at GATC sites that are not yet methylated (Dam).</text>
+</g>
+<g id="noteMT3" class="reveal">
+<text class="ts" x="30" y="200"><tspan fill="#C2410C" font-weight="600">EXO1</tspan> removes the new strand from the nick, past the mismatch;</text>
+<text class="ts" x="30" y="216"><tspan fill="#15803D" font-weight="600">RPA</tspan> protects the exposed single-stranded template.</text>
+</g>
+<g id="noteMT4" class="reveal">
+<text class="ts" x="30" y="200"><tspan fill="#0F6E56" font-weight="600">Pol δ</tspan> (with PCNA) refills the gap from the template — now C pairs with G — and</text>
+<text class="ts" x="30" y="216"><tspan fill="#B45309" font-weight="600">DNA ligase I</tspan> seals it. Mismatch repair makes replication ~100–1000× more accurate.</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 5 — a G·T mismatch in the new strand; a nick and loaded PCNA mark which strand is new",
+  "Step 1 of 5 — MutSα (MSH2–MSH6) clamps the mismatch and, with ATP, becomes a sliding clamp",
+  "Step 2 of 5 — MutLα (MLH1–PMS2) joins; PCNA activates PMS2 to nick only the new strand (E. coli: MutH at unmethylated GATC)",
+  "Step 3 of 5 — EXO1 excises the new strand past the mismatch while RPA protects the template",
+  "Step 4 of 5 — Pol δ with PCNA resynthesises the gap (C now pairs with G) and DNA ligase I seals it",
+  "Step 5 of 5 — without mismatch repair (Lynch syndrome), repeat-slippage errors persist: microsatellite instability and cancer risk"
+];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  const on = (id, v) => document.getElementById(id).classList.toggle('on', v);
+  on('mmLbl', step === 0); on('nickLbl', step === 0);
+  on('pcna', step <= 2);
+  on('mutSg', step === 1 || step === 2);
+  document.querySelector('svg').classList.toggle('slide', step === 2);   // the clamp slides along the DNA
+  document.getElementById('atpLbl').style.opacity = step === 1 ? '1' : '0';
+  on('mutLg', step === 2);
+  on('exo1', step === 3);
+  on('polD', step === 4);
+  on('msiT', step === 5);
+  document.getElementById('newExcised').style.opacity = step >= 3 ? '0' : '1';
+  document.getElementById('mmDot').style.opacity = step >= 3 ? '0' : '1';
+  document.getElementById('newFill').style.opacity = step >= 4 ? '1' : '0';
+  document.getElementById('okPair').style.opacity = step >= 4 ? '1' : '0';
+  document.getElementById('newLblT').textContent = step >= 4 ? 'New strand (corrected)' : 'New strand';
+  for (let k = 0; k <= 4; k++) on('noteMT' + k, k === step);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+
+# ---------------------------------------------------------------------------
 # CRISPR_CAS9_GENERAL  (source: crispr_cas9.html)
 # ---------------------------------------------------------------------------
 CRISPR_CAS9_GENERAL = '''
@@ -7106,6 +7271,16 @@ REGISTRY = {
                 "A replication error is detected, the faulty segment on "
                 "the new strand excised, correctly resynthesized from "
                 "the template, and sealed — proofreading after the fact."
+            ),
+        },
+        "Technical": {
+            "fragment": DNA_MISMATCH_REPAIR_TECHNICAL,
+            "height": 460,
+            "blurb": (
+                "MutSα (MSH2–MSH6) clamps the mismatch, MutLα (MLH1–PMS2) and "
+                "PCNA nick only the new strand, EXO1 excises it and Pol δ + "
+                "ligase I restore it. Loss of these genes causes Lynch syndrome "
+                "and microsatellite instability."
             ),
         },
     },
