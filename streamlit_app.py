@@ -6543,10 +6543,18 @@ LAC_OPERON_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #repressor { transition: transform 0.8s ease, opacity 0.5s ease; }
-  .removed #repressor { transform: translateY(-40px); opacity: 0; }
+  #repressor { transition: transform 0.8s ease, opacity 0.5s ease, fill .5s ease; transform-box: fill-box; transform-origin: center; }
+  .induced #repressor { transform: translateY(-4px) scale(1.15, 0.8); }          /* inducer bound: shape change loosens its grip */
+  .removed #repressor { transform: translateY(-40px) scale(1.15, 0.8); opacity: 0; }
+  #lactoseMol { transition: transform 0.8s ease, opacity 0.5s ease; }
+  .induced #lactoseMol { transform: translateY(42px); }                          /* lactose lands on the repressor */
+  .removed #lactoseMol { transform: translateY(2px); opacity: 0; }               /* ...and leaves with it */
+  #mrnaLac { transition: stroke-dashoffset 1s ease, opacity .5s ease; }
+  #blockMark { transition: opacity .4s ease; }
+  .tryBind #rnaPol { transform: translateX(22px); }                               /* polymerase pushes up to the repressor */
   #rnaPol { transition: transform 1s ease, opacity 0.5s ease; }
   .transcribing #rnaPol { transform: translateX(200px); }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
@@ -6577,13 +6585,19 @@ LAC_OPERON_GENERAL = '''
 
 <g id="lactoseMol" class="stg">
 <circle cx="235" cy="90" r="7" fill="#EF9F27"/>
-<text class="ts" x="235" y="75" text-anchor="middle">Lactose binds repressor</text>
+<text class="ts" x="235" y="33" text-anchor="middle">Lactose binds repressor</text>
 </g>
 
+<path id="mrnaLac" d="M215 116 L375 116" stroke="#1D9E75" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100 100" stroke-dashoffset="100" style="opacity:0"/>
 <circle id="rnaPol" cx="175" cy="150" r="12" class="c-teal"/>
+<g id="blockMark" style="opacity:0">
+<path d="M212 134 l10 10 M222 134 l-10 10" stroke="#B91C1C" stroke-width="2.5" stroke-linecap="round"/>
+<text class="ts" x="160" y="186" text-anchor="middle" font-weight="600" fill="#B91C1C">RNA polymerase blocked</text>
+</g>
 
 <g id="mrnaOut" class="stg">
 <text class="th" x="420" y="220" text-anchor="middle">Genes transcribed — enzymes made</text>
+<text class="ts" x="300" y="108" text-anchor="middle" fill="#15803D">mRNA</text>
 </g>
 </svg>
 
@@ -6608,7 +6622,7 @@ const configPresent = {
   repressorLabel: '',
   labels: [
     'Step 0 of 2 — lactose is present',
-    'Step 1 of 2 — lactose binds the repressor, changing its shape so it releases the operator',
+    'Step 1 of 2 — lactose (as its isomer allolactose) binds the repressor, changing its shape so it loosens its grip on the operator',
     'Step 2 of 2 — RNA polymerase transcribes the genes — enzymes made to digest lactose'
   ]
 };
@@ -6623,9 +6637,18 @@ function render() {
   const cfg = mode === 'absent' ? configAbsent : configPresent;
   document.getElementById('stepLabel').textContent = cfg.labels[step];
   document.getElementById('lactoseMol').classList.toggle('on', mode === 'present' && step >= 1);
+  document.getElementById('lactoseMol').style.display = mode === 'present' ? '' : 'none';
   const svg = document.querySelector('svg');
+  svg.classList.toggle('induced', mode === 'present' && step === 1);
   svg.classList.toggle('removed', mode === 'present' && step >= 2);
   svg.classList.toggle('transcribing', mode === 'present' && step >= 2);
+  svg.classList.toggle('tryBind', mode === 'absent' && step >= 1);
+  document.getElementById('blockMark').style.opacity = mode === 'absent' && step >= 1 ? '1' : '0';
+  document.getElementById('repressorLabel').textContent =
+    mode === 'absent' ? cfg.repressorLabel : (step === 0 ? 'Repressor bound to operator' : step === 1 ? 'Repressor changes shape' : '');
+  const m = document.getElementById('mrnaLac');
+  const tx = mode === 'present' && step >= 2;
+  m.style.opacity = tx ? '1' : '0'; m.style.strokeDashoffset = tx ? '0' : '100';   // mRNA grows behind the polymerase
   document.getElementById('mrnaOut').classList.toggle('on', mode === 'present' && step >= 2);
 }
 function stepFwd() { if (step < maxStep()) step++; render(); }
