@@ -6163,6 +6163,7 @@ DNA_MISMATCH_REPAIR_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }   /* faint previews keep their shape but not their (overlapping) captions */
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #gap { transition: opacity 0.6s ease; }
@@ -6175,6 +6176,9 @@ DNA_MISMATCH_REPAIR_GENERAL = '''
 
 <line x1="30" y1="120" x2="650" y2="120" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
 <line x1="30" y1="140" x2="650" y2="140" stroke="#D85A30" stroke-width="3" stroke-linecap="round"/>
+<text class="ts" x="30" y="110">Template strand (parental — correct)</text>
+<text class="ts" x="30" y="160" id="newStrandLabel">New strand (carries the error)</text>
+<line id="fixedPair" x1="340" y1="122" x2="340" y2="138" stroke="#1D9E75" stroke-width="3" stroke-linecap="round" style="opacity:0;transition:opacity .5s ease"/>
 
 <circle id="mismatch" cx="340" cy="130" r="8" fill="#E24B4A"/>
 <text class="ts" x="340" y="105" text-anchor="middle" id="mismatchLabel">Mismatched base</text>
@@ -6223,6 +6227,8 @@ function render() {
   document.getElementById('mismatch').style.opacity = step >= 2 ? '0' : '1';
   document.getElementById('excision').classList.toggle('on', step === 2);
   document.getElementById('resynthesis').classList.toggle('on', step >= 3);
+  document.getElementById('fixedPair').style.opacity = step >= 3 ? '1' : '0';   // the correct base now pairs with the template
+  document.getElementById('newStrandLabel').textContent = step >= 3 ? 'New strand (now corrected)' : 'New strand (carries the error)';
   document.getElementById('ligate').classList.toggle('on', step >= 4);
 }
 function stepFwd() { if (step < 4) step++; render(); }
