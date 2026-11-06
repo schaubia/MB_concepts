@@ -3242,28 +3242,32 @@ ACTION_POTENTIAL_GENERAL = '''
 <title>Three types of action potential</title>
 <desc>Neuronal action potentials are fast, brief spikes lasting one to two milliseconds, driven by voltage-gated sodium then potassium channels. Cardiac ventricular action potentials have a long plateau phase lasting two to three hundred milliseconds, where calcium influx balances potassium efflux, preventing the heart muscle from being tetanized. Pacemaker cells in the SA node have no stable resting potential; a funny current causes spontaneous slow depolarization to threshold, where calcium channels, not sodium channels, drive the upstroke, producing the heart's own spontaneous rhythm.</desc>
 
-<line x1="30" y1="140" x2="650" y2="140" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
-<text class="ts" x="60" y="125" id="cellLabel">Neuron axon membrane</text>
+<line x1="30" y1="50" x2="650" y2="50" stroke="var(--t)" stroke-width="2" stroke-linecap="round"/>
+<text class="ts" x="60" y="34" id="cellLabel">Neuron axon membrane</text>
 
-<g id="channel0" transform="translate(140,140)">
+<g id="channel0" transform="translate(140,50)">
 <rect id="channel0Rect" x="-7" y="-7" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" id="channel0Name" x="0" y="24" text-anchor="middle"></text>
 </g>
-<g id="channel1" transform="translate(175,140)">
+<g id="channel1" transform="translate(175,50)">
 <rect id="channel1Rect" x="-7" y="-7" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" id="channel1Name" x="0" y="24" text-anchor="middle"></text>
 </g>
-<g id="channel2" transform="translate(450,140)">
+<g id="channel2" transform="translate(450,50)">
 <rect id="channel2Rect" x="-7" y="-7" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" id="channel2Name" x="0" y="24" text-anchor="middle"></text>
 </g>
 
 <path id="traceLine" d="M30 200 L650 200" stroke="#378ADD" stroke-width="2.5" fill="none"/>
-<text class="ts" x="60" y="245" id="voltageLabel">Resting potential: −70 mV</text>
+<text class="ts" x="60" y="240" id="voltageLabel">Resting potential: −70 mV</text>
 
 <g id="channelNote" class="stg">
-<text class="ts" x="340" y="280" text-anchor="middle" id="channelLabel"></text>
+<text class="ts" x="340" y="262" text-anchor="middle" id="channelLabel"></text>
+<text class="ts" x="340" y="280" text-anchor="middle" id="channelLabel2"></text>
 </g>
 
 <g id="specialNote" class="stg">
-<text class="th" x="340" y="300" text-anchor="middle" id="specialLabel"></text>
+<text class="th" x="340" y="304" text-anchor="middle" id="specialLabel"></text>
 </g>
 </svg>
 
@@ -3299,8 +3303,8 @@ const neuronal = {
   channel: "Na+ channels open first and drive the fast upstroke; K+ channels open after to repolarize the membrane",
   special: "",
   channels: [
-    { x: 140, color: "#378ADD" },
-    { x: 175, color: "#2DAA6D" }
+    { x: 140, color: "#378ADD", name: "Na+" },
+    { x: 175, color: "#2DAA6D", name: "K+" }
   ],
   channelOpen: [[], [0], [1], [1], []]
 };
@@ -3321,12 +3325,12 @@ const cardiac = {
     "M30 200 L100 200 L120 90 L140 120 L450 120 L480 200 L650 200"
   ],
   voltage: ["Resting: −90 mV", "Rapid upstroke", "Plateau — sustained depolarization", "Repolarized, refractory period ends"],
-  channel: "Na+ channels drive the fast upstroke; Ca2+ channels then hold the plateau against K+ efflux; K+ alone repolarizes",
+  channel: "Na+ channels drive the fast upstroke; | Ca2+ channels then hold the plateau against K+ efflux; K+ alone repolarizes",
   special: "This plateau is why heart muscle can't be tetanized like skeletal muscle",
   channels: [
-    { x: 110, color: "#378ADD" },
-    { x: 140, color: "#7F77DD" },
-    { x: 450, color: "#2DAA6D" }
+    { x: 110, color: "#378ADD", name: "Na+" },
+    { x: 140, color: "#7F77DD", name: "Ca2+" },
+    { x: 450, color: "#2DAA6D", name: "K+" }
   ],
   channelOpen: [[], [0], [1, 2], [2]]
 };
@@ -3341,18 +3345,18 @@ const pacemaker = {
     "Step 3 of 3 — K+ channels repolarize, then the cycle repeats spontaneously — no external stimulus needed"
   ],
   traces: [
-    "M30 170 L650 170",
-    "M30 170 Q250 170 450 150 Q550 140 600 135 L650 135",
-    "M30 170 Q250 170 450 150 Q550 140 600 135 L615 105 L640 170 L650 170",
-    "M30 170 Q250 170 450 150 Q550 140 600 135 L615 105 L640 170 L650 170"
+    "M30 190 L650 190",
+    "M30 190 Q200 190 330 160",
+    "M30 190 Q200 190 330 160 L350 100",
+    "M30 190 Q200 190 330 160 L350 100 L385 190 Q520 190 640 160"
   ],
   voltage: ["~ −60 mV, drifting", "Slow spontaneous depolarization", "Ca2+-driven upstroke", "Repolarized — cycle repeats"],
-  channel: "HCN 'funny current' channels drive the slow spontaneous drift; Ca2+ channels trigger the upstroke; K+ repolarizes — no fast Na+ channels here",
+  channel: "HCN 'funny current' channels drive the slow spontaneous drift; | Ca2+ channels trigger the upstroke; K+ repolarizes — no fast Na+ channels here",
   special: "This spontaneous, self-repeating cycle is the origin of your heartbeat's rhythm",
   channels: [
-    { x: 250, color: "#EF9F27" },
-    { x: 605, color: "#7F77DD" },
-    { x: 640, color: "#2DAA6D" }
+    { x: 200, color: "#EF9F27", name: "HCN" },
+    { x: 340, color: "#7F77DD", name: "Ca2+" },
+    { x: 380, color: "#2DAA6D", name: "K+" }
   ],
   channelOpen: [[], [0], [1], [2]]
 };
@@ -3365,13 +3369,16 @@ function setMode(m) {
   document.getElementById('btnCardiac').classList.toggle('active', m === 'cardiac');
   document.getElementById('btnPacemaker').classList.toggle('active', m === 'pacemaker');
   document.getElementById('cellLabel').textContent = getCfg().cellLabel;
-  document.getElementById('channelLabel').textContent = getCfg().channel;
+  const note = getCfg().channel.split(' | ');
+  document.getElementById('channelLabel').textContent = note[0];
+  document.getElementById('channelLabel2').textContent = note[1] || '';
   const chCfg = getCfg().channels;
   for (let i = 0; i < 3; i++) {
     const g = document.getElementById('channel' + i);
     if (chCfg[i]) {
       g.style.display = '';
-      g.setAttribute('transform', `translate(${chCfg[i].x},140)`);
+      g.setAttribute('transform', `translate(${chCfg[i].x},50)`);
+      document.getElementById('channel' + i + 'Name').textContent = chCfg[i].name;
     } else {
       g.style.display = 'none';
     }
