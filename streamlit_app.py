@@ -3695,12 +3695,14 @@ SYNAPTIC_TRANSMISSION_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }   /* faint previews keep their shape, not their overlapping captions */
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .drift { animation: drift 1.6s ease-in-out infinite; }
-  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(90px)} }
+  #neurotransmitter circle { transition: transform 1s ease; }
+  .crossing #neurotransmitter circle { transform: translateX(150px); }
+  .bound #neurotransmitter circle { transform: translateX(300px); }
   #vesicle { transition: transform 0.8s ease, opacity 0.5s ease; }
-  .released #vesicle { transform: translateY(20px); opacity: 0; }
+  .released #vesicle { transform: translateX(22px); opacity: 0; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -3724,15 +3726,17 @@ SYNAPTIC_TRANSMISSION_GENERAL = '''
 <text class="ts" x="177" y="185" text-anchor="middle">Ca2+ in</text>
 </g>
 
-<circle id="vesicle" cx="140" cy="150" r="22" fill="none" stroke="#7F77DD" stroke-width="2"/>
+<g id="vesicle">
+<circle cx="140" cy="150" r="22" fill="none" stroke="#7F77DD" stroke-width="2"/>
 <circle cx="132" cy="145" r="3" fill="#7F77DD"/>
 <circle cx="148" cy="150" r="3" fill="#7F77DD"/>
 <circle cx="138" cy="158" r="3" fill="#7F77DD"/>
+</g>
 
 <g id="neurotransmitter" class="stg">
-<circle class="drift" cx="185" cy="150" r="5" fill="#7F77DD"/>
-<circle class="drift" cx="185" cy="165" r="5" fill="#7F77DD" style="animation-delay:.2s"/>
-<circle class="drift" cx="185" cy="135" r="5" fill="#7F77DD" style="animation-delay:.4s"/>
+<circle cx="190" cy="150" r="5" fill="#7F77DD"/>
+<circle cx="190" cy="165" r="5" fill="#7F77DD"/>
+<circle cx="190" cy="135" r="5" fill="#7F77DD"/>
 </g>
 
 <g id="receptor" class="stg">
@@ -3742,7 +3746,8 @@ SYNAPTIC_TRANSMISSION_GENERAL = '''
 
 <g id="response" class="stg">
 <circle cx="503" cy="150" r="20" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="3 3"/>
-<text class="ts" x="570" y="195" text-anchor="middle">Postsynaptic response (ion channel opens)</text>
+<text class="ts" x="570" y="240" text-anchor="middle">Postsynaptic response</text>
+<text class="ts" x="570" y="256" text-anchor="middle">(ion channel opens)</text>
 </g>
 </svg>
 
@@ -3767,7 +3772,9 @@ function render() {
   document.getElementById('apArrow').classList.toggle('on', step === 0);
   document.getElementById('caChannel').classList.toggle('on', step >= 1);
   document.querySelector('svg').classList.toggle('released', step >= 2);
-  document.getElementById('neurotransmitter').classList.toggle('on', step >= 2 && step < 4);
+  document.getElementById('neurotransmitter').classList.toggle('on', step >= 2);
+  document.querySelector('svg').classList.toggle('crossing', step === 3);   // halfway across the cleft
+  document.querySelector('svg').classList.toggle('bound', step >= 4);      // arrived at the receptor
   document.getElementById('receptor').classList.toggle('on', step >= 3);
   document.getElementById('response').classList.toggle('on', step >= 4);
 }
@@ -6809,10 +6816,13 @@ SYNAPSE_TYPES_TECHNICAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  #postCell { transition: transform .8s ease; }
+  .nt, .ion { transition: transform .9s ease, opacity .6s ease; }
+  .rcp { transition: fill .4s ease; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .drift { animation: drift 1.6s ease-in-out infinite; }
-  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(80px)} }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -6828,32 +6838,43 @@ SYNAPSE_TYPES_TECHNICAL = '''
 <title>Chemical vs electrical synapses</title>
 <desc>A chemical synapse releases neurotransmitter across a gap, which binds receptors and is then cleared by reuptake or enzymatic degradation, taking one to five milliseconds but allowing the connection strength to be modified. An electrical synapse connects two cells directly through gap junction channels called connexons, letting ions flow straight through with almost no delay, but the connection strength cannot be adjusted.</desc>
 
-<rect x="60" y="80" width="120" height="120" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="120" y="70" text-anchor="middle">Presynaptic cell</text>
-<rect x="500" y="80" width="120" height="120" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="560" y="70" text-anchor="middle">Postsynaptic cell</text>
+<rect x="80" y="80" width="180" height="120" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="170" y="70" text-anchor="middle">Presynaptic cell</text>
+<g id="apNote" class="stg"><text class="ts" x="130" y="145" text-anchor="middle">AP →</text></g>
 
-<g id="chemGap" class="stg">
-<rect x="180" y="80" width="60" height="120" fill="var(--surface-1)"/>
-<text class="ts" x="210" y="230" text-anchor="middle">Synaptic cleft (20 nm)</text>
-<circle class="drift" cx="195" cy="140" r="5" fill="#7F77DD"/>
-<circle class="drift" cx="195" cy="120" r="5" fill="#7F77DD" style="animation-delay:.3s"/>
-<circle cx="440" cy="130" r="10" fill="none" stroke="#EF9F27" stroke-width="2"/>
-<text class="ts" x="440" y="110" text-anchor="middle">Receptor</text>
-<text class="ts" x="440" y="230" text-anchor="middle">Cleared by reuptake / degradation</text>
+<!-- postsynaptic cell slides close for the electrical synapse: 20 nm cleft vs 3.5 nm gap junction -->
+<g id="postCell">
+<rect x="350" y="80" width="180" height="120" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="440" y="70" text-anchor="middle">Postsynaptic cell</text>
+<g id="postResp" class="stg"><text class="ts" x="450" y="145" text-anchor="middle">depolarizes ✦</text></g>
 </g>
 
-<g id="elecGap" class="stg">
-<rect x="180" y="80" width="60" height="120" fill="var(--surface-1)"/>
-<text class="ts" x="210" y="230" text-anchor="middle">Gap junction (3.5 nm)</text>
-<rect x="195" y="120" width="10" height="40" fill="#1D9E75"/>
-<rect x="215" y="120" width="10" height="40" fill="#1D9E75"/>
-<text class="ts" x="210" y="105" text-anchor="middle">Connexons</text>
-<circle class="drift" cx="200" cy="140" r="4" fill="#1D9E75"/>
+<g id="chemGap">
+<text class="ts" x="305" y="70" text-anchor="middle">Synaptic cleft (20 nm)</text>
+<circle cx="236" cy="118" r="12" fill="none" stroke="#7F77DD" stroke-width="2"/>
+<circle cx="236" cy="162" r="12" fill="none" stroke="#7F77DD" stroke-width="2"/>
+<circle class="nt" cx="250" cy="115" r="5" fill="#7F77DD"/>
+<circle class="nt" cx="250" cy="140" r="5" fill="#7F77DD"/>
+<circle class="nt" cx="250" cy="165" r="5" fill="#7F77DD"/>
+<rect class="rcp" x="350" y="107" width="8" height="16" rx="2" fill="none" stroke="#EF9F27" stroke-width="2"/>
+<rect class="rcp" x="350" y="132" width="8" height="16" rx="2" fill="none" stroke="#EF9F27" stroke-width="2"/>
+<rect class="rcp" x="350" y="157" width="8" height="16" rx="2" fill="none" stroke="#EF9F27" stroke-width="2"/>
+<text class="ts" x="365" y="100">Receptor</text>
+<g id="clearNote" class="stg"><text class="ts" x="305" y="222" text-anchor="middle">Cleared by reuptake / degradation</text></g>
+</g>
+
+<g id="elecGap">
+<rect x="250" y="108" width="32" height="12" rx="3" fill="#1D9E75"/>
+<rect x="250" y="134" width="32" height="12" rx="3" fill="#1D9E75"/>
+<rect x="250" y="160" width="32" height="12" rx="3" fill="#1D9E75"/>
+<circle class="ion" cx="232" cy="114" r="4" fill="#E1F5EE" stroke="#0F6E56"/>
+<circle class="ion" cx="232" cy="140" r="4" fill="#E1F5EE" stroke="#0F6E56"/>
+<circle class="ion" cx="232" cy="166" r="4" fill="#E1F5EE" stroke="#0F6E56"/>
+<text class="ts" x="266" y="222" text-anchor="middle">Gap junction (3.5 nm) — Connexons span both membranes</text>
 </g>
 
 <g id="delayNote" class="stg">
-<text class="th" x="340" y="250" text-anchor="middle" id="delayLabel"></text>
+<text class="th" x="340" y="258" text-anchor="middle" id="delayLabel"></text>
 </g>
 </svg>
 
@@ -6887,13 +6908,24 @@ function setMode(m) {
   mode = m; step = 0;
   document.getElementById('btnChemical').classList.toggle('active', m === 'chemical');
   document.getElementById('btnElectrical').classList.toggle('active', m === 'electrical');
-  document.getElementById('chemGap').classList.toggle('on', m === 'chemical');
-  document.getElementById('elecGap').classList.toggle('on', m === 'electrical');
+  document.getElementById('chemGap').classList.toggle('hide', m !== 'chemical');
+  document.getElementById('elecGap').classList.toggle('hide', m !== 'electrical');
+  document.getElementById('postCell').style.transform = m === 'electrical' ? 'translateX(-78px)' : 'none';
   render();
 }
 function render() {
   const cfg = mode === 'chemical' ? chemical : electrical;
   document.getElementById('stepLabel').textContent = cfg.labels[step];
+  document.getElementById('apNote').classList.toggle('on', step === 0);
+  document.getElementById('postResp').classList.toggle('on', step >= 2);
+  // chemical: released (0) -> bound to receptors (1, 2) -> taken back up / degraded (3)
+  const ntX = [0, 92, 92, 0][step];
+  document.querySelectorAll('#chemGap .nt').forEach(c => { c.style.transform = `translateX(${ntX}px)`; c.style.opacity = step === 3 ? 0.3 : 1; });
+  document.querySelectorAll('#chemGap .rcp').forEach(r => r.setAttribute('fill', step === 1 || step === 2 ? '#EF9F27' : 'none'));
+  document.getElementById('clearNote').classList.toggle('on', step === 3);
+  // electrical: ions pass straight through the connexons; at step 3 one flows back (bidirectional)
+  const ionX = [[0, 0, 0], [34, 34, 34], [68, 68, 68], [68, 0, 68]][step];
+  document.querySelectorAll('#elecGap .ion').forEach((c, i) => c.style.transform = `translateX(${ionX[i]}px)`);
   document.getElementById('delayNote').classList.toggle('on', step === 3);
   document.getElementById('delayLabel').textContent = step === 3 ? cfg.labels[3].split('— ')[1] : '';
 }
