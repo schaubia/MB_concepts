@@ -7449,6 +7449,7 @@ SLEEP_WAKE_REGULATION_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #adenosineBar { transition: width 1s ease; }
@@ -7463,6 +7464,7 @@ SLEEP_WAKE_REGULATION_GENERAL = '''
 <text class="ts" x="60" y="40">Sleep pressure (adenosine)</text>
 <rect x="60" y="50" width="250" height="16" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
 <rect id="adenosineBar" x="60" y="50" width="20" height="16" fill="#B91C1C"/>
+<text class="ts" x="60" y="84" id="adenoNote"></text>
 
 <g id="scn" class="stg">
 <circle cx="450" cy="60" r="12" class="c-amber"/>
@@ -7499,12 +7501,12 @@ const labels = [
   "Step 3 of 4 — NREM sleep: slow, high-amplitude delta waves — deep, restorative sleep",
   "Step 4 of 4 — REM sleep: fast, low-amplitude waves resembling wakefulness, muscle atonia, dreaming — NREM/REM cycles repeat roughly every 90 minutes"
 ];
-const waveTraces = [
-  "M30 200 L60 195 L90 205 L120 195 L150 205 L180 200 L650 200",
-  "M30 200 L60 195 L90 205 L120 195 L150 205 L180 200 L650 200",
-  "M30 200 L60 197 L90 203 L120 198 L150 200 L650 200",
-  "M30 200 Q70 160 110 200 Q150 240 190 200 Q230 160 270 200 L650 200",
-  "M30 200 L60 190 L90 210 L120 195 L150 205 L180 190 L210 210 L650 200"
+const waveTraces = [   // each trace spans the full width (previously they stopped part-way and ran flat)
+  "M30 200 L45 195 L60 204 L75 194 L90 203 L105 195 L120 206 L135 196 L150 205 L165 196 L180 206 L195 197 L210 205 L225 194 L240 204 L255 195 L270 204 L285 194 L300 203 L315 195 L330 206 L345 196 L360 205 L375 196 L390 206 L405 197 L420 205 L435 194 L450 204 L465 195 L480 204 L495 194 L510 203 L525 195 L540 206 L555 196 L570 205 L585 196 L600 206 L615 197 L630 205 L645 194 L650 200",
+  "M30 200 L45 195 L60 204 L75 194 L90 203 L105 195 L120 206 L135 196 L150 205 L165 196 L180 206 L195 197 L210 205 L225 194 L240 204 L255 195 L270 204 L285 194 L300 203 L315 195 L330 206 L345 196 L360 205 L375 196 L390 206 L405 197 L420 205 L435 194 L450 204 L465 195 L480 204 L495 194 L510 203 L525 195 L540 206 L555 196 L570 205 L585 196 L600 206 L615 197 L630 205 L645 194 L650 200",
+  "M30 200 L56 196 L82 206 L108 197 L134 205 L160 196 L186 204 L212 194 L238 203 L264 195 L290 204 L316 196 L342 206 L368 197 L394 205 L420 196 L446 204 L472 194 L498 203 L524 195 L550 204 L576 196 L602 206 L628 197 L650 200",
+  "M30 200 Q49.375 160 68.75 200 Q88.125 240 107.5 200 Q126.875 160 146.25 200 Q165.625 240 185 200 Q204.375 160 223.75 200 Q243.125 240 262.5 200 Q281.875 160 301.25 200 Q320.625 240 340 200 Q359.375 160 378.75 200 Q398.125 240 417.5 200 Q436.875 160 456.25 200 Q475.625 240 495 200 Q514.375 160 533.75 200 Q553.125 240 572.5 200 Q591.875 160 611.25 200 Q630.625 240 650 200",
+  "M30 200 L43 194 L56 209 L69 196 L82 208 L95 195 L108 207 L121 197 L134 206 L147 191 L160 204 L173 192 L186 205 L199 193 L212 203 L225 194 L238 209 L251 196 L264 208 L277 195 L290 207 L303 197 L316 206 L329 191 L342 204 L355 192 L368 205 L381 193 L394 203 L407 194 L420 209 L433 196 L446 208 L459 195 L472 207 L485 197 L498 206 L511 191 L524 204 L537 192 L550 205 L563 193 L576 203 L589 194 L602 209 L615 196 L628 208 L641 195 L650 200"
 ];
 const waveLabels = [
   "Awake — fast, low-amplitude waves",
@@ -7515,7 +7517,11 @@ const waveLabels = [
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('adenosineBar').setAttribute('width', 20 + step * 55);
+  // adenosine builds while awake and is cleared during sleep
+  const bar = [40, 140, 230, 150, 80][step];
+  document.getElementById('adenosineBar').setAttribute('width', bar);
+  document.getElementById('adenosineBar').style.width = bar + 'px';
+  document.getElementById('adenoNote').textContent = step <= 1 ? '↑ builds while awake' : step === 2 ? 'high — sleep pressure peaks' : '↓ cleared during sleep';
   document.getElementById('scn').classList.toggle('on', step >= 1);
   document.getElementById('vlpo').classList.toggle('on', step >= 2);
   document.getElementById('waveTrace').setAttribute('d', waveTraces[step]);
