@@ -3510,6 +3510,8 @@ CARDIAC_CONDUCTION_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text, .stg:not(.on) .lead { visibility: hidden; }
+  .lead { stroke: var(--t); stroke-width: 0.75; }
   .pulse { animation: pulse 1.1s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #atriaFill, #ventFill { transition: fill 0.5s ease; }
@@ -3524,23 +3526,28 @@ CARDIAC_CONDUCTION_GENERAL = '''
 <text class="ts" x="200" y="115" text-anchor="middle">Atria</text>
 
 <path id="ventFill" d="M200 180 L120 300 L280 300 Z" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="200" y="260" text-anchor="middle">Ventricles</text>
+<text class="ts" x="200" y="296" text-anchor="middle">Ventricles</text>
 
 <g id="saNode">
 <circle cx="230" cy="80" r="10" class="c-amber"/>
-<text class="ts" x="230" y="62" text-anchor="middle">SA node</text>
+<line class="lead" x1="241" y1="80" x2="300" y2="80"/>
+<text class="ts" x="306" y="84">SA node (pacemaker)</text>
 </g>
 
 <g id="avNode" class="stg">
 <circle cx="200" cy="175" r="9" class="c-purple"/>
-<text class="ts" x="200" y="195" text-anchor="middle">AV node (delay)</text>
+<line class="lead" x1="210" y1="175" x2="300" y2="175"/>
+<text class="ts" x="306" y="179">AV node (delay)</text>
 </g>
 
 <g id="hisPurkinje" class="stg">
 <line x1="200" y1="185" x2="200" y2="230" stroke="#0F6E56" stroke-width="2"/>
 <line x1="200" y1="230" x2="150" y2="290" stroke="#0F6E56" stroke-width="1.5"/>
 <line x1="200" y1="230" x2="250" y2="290" stroke="#0F6E56" stroke-width="1.5"/>
-<text class="ts" x="200" y="245" text-anchor="middle">Bundle of His → Purkinje fibers</text>
+<line class="lead" x1="202" y1="210" x2="300" y2="210"/>
+<text class="ts" x="306" y="214">Bundle of His</text>
+<line class="lead" x1="246" y1="285" x2="300" y2="285"/>
+<text class="ts" x="306" y="289">Purkinje fibers</text>
 </g>
 </svg>
 
