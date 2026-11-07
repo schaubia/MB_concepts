@@ -4484,6 +4484,7 @@ REFLEX_ARC_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -4510,22 +4511,26 @@ REFLEX_ARC_GENERAL = '''
 
 <g id="synapse" class="stg">
 <circle cx="540" cy="150" r="6" fill="#7F77DD"/>
-<text class="ts" x="600" y="130" text-anchor="middle">Monosynaptic — no brain involved</text>
+<text class="ts" x="580" y="282" text-anchor="middle">Monosynaptic — no brain involved</text>
 </g>
 
 <g id="motorPath" class="stg">
 <path d="M520 190 Q300 260 100 200" stroke="#D85A30" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-<text class="ts" x="300" y="280" text-anchor="middle">Motor (efferent) neuron</text>
+<text class="ts" x="330" y="252" text-anchor="middle">Motor (efferent) neuron</text>
 </g>
 
 <g id="contraction" class="stg">
 <text class="th" x="65" y="245" text-anchor="middle">Contracts</text>
 </g>
 
-<rect id="hamstring" x="150" y="230" width="70" height="50" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1" class="stg"/>
-<text class="ts" x="185" y="222" text-anchor="middle" class="stg" id="hamLabel1">Hamstring</text>
+<rect id="hamstring" x="150" y="248" width="70" height="44" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1" class="stg"/>
+<text class="ts stg" x="185" y="243" text-anchor="middle" id="hamLabel1">Hamstring</text>
 <g id="inhibition" class="stg">
-<text class="ts" x="185" y="295" text-anchor="middle">Inhibitory interneuron relaxes it (reciprocal inhibition)</text>
+<path d="M540 156 L556 196" stroke="#888780" stroke-width="1.5" fill="none"/>
+<circle cx="558" cy="202" r="6" class="c-gray"/>
+<text class="ts" x="570" y="206">interneuron</text>
+<path d="M552 210 Q420 300 224 274" stroke="#888780" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="185" y="308" text-anchor="middle">Inhibitory interneuron relaxes it (reciprocal inhibition)</text>
 </g>
 </svg>
 
