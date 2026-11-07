@@ -4658,6 +4658,7 @@ CARDIAC_MUSCLE_CONTRACTION_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift-up { animation: driftup 1.4s ease-in-out infinite; }
@@ -4674,43 +4675,44 @@ CARDIAC_MUSCLE_CONTRACTION_GENERAL = '''
 <text class="ts" x="170" y="50" text-anchor="middle">Cardiomyocyte 1</text>
 
 <rect id="cellRight" x="320" y="60" width="220" height="180" rx="12" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1.5" class="stg"/>
-<text class="ts" x="430" y="50" text-anchor="middle" class="stg" id="cell2Label">Cardiomyocyte 2</text>
+<text class="ts stg" x="430" y="50" text-anchor="middle" id="cell2Label">Cardiomyocyte 2</text>
 
 <rect x="280" y="60" width="40" height="180" fill="#7F77DD" opacity="0.3"/>
 <text class="ts" x="300" y="255" text-anchor="middle" id="idLabel">Intercalated disc</text>
 
 <g id="lTypeChannel" class="stg">
-<rect x="90" y="180" width="14" height="24" fill="#EF9F27"/>
-<text class="ts" x="97" y="220" text-anchor="middle">L-type Ca2+ channel (trigger)</text>
+<rect x="70" y="210" width="14" height="22" fill="#EF9F27"/>
+<text class="ts" x="90" y="225">L-type Ca2+ channel (trigger)</text>
 </g>
 
-<ellipse cx="170" cy="140" rx="60" ry="35" fill="none" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="3 3"/>
-<text class="ts" x="170" y="105" text-anchor="middle">Sarcoplasmic reticulum</text>
+<ellipse cx="170" cy="130" rx="60" ry="32" fill="none" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text class="ts" x="170" y="90" text-anchor="middle">Sarcoplasmic reticulum</text>
 
 <g id="ryr" class="stg">
-<circle cx="140" cy="150" r="6" class="c-red"/>
-<text class="ts" x="140" y="170" text-anchor="middle">Ryanodine receptor</text>
+<circle cx="130" cy="154" r="6" class="c-red"/>
+<text class="ts" x="130" y="178" text-anchor="middle">Ryanodine receptor</text>
 </g>
 
 <g id="cicr" class="stg">
-<circle class="drift-up" cx="150" cy="150" r="4" fill="#B91C1C"/>
-<circle class="drift-up" cx="165" cy="145" r="4" fill="#B91C1C" style="animation-delay:.2s"/>
-<circle class="drift-up" cx="180" cy="150" r="4" fill="#B91C1C" style="animation-delay:.4s"/>
-<circle class="drift-up" cx="160" cy="160" r="4" fill="#B91C1C" style="animation-delay:.6s"/>
-<text class="ts" x="170" y="200" text-anchor="middle">Calcium-induced calcium release</text>
+<circle class="drift-up" cx="150" cy="140" r="4" fill="#B91C1C"/>
+<circle class="drift-up" cx="165" cy="135" r="4" fill="#B91C1C" style="animation-delay:.2s"/>
+<circle class="drift-up" cx="180" cy="142" r="4" fill="#B91C1C" style="animation-delay:.4s"/>
+<circle class="drift-up" cx="195" cy="148" r="4" fill="#B91C1C" style="animation-delay:.6s"/>
+<text class="ts" x="170" y="198" text-anchor="middle">Calcium-induced calcium release</text>
 </g>
 
 <g id="gapJunction" class="stg">
 <circle cx="300" cy="120" r="5" fill="#1D9E75"/>
 <circle cx="300" cy="150" r="5" fill="#1D9E75"/>
 <circle cx="300" cy="180" r="5" fill="#1D9E75"/>
-<text class="ts" x="300" y="105" text-anchor="middle" id="gjLabel">Gap junctions</text>
+<text class="ts" x="300" y="50" text-anchor="middle" id="gjLabel">Gap junctions</text>
 </g>
 
 <g id="cell2Activity" class="stg">
 <circle class="drift-up" cx="420" cy="150" r="4" fill="#B91C1C"/>
 <circle class="drift-up" cx="435" cy="145" r="4" fill="#B91C1C" style="animation-delay:.2s"/>
-<text class="ts" x="430" y="200" text-anchor="middle">Same coupling repeats — syncytial contraction</text>
+<text class="ts" x="430" y="196" text-anchor="middle">Same coupling repeats —</text>
+<text class="ts" x="430" y="211" text-anchor="middle">syncytial contraction</text>
 </g>
 </svg>
 
