@@ -7241,10 +7241,11 @@ DOPAMINE_REWARD_PATHWAY_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 1.6s ease-in-out infinite; }
-  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(70px)} }
+  @keyframes drift { 0%{transform:translateX(0)} 100%{transform:translateX(95px)}   /* far enough to reach the nucleus accumbens */ }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -7255,6 +7256,13 @@ DOPAMINE_REWARD_PATHWAY_GENERAL = '''
 <circle cx="130" cy="150" r="16" fill="#EF9F27" id="stimulus"/>
 <text class="ts" x="130" y="120" text-anchor="middle">Rewarding stimulus</text>
 
+<defs><marker id="daArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g id="activate" class="stg">
+<path d="M150 150 L200 150" stroke="#EF9F27" stroke-width="2" fill="none" marker-end="url(#daArrow)"/>
+<path d="M296 150 L412 150" stroke="#7F77DD" stroke-width="2" fill="none" marker-end="url(#daArrow)"/>
+<text class="ts" x="354" y="188" text-anchor="middle">VTA → NAc projection</text>
+</g>
+<ellipse id="vtaGlow" cx="250" cy="150" rx="52" ry="42" fill="none" stroke="#EF9F27" stroke-width="2" class="stg"/>
 <ellipse cx="250" cy="150" rx="45" ry="35" class="c-purple"/>
 <text class="ts" x="250" y="150" text-anchor="middle" dominant-baseline="central">VTA</text>
 
@@ -7264,7 +7272,7 @@ DOPAMINE_REWARD_PATHWAY_GENERAL = '''
 <circle class="drift" cx="320" cy="150" r="5" fill="#7F77DD" style="animation-delay:.6s"/>
 </g>
 
-<ellipse cx="480" cy="150" rx="50" ry="38" class="c-teal"/>
+<ellipse cx="480" cy="150" rx="64" ry="38" class="c-teal"/>
 <text class="ts" x="480" y="150" text-anchor="middle" dominant-baseline="central">Nucleus accumbens</text>
 
 <g id="reinforcement" class="stg">
@@ -7272,12 +7280,13 @@ DOPAMINE_REWARD_PATHWAY_GENERAL = '''
 </g>
 
 <g id="reuptake" class="stg">
-<circle cx="440" cy="120" r="6" fill="#B91C1C"/>
+<circle cx="434" cy="121" r="6" fill="#B91C1C"/>
 <text class="ts" x="440" y="100" text-anchor="middle">DAT clears dopamine — signal ends</text>
 </g>
 
 <g id="hijack" class="stg">
-<text class="th" x="480" y="240" text-anchor="middle">Some drugs block DAT or trigger extra release — much larger, longer surge</text>
+<text class="th" x="400" y="240" text-anchor="middle">Some drugs block DAT or trigger extra release —</text>
+<text class="th" x="400" y="258" text-anchor="middle">a much larger, longer surge</text>
 </g>
 </svg>
 
@@ -7300,6 +7309,10 @@ const labels = [
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('stimulus').classList.toggle('pulse', step === 0);
+  document.getElementById('activate').classList.toggle('on', step >= 1);
+  const glow = document.getElementById('vtaGlow');
+  glow.classList.toggle('on', step >= 1);
+  glow.classList.toggle('pulse', step === 1);   // VTA dopamine neurons firing
   document.getElementById('dopamineRelease').classList.toggle('on', step >= 2 && step < 4);
   document.getElementById('reinforcement').classList.toggle('on', step >= 2 && step < 4);
   document.getElementById('reuptake').classList.toggle('on', step >= 4);
