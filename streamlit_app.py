@@ -3418,13 +3418,14 @@ MUSCLE_CONTRACTION_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #actinLeft, #actinRight { transition: transform 1s ease; }
   .contracted #actinLeft { transform: translateX(40px); }
   .contracted #actinRight { transform: translateX(-40px); }
-  #tropomyosin { transition: transform 0.6s ease; }
-  .exposed #tropomyosin { transform: translateY(6px); opacity: 0.3; }
+  .tropo { transition: transform 0.6s ease, opacity 0.6s ease; }
+  .exposed .tropo { transform: translateY(6px); opacity: 0.3; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -3433,20 +3434,21 @@ MUSCLE_CONTRACTION_GENERAL = '''
 <desc>Calcium released from the sarcoplasmic reticulum binds troponin, moving tropomyosin to expose myosin-binding sites on actin. Myosin heads form cross-bridges, pull the actin filaments inward during the power stroke, and the sarcomere shortens as the Z-lines are drawn closer together.</desc>
 
 <line x1="60" y1="130" x2="620" y2="130" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="2 2"/>
-<line x1="80" y1="60" x2="80" y2="200" stroke="var(--t)" stroke-width="3"/>
-<line x1="600" y1="60" x2="600" y2="200" stroke="var(--t)" stroke-width="3"/>
-<text class="ts" x="80" y="50" text-anchor="middle">Z-line</text>
-<text class="ts" x="600" y="50" text-anchor="middle">Z-line</text>
 
 <rect x="250" y="115" width="180" height="30" fill="#7F77DD"/>
 <text class="ts" x="340" y="105" text-anchor="middle">Myosin (thick filament)</text>
 
 <g id="actinLeft">
+<line x1="80" y1="60" x2="80" y2="200" stroke="var(--t)" stroke-width="3"/>
+<text class="ts" x="80" y="50" text-anchor="middle">Z-line</text>
 <rect x="80" y="120" width="200" height="8" fill="#378ADD"/>
-<rect id="tropomyosin" x="80" y="120" width="200" height="8" fill="#EF9F27" opacity="0.7"/>
+<rect id="tropomyosin" class="tropo" x="80" y="120" width="200" height="8" fill="#EF9F27" opacity="0.7"/>
 </g>
 <g id="actinRight">
+<line x1="600" y1="60" x2="600" y2="200" stroke="var(--t)" stroke-width="3"/>
+<text class="ts" x="600" y="50" text-anchor="middle">Z-line</text>
 <rect x="400" y="120" width="200" height="8" fill="#D85A30"/>
+<rect class="tropo" x="400" y="120" width="200" height="8" fill="#EF9F27" opacity="0.7"/>
 </g>
 <text class="ts" x="340" y="215" text-anchor="middle">Actin (thin filaments)</text>
 
@@ -3457,14 +3459,14 @@ MUSCLE_CONTRACTION_GENERAL = '''
 </g>
 
 <g id="crossbridge" class="stg">
-<line x1="290" y1="130" x2="320" y2="130" stroke="#7F77DD" stroke-width="3"/>
-<text class="ts" x="305" y="150" text-anchor="middle">Cross-bridge</text>
+<path d="M268 145 L258 128 M298 145 L288 128 M382 145 L392 128 M412 145 L422 128" stroke="#3C3489" stroke-width="3" stroke-linecap="round" fill="none"/>
+<text class="ts" x="340" y="160" text-anchor="middle">Cross-bridges (myosin heads)</text>
 </g>
 
 <g id="atpRelease" class="stg">
-<circle cx="340" cy="90" r="9" class="c-amber pulse"/>
-<text class="ts" x="340" y="90" text-anchor="middle" dominant-baseline="central" font-size="8">ATP</text>
-<text class="ts" x="340" y="75" text-anchor="middle">ATP binds — cross-bridge releases</text>
+<circle cx="340" cy="182" r="9" class="c-amber pulse"/>
+<text class="ts" x="340" y="182" text-anchor="middle" dominant-baseline="central" font-size="8">ATP</text>
+<text class="ts" x="340" y="245" text-anchor="middle">ATP binds — cross-bridge releases</text>
 </g>
 </svg>
 
@@ -4755,10 +4757,13 @@ MUSCLE_CONTRACTION_TECHNICAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #myosinHead { transition: transform 1s ease; }
-  .stroke #myosinHead { transform: rotate(-25deg); transform-origin: 340px 160px; }
+  #myosinHead { transform-origin: 340px 144px; }
+  .stroke #myosinHead { transform: rotate(-25deg); }
+  .detached #myosinHead { transform: rotate(-25deg) translateY(-16px); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
@@ -4777,10 +4782,10 @@ MUSCLE_CONTRACTION_TECHNICAL = '''
 <text class="ts" x="90" y="175" text-anchor="middle" id="ryrLabel">RyR</text>
 
 <g id="calcium" class="stg">
-<circle cx="170" cy="130" r="4" fill="#B91C1C"/>
-<circle cx="185" cy="145" r="4" fill="#B91C1C"/>
-<circle cx="175" cy="165" r="4" fill="#B91C1C"/>
-<text class="ts" x="180" y="110" text-anchor="middle">Ca2+ floods out</text>
+<circle cx="214" cy="128" r="4" fill="#B91C1C"/>
+<circle cx="228" cy="142" r="4" fill="#B91C1C"/>
+<circle cx="216" cy="158" r="4" fill="#B91C1C"/>
+<text class="ts" x="246" y="104" text-anchor="middle">Ca2+ floods out</text>
 </g>
 
 <g id="troponin" class="stg">
@@ -4834,6 +4839,7 @@ function render() {
   document.getElementById('troponin').classList.toggle('on', step >= 2);
   document.getElementById('myosinHead').classList.toggle('on', step >= 3);
   document.querySelector('svg').classList.toggle('stroke', step === 3);
+  document.querySelector('svg').classList.toggle('detached', step === 5);
   document.getElementById('stateLabel').classList.toggle('on', step >= 3);
   document.getElementById('crossBridgeState').textContent = states[step] || '';
   document.getElementById('atpNote').classList.toggle('on', step >= 5);
