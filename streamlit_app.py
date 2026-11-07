@@ -4752,6 +4752,157 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# CARDIAC_MUSCLE_CONTRACTION_TECHNICAL
+# ---------------------------------------------------------------------------
+CARDIAC_MUSCLE_CONTRACTION_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of cardiac excitation-contraction coupling: trigger Ca2+ through L-type channels opens RyR2 across the dyad (calcium-induced calcium release), Ca2+ binds troponin C, relaxation by SERCA2a (regulated by phospholamban) and the Na+/Ca2+ exchanger, and beta-adrenergic enhancement through PKA.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .cyt { transition: opacity .6s ease; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Cardiac excitation-contraction coupling, technical view</title>
+<desc>An action potential opens L-type Ca2+ channels in the T-tubule; the small trigger influx crosses the dyad and opens RyR2 on the junctional sarcoplasmic reticulum, releasing a much larger amount of Ca2+ (calcium-induced calcium release). Ca2+ binds troponin C and the cell contracts, with force graded by the amount released. SERCA2a, braked by phospholamban, pumps most Ca2+ back into the SR and the Na+/Ca2+ exchanger removes the rest from the cell. Beta-1 adrenergic stimulation activates PKA, which phosphorylates the L-type channel and phospholamban, giving a larger and faster Ca2+ transient.</desc>
+<defs><marker id="ctArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<!-- sarcolemma with a T-tubule dipping into the cell -->
+<text class="ts" x="40" y="40">Extracellular</text>
+<path d="M30 60 L140 60 L140 140 L180 140 L180 60 L650 60" fill="none" stroke="var(--t)" stroke-width="2"/>
+<text class="ts" x="188" y="100">T-tubule</text>
+
+<!-- L-type Ca2+ channel on the T-tubule floor -->
+<rect x="152" y="134" width="16" height="12" rx="2" fill="#EF9F27" stroke="#B45309" stroke-width="1"/>
+<text class="ts" x="134" y="118" text-anchor="end">L-type Ca2+</text>
+<text class="ts" x="134" y="131" text-anchor="end">channel</text>
+<text class="ts" x="186" y="155" style="font-size:9px">dyad ~15 nm</text>
+
+<!-- junctional SR with RyR2 facing the L-type channel -->
+<rect x="100" y="160" width="240" height="46" rx="18" fill="none" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text class="ts" x="230" y="188" text-anchor="middle">SR (Ca2+ store)</text>
+<circle id="ryr" cx="160" cy="164" r="7" class="c-red"/>
+<text class="ts" x="112" y="196">RyR2</text>
+
+<!-- SERCA2a + phospholamban on the SR -->
+<circle cx="320" cy="206" r="8" class="c-green"/>
+<text class="ts" x="332" y="226">SERCA2a</text>
+<circle cx="304" cy="214" r="5" class="c-gray"/>
+<text class="ts" x="296" y="232" text-anchor="end">PLB</text>
+<g id="serca" class="stg"><path d="M322 252 L322 220" stroke="#15803D" stroke-width="2" fill="none" marker-end="url(#ctArrow)"/>
+<text class="ts" x="332" y="250">Ca2+ back into SR</text></g>
+
+<!-- NCX on the sarcolemma -->
+<rect x="322" y="52" width="16" height="16" rx="3" class="c-teal"/>
+<text class="ts" x="330" y="86" text-anchor="middle">NCX</text>
+<g id="ncx" class="stg">
+<path d="M346 72 L346 30" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#ctArrow)"/>
+<text class="ts" x="352" y="36">1 Ca2+ out</text>
+<path d="M314 26 L314 70" stroke="#0F6E56" stroke-width="2" fill="none" marker-end="url(#ctArrow)"/>
+<text class="ts" x="308" y="36" text-anchor="end">3 Na+ in</text>
+</g>
+
+<!-- trigger Ca2+ in the dyad -->
+<g id="trigger" class="stg">
+<circle cx="156" cy="151" r="3" fill="#B91C1C"/><circle cx="166" cy="154" r="3" fill="#B91C1C"/>
+</g>
+<g id="release" class="stg"><path d="M160 172 L170 214" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#ctArrow)"/></g>
+
+<!-- cytosolic Ca2+ -->
+<circle class="cyt" cx="130" cy="226" r="4" fill="#B91C1C"/>
+<circle class="cyt" cx="152" cy="238" r="4" fill="#B91C1C"/>
+<circle class="cyt" cx="176" cy="226" r="4" fill="#B91C1C"/>
+<circle class="cyt" cx="198" cy="240" r="4" fill="#B91C1C"/>
+<circle class="cyt" cx="220" cy="228" r="4" fill="#B91C1C"/>
+<circle class="cyt" cx="242" cy="242" r="4" fill="#B91C1C"/>
+<circle class="cyt" cx="262" cy="226" r="4" fill="#B91C1C"/>
+<circle class="cyt" cx="140" cy="254" r="4" fill="#B91C1C"/>
+<circle class="cyt" cx="230" cy="256" r="4" fill="#B91C1C"/>
+<text class="ts" x="40" y="244" id="cytLabel">cytosolic Ca2+</text>
+
+<!-- Ca2+ transient plot -->
+<text class="ts" x="400" y="84">[Ca2+]i transient</text>
+<line x1="400" y1="190" x2="640" y2="190" stroke="var(--t)" stroke-width="1"/>
+<line x1="400" y1="92" x2="400" y2="190" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="640" y="204" text-anchor="end">time</text>
+<path id="baseTrace" d="" fill="none" stroke="#888780" stroke-width="1.5" stroke-dasharray="4 3"/>
+<path id="caTrace" d="M400 180 L640 180" fill="none" stroke="#B91C1C" stroke-width="2.5" stroke-linejoin="round"/>
+<g id="baseKey" class="stg"><text class="ts" x="636" y="104" text-anchor="end">dashed = baseline beat</text></g>
+
+<!-- myofilaments -->
+<line x1="390" y1="262" x2="640" y2="262" stroke="#378ADD" stroke-width="5" stroke-linecap="round"/>
+<rect x="440" y="270" width="160" height="14" rx="3" fill="#7F77DD"/>
+<circle class="tnc" cx="425" cy="262" r="6" class="c-purple"/>
+<circle class="tnc" cx="515" cy="262" r="6" class="c-purple"/>
+<circle class="tnc" cx="605" cy="262" r="6" class="c-purple"/>
+<text class="ts" x="640" y="248" text-anchor="end">Troponin C on actin · myosin</text>
+<g id="contract" class="stg"><text class="th" x="515" y="304" text-anchor="middle">Ca2+ on troponin C → cross-bridges cycle</text></g>
+
+<!-- beta-adrenergic: PKA phosphorylations -->
+<g id="beta" class="stg">
+<circle cx="90" cy="60" r="8" class="c-coral"/>
+<text class="ts" x="40" y="80">β1 → cAMP → PKA</text>
+<circle cx="174" cy="132" r="6" class="c-coral"/><text x="174" y="135" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#7F1D1D">P</text>
+<circle cx="296" cy="208" r="6" class="c-coral"/><text x="296" y="211" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#7F1D1D">P</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 5</span>
+</div>
+
+<script>
+let step = 0;
+const labels = [
+  "Step 0 of 5 — the action potential spreads down the T-tubule and opens L-type Ca2+ channels (Cav1.2) — a small trigger influx into the dyad",
+  "Step 1 of 5 — trigger Ca2+ binds RyR2 on the junctional SR across the ~15 nm dyad and opens it: calcium-induced calcium release amplifies the signal ~10× (no mechanical DHPR–RyR link, unlike skeletal muscle)",
+  "Step 2 of 5 — cytosolic Ca2+ rises ~10-fold and binds troponin C — cross-bridges cycle and the cell contracts; force is graded by how much Ca2+ is released",
+  "Step 3 of 5 — relaxation: SERCA2a pumps most of the Ca2+ (~70%) back into the SR; phospholamban (PLB) acts as its brake",
+  "Step 4 of 5 — relaxation: the Na+/Ca2+ exchanger (NCX) removes the rest (3 Na+ in for 1 Ca2+ out), so Ca2+ entry and exit balance beat to beat",
+  "Step 5 of 5 — sympathetic β1 stimulation: cAMP → PKA phosphorylates the L-type channel (more trigger Ca2+) and phospholamban (SERCA unbraked) — a larger, faster Ca2+ transient: stronger and quicker beats"
+];
+const T0 = "M400 180 L440 180 L450 176";
+const traces = [
+  T0,
+  T0 + " L462 112",
+  T0 + " L462 112 L472 104",
+  T0 + " L462 112 L472 104 Q500 110 530 150",
+  T0 + " L462 112 L472 104 Q500 110 530 150 Q560 176 600 180 L640 180",
+  "M400 180 L440 180 L448 172 L458 92 L464 86 Q484 96 504 150 Q522 176 548 180 L640 180"
+];
+const BASE = traces[4];
+const cytCount = [0, 4, 9, 4, 0, 9];
+function render() {
+  document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('trigger').classList.toggle('on', step <= 2 || step === 5);
+  document.getElementById('ryr').classList.toggle('pulse', step === 1);
+  document.getElementById('release').classList.toggle('on', step === 1 || step === 2 || step === 5);
+  document.querySelectorAll('.cyt').forEach((d, i) => { d.style.opacity = i < cytCount[step] ? 1 : 0; });
+  document.getElementById('contract').classList.toggle('on', step === 2 || step === 5);
+  document.querySelectorAll('.tnc').forEach(c => c.setAttribute('class', (step === 2 || step === 5) ? 'tnc c-red' : 'tnc c-purple'));
+  document.getElementById('serca').classList.toggle('on', step === 3 || step === 5);
+  document.getElementById('ncx').classList.toggle('on', step === 4 || step === 5);
+  document.getElementById('beta').classList.toggle('on', step === 5);
+  document.getElementById('caTrace').setAttribute('d', traces[step]);
+  document.getElementById('baseTrace').setAttribute('d', step === 5 ? BASE : '');
+  document.getElementById('baseKey').classList.toggle('on', step === 5);
+}
+function stepFwd() { if (step < 5) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # MUSCLE_CONTRACTION_TECHNICAL  (source: muscle_technical.html)
 # ---------------------------------------------------------------------------
 MUSCLE_CONTRACTION_TECHNICAL = '''
@@ -8050,6 +8201,16 @@ REGISTRY = {
                 "trigger Ca2+ influx opens ryanodine receptors for "
                 "calcium-induced calcium release, and gap junctions at "
                 "intercalated discs spread the signal cell to cell."
+            ),
+        },
+        "Technical": {
+            "fragment": CARDIAC_MUSCLE_CONTRACTION_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "The dyad and the full Ca2+ cycle: L-type trigger Ca2+ opens "
+                "RyR2 (CICR), Ca2+ binds troponin C, SERCA2a/phospholamban and "
+                "NCX clear it, and beta-1/PKA signalling makes beats stronger "
+                "and faster."
             ),
         },
     },
