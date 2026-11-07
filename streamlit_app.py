@@ -6945,6 +6945,7 @@ SYNAPTIC_PLASTICITY_LTP_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #mgBlock { transition: transform 0.8s ease, opacity 0.5s ease; }
@@ -6959,22 +6960,29 @@ SYNAPTIC_PLASTICITY_LTP_GENERAL = '''
 <rect x="30" y="60" width="620" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
 <text class="ts" x="60" y="50">Presynaptic terminal</text>
 
-<circle class="stg" id="glutamate1" cx="200" cy="70" r="6" fill="#7F77DD"/>
-<circle class="stg" id="glutamate2" cx="220" cy="70" r="6" fill="#7F77DD"/>
-<text class="ts" x="210" y="95" text-anchor="middle" id="glutamateLabel">Glutamate released</text>
+<text class="ts" x="210" y="98" text-anchor="middle" id="glutamateLabel">Glutamate released</text>
+<path d="M210 104 L210 128" stroke="#7F77DD" stroke-width="1.5" fill="none" marker-end="url(#ltpArrow)"/>
+<defs><marker id="ltpArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#7F77DD" stroke-width="1.5"/></marker></defs>
 
-<rect x="80" y="140" width="600" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="110" y="130">Postsynaptic membrane</text>
+<rect x="80" y="140" width="570" height="120" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="640" y="250" text-anchor="end">Postsynaptic membrane</text>
 
 <circle cx="220" cy="160" r="14" class="c-purple"/>
 <text class="ts" x="220" y="185" text-anchor="middle">NMDA receptor</text>
 <circle id="mgBlock" cx="220" cy="150" r="5" fill="#EF9F27"/>
-<text class="ts" x="220" y="135" text-anchor="middle" id="mgLabel">Mg2+ block</text>
+<circle class="stg" id="glutamate1" cx="200" cy="148" r="6" fill="#7F77DD"/>
+<circle class="stg" id="glutamate2" cx="240" cy="148" r="6" fill="#7F77DD"/>
+<text class="ts" x="250" y="168" id="mgLabel">Mg2+ block</text>
+
+<g id="depol" class="stg">
+<text class="ts" x="100" y="250" fill="#D85A30">+ + +  membrane depolarized</text>
+</g>
 
 <g id="calcium" class="stg">
-<circle cx="220" cy="180" r="4" fill="#B91C1C"/>
-<circle cx="230" cy="190" r="4" fill="#B91C1C"/>
-<text class="ts" x="220" y="215" text-anchor="middle">Ca2+ influx</text>
+<circle cx="212" cy="200" r="4" fill="#B91C1C"/>
+<circle cx="228" cy="200" r="4" fill="#B91C1C"/>
+<circle cx="220" cy="208" r="4" fill="#B91C1C"/>
+<text class="ts" x="220" y="228" text-anchor="middle">Ca2+ influx</text>
 </g>
 
 <g id="camkii" class="stg">
@@ -6990,7 +6998,7 @@ SYNAPTIC_PLASTICITY_LTP_GENERAL = '''
 <g id="ampaNew" class="stg">
 <circle cx="500" cy="170" r="10" class="c-teal"/>
 <circle cx="550" cy="170" r="10" class="c-teal"/>
-<text class="th" x="520" y="145" text-anchor="middle">New AMPA receptors inserted</text>
+<text class="th" x="500" y="128" text-anchor="middle">New AMPA receptors inserted</text>
 </g>
 </svg>
 
@@ -7014,8 +7022,9 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('glutamate1').classList.toggle('on', step >= 0);
   document.getElementById('glutamate2').classList.toggle('on', step >= 0);
-  document.querySelector('svg').classList.toggle('expelled', step >= 2);
-  document.getElementById('mgLabel').style.opacity = step >= 2 ? '0' : '1';
+  document.querySelector('svg').classList.toggle('expelled', step >= 1);   // step 1 caption: depolarization expels the Mg2+ block
+  document.getElementById('depol').classList.toggle('on', step >= 1);
+  document.getElementById('mgLabel').style.opacity = step >= 1 ? '0' : '1';
   document.getElementById('calcium').classList.toggle('on', step >= 2);
   document.getElementById('camkii').classList.toggle('on', step >= 3);
   document.getElementById('ampaNew').classList.toggle('on', step >= 4);
@@ -7024,6 +7033,197 @@ function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# SYNAPTIC_PLASTICITY_LTP_TECHNICAL
+# ---------------------------------------------------------------------------
+SYNAPTIC_PLASTICITY_LTP_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of bidirectional synaptic plasticity: strong stimulation gives a large Ca2+ rise that activates CaMKII and strengthens the synapse (early and late LTP), while weak stimulation gives a small Ca2+ rise that activates phosphatases and removes AMPA receptors (LTD).</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  #spine, #caFill { transition: x .9s ease, y .9s ease, width .9s ease, height .9s ease; }
+  #mg, .ampaMove, .ca { transition: transform .9s ease, opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnLtp" onclick="setMode('ltp')">LTP (strengthening)</button>
+  <button id="btnLtd" onclick="setMode('ltd')">LTD (weakening)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>LTP versus LTD, technical view</title>
+<desc>Strong high-frequency stimulation opens NMDA receptors fully and gives a large Ca2+ rise. Ca2+/calmodulin activates CaMKII, which autophosphorylates and stays active, phosphorylates AMPA receptors and drives insertion of more of them (early LTP); repeated stimulation recruits PKA and CREB, new protein synthesis and spine enlargement (late LTP). Weak low-frequency stimulation gives only a small Ca2+ rise, which activates calcineurin and PP1; AMPA receptors are dephosphorylated and removed by endocytosis (LTD).</desc>
+
+<rect x="30" y="40" width="620" height="22" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="40" y="32">Presynaptic terminal</text>
+
+<!-- dendritic spine (postsynaptic); grows in late LTP -->
+<rect id="spine" x="80" y="110" width="460" height="150" rx="30" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="530" y="250" text-anchor="end">Dendritic spine</text>
+
+<!-- glutamate in the cleft -->
+<circle cx="160" cy="80" r="5" fill="#7F77DD"/>
+<circle cx="308" cy="80" r="5" fill="#7F77DD"/>
+<circle cx="348" cy="80" r="5" fill="#7F77DD"/>
+<text class="ts" x="380" y="84">glutamate</text>
+
+<!-- NMDA receptor with Mg2+ plug -->
+<rect x="151" y="97" width="18" height="26" rx="4" class="c-purple"/>
+<text class="ts" x="160" y="138" text-anchor="middle">NMDA</text>
+<circle id="mg" cx="160" cy="102" r="5" fill="#EF9F27" stroke="#B45309" stroke-width="1"/>
+<text class="ts" x="146" y="106" text-anchor="end" id="mgLabel">Mg2+</text>
+
+<!-- AMPA receptors: two present at baseline, two more can be inserted (LTP); one can be removed (LTD) -->
+<g id="ampa1"><rect x="300" y="97" width="16" height="26" rx="4" class="c-teal"/>
+<g id="p1" class="stg"><circle cx="318" cy="98" r="6" class="c-coral"/><text x="318" y="101" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#7F1D1D">P</text></g></g>
+<g id="ampa2" class="ampaMove"><rect x="340" y="97" width="16" height="26" rx="4" class="c-teal"/>
+<g id="p2" class="stg"><circle cx="358" cy="98" r="6" class="c-coral"/><text x="358" y="101" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#7F1D1D">P</text></g></g>
+<g id="ampaNew3" class="ampaMove" style="opacity:0;transform:translateY(80px)"><rect x="380" y="97" width="16" height="26" rx="4" class="c-teal"/></g>
+<g id="ampaNew4" class="ampaMove" style="opacity:0;transform:translateY(80px)"><rect x="420" y="97" width="16" height="26" rx="4" class="c-teal"/></g>
+<text class="ts" x="368" y="148" text-anchor="middle" id="ampaLabel">AMPA receptors</text>
+<g id="endo" class="stg"><circle cx="348" cy="190" r="20" fill="none" stroke="#64748B" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text class="ts" x="376" y="214">endocytosed</text></g>
+
+<!-- depolarization -->
+<g id="depol" class="stg"><text class="ts" x="460" y="175" text-anchor="middle" id="depolLabel"></text></g>
+
+<!-- Ca2+ entering through NMDA -->
+<circle class="ca" cx="152" cy="160" r="4" fill="#B91C1C"/>
+<circle class="ca" cx="168" cy="160" r="4" fill="#B91C1C"/>
+<circle class="ca" cx="160" cy="172" r="4" fill="#B91C1C"/>
+<circle class="ca" cx="148" cy="184" r="4" fill="#B91C1C"/>
+<circle class="ca" cx="172" cy="184" r="4" fill="#B91C1C"/>
+<circle class="ca" cx="160" cy="196" r="4" fill="#B91C1C"/>
+<g id="caText" class="stg"><text class="ts" x="136" y="180" text-anchor="end">Ca2+</text></g>
+
+<!-- LTP enzyme: CaMKII, autophosphorylated -->
+<g id="camkii" class="stg">
+<circle cx="250" cy="200" r="15" class="c-amber"/>
+<text class="ts" x="250" y="230" text-anchor="middle">CaMKII</text>
+<g id="camkiiP" class="stg"><circle cx="263" cy="188" r="6" class="c-coral"/><text x="263" y="191" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#7F1D1D">P</text>
+<text class="ts" x="274" y="204">autophosphorylated — stays active</text></g>
+</g>
+
+<!-- LTD enzymes: calcineurin -> PP1 -->
+<g id="phos" class="stg">
+<circle cx="250" cy="200" r="15" class="c-gray"/>
+<text class="ts" x="250" y="230" text-anchor="middle">Calcineurin → PP1</text>
+</g>
+
+<!-- late LTP -->
+<g id="late" class="stg"><text class="ts" x="100" y="278">cAMP → PKA → CREB → new gene expression &amp; protein synthesis · spine enlarges</text></g>
+
+<!-- Ca2+ level gauge: high Ca2+ favours kinases (LTP), low Ca2+ favours phosphatases (LTD) -->
+<text class="ts" x="589" y="112" text-anchor="middle">Ca2+</text>
+<rect x="582" y="120" width="14" height="130" rx="3" fill="none" stroke="var(--t)" stroke-width="1"/>
+<rect id="caFill" x="582" y="250" width="14" height="0" rx="3" fill="#B91C1C" opacity="0.75"/>
+<line x1="576" y1="172" x2="602" y2="172" stroke="var(--t)" stroke-width="1" stroke-dasharray="3 2"/>
+<text class="ts" x="604" y="150">kinases</text>
+<text class="ts" x="604" y="214">phospha-</text>
+<text class="ts" x="604" y="227">tases</text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'ltp';
+const ltp = {
+  maxStep: 4,
+  labels: [
+    "Step 0 of 4 — strong, high-frequency stimulation: glutamate binds AMPA and NMDA receptors and AMPA current strongly depolarizes the spine",
+    "Step 1 of 4 — depolarization expels Mg2+ from the NMDA channel — a large, fast Ca2+ rise floods the spine (well above the kinase threshold)",
+    "Step 2 of 4 — Ca2+/calmodulin activates CaMKII, which autophosphorylates (Thr286) and stays active after Ca2+ falls — a molecular memory switch",
+    "Step 3 of 4 — early LTP (minutes to ~1 h): CaMKII phosphorylates AMPA receptors (GluA1 Ser831, more conductance) and drives insertion of extra AMPA receptors",
+    "Step 4 of 4 — late LTP (hours and longer): repeated stimulation recruits cAMP/PKA → CREB → new gene expression and protein synthesis; the spine enlarges and the change is stabilized"
+  ],
+  depol: "+ + +  strong depolarization",
+  caLevel: [0, 0.9, 0.65, 0.65, 0.65],   // Ca2+ eases back but stays in the kinase range
+  caCount: [0, 6, 6, 6, 6]
+};
+const ltd = {
+  maxStep: 3,
+  labels: [
+    "Step 0 of 3 — weak, low-frequency stimulation (~1 Hz): glutamate binds, but the spine is only modestly depolarized",
+    "Step 1 of 3 — the Mg2+ block is only partly relieved — NMDA receptors let in a small, slow Ca2+ rise (below the kinase threshold)",
+    "Step 2 of 3 — low Ca2+ preferentially activates phosphatases: calcineurin (PP2B) activates PP1",
+    "Step 3 of 3 — PP1 dephosphorylates AMPA receptors (GluA1 Ser845) and they are removed by clathrin-mediated endocytosis — the synapse weakens (LTD)"
+  ],
+  depol: "+  weak depolarization",
+  caLevel: [0, 0.3, 0.3, 0.25],
+  caCount: [0, 2, 2, 2]
+};
+function cfg() { return mode === 'ltp' ? ltp : ltd; }
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnLtp').classList.toggle('active', m === 'ltp');
+  document.getElementById('btnLtd').classList.toggle('active', m === 'ltd');
+  document.getElementById('camkii').classList.toggle('hide', m !== 'ltp');
+  document.getElementById('late').classList.toggle('hide', m !== 'ltp');
+  document.getElementById('phos').classList.toggle('hide', m !== 'ltd');
+  document.getElementById('endo').classList.toggle('hide', m !== 'ltd');
+  document.getElementById('depolLabel').textContent = cfg().depol;
+  render();
+}
+function setRect(el, x, y, w, h) {
+  el.setAttribute('x', x); el.setAttribute('y', y); el.setAttribute('width', w); el.setAttribute('height', h);
+  el.style.x = x + 'px'; el.style.y = y + 'px'; el.style.width = w + 'px'; el.style.height = h + 'px';
+}
+function render() {
+  const c = cfg(), L = mode === 'ltp';
+  document.getElementById('stepLabel').textContent = c.labels[step];
+  document.getElementById('depol').classList.toggle('on', true);
+  // Mg2+ plug: fully expelled by strong depolarization, only partly relieved by weak
+  const mg = document.getElementById('mg');
+  if (step === 0) { mg.style.transform = 'none'; mg.style.opacity = 1; }
+  else if (L) { mg.style.transform = 'translateY(-28px)'; mg.style.opacity = 0; }
+  else { mg.style.transform = 'translateY(-10px)'; mg.style.opacity = 0.6; }
+  document.getElementById('mgLabel').style.opacity = step === 0 || !L ? 1 : 0;
+  // Ca2+ entry and gauge
+  document.querySelectorAll('.ca').forEach((d, i) => { d.style.opacity = i < c.caCount[step] ? 1 : 0; });
+  document.getElementById('caText').classList.toggle('on', step >= 1);
+  const h = Math.round(130 * c.caLevel[step]);
+  setRect(document.getElementById('caFill'), 582, 250 - h, 14, h);
+  // enzymes
+  document.getElementById('camkii').classList.toggle('on', L && step >= 2);
+  document.getElementById('camkiiP').classList.toggle('on', L && step >= 2);
+  document.getElementById('phos').classList.toggle('on', !L && step >= 2);
+  // AMPA receptors: baseline phosphorylation shown at rest; LTP adds P + inserts two more; LTD strips P and removes one
+  const phos = L ? step >= 3 : step < 3;
+  document.getElementById('p1').classList.toggle('on', L ? step >= 3 : step < 3);
+  document.getElementById('p2').classList.toggle('on', phos);
+  const ins = L && step >= 3;
+  ['ampaNew3', 'ampaNew4'].forEach(id => { const g = document.getElementById(id); g.style.opacity = ins ? 1 : 0; g.style.transform = ins ? 'none' : 'translateY(80px)'; });
+  const removed = !L && step >= 3;
+  const a2 = document.getElementById('ampa2');
+  a2.style.transform = removed ? 'translateY(78px)' : 'none';
+  a2.style.opacity = removed ? 0.55 : 1;
+  document.getElementById('endo').classList.toggle('on', removed);
+  // late LTP: spine enlarges
+  document.getElementById('late').classList.toggle('on', L && step >= 4);
+  const big = L && step >= 4;
+  setRect(document.getElementById('spine'), big ? 64 : 80, 110, big ? 496 : 460, big ? 155 : 150);
+}
+function stepFwd() { if (step < cfg().maxStep) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('ltp');
 </script>
 '''
 
@@ -7873,6 +8073,16 @@ REGISTRY = {
                 "receptor acts as a coincidence detector, needing both "
                 "glutamate AND depolarization to open, triggering AMPA "
                 "receptor insertion that strengthens the synapse."
+            ),
+        },
+        "Technical": {
+            "fragment": SYNAPTIC_PLASTICITY_LTP_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "LTP vs LTD: a large Ca2+ rise activates CaMKII "
+                "(autophosphorylation, AMPA phosphorylation and insertion, "
+                "then PKA-CREB for late LTP), while a small Ca2+ rise "
+                "activates calcineurin/PP1, which removes AMPA receptors."
             ),
         },
     },
