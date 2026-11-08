@@ -4659,6 +4659,205 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# BARORECEPTOR_REFLEX_TECHNICAL
+# ---------------------------------------------------------------------------
+BARORECEPTOR_REFLEX_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of the baroreceptor reflex: carotid sinus and aortic arch baroreceptors signal through cranial nerves IX and X to the nucleus tractus solitarius, which drives the nucleus ambiguus (vagal output) and, through the CVLM, inhibits the RVLM (sympathetic output); shown for a rise and for a fall in blood pressure.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .pulse { animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+  .nuc { transition: opacity .5s ease; }
+  .nuc.lo { opacity: .35; }
+  .nuc circle { transition: stroke-width .4s ease; }
+  .nuc.hi circle { stroke-width: 4; }
+  .outPath { transition: stroke-width .5s ease, opacity .5s ease; }
+  #vessel { transition: transform .8s ease; transform-box: fill-box; transform-origin: center; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnRise" onclick="setMode('rise')">BP rises</button>
+  <button id="btnFall" onclick="setMode('fall')">BP falls (standing up)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Baroreceptor reflex, technical view</title>
+<desc>Baroreceptors in the carotid sinus (cranial nerve IX) and aortic arch (cranial nerve X) fire faster when stretched. They excite the nucleus tractus solitarius (NTS) in the medulla, which excites the nucleus ambiguus (vagal output to the heart) and the caudal ventrolateral medulla (CVLM); the CVLM inhibits the rostral ventrolateral medulla (RVLM), the source of sympathetic drive to the heart, vessels and kidney. A rise in pressure therefore slows the heart and dilates vessels; a fall in pressure does the opposite.</desc>
+<defs><marker id="brArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<text class="th" x="30" y="22" id="bpLabel">Arterial pressure: ↑ high</text>
+
+<!-- sensors -->
+<g id="sensors">
+<ellipse cx="90" cy="80" rx="46" ry="22" fill="none" stroke="#B91C1C" stroke-width="2"/>
+<text class="ts" x="90" y="84" text-anchor="middle">Carotid sinus</text>
+<path d="M48 196 Q90 140 132 196" fill="none" stroke="#B91C1C" stroke-width="5" stroke-linecap="round"/>
+<text class="ts" x="90" y="214" text-anchor="middle">Aortic arch</text>
+</g>
+
+<!-- afferent nerves -->
+<g id="afferent" class="stg">
+<path d="M136 80 L278 80" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#brArrow)"/>
+<text class="ts" x="206" y="72" text-anchor="middle">CN IX</text>
+<path d="M126 176 Q220 160 284 98" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#brArrow)"/>
+<text class="ts" x="214" y="180" text-anchor="middle">CN X</text>
+</g>
+
+<!-- medulla -->
+<rect x="250" y="30" width="222" height="186" rx="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.75"/>
+<text class="ts" x="262" y="208">Medulla</text>
+
+<path d="M320 80 L396 80" stroke="var(--t)" stroke-width="1.5" fill="none" marker-end="url(#brArrow)"/>
+<path d="M300 100 L300 146" stroke="var(--t)" stroke-width="1.5" fill="none" marker-end="url(#brArrow)"/>
+<path d="M320 170 L398 170 M400 161 L400 179" stroke="var(--t)" stroke-width="1.5" fill="none"/>
+<text class="ts" x="359" y="162" text-anchor="middle" style="font-size:10px">inhibits</text>
+
+<g id="nNTS" class="nuc"><circle cx="300" cy="80" r="20" class="c-purple"/><text class="ts" x="300" y="84" text-anchor="middle">NTS</text></g>
+<g id="nNA" class="nuc"><circle cx="420" cy="80" r="20" class="c-teal"/><text class="ts" x="420" y="84" text-anchor="middle">NA</text></g>
+<g id="nCVLM" class="nuc"><circle cx="300" cy="170" r="20" class="c-gray"/><text class="ts" x="300" y="174" text-anchor="middle">CVLM</text></g>
+<g id="nRVLM" class="nuc"><circle cx="420" cy="170" r="20" class="c-coral"/><text class="ts" x="420" y="174" text-anchor="middle">RVLM</text></g>
+<text class="th" x="272" y="70" text-anchor="end" id="aNTS"></text>
+<text class="th" x="420" y="52" text-anchor="middle" id="aNA"></text>
+<text class="th" x="272" y="160" text-anchor="end" id="aCVLM"></text>
+<text class="th" x="448" y="152" text-anchor="middle" id="aRVLM"></text>
+
+<!-- outputs -->
+<path id="vagal" class="outPath" d="M440 80 Q500 80 560 100" stroke="#0F6E56" stroke-width="2" fill="none" marker-end="url(#brArrow)"/>
+<text class="ts" x="500" y="72" text-anchor="middle">vagus (parasymp.)</text>
+<g id="symp" class="outPath">
+<path d="M440 172 Q500 168 566 122" stroke="#D85A30" stroke-width="2" fill="none" marker-end="url(#brArrow)"/>
+<path d="M440 176 Q500 196 544 220" stroke="#D85A30" stroke-width="2" fill="none" marker-end="url(#brArrow)"/>
+<path d="M440 180 Q480 268 568 296" stroke="#D85A30" stroke-width="2" fill="none" marker-end="url(#brArrow)"/>
+</g>
+<text class="ts" x="470" y="322">sympathetic</text>
+
+<!-- effectors -->
+<circle cx="592" cy="104" r="26" class="c-red"/>
+<text class="ts" x="592" y="108" text-anchor="middle">Heart</text>
+<g id="eHeart" class="stg"><text class="th" x="592" y="148" text-anchor="middle" id="tHeart"></text><text class="th" x="592" y="164" text-anchor="middle" id="tHeart2"></text></g>
+
+<text class="ts" x="598" y="190" text-anchor="middle">Arterioles &amp; veins</text>
+<g id="vessel">
+<line x1="548" y1="210" x2="650" y2="210" stroke="#B91C1C" stroke-width="3"/>
+<line x1="548" y1="234" x2="650" y2="234" stroke="#B91C1C" stroke-width="3"/>
+</g>
+<g id="eVessel" class="stg"><text class="th" x="598" y="256" text-anchor="middle" id="tVessel"></text></g>
+
+<ellipse cx="600" cy="300" rx="28" ry="16" class="c-amber"/>
+<text class="ts" x="600" y="304" text-anchor="middle">Kidney</text>
+<g id="eKidney" class="stg"><text class="th" x="600" y="332" text-anchor="middle" id="tKidney"></text></g>
+
+<!-- afferent firing-rate strip -->
+<text class="ts" x="30" y="252">Baroreceptor firing</text>
+<rect x="30" y="260" width="180" height="30" rx="4" fill="none" stroke="var(--t)" stroke-width="0.75"/>
+<g id="ticks"></g>
+<text class="ts" x="30" y="306" id="rateLabel"></text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'rise';
+const M = {
+  rise: {
+    labels: [
+      "Step 0 of 4 — blood pressure rises: the carotid sinus and aortic arch walls stretch, and mechanosensitive channels (PIEZO1/2) depolarize the baroreceptor endings",
+      "Step 1 of 4 — firing rate increases on CN IX (glossopharyngeal, carotid) and CN X (vagus, aortic) into the nucleus tractus solitarius (NTS)",
+      "Step 2 of 4 — the NTS excites the nucleus ambiguus (vagal output ↑) and the CVLM, which inhibits the RVLM (sympathetic output ↓)",
+      "Step 3 of 4 — effectors: vagal ACh on M2 receptors slows the SA node; less sympathetic drive lowers contractility, dilates arterioles and veins, and reduces renin release",
+      "Step 4 of 4 — cardiac output and peripheral resistance fall, blood pressure returns toward setpoint, and firing settles back to baseline"
+    ],
+    bp: ["↑ high", "↑ high", "↑ high", "↑ high", "→ back to setpoint"],
+    rate: [18, 18, 18, 18, 8],
+    nts: "↑", na: "↑", cvlm: "↑", rvlm: "↓",
+    heart: ["HR ↓", "contractility ↓"], vessel: "dilate", kidney: "renin ↓", vScale: 1.35
+  },
+  fall: {
+    labels: [
+      "Step 0 of 4 — standing up: blood pools in the legs, venous return and blood pressure drop, and the baroreceptors are stretched less",
+      "Step 1 of 4 — firing on CN IX and CN X falls — less excitatory input reaches the NTS",
+      "Step 2 of 4 — NTS drive weakens: the nucleus ambiguus quietens (vagal output ↓) and the CVLM no longer restrains the RVLM (sympathetic output ↑)",
+      "Step 3 of 4 — effectors: heart rate and contractility rise (β1), arterioles and veins constrict (α1), and the kidney releases renin (β1) → angiotensin II",
+      "Step 4 of 4 — cardiac output and resistance rise, blood pressure is restored within seconds, and firing returns to baseline"
+    ],
+    bp: ["↓ low", "↓ low", "↓ low", "↓ low", "→ restored"],
+    rate: [3, 3, 3, 3, 8],
+    nts: "↓", na: "↓", cvlm: "↓", rvlm: "↑",
+    heart: ["HR ↑", "contractility ↑"], vessel: "constrict", kidney: "renin ↑", vScale: 0.6
+  }
+};
+function cfg() { return M[mode]; }
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnRise').classList.toggle('active', m === 'rise');
+  document.getElementById('btnFall').classList.toggle('active', m === 'fall');
+  render();
+}
+function drawTicks(n) {
+  const g = document.getElementById('ticks');
+  g.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const x = 38 + (i + 0.5) * (164 / n);
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', x); l.setAttribute('x2', x); l.setAttribute('y1', 265); l.setAttribute('y2', 285);
+    l.setAttribute('stroke', '#378ADD'); l.setAttribute('stroke-width', '2');
+    g.appendChild(l);
+  }
+  document.getElementById('rateLabel').textContent = n > 8 ? 'firing ↑ (more stretch)' : n < 8 ? 'firing ↓ (less stretch)' : 'baseline firing';
+}
+function setNuc(id, arrowId, dir, active) {
+  const el = document.getElementById(id);
+  el.classList.toggle('lo', active && dir === '↓');
+  el.classList.toggle('hi', active && dir === '↑');
+  document.getElementById(arrowId).textContent = active ? dir : '';
+}
+function render() {
+  const c = cfg();
+  document.getElementById('stepLabel').textContent = c.labels[step];
+  document.getElementById('bpLabel').textContent = 'Arterial pressure: ' + c.bp[step];
+  document.getElementById('sensors').classList.toggle('pulse', step === 0);
+  drawTicks(c.rate[step]);
+  document.getElementById('afferent').classList.toggle('on', step >= 1);
+  const inBrain = step >= 1 && step <= 3;
+  setNuc('nNTS', 'aNTS', c.nts, inBrain);
+  setNuc('nNA', 'aNA', c.na, step >= 2 && step <= 3);
+  setNuc('nCVLM', 'aCVLM', c.cvlm, step >= 2 && step <= 3);
+  setNuc('nRVLM', 'aRVLM', c.rvlm, step >= 2 && step <= 3);
+  // output pathways: the active limb thickens, the withdrawn limb fades
+  const out = step >= 2 && step <= 3;
+  const v = document.getElementById('vagal'), s = document.getElementById('symp');
+  v.style.strokeWidth = out && c.na === '↑' ? 4 : 2;
+  v.style.opacity = out && c.na === '↓' ? 0.3 : 1;
+  s.style.opacity = out && c.rvlm === '↓' ? 0.3 : 1;
+  s.querySelectorAll('path').forEach(p => p.style.strokeWidth = out && c.rvlm === '↑' ? 4 : 2);
+  const eff = step >= 3;
+  document.getElementById('tHeart').textContent = c.heart[0];
+  document.getElementById('tHeart2').textContent = c.heart[1];
+  document.getElementById('tVessel').textContent = c.vessel;
+  document.getElementById('tKidney').textContent = c.kidney;
+  ['eHeart', 'eVessel', 'eKidney'].forEach(id => document.getElementById(id).classList.toggle('on', eff && step === 3));
+  document.getElementById('vessel').style.transform = step === 3 ? `scaleY(${c.vScale})` : 'none';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('rise');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # CARDIAC_MUSCLE_CONTRACTION_GENERAL  (source: cardiac_muscle.html)
 # ---------------------------------------------------------------------------
 CARDIAC_MUSCLE_CONTRACTION_GENERAL = '''
@@ -8386,6 +8585,16 @@ REGISTRY = {
                 "Rising blood pressure stretches baroreceptors, the "
                 "medulla shifts autonomic output, and heart rate and "
                 "vessel tone fall to bring pressure back to setpoint."
+            ),
+        },
+        "Technical": {
+            "fragment": BARORECEPTOR_REFLEX_TECHNICAL,
+            "height": 540,
+            "blurb": (
+                "The full circuit in both directions: CN IX/X afferents to the "
+                "NTS, the nucleus ambiguus (vagal) and the CVLM-RVLM "
+                "(sympathetic) limbs, and their effects on heart, vessels and "
+                "kidney when pressure rises or falls."
             ),
         },
     },
