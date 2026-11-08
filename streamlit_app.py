@@ -3896,40 +3896,52 @@ BLOOD_CLOTTING_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
-<svg width="100%" viewBox="0 0 680 300" role="img">
+<svg width="100%" viewBox="0 0 680 304" role="img">
 <title>Hemostasis, general view</title>
 <desc>Vessel injury exposes collagen, platelets adhere and aggregate to form a temporary plug, the coagulation cascade converges on thrombin, thrombin converts fibrinogen into fibrin strands, and the fibrin mesh stabilizes the clot.</desc>
 
-<path d="M60 150 L300 150" stroke="#B91C1C" stroke-width="18" stroke-linecap="round"/>
-<path id="injuryGap" d="M300 150 L380 150" stroke="#B91C1C" stroke-width="18" stroke-linecap="round" stroke-dasharray="0 0"/>
-<path d="M380 150 L620 150" stroke="#B91C1C" stroke-width="18" stroke-linecap="round"/>
-<text class="ts" x="340" y="120" text-anchor="middle">Vessel injury — collagen exposed</text>
+<!-- vessel drawn as a tube; the top wall is broken at the injury, exposing collagen -->
+<rect x="40" y="120" width="600" height="100" fill="#FCEBEB"/>
+<text class="ts" x="60" y="200">Blood (lumen)</text>
+<line x1="40" y1="220" x2="640" y2="220" stroke="#B91C1C" stroke-width="12"/>
+<line x1="40" y1="120" x2="300" y2="120" stroke="#B91C1C" stroke-width="12"/>
+<line x1="380" y1="120" x2="640" y2="120" stroke="#B91C1C" stroke-width="12"/>
+<g id="injuryGap">
+<path d="M302 104 Q312 92 322 104 T342 104 T362 104 T378 104" fill="none" stroke="#8B5A2B" stroke-width="2.5"/>
+<path d="M304 114 Q314 102 324 114 T344 114 T364 114 T378 114" fill="none" stroke="#8B5A2B" stroke-width="2.5"/>
+</g>
+<text class="ts" x="340" y="76" text-anchor="middle">Vessel injury — collagen exposed</text>
 
 <g id="platelets" class="stg">
-<circle cx="320" cy="150" r="10" fill="#EF9F27"/>
-<circle cx="340" cy="145" r="10" fill="#EF9F27"/>
-<circle cx="360" cy="152" r="10" fill="#EF9F27"/>
-<circle cx="335" cy="160" r="10" fill="#EF9F27"/>
-<text class="ts" x="340" y="190" text-anchor="middle">Platelet plug</text>
+<circle cx="316" cy="118" r="10" fill="#EF9F27"/>
+<circle cx="340" cy="110" r="10" fill="#EF9F27"/>
+<circle cx="364" cy="118" r="10" fill="#EF9F27"/>
+<circle cx="328" cy="134" r="10" fill="#EF9F27"/>
+<circle cx="352" cy="134" r="10" fill="#EF9F27"/>
+<text class="ts" x="396" y="152">Platelet plug</text>
 </g>
 
 <g id="cascade" class="stg">
-<text class="ts" x="340" y="230" text-anchor="middle">Coagulation cascade → thrombin</text>
+<circle cx="300" cy="160" r="5" fill="#7F77DD"/>
+<circle cx="384" cy="166" r="5" fill="#7F77DD"/>
+<circle cx="296" cy="140" r="5" fill="#7F77DD"/>
+<text class="ts" x="340" y="248" text-anchor="middle">Coagulation cascade → thrombin</text>
 </g>
 
 <g id="fibrin" class="stg">
-<path d="M310 130 L370 170 M320 175 L365 130 M300 150 L385 150" stroke="#7F77DD" stroke-width="2"/>
-<text class="ts" x="340" y="260" text-anchor="middle">Fibrinogen → fibrin mesh</text>
+<path d="M302 100 L378 146 M306 146 L376 100 M300 124 L382 124 M318 96 L322 148 M358 96 L362 148" stroke="#7F77DD" stroke-width="2" fill="none"/>
+<text class="ts" x="340" y="270" text-anchor="middle">Fibrinogen → fibrin mesh</text>
 </g>
 
 <g id="stableClot" class="stg">
-<circle cx="340" cy="150" r="45" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="4 3"/>
-<text class="th" x="340" y="280" text-anchor="middle">Stable clot</text>
+<ellipse cx="340" cy="122" rx="54" ry="36" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="th" x="340" y="294" text-anchor="middle">Stable clot</text>
 </g>
 </svg>
 
@@ -3951,6 +3963,7 @@ const labels = [
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('injuryGap').classList.toggle('pulse', step === 0);
   document.getElementById('platelets').classList.toggle('on', step >= 1);
   document.getElementById('cascade').classList.toggle('on', step === 2);
   document.getElementById('fibrin').classList.toggle('on', step >= 3);
