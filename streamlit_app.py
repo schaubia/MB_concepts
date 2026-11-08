@@ -4586,6 +4586,7 @@ BARORECEPTOR_REFLEX_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -4612,7 +4613,7 @@ BARORECEPTOR_REFLEX_GENERAL = '''
 <text class="ts" x="440" y="130" text-anchor="middle" dominant-baseline="central">Medulla</text>
 
 <g id="outputChange" class="stg">
-<text class="ts" x="440" y="185" text-anchor="middle" id="outputLabel">Parasympathetic ↑, sympathetic ↓</text>
+<text class="ts" x="500" y="190" text-anchor="middle" id="outputLabel">Parasympathetic ↑, sympathetic ↓</text>
 </g>
 
 <g id="signal2" class="stg">
@@ -4621,7 +4622,7 @@ BARORECEPTOR_REFLEX_GENERAL = '''
 </g>
 
 <ellipse cx="120" cy="220" rx="45" ry="30" class="c-coral stg" id="heart"/>
-<text class="ts" x="120" y="220" text-anchor="middle" dominant-baseline="central" class="stg" id="heartLabel">Heart rate ↓</text>
+<text class="ts stg" x="120" y="220" text-anchor="middle" dominant-baseline="central" id="heartLabel">Heart rate ↓</text>
 </svg>
 
 <div class="btnrow">
