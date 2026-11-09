@@ -3697,6 +3697,207 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# GAS_EXCHANGE_TECHNICAL
+# ---------------------------------------------------------------------------
+GAS_EXCHANGE_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of gas exchange and gas transport: partial-pressure gradients, diffusion across the respiratory membrane, the oxygen-hemoglobin dissociation curve with the Bohr shift, and carbon dioxide carriage as bicarbonate via carbonic anhydrase and the chloride shift, shown for loading in the lungs and unloading in the tissues.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  .gdot { transition: cx 1.1s ease, cy 1.1s ease, opacity .6s ease; }
+  #hbPt { transition: cx 1s ease, cy 1s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnLungs" onclick="setMode('lungs')">Lungs (loading)</button>
+  <button id="btnTissues" onclick="setMode('tissues')">Tissues (unloading)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Gas exchange and transport, technical view</title>
+<desc>In the lungs, venous blood (PO2 about 40, PCO2 about 46 mmHg) meets alveolar air (PO2 about 100, PCO2 about 40); O2 diffuses in and saturates hemoglobin to about 98 percent within about a third of the capillary transit time, while CO2, far more soluble, diffuses out after being regenerated from bicarbonate by carbonic anhydrase. In the tissues, CO2, H+ and heat shift the dissociation curve right (Bohr effect) so O2 unloads, and CO2 is converted to bicarbonate, which leaves the red cell in exchange for chloride.</desc>
+<defs><marker id="gtArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<!-- exchange compartment: alveolus (lungs) or tissue (tissues) -->
+<rect x="30" y="34" width="360" height="70" rx="12" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1"/>
+<text class="th" x="44" y="58" id="compName"></text>
+<text class="ts" x="44" y="80" id="compP"></text>
+<line x1="30" y1="114" x2="390" y2="114" stroke="var(--t)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" x="388" y="128" text-anchor="end" id="memLabel" style="font-size:10px"></text>
+
+<!-- capillary with a red blood cell -->
+<rect x="30" y="134" width="360" height="92" rx="24" fill="#FCEBEB" stroke="#B91C1C" stroke-width="2"/>
+<text class="ts" x="44" y="152" style="font-size:10px">blood flow →</text>
+<ellipse cx="210" cy="182" rx="48" ry="26" class="c-coral"/>
+<text class="ts" x="210" y="198" text-anchor="middle">RBC · Hb</text>
+<text class="ts" x="30" y="244" id="inLabel"></text>
+<text class="ts" x="390" y="244" text-anchor="end" id="outLabel"></text>
+
+<!-- chloride shift across the RBC membrane -->
+<g id="shift" class="stg">
+<path id="hco3Arrow" d="M258 176 L298 176" stroke="#0F6E56" stroke-width="2" fill="none" marker-end="url(#gtArrow)"/>
+<path id="clArrow" d="M298 192 L258 192" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#gtArrow)"/>
+<text class="ts" x="304" y="180" id="hco3Text"></text>
+<text class="ts" x="304" y="196" id="clText"></text>
+</g>
+
+<!-- gas molecules -->
+<circle class="gdot o2" r="6" fill="#378ADD"/>
+<circle class="gdot o2" r="6" fill="#378ADD"/>
+<circle class="gdot o2" r="6" fill="#378ADD"/>
+<circle class="gdot co2" r="6" fill="#639922"/>
+<circle class="gdot co2" r="6" fill="#639922"/>
+<circle class="gdot co2" r="6" fill="#639922"/>
+<text class="ts" x="320" y="58"><tspan fill="#378ADD">●</tspan> O2   <tspan fill="#639922">●</tspan> CO2</text>
+
+<!-- carbonic anhydrase reaction -->
+<g id="reaction" class="stg"><text class="ts" x="30" y="272" id="rxText"></text></g>
+
+<!-- equilibration within the transit time (lungs) -->
+<g id="transit" class="stg">
+<line x1="30" y1="296" x2="390" y2="296" stroke="#C9C7C0" stroke-width="6" stroke-linecap="round"/>
+<line x1="30" y1="296" x2="150" y2="296" stroke="#378ADD" stroke-width="6" stroke-linecap="round"/>
+<text class="ts" x="30" y="316">0 s</text>
+<text class="ts" x="150" y="316" text-anchor="middle">~0.25 s: equilibrated</text>
+<text class="ts" x="390" y="316" text-anchor="end">0.75 s: leaves capillary</text>
+</g>
+
+<!-- O2-Hb dissociation curve -->
+<text class="th" x="540" y="34" text-anchor="middle">O2–Hb dissociation curve</text>
+<line x1="430" y1="220" x2="650" y2="220" stroke="var(--t)" stroke-width="1"/>
+<line x1="430" y1="60" x2="430" y2="220" stroke="var(--t)" stroke-width="1"/>
+<line x1="430" y1="60" x2="650" y2="60" stroke="var(--t)" stroke-width="0.5" stroke-dasharray="2 3"/>
+<text class="ts" x="430" y="236" text-anchor="middle">0</text>
+<text class="ts" x="518" y="236" text-anchor="middle">40</text>
+<text class="ts" x="650" y="236" text-anchor="middle">100</text>
+<text class="ts" x="540" y="252" text-anchor="middle">PO2 (mmHg)</text>
+<text class="ts" x="424" y="224" text-anchor="end">0</text>
+<text class="ts" x="424" y="144" text-anchor="end">50</text>
+<text class="ts" x="424" y="64" text-anchor="end">100</text>
+<text class="ts" x="424" y="48" text-anchor="end" style="font-size:10px">SO2 %</text>
+<path id="curveN" fill="none" stroke="#888780" stroke-width="2"/>
+<g id="bohr" class="stg"><path id="curveR" fill="none" stroke="#B91C1C" stroke-width="2" stroke-dasharray="5 3"/>
+<text class="ts" x="560" y="176" style="fill:#B91C1C">right shift (Bohr)</text></g>
+<circle id="hbPt" r="6" fill="#B91C1C" stroke="#fff" stroke-width="1.5"/>
+<text class="th" x="650" y="276" text-anchor="end" id="satLabel"></text>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'lungs';
+const N = 2.7;
+function sat(p, p50) { return Math.pow(p, N) / (Math.pow(p, N) + Math.pow(p50, N)); }
+function X(p) { return 430 + p * 2.2; }
+function Y(s) { return 220 - s * 160; }
+function curvePath(p50) {
+  let d = '';
+  for (let p = 0; p <= 100; p += 2) d += (p ? ' L' : 'M') + X(p).toFixed(1) + ' ' + Y(sat(p, p50)).toFixed(1);
+  return d;
+}
+document.getElementById('curveN').setAttribute('d', curvePath(27));
+document.getElementById('curveR').setAttribute('d', curvePath(33));
+
+// molecule positions: top = in the alveolus / tissue, rbc = bound in the red cell, plasma = dissolved in blood
+const POS = {
+  o2Top: [[110, 96], [150, 92], [190, 96]],
+  o2Rbc: [[190, 174], [210, 170], [230, 174]],
+  co2Top: [[270, 96], [310, 92], [350, 96]],
+  co2Blood: [[90, 190], [120, 204], [320, 210]]
+};
+const M = {
+  lungs: {
+    name: 'Alveolus', p: 'PO2 ~100 · PCO2 ~40 mmHg', mem: 'respiratory membrane ~0.5 µm',
+    inL: 'in: PO2 40 · PCO2 46', outL: 'out: PO2 100 · PCO2 40',
+    labels: [
+      "Step 0 of 4 — venous blood enters the pulmonary capillary (PO2 ~40, PCO2 ~46 mmHg) and meets alveolar air (PO2 ~100, PCO2 ~40)",
+      "Step 1 of 4 — O2 diffuses down a ~60 mmHg gradient across the ~0.5 µm membrane (Fick: rate ∝ area × ΔP ÷ thickness) and binds Hb",
+      "Step 2 of 4 — blood equilibrates with alveolar air within ~0.25 s of a ~0.75 s transit, leaving a reserve for exercise; Hb saturation reaches ~98%",
+      "Step 3 of 4 — CO2 diffuses out on a gradient of only ~6 mmHg, but it is ~20× more soluble than O2, so it keeps pace",
+      "Step 4 of 4 — in the red cell HCO3− re-enters (Cl− leaves) and carbonic anhydrase regenerates CO2 to be exhaled; O2 binding to Hb releases CO2 and H+ (Haldane effect)"
+    ],
+    po2: [40, 70, 100, 100, 100], shifted: [false, false, false, false, false],
+    o2AtTop: [true, false, false, false, false],
+    co2AtTop: [false, false, false, true, true],
+    rx: 'RBC: HCO3− + H+ → H2CO3 → CO2 + H2O  (carbonic anhydrase)', rxOn: s => s === 4,
+    shiftOn: s => s === 4, hco3: 'HCO3− in', cl: 'Cl− out', transitOn: s => s === 2
+  },
+  tissues: {
+    name: 'Active tissue', p: 'PO2 ~40 or lower · PCO2 ~46+ mmHg', mem: 'capillary wall',
+    inL: 'in: PO2 100 · PCO2 40', outL: 'out: PO2 40 · PCO2 46',
+    labels: [
+      "Step 0 of 4 — arterial blood reaches the systemic capillary (PO2 ~100, PCO2 ~40 mmHg); working tissue has PO2 ~40 or lower and PCO2 ~46 or higher",
+      "Step 1 of 4 — CO2, H+ and heat from metabolism shift the O2–Hb curve to the right (Bohr effect): hemoglobin's O2 affinity falls",
+      "Step 2 of 4 — O2 unloads down its gradient into the tissue; on the steep part of the curve a small fall in PO2 releases a lot of O2",
+      "Step 3 of 4 — CO2 diffuses into the blood; in the red cell carbonic anhydrase converts CO2 + H2O → H2CO3 → H+ + HCO3−",
+      "Step 4 of 4 — HCO3− leaves the red cell in exchange for Cl− (chloride shift) and travels in plasma (~70% of CO2); deoxy-Hb buffers H+ and carries more CO2 (Haldane effect)"
+    ],
+    po2: [100, 100, 40, 40, 40], shifted: [false, true, true, true, true],
+    o2AtTop: [false, false, true, true, true],
+    co2AtTop: [true, true, true, false, false],
+    rx: 'RBC: CO2 + H2O → H2CO3 → H+ + HCO3−  (carbonic anhydrase)', rxOn: s => s >= 3,
+    shiftOn: s => s === 4, hco3: 'HCO3− out', cl: 'Cl− in', transitOn: s => false
+  }
+};
+function cfg() { return M[mode]; }
+function place(el, xy) {
+  el.setAttribute('cx', xy[0]); el.setAttribute('cy', xy[1]);
+  el.style.cx = xy[0] + 'px'; el.style.cy = xy[1] + 'px';
+}
+function setMode(m) {
+  mode = m; step = 0;
+  const c = cfg();
+  document.getElementById('btnLungs').classList.toggle('active', m === 'lungs');
+  document.getElementById('btnTissues').classList.toggle('active', m === 'tissues');
+  document.getElementById('compName').textContent = c.name;
+  document.getElementById('compP').textContent = c.p;
+  document.getElementById('memLabel').textContent = c.mem;
+  document.getElementById('inLabel').textContent = c.inL;
+  document.getElementById('outLabel').textContent = c.outL;
+  document.getElementById('rxText').textContent = c.rx;
+  document.getElementById('transit').classList.toggle('hide', m !== 'lungs');   // equilibration timing is a lung concept
+  document.getElementById('bohr').classList.toggle('hide', m !== 'tissues');    // the right shift is shown where it happens
+  document.getElementById('hco3Text').textContent = c.hco3;
+  document.getElementById('clText').textContent = c.cl;
+  // arrows point the way each ion moves in this mode
+  document.getElementById('hco3Arrow').setAttribute('d', m === 'tissues' ? 'M258 176 L298 176' : 'M298 176 L258 176');
+  document.getElementById('clArrow').setAttribute('d', m === 'tissues' ? 'M298 192 L258 192' : 'M258 192 L298 192');
+  render();
+}
+function render() {
+  const c = cfg();
+  document.getElementById('stepLabel').textContent = c.labels[step];
+  document.querySelectorAll('.o2').forEach((d, i) => place(d, c.o2AtTop[step] ? POS.o2Top[i] : POS.o2Rbc[i]));
+  document.querySelectorAll('.co2').forEach((d, i) => place(d, c.co2AtTop[step] ? POS.co2Top[i] : POS.co2Blood[i]));
+  document.getElementById('reaction').classList.toggle('on', c.rxOn(step));
+  document.getElementById('shift').classList.toggle('on', c.shiftOn(step));
+  document.getElementById('transit').classList.toggle('on', c.transitOn(step));
+  const sh = c.shifted[step];
+  document.getElementById('bohr').classList.toggle('on', sh);
+  const p = c.po2[step], s = sat(p, sh ? 33 : 27);
+  place(document.getElementById('hbPt'), [X(p), Y(s)]);
+  document.getElementById('satLabel').textContent = 'PO2 ' + p + ' mmHg → SO2 ≈ ' + Math.round(s * 100) + '%';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('lungs');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # SYNAPTIC_TRANSMISSION_GENERAL  (source: synaptic.html)
 # ---------------------------------------------------------------------------
 SYNAPTIC_TRANSMISSION_GENERAL = '''
@@ -8453,6 +8654,16 @@ REGISTRY = {
                 "O2 diffuses from alveolus into blood and binds "
                 "hemoglobin, while CO2 diffuses the opposite direction "
                 "to be exhaled — both driven by concentration gradients."
+            ),
+        },
+        "Technical": {
+            "fragment": GAS_EXCHANGE_TECHNICAL,
+            "height": 540,
+            "blurb": (
+                "Partial pressures and Fick diffusion, the O2-Hb "
+                "dissociation curve with the Bohr shift, and CO2 carried as "
+                "bicarbonate (carbonic anhydrase, chloride shift, Haldane "
+                "effect) in the lungs and in the tissues."
             ),
         },
     },
