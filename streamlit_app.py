@@ -3592,6 +3592,7 @@ GAS_EXCHANGE_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .gasdot { transition: transform 1.3s ease-in-out, opacity 1.3s ease-in-out; }
   .gasarrow { transition: opacity .5s ease; opacity: 0; }
   .gasarrow.on { opacity: 1; }
@@ -3611,8 +3612,7 @@ GAS_EXCHANGE_GENERAL = '''
 
 <rect x="380" y="110" width="260" height="80" rx="30" fill="none" stroke="#B91C1C" stroke-width="3"/>
 <text class="ts" x="510" y="100" text-anchor="middle">Capillary</text>
-<text class="ts" x="440" y="215" text-anchor="middle">Deoxygenated blood in</text>
-<text class="ts" x="580" y="215" text-anchor="middle" id="outLabel">→</text>
+<text class="ts" x="390" y="215" id="outLabel">→ Deoxygenated blood in</text>
 
 <path id="o2Arrow" class="gasarrow" d="M300 128 L400 128" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#gxArrow)"/>
 <text class="ts" x="350" y="118" text-anchor="middle">O2</text>
@@ -3632,12 +3632,12 @@ GAS_EXCHANGE_GENERAL = '''
 
 <g id="hemoglobin" class="stg">
 <circle cx="480" cy="150" r="16" fill="#B91C1C"/>
-<text class="ts" x="480" y="150" text-anchor="middle" dominant-baseline="central" fill="white">Hb</text>
+<text class="ts" x="480" y="150" text-anchor="middle" dominant-baseline="central" style="fill:#fff">Hb</text>
 <text class="ts" x="480" y="175" text-anchor="middle">O2 binds hemoglobin</text>
 </g>
 
 <g id="oxygenated" class="stg">
-<text class="th" x="600" y="150" text-anchor="middle">Oxygenated blood out</text>
+<text class="th" x="640" y="238" text-anchor="end">Oxygenated blood out →</text>
 </g>
 
 <g id="exhaled" class="stg">
