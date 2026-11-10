@@ -4129,6 +4129,184 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# ELECTRON_TRANSPORT_CHAIN_TECHNICAL
+# ---------------------------------------------------------------------------
+ELECTRON_TRANSPORT_CHAIN_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of oxidative phosphorylation: electrons from NADH (Complex I) or FADH2 (Complex II) pass via ubiquinone, Complex III and cytochrome c to Complex IV, pumping 10 or 6 protons; the proton-motive force turns the Fo c-ring and the F1 binding-change mechanism makes ATP, giving P/O ratios of about 2.5 and 1.5.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  .dim { opacity: .3; transition: opacity .5s ease; }
+  .turning .csub { animation: csub 1.2s linear infinite; }
+  @keyframes csub { 0%,100%{opacity:.35} 12%{opacity:1} 25%{opacity:.35} }
+  #gamma { transform-origin: 520px 248px; }
+  .turning #gamma { animation: gspin 1.2s linear infinite; }
+  @keyframes gspin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnNadh" onclick="setMode('nadh')">NADH (Complex I)</button>
+  <button id="btnFad" onclick="setMode('fadh')">FADH2 (Complex II)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Oxidative phosphorylation, technical view</title>
+<desc>Complex I oxidizes NADH and pumps 4 protons; Complex II oxidizes succinate via FADH2 and pumps none. Ubiquinol carries electrons to Complex III, which pumps 4 protons via the Q cycle and reduces cytochrome c; Complex IV reduces oxygen to water and pumps 2 protons. The resulting proton-motive force of about 200 mV drives protons through the Fo c-ring, rotating the gamma shaft inside F1, whose three beta subunits cycle through loose, tight and open states to make ATP.</desc>
+<defs><marker id="oxArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<text class="ts" x="40" y="24">Intermembrane space</text>
+<text class="th" x="640" y="24" text-anchor="end" id="hCount"></text>
+<rect x="30" y="110" width="620" height="60" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="40" y="326">Matrix</text>
+
+<!-- complexes -->
+<g id="cI"><rect x="70" y="100" width="40" height="80" rx="8" class="c-purple"/><rect x="72" y="176" width="22" height="30" rx="6" class="c-purple"/>
+<text class="ts" x="90" y="122" text-anchor="middle">I</text></g>
+<g id="cII"><rect x="140" y="132" width="30" height="58" rx="8" class="c-gray"/><text class="ts" x="155" y="166" text-anchor="middle">II</text></g>
+<circle cx="190" cy="150" r="10" class="c-amber"/><text class="ts" x="190" y="154" text-anchor="middle" style="font-size:10px">Q</text>
+<rect x="210" y="100" width="40" height="80" rx="8" class="c-teal"/><text class="ts" x="230" y="196" text-anchor="middle">III</text>
+<circle cx="275" cy="102" r="9" class="c-red"/><text class="ts" x="275" y="106" text-anchor="middle" style="font-size:10px">c</text>
+<rect x="300" y="100" width="40" height="80" rx="8" class="c-coral"/><text class="ts" x="342" y="196">IV</text>
+
+<!-- electron donors -->
+<g id="donNadh"><text class="ts" x="83" y="238" text-anchor="middle">NADH → NAD+</text></g>
+<g id="donFad"><text class="ts" x="160" y="238" text-anchor="middle">succinate → fumarate</text><text class="ts" x="160" y="252" text-anchor="middle" style="font-size:10px">(FADH2 in Complex II)</text></g>
+
+<!-- electron path, drawn in three legs -->
+<g id="e1" class="stg"><path id="e1p" d="M83 224 L83 150 L178 150" stroke="#EF9F27" stroke-width="2.5" fill="none" marker-end="url(#oxArrow)"/></g>
+<g id="e2" class="stg"><path d="M200 150 L230 150 L230 116 L264 104" stroke="#EF9F27" stroke-width="2.5" fill="none" marker-end="url(#oxArrow)"/></g>
+<g id="e3" class="stg"><path d="M284 104 L320 116 L320 208" stroke="#EF9F27" stroke-width="2.5" fill="none" marker-end="url(#oxArrow)"/></g>
+
+<!-- proton pumping -->
+<g id="pI" class="stg"><path d="M98 96 L98 56" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#oxArrow)"/><text class="ts" x="104" y="64">4 H+</text></g>
+<g id="pII" class="stg"><text class="ts" x="155" y="124" text-anchor="middle" style="fill:#888780">0 H+</text></g>
+<g id="pIII" class="stg"><path d="M238 96 L238 56" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#oxArrow)"/><text class="ts" x="244" y="64">4 H+</text></g>
+<g id="pIV" class="stg"><path d="M328 96 L328 56" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#oxArrow)"/><text class="ts" x="334" y="64">2 H+</text></g>
+
+<g id="oxy" class="stg"><circle cx="322" cy="222" r="8" fill="#378ADD"/><text class="ts" x="322" y="250" text-anchor="middle">½O2 + 2H+ → H2O</text></g>
+
+<!-- proton-motive force + ATP synthase -->
+<g id="pmf" class="stg">
+<path d="M520 52 L520 112" stroke="#B91C1C" stroke-width="2.5" fill="none" marker-end="url(#oxArrow)"/>
+<text class="ts" x="512" y="48" text-anchor="end">Δp ≈ 200 mV</text>
+<text class="ts" x="528" y="48">(mostly Δψ, plus ΔpH)</text>
+</g>
+<text class="ts" x="600" y="104" text-anchor="middle" style="font-size:10px">Fo c-ring</text>
+<g id="cring">
+<rect class="csub" x="484" y="126" width="7" height="28" rx="2" fill="#1D9E75" style="animation-delay:0s"/>
+<rect class="csub" x="493" y="126" width="7" height="28" rx="2" fill="#1D9E75" style="animation-delay:.15s"/>
+<rect class="csub" x="502" y="126" width="7" height="28" rx="2" fill="#1D9E75" style="animation-delay:.3s"/>
+<rect class="csub" x="511" y="126" width="7" height="28" rx="2" fill="#1D9E75" style="animation-delay:.45s"/>
+<rect class="csub" x="520" y="126" width="7" height="28" rx="2" fill="#1D9E75" style="animation-delay:.6s"/>
+<rect class="csub" x="529" y="126" width="7" height="28" rx="2" fill="#1D9E75" style="animation-delay:.75s"/>
+<rect class="csub" x="538" y="126" width="7" height="28" rx="2" fill="#1D9E75" style="animation-delay:.9s"/>
+<rect class="csub" x="547" y="126" width="7" height="28" rx="2" fill="#1D9E75" style="animation-delay:1.05s"/>
+</g>
+<line x1="519" y1="154" x2="519" y2="236" stroke="var(--t)" stroke-width="3"/>
+<text class="ts" x="512" y="194" text-anchor="end" style="font-size:10px">γ shaft</text>
+<!-- F1 head: alternating alpha (grey) and beta (amber) subunits -->
+<circle cx="550" cy="248" r="13" class="c-amber"/><text class="ts" id="b0" x="550" y="252" text-anchor="middle" style="font-size:10px"></text>
+<circle cx="535" cy="274" r="13" class="c-gray"/>
+<circle cx="505" cy="274" r="13" class="c-amber"/><text class="ts" id="b1" x="505" y="278" text-anchor="middle" style="font-size:10px"></text>
+<circle cx="490" cy="248" r="13" class="c-gray"/>
+<circle cx="505" cy="222" r="13" class="c-amber"/><text class="ts" id="b2" x="505" y="226" text-anchor="middle" style="font-size:10px"></text>
+<circle cx="535" cy="222" r="13" class="c-gray"/>
+<g id="gamma"><circle cx="520" cy="248" r="5" fill="var(--t)"/><line x1="520" y1="248" x2="520" y2="234" stroke="var(--t)" stroke-width="3"/></g>
+<text class="ts" x="650" y="304" text-anchor="end" style="font-size:10px">F1 (α3β3)</text>
+<text class="ts" x="650" y="318" text-anchor="end" style="font-size:10px">β: L loose · T tight · O open</text>
+
+<g id="yield" class="stg">
+<text class="th" x="466" y="282" text-anchor="end" id="poText"></text>
+<text class="ts" x="466" y="300" text-anchor="end">~2.7 H+ per ATP</text>
+<text class="ts" x="466" y="316" text-anchor="end">+1 H+ (ADP/Pi import)</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'nadh';
+let bTimer = null, bPhase = 0;
+const M = {
+  nadh: {
+    labels: [
+      "Step 0 of 4 — Complex I oxidizes NADH: 2 e− pass via FMN and Fe–S clusters to ubiquinone (Q → QH2) while 4 H+ are pumped",
+      "Step 1 of 4 — QH2 delivers electrons to Complex III; the Q cycle releases 4 H+ into the intermembrane space and reduces cytochrome c",
+      "Step 2 of 4 — cytochrome c carries electrons to Complex IV, which reduces ½O2 to H2O and pumps 2 more H+ — 10 H+ per NADH in total",
+      "Step 3 of 4 — the proton-motive force (Δp ≈ 200 mV, mostly membrane potential Δψ plus ΔpH) drives H+ back through the Fo c-ring, turning it and the γ shaft",
+      "Step 4 of 4 — binding change in F1: the rotating γ shaft drives each β subunit through Loose → Tight (ATP forms) → Open (ATP released); 3 ATP per turn → P/O ≈ 2.5"
+    ],
+    counts: ["4 H+ pumped per NADH", "8 H+ pumped per NADH", "10 H+ pumped per NADH", "10 H+ pumped per NADH", "10 H+ pumped per NADH"],
+    po: "P/O ≈ 10 ÷ 4 ≈ 2.5 ATP"
+  },
+  fadh: {
+    labels: [
+      "Step 0 of 4 — Complex II (succinate dehydrogenase, also a TCA-cycle enzyme) oxidizes succinate; FADH2 passes electrons to Q — Complex II pumps no protons",
+      "Step 1 of 4 — QH2 delivers electrons to Complex III; the Q cycle releases 4 H+ into the intermembrane space and reduces cytochrome c",
+      "Step 2 of 4 — cytochrome c carries electrons to Complex IV, which reduces ½O2 to H2O and pumps 2 more H+ — only 6 H+ per FADH2, because Complex I is bypassed",
+      "Step 3 of 4 — the proton-motive force (Δp ≈ 200 mV, mostly membrane potential Δψ plus ΔpH) drives H+ back through the Fo c-ring, turning it and the γ shaft",
+      "Step 4 of 4 — binding change in F1 as above; with 6 H+ instead of 10, each FADH2 yields fewer ATP → P/O ≈ 1.5"
+    ],
+    counts: ["0 H+ pumped per FADH2", "4 H+ pumped per FADH2", "6 H+ pumped per FADH2", "6 H+ pumped per FADH2", "6 H+ pumped per FADH2"],
+    po: "P/O ≈ 6 ÷ 4 ≈ 1.5 ATP"
+  }
+};
+const STATES = ['L', 'T', 'O'];
+function showBeta() { for (let i = 0; i < 3; i++) document.getElementById('b' + i).textContent = STATES[(i + bPhase) % 3]; }
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnNadh').classList.toggle('active', m === 'nadh');
+  document.getElementById('btnFad').classList.toggle('active', m === 'fadh');
+  document.getElementById('cI').classList.toggle('dim', m === 'fadh');
+  document.getElementById('cII').classList.toggle('dim', m === 'nadh');
+  document.getElementById('donNadh').classList.toggle('hide', m !== 'nadh');
+  document.getElementById('donFad').classList.toggle('hide', m !== 'fadh');
+  document.getElementById('pI').classList.toggle('hide', m !== 'nadh');
+  document.getElementById('pII').classList.toggle('hide', m !== 'fadh');
+  document.getElementById('e1p').setAttribute('d', m === 'nadh' ? 'M83 224 L83 150 L178 150' : 'M160 224 L160 150 L178 150');
+  document.getElementById('poText').textContent = M[m].po;
+  render();
+}
+function render() {
+  const c = M[mode];
+  document.getElementById('stepLabel').textContent = c.labels[step];
+  document.getElementById('hCount').textContent = c.counts[step];
+  document.getElementById('e1').classList.toggle('on', step >= 0);
+  document.getElementById('e2').classList.toggle('on', step >= 1);
+  document.getElementById('e3').classList.toggle('on', step >= 2);
+  document.getElementById('pI').classList.toggle('on', step >= 0);
+  document.getElementById('pII').classList.toggle('on', step >= 0);
+  document.getElementById('pIII').classList.toggle('on', step >= 1);
+  document.getElementById('pIV').classList.toggle('on', step >= 2);
+  document.getElementById('oxy').classList.toggle('on', step >= 2);
+  document.getElementById('pmf').classList.toggle('on', step >= 3);
+  document.querySelector('svg').classList.toggle('turning', step >= 3);
+  document.getElementById('yield').classList.toggle('on', step >= 4);
+  // beta-subunit states cycle only while ATP is being made
+  if (bTimer) { clearInterval(bTimer); bTimer = null; }
+  bPhase = 0; showBeta();
+  if (step >= 4) bTimer = setInterval(() => { bPhase = (bPhase + 1) % 3; showBeta(); }, 900);
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('nadh');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # BLOOD_CLOTTING_GENERAL  (source: clotting.html)
 # ---------------------------------------------------------------------------
 BLOOD_CLOTTING_GENERAL = '''
@@ -4663,6 +4841,7 @@ NEPHRON_FILTRATION_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 1.6s ease-in-out infinite; }
@@ -4677,8 +4856,12 @@ NEPHRON_FILTRATION_GENERAL = '''
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 </defs>
 
-<circle cx="120" cy="150" r="45" fill="none" stroke="#B91C1C" stroke-width="2"/>
-<text class="ts" x="120" y="115" text-anchor="middle">Glomerulus</text>
+<circle id="glom" cx="120" cy="150" r="45" fill="none" stroke="#B91C1C" stroke-width="2"/>
+<text class="ts" x="120" y="154" text-anchor="middle">Glomerulus</text>
+<g id="bloodIn" class="stg">
+<path d="M30 70 L80 112" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="30" y="62">Blood in (afferent arteriole)</text>
+</g>
 <circle cx="120" cy="150" r="60" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
 <text class="ts" x="120" y="222" text-anchor="middle">Bowman's capsule</text>
 
@@ -4688,17 +4871,17 @@ NEPHRON_FILTRATION_GENERAL = '''
 <g id="filtrate" class="stg">
 <circle class="drift" cx="185" cy="150" r="5" fill="#378ADD"/>
 <circle class="drift" cx="185" cy="145" r="5" fill="#EF9F27" style="animation-delay:.3s"/>
-<text class="ts" x="180" y="185" text-anchor="middle">Filtrate — water, ions, glucose</text>
+<text class="ts" x="190" y="180">Filtrate — water, ions, glucose</text>
 </g>
 
 <g id="reabsorption" class="stg">
-<line x1="300" y1="100" x2="300" y2="60" stroke="#639922" stroke-width="1.5" marker-end="url(#arrow)"/>
-<text class="ts" x="300" y="50" text-anchor="middle">Glucose, water, ions reabsorbed → blood</text>
+<line x1="296" y1="118" x2="296" y2="72" stroke="#639922" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="296" y="62" text-anchor="middle">Glucose, water, ions reabsorbed → blood</text>
 </g>
 
 <g id="secretion" class="stg">
-<line x1="480" y1="220" x2="480" y2="255" stroke="#B91C1C" stroke-width="1.5" marker-end="url(#arrow)"/>
-<text class="ts" x="480" y="275" text-anchor="middle">Waste, H+, K+ secreted → filtrate</text>
+<line x1="480" y1="240" x2="480" y2="184" stroke="#B91C1C" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="480" y="258" text-anchor="middle">Waste, H+, K+ secreted → filtrate</text>
 </g>
 
 <g id="urine" class="stg">
@@ -4725,6 +4908,8 @@ const labels = [
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
+  document.getElementById('bloodIn').classList.toggle('on', step === 0);
+  document.getElementById('glom').classList.toggle('pulse', step === 0);
   document.getElementById('filtrate').classList.toggle('on', step >= 1);
   document.getElementById('reabsorption').classList.toggle('on', step >= 2);
   document.getElementById('secretion').classList.toggle('on', step >= 3);
@@ -4734,6 +4919,152 @@ function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# NEPHRON_FILTRATION_TECHNICAL
+# ---------------------------------------------------------------------------
+NEPHRON_FILTRATION_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of nephron function: Starling forces set the glomerular filtration rate, then the proximal tubule, loop of Henle, distal tubule and collecting duct each handle solutes and water with specific transporters over the corticomedullary osmotic gradient; ADH decides whether the final urine is dilute or concentrated.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  .seg { transition: stroke .4s ease, stroke-width .4s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnHyd" onclick="setMode('hyd')">Hydrated (low ADH)</button>
+  <button id="btnDeh" onclick="setMode('deh')">Dehydrated (high ADH)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Nephron function, technical view</title>
+<desc>Glomerular capillary pressure minus plasma oncotic pressure and Bowman's capsule pressure gives a net filtration pressure of about 10 mmHg and a GFR of about 125 mL/min. The proximal tubule reabsorbs about two-thirds of sodium and water iso-osmotically and all filtered glucose through SGLT2 and SGLT1. The descending limb loses water through aquaporin-1 into the hypertonic medulla, and the water-impermeable thick ascending limb pumps out NaCl through NKCC2, building the gradient and diluting the fluid. The distal tubule reabsorbs NaCl through NCC and calcium under PTH. In the collecting duct, aldosterone drives ENaC and ROMK, and ADH inserts aquaporin-2 so water leaves and urine is concentrated; without ADH, dilute urine is excreted.</desc>
+<defs>
+<marker id="nfArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<linearGradient id="medGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDE7C8" stop-opacity=".25"/><stop offset="1" stop-color="#F59E0B" stop-opacity=".45"/></linearGradient>
+</defs>
+
+<!-- cortex and medulla with the osmotic gradient -->
+<rect x="30" y="30" width="620" height="90" fill="var(--surface-1)"/>
+<rect x="30" y="120" width="620" height="200" fill="url(#medGrad)"/>
+<text class="ts" x="644" y="46" text-anchor="end">Cortex · 300</text>
+<text class="ts" x="644" y="136" text-anchor="end">Medulla · 300</text>
+<text class="ts" x="644" y="200" text-anchor="end">600</text>
+<text class="ts" x="644" y="260" text-anchor="end">900</text>
+<text class="ts" x="644" y="314" text-anchor="end">1200 mOsm/kg</text>
+
+<!-- nephron -->
+<circle cx="70" cy="74" r="30" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<circle id="glom" cx="70" cy="74" r="20" fill="none" stroke="#B91C1C" stroke-width="2.5"/>
+<path id="sPCT" class="seg" d="M100 74 Q115 54 130 74 T160 74 T190 74 L210 84" fill="none" stroke="#888780" stroke-width="3"/>
+<path id="sLoop" class="seg" d="M210 84 L215 296 Q235 326 255 296" fill="none" stroke="#888780" stroke-width="3"/>
+<path id="sTAL" class="seg" d="M255 296 L260 112" fill="none" stroke="#888780" stroke-width="5"/>
+<path id="sDCT" class="seg" d="M260 112 Q290 92 320 102 T380 100 L420 92" fill="none" stroke="#888780" stroke-width="3"/>
+<path id="sCD" class="seg" d="M420 92 L560 72 L560 320" fill="none" stroke="#888780" stroke-width="4"/>
+
+<!-- step 0: Starling forces -->
+<g id="t0" class="stg">
+<text class="ts" x="110" y="24">P_GC 55 − π_GC 30 − P_BS 15 = net +10 mmHg → GFR ≈ 125 mL/min (180 L/day)</text>
+</g>
+<!-- step 1: proximal tubule -->
+<g id="t1" class="stg">
+<path d="M150 64 L150 40" stroke="#639922" stroke-width="2" fill="none" marker-end="url(#nfArrow)"/>
+<text class="ts" x="158" y="44">SGLT2/1: all glucose · ~65% Na+ &amp; water · HCO3−</text>
+<text class="ts" x="204" y="116" text-anchor="end">fluid stays ~300 (iso-osmotic)</text>
+</g>
+<!-- step 2: loop of Henle -->
+<g id="t2" class="stg">
+<path d="M212 190 L182 190" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#nfArrow)"/>
+<text class="ts" x="178" y="186" text-anchor="end">descending:</text>
+<text class="ts" x="178" y="200" text-anchor="end">water out (AQP1)</text>
+<path d="M258 220 L290 220" stroke="#D85A30" stroke-width="2" fill="none" marker-end="url(#nfArrow)"/>
+<text class="ts" x="296" y="216">thick ascending: NKCC2 pumps NaCl out,</text>
+<text class="ts" x="296" y="230">impermeable to water → builds the gradient</text>
+<text class="ts" x="236" y="336" text-anchor="middle" style="font-size:10px">tip ≈ 1200</text>
+<text class="ts" x="268" y="130">fluid ≈ 100 (dilute)</text>
+</g>
+<!-- step 3: distal tubule -->
+<g id="t3" class="stg">
+<text class="ts" x="290" y="62">DCT: NCC (thiazide target) · Ca2+ reabsorbed (PTH)</text>
+</g>
+<!-- step 4: collecting duct, depends on ADH -->
+<g id="t4" class="stg">
+<text class="ts" x="548" y="150" text-anchor="end">ENaC: Na+ in · ROMK: K+ out (aldosterone)</text>
+<text class="ts" x="548" y="166" text-anchor="end" id="adhText"></text>
+<g id="water">
+<path d="M556 200 L524 200" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#nfArrow)"/>
+<path d="M556 240 L524 240" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#nfArrow)"/>
+<path d="M556 280 L524 280" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#nfArrow)"/>
+<text class="ts" x="520" y="244" text-anchor="end">water out</text>
+</g>
+<text class="th" x="548" y="316" text-anchor="end" id="urineText"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'deh';
+const common = [
+  "Step 0 of 4 — glomerulus: glomerular capillary pressure (~55 mmHg) minus plasma oncotic pressure (~30) and Bowman's capsule pressure (~15) leaves ~10 mmHg net filtration → GFR ≈ 125 mL/min",
+  "Step 1 of 4 — proximal tubule: SGLT2 (and SGLT1) reabsorb all filtered glucose, plus ~65% of Na+ and water, amino acids and HCO3−; fluid leaves still iso-osmotic (~300 mOsm)",
+  "Step 2 of 4 — loop of Henle: the descending limb loses water through AQP1 into the hypertonic medulla; the water-tight thick ascending limb pumps NaCl out via NKCC2 — the countercurrent multiplier that builds the gradient and dilutes the fluid",
+  "Step 3 of 4 — distal convoluted tubule: NCC (the thiazide target) reabsorbs ~5% of NaCl; Ca2+ is reabsorbed under PTH; fluid stays dilute"
+];
+const M = {
+  hyd: {
+    last: "Step 4 of 4 — collecting duct, low ADH: aldosterone still tunes Na+/K+ via ENaC and ROMK, but without AQP2 the duct is water-tight — large volumes of dilute urine (~50–100 mOsm)",
+    adh: "low ADH: no AQP2 inserted — duct stays water-tight",
+    urine: "Urine ≈ 50–100 mOsm · large volume",
+    water: false
+  },
+  deh: {
+    last: "Step 4 of 4 — collecting duct, high ADH: V2 receptor → cAMP inserts AQP2; water leaves into the hypertonic medulla — small volume of concentrated urine (up to ~1200 mOsm)",
+    adh: "high ADH: AQP2 inserted (V2 → cAMP)",
+    urine: "Urine up to ~1200 mOsm · small volume",
+    water: true
+  }
+};
+const SEGS = ['glom', 'sPCT', 'sLoop', 'sDCT', 'sCD'];
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnHyd').classList.toggle('active', m === 'hyd');
+  document.getElementById('btnDeh').classList.toggle('active', m === 'deh');
+  document.getElementById('adhText').textContent = M[m].adh;
+  document.getElementById('urineText').textContent = M[m].urine;
+  document.getElementById('water').classList.toggle('hide', !M[m].water);
+  render();
+}
+function render() {
+  document.getElementById('stepLabel').textContent = step < 4 ? common[step] : M[mode].last;
+  for (let i = 0; i <= 4; i++) document.getElementById('t' + i).classList.toggle('on', step === i);
+  // highlight the segment being described
+  SEGS.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (id === 'glom') { el.style.strokeWidth = step === 0 ? 4 : 2.5; return; }
+    el.style.stroke = step === i ? '#378ADD' : '#888780';
+  });
+  const tal = document.getElementById('sTAL');
+  tal.style.stroke = step === 2 ? '#D85A30' : '#888780';
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('deh');
 </script>
 '''
 
@@ -8794,6 +9125,16 @@ REGISTRY = {
                 "through ATP synthase spin it, generating ATP."
             ),
         },
+        "Technical": {
+            "fragment": ELECTRON_TRANSPORT_CHAIN_TECHNICAL,
+            "height": 540,
+            "blurb": (
+                "NADH vs FADH2: proton stoichiometry of Complexes I-IV "
+                "(10 vs 6 H+), the proton-motive force, Fo c-ring rotation and "
+                "the F1 binding-change mechanism, giving P/O ratios of about "
+                "2.5 and 1.5."
+            ),
+        },
     },
     "Blood clotting (hemostasis)": {
         "General": {
@@ -8825,6 +9166,16 @@ REGISTRY = {
                 "Blood is filtered at the glomerulus, useful solutes are "
                 "reabsorbed along the tubule back into blood, waste is "
                 "secreted into the filtrate, and the rest becomes urine."
+            ),
+        },
+        "Technical": {
+            "fragment": NEPHRON_FILTRATION_TECHNICAL,
+            "height": 560,
+            "blurb": (
+                "Starling forces and GFR, then segment by segment: SGLT2 in "
+                "the proximal tubule, AQP1 and NKCC2 in the loop (countercurrent "
+                "multiplier), NCC in the DCT, and ENaC/ROMK/AQP2 in the "
+                "collecting duct, with and without ADH."
             ),
         },
     },
