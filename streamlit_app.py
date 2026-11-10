@@ -4004,56 +4004,87 @@ ELECTRON_TRANSPORT_CHAIN_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.1s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .spin { animation: spin 1.2s linear infinite; transform-origin: 560px 150px; }
+  #rotor { transform-box: fill-box; transform-origin: center; }
+  .spin { animation: spin 1.2s linear infinite; }
+  #eDot { transition: cx 1.4s ease-in-out, cy 1s ease, opacity .5s ease; }
+  .flowdown { animation: flowdown 1.4s linear infinite; }
+  @keyframes flowdown { 0%{transform:translateY(0);opacity:0} 15%{opacity:1} 85%{opacity:1} 100%{transform:translateY(90px);opacity:0} }
   @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-  .drift-up { animation: driftup 1.5s ease-in-out infinite; }
-  @keyframes driftup { 0%{transform:translateY(0)} 100%{transform:translateY(-60px)} }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
-<svg width="100%" viewBox="0 0 680 300" role="img">
+<svg width="100%" viewBox="0 0 680 280" role="img">
 <title>Electron transport chain and ATP synthase</title>
 <desc>Electrons from NADH pass through membrane protein complexes, which pump protons into the intermembrane space, building an electrochemical gradient. Oxygen accepts electrons at the final complex, forming water. Protons flow back through ATP synthase, spinning it to catalyze ATP formation from ADP and phosphate.</desc>
 
-<rect x="30" y="120" width="600" height="50" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
-<text class="ts" x="42" y="115">Inner mitochondrial membrane</text>
-<text class="ts" x="42" y="100" id="imsLabel">Intermembrane space</text>
-<text class="ts" x="42" y="190" id="matrixLabel">Matrix</text>
+<defs><marker id="etcArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="ts" x="40" y="40" id="imsLabel">Intermembrane space</text>
+<rect x="30" y="120" width="620" height="50" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+<text class="ts" x="450" y="149" text-anchor="middle" style="font-size:10px">Inner mitochondrial membrane</text>
+<text class="ts" x="40" y="268" id="matrixLabel">Matrix</text>
+
+<!-- electron route through the chain -->
+<g id="route" class="stg"><path d="M150 145 L218 145" stroke="#EF9F27" stroke-width="2" stroke-dasharray="4 3" fill="none" marker-end="url(#etcArrow)"/>
+<path d="M250 145 L318 145" stroke="#EF9F27" stroke-width="2" stroke-dasharray="4 3" fill="none" marker-end="url(#etcArrow)"/></g>
 
 <rect x="120" y="110" width="30" height="70" rx="8" class="c-purple"/>
-<text class="ts" x="135" y="200" text-anchor="middle">I</text>
+<text class="ts" x="135" y="196" text-anchor="middle">I</text>
 <rect x="220" y="110" width="30" height="70" rx="8" class="c-teal"/>
-<text class="ts" x="235" y="200" text-anchor="middle">III</text>
+<text class="ts" x="235" y="196" text-anchor="middle">III</text>
 <rect x="320" y="110" width="30" height="70" rx="8" class="c-coral"/>
-<text class="ts" x="335" y="200" text-anchor="middle">IV</text>
+<text class="ts" x="335" y="196" text-anchor="middle">IV</text>
 
 <g id="electron" class="stg">
-<circle cx="100" cy="145" r="6" fill="#EF9F27"/>
-<text class="ts" x="100" y="128" text-anchor="middle">e- from NADH</text>
+<text class="ts" x="90" y="222" text-anchor="middle">NADH → NAD+</text>
+<path d="M98 206 L124 178" stroke="#EF9F27" stroke-width="1.5" fill="none" marker-end="url(#etcArrow)"/>
+<text class="ts" x="90" y="238" text-anchor="middle">e- from NADH</text>
 </g>
+<circle id="eDot" cx="135" cy="145" r="6" fill="#EF9F27"/>
 
+<!-- protons pumped up by I, III and IV, accumulating in the intermembrane space -->
 <g id="protons" class="stg">
-<circle class="drift-up" cx="135" cy="115" r="4" fill="#B91C1C"/>
-<circle class="drift-up" cx="235" cy="115" r="4" fill="#B91C1C" style="animation-delay:.3s"/>
-<circle class="drift-up" cx="335" cy="115" r="4" fill="#B91C1C" style="animation-delay:.6s"/>
-<text class="ts" x="235" y="70" text-anchor="middle">H+ pumped into intermembrane space</text>
+<path d="M135 106 L135 76" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#etcArrow)"/>
+<path d="M235 106 L235 76" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#etcArrow)"/>
+<path d="M335 106 L335 76" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#etcArrow)"/>
+<text class="ts" x="235" y="62" text-anchor="middle">H+ pumped into intermembrane space</text>
+</g>
+<g id="gradient" class="stg">
+<circle cx="160" cy="88" r="4" fill="#B91C1C"/><circle cx="200" cy="96" r="4" fill="#B91C1C"/>
+<circle cx="270" cy="86" r="4" fill="#B91C1C"/><circle cx="300" cy="100" r="4" fill="#B91C1C"/>
+<circle cx="380" cy="90" r="4" fill="#B91C1C"/><circle cx="420" cy="102" r="4" fill="#B91C1C"/>
+<circle cx="460" cy="86" r="4" fill="#B91C1C"/><circle cx="500" cy="98" r="4" fill="#B91C1C"/>
+<text class="ts" x="400" y="70" text-anchor="middle">high H+ (gradient)</text>
 </g>
 
 <g id="oxygen" class="stg">
-<circle cx="380" cy="145" r="10" fill="#378ADD"/>
-<text class="ts" x="380" y="200" text-anchor="middle">O2 + e- → H2O</text>
+<circle cx="380" cy="214" r="10" fill="#378ADD"/>
+<path d="M342 182 L370 206" stroke="#EF9F27" stroke-width="1.5" fill="none" marker-end="url(#etcArrow)"/>
+<text class="ts" x="380" y="242" text-anchor="middle">O2 + e- → H2O</text>
 </g>
 
+<!-- ATP synthase: Fo channel in the membrane, F1 head (rotor) in the matrix -->
 <g id="atpSynthase">
-<rect x="545" y="105" width="30" height="80" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<circle id="rotor" class="c-amber" cx="560" cy="150" r="14"/>
-<text class="ts" x="560" y="200" text-anchor="middle">ATP synthase</text>
+<rect x="545" y="112" width="30" height="66" rx="8" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<line x1="560" y1="178" x2="560" y2="192" stroke="var(--t)" stroke-width="3"/>
+<g id="rotor">
+<circle cx="560" cy="214" r="22" class="c-amber"/>
+<path d="M560 196 L560 232 M544 205 L576 223 M544 223 L576 205" stroke="#B45309" stroke-width="2"/>
+</g>
+<text class="ts" x="582" y="108">ATP synthase</text>
+</g>
+<g id="flow" class="stg">
+<path d="M560 64 L560 104" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#etcArrow)"/>
+<circle class="flowdown" cx="560" cy="96" r="4" fill="#B91C1C"/>
+<circle class="flowdown" cx="560" cy="96" r="4" fill="#B91C1C" style="animation-delay:.47s"/>
+<circle class="flowdown" cx="560" cy="96" r="4" fill="#B91C1C" style="animation-delay:.94s"/>
+<text class="ts" x="552" y="60" text-anchor="end">H+ flows back</text>
 </g>
 
 <g id="atpOut" class="stg">
-<text class="th" x="560" y="90" text-anchor="middle">ADP + Pi → ATP</text>
+<text class="th" x="560" y="262" text-anchor="middle">ADP + Pi → ATP</text>
 </g>
 </svg>
 
@@ -4075,8 +4106,16 @@ const labels = [
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('electron').classList.toggle('on', step >= 0 && step <= 1);
+  document.getElementById('electron').classList.toggle('on', step === 0);
+  document.getElementById('route').classList.toggle('on', step >= 1);
+  // the electron travels I -> III -> IV, then is handed to O2
+  const e = document.getElementById('eDot');
+  const ex = step === 0 ? 135 : step === 1 ? 335 : 380, ey = step >= 2 ? 214 : 145;
+  e.setAttribute('cx', ex); e.setAttribute('cy', ey); e.style.cx = ex + 'px'; e.style.cy = ey + 'px';
+  e.style.opacity = step >= 2 ? 0 : 1;
   document.getElementById('protons').classList.toggle('on', step >= 1 && step <= 2);
+  document.getElementById('gradient').classList.toggle('on', step >= 1);
+  document.getElementById('flow').classList.toggle('on', step >= 3);
   document.getElementById('oxygen').classList.toggle('on', step >= 2);
   document.getElementById('rotor').classList.toggle('spin', step >= 3);
   document.getElementById('atpOut').classList.toggle('on', step >= 4);
