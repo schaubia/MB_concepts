@@ -6923,6 +6923,192 @@ render();
 
 
 # ---------------------------------------------------------------------------
+# INNATE_IMMUNE_RECOGNITION_TECHNICAL
+# ---------------------------------------------------------------------------
+INNATE_IMMUNE_RECOGNITION_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of innate immune signalling as a two-signal model: TLR4 recognizes LPS and signals through MyD88, IRAKs, TRAF6, TAK1 and IKK to free NF-kB and induce cytokines including inactive pro-IL-1 beta; a second danger signal activates the NLRP3 inflammasome, whose caspase-1 matures IL-1 beta and IL-18 and cleaves gasdermin D to cause pyroptosis.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  .mvg { transition: transform 1s ease, opacity .6s ease; }
+  .pulse { animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnTlr" onclick="setMode('tlr')">TLR4 → NF-κB (signal 1)</button>
+  <button id="btnInf" onclick="setMode('inf')">NLRP3 inflammasome (signal 2)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 330" role="img">
+<title>Innate immune signalling, technical view</title>
+<desc>Signal 1: LPS is transferred by LBP and CD14 to the TLR4-MD-2 complex; TLR4 recruits MyD88, IRAK4 and IRAK1 and TRAF6, which activates TAK1 and then IKK; IKK phosphorylates IkB, which is ubiquitinated and degraded, freeing NF-kB to enter the nucleus and induce TNF-alpha, IL-6 and inactive pro-IL-1 beta. Signal 2: a danger cue such as potassium efflux through P2X7, urate crystals or toxins activates NLRP3, which assembles with ASC and pro-caspase-1; active caspase-1 cleaves pro-IL-1 beta, pro-IL-18 and gasdermin D, whose pores release IL-1 beta and can kill the cell by pyroptosis.</desc>
+<defs><marker id="inA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<text class="ts" x="650" y="30" text-anchor="end">outside the cell</text>
+<line x1="20" y1="80" x2="660" y2="80" stroke="var(--t)" stroke-width="3"/>
+<text class="ts" x="650" y="104" text-anchor="end">macrophage cytoplasm</text>
+<ellipse cx="560" cy="262" rx="84" ry="40" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="ts" x="560" y="318" text-anchor="middle">Nucleus</text>
+
+<!-- ================ signal 1: TLR4 ================ -->
+<g id="gT">
+<rect x="112" y="62" width="10" height="18" rx="3" class="c-amber"/>
+<text class="ts" x="117" y="40" text-anchor="middle">LBP → CD14</text>
+<path d="M126 58 L210 46" stroke="#B91C1C" stroke-width="1.2" stroke-dasharray="3 3" fill="none" marker-end="url(#inA)"/>
+<rect x="212" y="64" width="12" height="40" rx="4" class="c-purple"/>
+<rect x="230" y="64" width="12" height="40" rx="4" class="c-purple"/>
+<circle cx="218" cy="56" r="7" class="c-amber"/><circle cx="236" cy="56" r="7" class="c-amber"/>
+<circle cx="227" cy="42" r="6" fill="#B91C1C"/>
+<text class="ts" x="227" y="26" text-anchor="middle">LPS</text>
+<text class="ts" x="252" y="60">TLR4–MD-2 dimer</text>
+
+<g id="t1" class="stg">
+<circle cx="236" cy="132" r="15" class="c-teal"/><text class="ts" x="236" y="135" text-anchor="middle" style="font-size:8px">MyD88</text>
+<path d="M236 106 L236 115" stroke="var(--t)" stroke-width="1.2"/>
+<path d="M236 148 L236 160" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#inA)"/>
+<circle cx="236" cy="176" r="15" class="c-gray"/><text class="ts" x="236" y="179" text-anchor="middle" style="font-size:8px">IRAK4/1</text>
+<path d="M236 192 L236 204" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#inA)"/>
+<circle cx="236" cy="220" r="15" class="c-amber"/><text class="ts" x="236" y="223" text-anchor="middle" style="font-size:8px">TRAF6</text>
+<text class="ts" x="210" y="252" text-anchor="end" style="font-size:10px">K63-ubiquitin</text>
+</g>
+<g id="t2" class="stg">
+<path d="M252 220 L312 220" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#inA)"/>
+<circle cx="330" cy="220" r="15" class="c-coral"/><text class="ts" x="330" y="223" text-anchor="middle" style="font-size:8px">TAK1</text>
+<path d="M346 220 L402 220" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#inA)"/>
+<circle cx="420" cy="220" r="15" class="c-purple"/><text class="ts" x="420" y="223" text-anchor="middle" style="font-size:8px">IKK</text>
+<path d="M420 204 L420 166" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#inA)"/>
+<rect x="490" y="122" width="30" height="40" rx="6" class="c-gray"/>
+<text class="ts" x="505" y="178" text-anchor="middle" style="font-size:10px">proteasome</text>
+<text class="ts" x="330" y="252" text-anchor="middle" style="font-size:10px">also → MAPKs → AP-1</text>
+</g>
+<!-- IkB : NF-kB complex -->
+<g id="ikb" class="mvg">
+<circle cx="408" cy="150" r="12" class="c-gray"/><text class="ts" x="408" y="153" text-anchor="middle" style="font-size:8px">IκBα</text>
+<g id="ikbP" class="stg"><circle cx="398" cy="138" r="6" class="c-coral"/><text x="398" y="141" text-anchor="middle" style="font-size:7px;font-weight:600;fill:#7F1D1D">P</text></g>
+</g>
+<g id="nfkb" class="mvg">
+<circle cx="432" cy="150" r="12" class="c-purple"/><text class="ts" x="432" y="153" text-anchor="middle" style="font-size:8px">NF-κB</text>
+</g>
+<g id="t4" class="stg">
+<text class="ts" x="522" y="258">→ TNF-α · IL-6 · IL-12</text>
+<text class="ts" x="522" y="274">→ pro-IL-1β (inactive)</text>
+<text class="ts" x="30" y="300">endosomal TLR4 also → TRIF → IRF3 → type I IFN</text>
+</g>
+</g>
+
+<!-- ================ signal 2: NLRP3 inflammasome ================ -->
+<g id="gI">
+<rect x="398" y="62" width="14" height="36" rx="4" class="c-teal"/>
+<text class="ts" x="418" y="118">P2X7</text>
+<g id="i1" class="stg">
+<circle cx="405" cy="44" r="6" fill="#EF9F27"/><text class="ts" x="394" y="40" text-anchor="end">ATP</text>
+<path d="M422 112 L422 50" stroke="#378ADD" stroke-width="2" fill="none" marker-end="url(#inA)"/>
+<text class="ts" x="430" y="56">K+ out</text>
+<rect x="500" y="36" width="12" height="12" transform="rotate(45 506 42)" fill="#888780"/>
+<text class="ts" x="522" y="46">urate crystals, toxins</text>
+</g>
+<!-- pro-cytokines made during priming -->
+<g id="pro" class="mvg">
+<circle class="cyt" cx="110" cy="190" r="6" fill="#888780"/><circle class="cyt" cx="128" cy="202" r="6" fill="#888780"/>
+<circle class="cyt" cx="112" cy="214" r="6" fill="#888780"/><circle class="cyt" cx="132" cy="180" r="6" fill="#888780"/>
+</g>
+<text class="ts" x="122" y="240" text-anchor="middle" id="proLabel">pro-IL-1β, pro-IL-18</text>
+<!-- NLRP3 -->
+<circle id="nlrp3One" cx="300" cy="170" r="14" class="c-gray"/>
+<g id="i2" class="stg">
+<circle cx="300" cy="148" r="8" class="c-purple"/><circle cx="319" cy="159" r="8" class="c-purple"/><circle cx="319" cy="181" r="8" class="c-purple"/>
+<circle cx="300" cy="192" r="8" class="c-purple"/><circle cx="281" cy="181" r="8" class="c-purple"/><circle cx="281" cy="159" r="8" class="c-purple"/>
+<circle cx="300" cy="170" r="9" class="c-amber"/>
+</g>
+<text class="ts" x="300" y="218" text-anchor="middle" id="nlrpLabel">NLRP3 (inactive)</text>
+<g id="i3" class="stg">
+<path d="M282 196 L150 200" stroke="#D85A30" stroke-width="1.5" fill="none" marker-end="url(#inA)"/>
+<text class="ts" x="336" y="166">caspase-1 cleaves</text>
+<text class="ts" x="336" y="182">pro-IL-1β, pro-IL-18, gasdermin D</text>
+</g>
+<g id="i4" class="stg">
+<rect x="104" y="72" width="14" height="16" fill="var(--surface-1)" stroke="#B91C1C" stroke-width="1.5"/>
+<rect x="138" y="72" width="14" height="16" fill="var(--surface-1)" stroke="#B91C1C" stroke-width="1.5"/>
+<text class="ts" x="160" y="64">gasdermin D pores</text>
+<text class="th" x="30" y="300">IL-1β, IL-18 released · pyroptosis (fever, inflammation)</text>
+</g>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'tlr';
+const L = {
+  tlr: [
+    "Step 0 of 4 — LPS is passed by LBP to CD14 and then to the TLR4–MD-2 complex; two TLR4–MD-2 units dimerize",
+    "Step 1 of 4 — the TLR4 TIR domains recruit MyD88 (via TIRAP), which recruits IRAK4 and IRAK1 and then TRAF6, which builds K63-ubiquitin chains",
+    "Step 2 of 4 — TRAF6 activates TAK1, which activates IKK (IKKα/β + NEMO); IKK phosphorylates IκBα, which is ubiquitinated and destroyed by the proteasome",
+    "Step 3 of 4 — freed NF-κB (p65/p50) enters the nucleus; TAK1 also activates MAPKs → AP-1",
+    "Step 4 of 4 — transcription of TNF-α, IL-6, IL-12, chemokines and pro-IL-1β (still inactive); TLR4 taken into endosomes also signals via TRIF → IRF3 → type I interferons"
+  ],
+  inf: [
+    "Step 0 of 4 — signal 1 (priming): TLR → NF-κB has already made pro-IL-1β, pro-IL-18 and NLRP3, but pro-IL-1β is inactive and NLRP3 is idle",
+    "Step 1 of 4 — signal 2: a danger cue activates NLRP3 — K+ efflux (e.g. extracellular ATP through P2X7), urate or cholesterol crystals, pore-forming toxins",
+    "Step 2 of 4 — NLRP3 oligomerizes and recruits the adaptor ASC, which polymerizes and recruits pro-caspase-1 — the inflammasome",
+    "Step 3 of 4 — autoactivated caspase-1 cleaves pro-IL-1β and pro-IL-18 into mature cytokines and cleaves gasdermin D",
+    "Step 4 of 4 — gasdermin D N-terminal fragments insert into the membrane as pores: IL-1β and IL-18 are released and the cell may die by pyroptosis"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnTlr').classList.toggle('active', m === 'tlr');
+  document.getElementById('btnInf').classList.toggle('active', m === 'inf');
+  document.getElementById('gT').classList.toggle('hide', m !== 'tlr');
+  document.getElementById('gI').classList.toggle('hide', m !== 'inf');
+  render();
+}
+function render() {
+  document.getElementById('stepLabel').textContent = L[mode][step];
+  if (mode === 'tlr') {
+    document.getElementById('t1').classList.toggle('on', step >= 1);
+    document.getElementById('t2').classList.toggle('on', step >= 2);
+    document.getElementById('ikbP').classList.toggle('on', step >= 2);
+    const ikb = document.getElementById('ikb');
+    ikb.style.transform = step >= 2 ? 'translate(97px,-8px)' : 'none';   // into the proteasome
+    ikb.style.opacity = step >= 3 ? 0 : 1;
+    document.getElementById('nfkb').style.transform = step >= 3 ? 'translate(68px,112px)' : 'none';
+    document.getElementById('t4').classList.toggle('on', step >= 4);
+  } else {
+    document.getElementById('i1').classList.toggle('on', step >= 1);
+    const active = step >= 2;
+    document.getElementById('i2').classList.toggle('on', active);
+    document.getElementById('nlrp3One').style.opacity = active ? 0 : 1;
+    document.getElementById('nlrp3One').classList.toggle('pulse', step === 1);
+    document.getElementById('nlrpLabel').textContent = active ? 'NLRP3–ASC–caspase-1 inflammasome' : 'NLRP3 (inactive)';
+    document.getElementById('i3').classList.toggle('on', step >= 3);
+    document.querySelectorAll('#pro .cyt').forEach(c => c.setAttribute('fill', step >= 3 ? '#E24B4A' : '#888780'));
+    document.getElementById('proLabel').textContent = step >= 3 ? 'mature IL-1β, IL-18' : 'pro-IL-1β, pro-IL-18';
+    document.getElementById('i4').classList.toggle('on', step >= 4);
+    document.getElementById('pro').style.transform = step >= 4 ? 'translateY(-150px)' : 'none';   // out through the pores
+  }
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('tlr');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # NK_CELL_MISSING_SELF_GENERAL  (source: nk_cell.html)
 # ---------------------------------------------------------------------------
 NK_CELL_MISSING_SELF_GENERAL = '''
@@ -9340,6 +9526,16 @@ REGISTRY = {
                 "A Toll-like receptor on a macrophage detects a "
                 "pathogen-associated pattern, triggering NF-kB signaling "
                 "and inflammatory cytokine release."
+            ),
+        },
+        "Technical": {
+            "fragment": INNATE_IMMUNE_RECOGNITION_TECHNICAL,
+            "height": 560,
+            "blurb": (
+                "The two-signal model: TLR4-MyD88-IRAK-TRAF6-TAK1-IKK frees "
+                "NF-kB to make pro-IL-1 beta, then the NLRP3-ASC-caspase-1 "
+                "inflammasome matures IL-1 beta and IL-18 and drives "
+                "gasdermin D pyroptosis."
             ),
         },
     },
