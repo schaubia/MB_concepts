@@ -6828,6 +6828,8 @@ INNATE_IMMUNE_RECOGNITION_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  #pampDot, #nfkbG { transition: transform 1s ease; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 1.8s ease-in-out infinite; }
@@ -6839,37 +6841,44 @@ INNATE_IMMUNE_RECOGNITION_GENERAL = '''
 <title>Innate immune pattern recognition</title>
 <desc>A pathogen-associated molecular pattern such as bacterial LPS is recognized by a Toll-like receptor on a macrophage. Binding triggers an intracellular signaling cascade that activates the transcription factor NF-kB, which moves into the nucleus and drives the release of inflammatory cytokines, recruiting more immune cells and triggering inflammation.</desc>
 
-<ellipse cx="200" cy="170" rx="130" ry="90" fill="none" stroke="var(--t)" stroke-width="1.5"/>
-<text class="ts" x="200" y="70" text-anchor="middle">Macrophage</text>
-<ellipse cx="200" cy="200" rx="35" ry="25" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
-<text class="ts" x="200" y="235" text-anchor="middle">Nucleus</text>
+<ellipse cx="250" cy="170" rx="130" ry="90" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="250" y="70" text-anchor="middle">Macrophage</text>
+<ellipse cx="275" cy="200" rx="38" ry="26" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="ts" x="275" y="242" text-anchor="middle">Nucleus</text>
+
+<!-- TLR sits in the plasma membrane -->
+<circle id="tlr" cx="123" cy="150" r="10" class="c-amber"/>
+<text class="ts" x="104" y="180" text-anchor="end">TLR</text>
 
 <g id="pamp" class="stg">
-<circle cx="70" cy="140" r="8" fill="#B91C1C"/>
-<text class="ts" x="70" y="120" text-anchor="middle">PAMP (e.g. LPS)</text>
+<circle id="pampDot" cx="60" cy="146" r="8" fill="#B91C1C"/>
+<text class="ts" x="60" y="122" text-anchor="middle">PAMP (e.g. LPS)</text>
 </g>
-
-<circle id="tlr" cx="90" cy="150" r="10" class="c-amber"/>
-<text class="ts" x="90" y="175" text-anchor="middle">TLR</text>
 
 <g id="signaling" class="stg">
-<line x1="100" y1="150" x2="180" y2="180" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#arrow)"/>
-<text class="ts" x="140" y="150" text-anchor="middle">Signaling cascade</text>
+<line x1="135" y1="156" x2="200" y2="178" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="150" y="130">Signaling cascade</text>
 </g>
 
+<!-- NF-kB is freed in the cytoplasm, then moves into the nucleus -->
 <g id="nfkb" class="stg">
-<circle cx="200" cy="200" r="8" class="c-purple pulse"/>
+<g id="nfkbG" transform="translate(212,186)">
+<circle cx="0" cy="0" r="8" class="c-purple pulse"/>
+<text class="ts" x="0" y="-13" text-anchor="middle" style="font-size:10px">NF-κB</text>
+</g>
 </g>
 
 <g id="cytokines" class="stg">
-<circle class="drift" cx="340" cy="130" r="6" fill="#E24B4A"/>
-<circle class="drift" cx="360" cy="150" r="6" fill="#E24B4A" style="animation-delay:.3s"/>
-<circle class="drift" cx="330" cy="170" r="6" fill="#E24B4A" style="animation-delay:.6s"/>
-<text class="ts" x="345" y="105" text-anchor="middle">Cytokines released (TNF-a, IL-1, IL-6)</text>
+<path d="M312 192 L372 168" stroke="#E24B4A" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+<circle class="drift" cx="406" cy="140" r="6" fill="#E24B4A"/>
+<circle class="drift" cx="428" cy="160" r="6" fill="#E24B4A" style="animation-delay:.3s"/>
+<circle class="drift" cx="400" cy="178" r="6" fill="#E24B4A" style="animation-delay:.6s"/>
+<text class="ts" x="530" y="112" text-anchor="middle">Cytokines released (TNF-α, IL-1, IL-6)</text>
 </g>
 
 <g id="inflammation" class="stg">
-<text class="th" x="500" y="150" text-anchor="middle">Recruits immune cells, triggers inflammation</text>
+<text class="th" x="530" y="214" text-anchor="middle">Recruits immune cells,</text>
+<text class="th" x="530" y="232" text-anchor="middle">triggers inflammation</text>
 </g>
 
 <defs>
@@ -6895,11 +6904,14 @@ const labels = [
 ];
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
-  document.getElementById('pamp').classList.toggle('on', step === 0);
+  document.getElementById('pamp').classList.toggle('on', true);
+  // the PAMP stays visible and docks on the TLR at step 1
+  document.getElementById('pampDot').style.transform = step >= 1 ? 'translateX(45px)' : 'none';
   document.getElementById('tlr').classList.toggle('pulse', step === 1);
-  document.getElementById('signaling').classList.toggle('on', step >= 1);
+  document.getElementById('signaling').classList.toggle('on', step >= 2);
   document.getElementById('nfkb').classList.toggle('on', step >= 2);
-  document.getElementById('cytokines').classList.toggle('on', step >= 3);
+  document.getElementById('nfkbG').style.transform = step >= 3 ? 'translate(275px,200px)' : 'translate(212px,186px)';
+  document.getElementById('cytokines').classList.toggle('on', step >= 4);
   document.getElementById('inflammation').classList.toggle('on', step >= 4);
 }
 function stepFwd() { if (step < 4) step++; render(); }
