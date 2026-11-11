@@ -1844,6 +1844,7 @@ TCELL_ACTIVATION_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #tcellGroup { transition: transform 1s ease; }
@@ -1868,7 +1869,7 @@ TCELL_ACTIVATION_GENERAL = '''
 
 <g id="mhcII" class="stg">
 <rect x="230" y="150" width="26" height="12" rx="3" fill="#EF9F27"/>
-<text class="ts" x="243" y="135" text-anchor="middle">MHC-II + antigen</text>
+<text class="ts" x="190" y="188" text-anchor="middle">MHC-II + antigen →</text>
 </g>
 
 <g id="tcellGroup">
@@ -1877,23 +1878,26 @@ TCELL_ACTIVATION_GENERAL = '''
 </g>
 
 <g id="signal1" class="stg">
-<line x1="380" y1="160" x2="258" y2="158" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#arrow)"/>
-<text class="ts" x="320" y="145" text-anchor="middle">Signal 1 — TCR / MHC</text>
+<line x1="346" y1="158" x2="260" y2="156" stroke="#7F77DD" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="40" y1="270" x2="70" y2="270" stroke="#7F77DD" stroke-width="2"/>
+<text class="ts" x="78" y="274">Signal 1 — TCR / MHC</text>
 </g>
 
 <g id="signal2" class="stg">
-<line x1="400" y1="200" x2="270" y2="195" stroke="#639922" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
-<text class="ts" x="335" y="215" text-anchor="middle">Signal 2 — CD28 / B7 (costimulation)</text>
+<line x1="358" y1="194" x2="262" y2="190" stroke="#639922" stroke-width="2" stroke-dasharray="3 3" marker-end="url(#arrow)"/>
+<line x1="40" y1="292" x2="70" y2="292" stroke="#639922" stroke-width="2" stroke-dasharray="3 3"/>
+<text class="ts" x="78" y="296">Signal 2 — CD28 / B7 (costimulation)</text>
 </g>
 
 <g id="activated" class="stg">
-<circle cx="440" cy="160" r="60" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="4 3"/>
-<text class="ts" x="440" y="225" text-anchor="middle">Activated</text>
-<circle cx="560" cy="110" r="28" class="c-purple"/>
-<text class="ts" x="560" y="110" text-anchor="middle" dominant-baseline="central">Helper T</text>
-<circle cx="560" cy="210" r="28" class="c-purple"/>
-<text class="ts" x="560" y="210" text-anchor="middle" dominant-baseline="central">Helper T</text>
-<text class="th" x="560" y="255" text-anchor="middle">Proliferates into helper T cells</text>
+<circle cx="400" cy="160" r="62" fill="none" stroke="#639922" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="ts" x="400" y="238" text-anchor="middle">Activated</text>
+<circle cx="590" cy="110" r="28" class="c-purple"/>
+<text class="ts" x="590" y="110" text-anchor="middle" dominant-baseline="central">Helper T</text>
+<circle cx="590" cy="210" r="28" class="c-purple"/>
+<text class="ts" x="590" y="210" text-anchor="middle" dominant-baseline="central">Helper T</text>
+<text class="th" x="600" y="270" text-anchor="middle">Proliferates into</text>
+<text class="th" x="600" y="288" text-anchor="middle">helper T cells</text>
 </g>
 </svg>
 
@@ -7494,62 +7498,72 @@ TCR_SIGNALING_TECHNICAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
-<svg width="100%" viewBox="0 0 680 320" role="img">
+<svg width="100%" viewBox="0 0 680 310" role="img">
 <title>TCR signaling cascade, technical view</title>
 <desc>The TCR-CD3 complex engages peptide-MHC. Lck phosphorylates ITAMs on CD3, recruiting ZAP-70, which phosphorylates LAT to form a signalosome and activates PLC-gamma. PLC-gamma generates DAG and IP3: DAG activates the Ras-MAPK pathway while IP3 triggers calcium release, activating calcineurin. Calcineurin dephosphorylates NFAT, which translocates to the nucleus and drives IL-2 gene transcription, causing T cell proliferation.</desc>
 
-<line x1="30" y1="140" x2="650" y2="140" stroke="var(--border-strong)" stroke-width="2"/>
-<text class="ts" x="60" y="125">Membrane</text>
-
-<circle cx="90" cy="140" r="12" class="c-purple"/>
-<text class="ts" x="90" y="165" text-anchor="middle">TCR-CD3</text>
+<defs><marker id="tcA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<!-- APC above, T cell below the membrane -->
+<rect x="30" y="18" width="200" height="44" rx="10" fill="#FAEEDA"/>
+<text class="ts" x="40" y="36">APC</text>
+<rect x="80" y="54" width="22" height="12" rx="3" fill="#EF9F27"/>
+<text class="ts" x="110" y="58">peptide–MHC</text>
+<line x1="20" y1="90" x2="660" y2="90" stroke="var(--border-strong)" stroke-width="2"/>
+<text class="ts" x="650" y="82" text-anchor="end">T cell membrane</text>
+<circle cx="91" cy="84" r="12" class="c-purple"/>
+<text class="ts" x="110" y="80">TCR-CD3</text>
 
 <g id="lck" class="stg">
-<circle cx="140" cy="120" r="8" class="c-amber pulse"/>
-<text class="ts" x="140" y="105" text-anchor="middle">Lck phosphorylates ITAMs</text>
+<circle cx="56" cy="122" r="8" class="c-amber pulse"/>
+<text class="ts" x="30" y="148">Lck phosphorylates ITAMs</text>
 </g>
-
 <g id="zap70" class="stg">
-<circle cx="190" cy="140" r="9" class="c-teal"/>
-<text class="ts" x="190" y="165" text-anchor="middle">ZAP-70</text>
+<path d="M98 96 L128 120" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#tcA)"/>
+<circle cx="140" cy="128" r="9" class="c-teal"/>
+<text class="ts" x="154" y="132">ZAP-70</text>
 </g>
-
 <g id="lat" class="stg">
-<circle cx="250" cy="160" r="10" class="c-coral"/>
-<text class="ts" x="250" y="185" text-anchor="middle">LAT signalosome</text>
+<path d="M150 120 L196 100" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#tcA)"/>
+<circle cx="210" cy="96" r="10" class="c-coral"/>
+<text class="ts" x="226" y="112">LAT signalosome</text>
 </g>
-
 <g id="plcg" class="stg">
-<circle cx="310" cy="140" r="9" class="c-red"/>
-<text class="ts" x="310" y="120" text-anchor="middle">PLC-gamma</text>
+<path d="M222 100 L286 122" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#tcA)"/>
+<circle cx="300" cy="128" r="9" class="c-red"/>
+<text class="ts" x="300" y="150" text-anchor="middle">PLC-gamma</text>
 </g>
-
 <g id="dag" class="stg">
+<path d="M310 120 L366 102" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#tcA)"/>
 <circle cx="380" cy="100" r="7" fill="#639922"/>
-<text class="ts" x="380" y="82" text-anchor="middle">DAG → Ras-MAPK</text>
+<text class="ts" x="394" y="104">DAG → Ras-MAPK</text>
 </g>
 <g id="ip3" class="stg">
-<circle cx="380" cy="180" r="7" fill="#378ADD"/>
-<text class="ts" x="380" y="200" text-anchor="middle">IP3 → Ca2+ release</text>
+<path d="M310 136 L366 170" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#tcA)"/>
+<circle cx="380" cy="176" r="7" fill="#378ADD"/>
+<text class="ts" x="394" y="180">IP3 → Ca2+ release</text>
 </g>
-
 <g id="calcineurin" class="stg">
-<circle cx="450" cy="180" r="9" class="c-purple"/>
-<text class="ts" x="450" y="205" text-anchor="middle">Calcineurin</text>
+<path d="M380 186 L380 216" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#tcA)"/>
+<circle cx="380" cy="228" r="9" class="c-purple"/>
+<text class="ts" x="366" y="232" text-anchor="end">Calcineurin</text>
 </g>
-
+<ellipse cx="560" cy="236" rx="96" ry="50" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="ts" x="560" y="300" text-anchor="middle">Nucleus</text>
 <g id="nfat" class="stg">
-<circle cx="520" cy="160" r="10" class="c-amber pulse"/>
-<text class="ts" x="520" y="185" text-anchor="middle">NFAT → nucleus</text>
+<path d="M392 228 L486 230" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#tcA)"/>
+<circle cx="500" cy="230" r="10" class="c-amber pulse"/>
+<text class="ts" x="440" y="220" text-anchor="middle">NFAT → nucleus</text>
 </g>
-
 <g id="il2" class="stg">
-<text class="th" x="600" y="160" text-anchor="middle">IL-2 gene transcribed — proliferation</text>
+<text class="th" x="520" y="234">IL-2 gene</text>
+<text class="th" x="520" y="252">transcribed</text>
+<text class="ts" x="520" y="270">→ proliferation</text>
 </g>
 </svg>
 
