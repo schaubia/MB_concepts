@@ -6124,13 +6124,22 @@ LABOR_TECHNICAL = '''
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #progBar { transition: width 1s ease; }
   #receptorDots circle { transition: opacity 0.6s ease; }
+  .hide { display: none; }
+  .fil { transition: transform 1s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
+<div class="rowbtns">
+  <button id="btnOnset" onclick="setMode('onset')">Labor onset</button>
+  <button id="btnCell" onclick="setMode('cell')">Myometrial cell</button>
+</div>
+
 <svg width="100%" viewBox="0 0 680 334" role="img">
 <title>Labor initiation and the primed Ferguson reflex, technical view</title>
 <desc>Late in pregnancy progesterone maintains uterine quiescence. Progesterone withdrawal alongside rising placental CRH and cortisol shifts the balance toward contraction readiness. Prostaglandins ripen the cervix and upregulate oxytocin receptors on the myometrium, sensitizing the tissue. Only then does the Ferguson reflex positive feedback loop — cervical stretch triggering oxytocin, which causes contractions that increase stretch — drive labor to completion.</desc>
 
+<g id="onsetView">
 <text class="ts" x="60" y="40">Progesterone (uterine quiescence)</text>
 <rect x="60" y="50" width="200" height="16" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
 <rect id="progBar" x="60" y="50" width="200" height="16" fill="#7F77DD"/>
@@ -6174,6 +6183,61 @@ LABOR_TECHNICAL = '''
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
 </defs>
+</g>
+
+<!-- ===== Myometrial cell view: oxytocin -> Gq -> Ca2+ -> MLCK -> contraction ===== -->
+<g id="cellView" class="hide">
+<rect x="40" y="50" width="480" height="250" rx="40" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1"/>
+<text class="th" x="40" y="324">Myometrial smooth muscle cell</text>
+<rect x="532" y="80" width="118" height="180" rx="30" fill="none" stroke="var(--t)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" x="591" y="104" text-anchor="middle">neighbouring cell</text>
+
+<rect x="152" y="38" width="16" height="26" rx="4" class="c-purple"/>
+<text class="ts" x="176" y="66">oxytocin receptor (Gq)</text>
+<g id="c0" class="stg"><circle class="pulse" cx="160" cy="24" r="7" fill="#7F77DD"/><text class="ts" x="174" y="26">oxytocin</text></g>
+
+<ellipse cx="160" cy="172" rx="70" ry="30" fill="none" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text class="ts" x="130" y="176" text-anchor="middle">SR</text>
+<rect x="34" y="236" width="12" height="26" rx="3" fill="#D85A30"/>
+<text class="ts" x="56" y="280">L-type Ca2+ channel</text>
+<g id="c1" class="stg">
+<path d="M160 74 L160 138" stroke="#7F77DD" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="168" y="102">Gq → PLCβ → IP3 + DAG</text>
+<circle cx="214" cy="140" r="4" fill="#B91C1C"/><circle cx="236" cy="152" r="4" fill="#B91C1C"/><circle cx="228" cy="128" r="4" fill="#B91C1C"/>
+<circle cx="62" cy="244" r="4" fill="#B91C1C"/><circle cx="76" cy="256" r="4" fill="#B91C1C"/>
+<text class="ts" x="246" y="140">Ca2+</text>
+</g>
+
+<line x1="270" y1="214" x2="362" y2="214" class="fil" id="aL1" stroke="#378ADD" stroke-width="4"/>
+<line x1="270" y1="252" x2="362" y2="252" class="fil" id="aL2" stroke="#378ADD" stroke-width="4"/>
+<line x1="418" y1="214" x2="510" y2="214" class="fil" id="aR1" stroke="#378ADD" stroke-width="4"/>
+<line x1="418" y1="252" x2="510" y2="252" class="fil" id="aR2" stroke="#378ADD" stroke-width="4"/>
+<rect x="330" y="226" width="120" height="14" rx="3" fill="#7F77DD"/>
+<text class="ts" x="390" y="278" text-anchor="middle">actin · myosin (no troponin)</text>
+<g id="c2" class="stg">
+<text class="ts" x="270" y="176">Ca2+–calmodulin → MLCK</text>
+<path d="M330 182 L346 220" stroke="#EF9F27" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+<circle cx="352" cy="226" r="7" class="c-coral"/><text x="352" y="229" text-anchor="middle" style="font-size:8px;font-weight:600;fill:#7F1D1D">P</text>
+<text class="ts" x="366" y="192">myosin light chain</text>
+<text class="ts" x="366" y="206">phosphorylated</text>
+</g>
+
+<rect x="512" y="150" width="28" height="9" rx="2" fill="#1D9E75"/>
+<rect x="512" y="172" width="28" height="9" rx="2" fill="#1D9E75"/>
+<text class="ts" x="591" y="280" text-anchor="middle" style="font-size:10px">connexin-43 gap junctions</text>
+<g id="c3" class="stg">
+<path d="M500 166 L572 166" stroke="#D85A30" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<text class="ts" x="591" y="196" text-anchor="middle">excitation</text>
+<text class="ts" x="591" y="210" text-anchor="middle">spreads</text>
+</g>
+
+<g id="c4" class="stg">
+<text class="ts" x="176" y="46" style="fill:#B91C1C">✕ atosiban (OTR antagonist)</text>
+<text class="ts" x="54" y="230" style="fill:#B91C1C">✕ nifedipine</text>
+<text class="ts" x="650" y="36" text-anchor="end">induce: oxytocin, prostaglandins</text>
+<text class="ts" x="650" y="52" text-anchor="end">delay: atosiban, nifedipine</text>
+</g>
+</g>
 </svg>
 
 <div class="btnrow">
@@ -6185,6 +6249,14 @@ LABOR_TECHNICAL = '''
 
 <script>
 let step = 0;
+let mode = 'onset';
+const labelsCell = [
+  "Step 0 of 4 — oxytocin binds its Gq-coupled receptor (OTR), which rises sharply near term; PGF2α acts through a similar Gq receptor",
+  "Step 1 of 4 — Gq activates PLCβ → IP3 (+ DAG); IP3 releases Ca2+ from the SR, and depolarization lets more Ca2+ in through L-type channels",
+  "Step 2 of 4 — Ca2+ binds calmodulin; Ca2+–calmodulin activates myosin light-chain kinase (MLCK), which phosphorylates the myosin regulatory light chain (smooth muscle has no troponin)",
+  "Step 3 of 4 — phosphorylated myosin cycles on actin and the cell shortens; connexin-43 gap junctions, greatly increased at term, spread excitation so the uterus contracts as one",
+  "Step 4 of 4 — drug targets: oxytocin and prostaglandin analogues (misoprostol, dinoprostone) induce labor; atosiban (OTR antagonist) and nifedipine (L-type blocker) are tocolytics that delay preterm labor"
+];
 const labels = [
   "Step 0 of 4 — late pregnancy: high progesterone keeps the uterus quiescent",
   "Step 1 of 4 — progesterone withdrawal, rising CRH/cortisol/estrogen shift the balance toward contraction readiness",
@@ -6192,7 +6264,23 @@ const labels = [
   "Step 3 of 4 — the sensitized tissue now responds strongly — the Ferguson reflex positive feedback loop takes over",
   "Step 4 of 4 — contractions intensify, cervix fully dilates, labor completes and the loop breaks at birth"
 ];
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnOnset').classList.toggle('active', m === 'onset');
+  document.getElementById('btnCell').classList.toggle('active', m === 'cell');
+  document.getElementById('onsetView').classList.toggle('hide', m !== 'onset');
+  document.getElementById('cellView').classList.toggle('hide', m !== 'cell');
+  render();
+}
+function renderCell() {
+  document.getElementById('stepLabel').textContent = labelsCell[step];
+  for (let i = 0; i <= 4; i++) document.getElementById('c' + i).classList.toggle('on', i === 4 ? step === 4 : step >= i);
+  const pull = step >= 3 ? 18 : 0;   // filaments slide toward the myosin as the cell contracts
+  ['aL1', 'aL2'].forEach(id => document.getElementById(id).style.transform = `translateX(${pull}px)`);
+  ['aR1', 'aR2'].forEach(id => document.getElementById(id).style.transform = `translateX(${-pull}px)`);
+}
 function render() {
+  if (mode === 'cell') { renderCell(); return; }
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('progBar').setAttribute('width', step === 0 ? '200' : step === 1 ? '80' : '20');
   document.getElementById('crh').classList.toggle('on', step >= 1);
@@ -6205,7 +6293,7 @@ function render() {
 function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
-render();
+setMode('onset');
 </script>
 '''
 
@@ -9455,7 +9543,7 @@ REGISTRY = {
         },
         "Technical": {
             "fragment": LABOR_TECHNICAL,
-            "height": 500,
+            "height": 560,
             "blurb": (
                 "What primes the loop: progesterone withdrawal and rising "
                 "CRH shift the uterus out of quiescence, prostaglandins "
