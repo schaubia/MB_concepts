@@ -7233,6 +7233,173 @@ setMode('healthy');
 
 
 # ---------------------------------------------------------------------------
+# NK_CELL_MISSING_SELF_TECHNICAL
+# ---------------------------------------------------------------------------
+NK_CELL_MISSING_SELF_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of NK cell recognition: inhibitory receptors (KIR, CD94/NKG2A) reading HLA class I signal through ITIMs and SHP-1/2, activating receptors such as NKG2D reading stress ligands signal through DAP10/DAP12, the balance decides killing by perforin and granzyme B; antibody-dependent cellular cytotoxicity through CD16 is shown as a second mode.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  .mvg { transition: transform .9s ease, opacity .6s ease; }
+  .rc { transition: x .9s ease, width .9s ease; }
+  #ptr { transition: transform .9s ease; }
+  #target { transition: opacity .8s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnBal" onclick="setMode('balance')">Missing self (balance)</button>
+  <button id="btnAdcc" onclick="setMode('adcc')">ADCC (CD16)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 330" role="img">
+<title>NK cell recognition, technical view</title>
+<desc>Inhibitory receptors KIR and CD94/NKG2A bind self HLA class I and signal through ITIM motifs that recruit the phosphatases SHP-1 and SHP-2. The activating receptor NKG2D binds stress ligands such as MICA, MICB and ULBPs and signals through DAP10 and DAP12. A healthy cell inhibits the NK cell; a stressed cell that keeps HLA-I is balanced; a cell that has lost HLA-I and expresses stress ligands is killed by perforin and granzyme B. In antibody-dependent cellular cytotoxicity, CD16 binds the Fc region of IgG coating a target and triggers killing.</desc>
+
+<circle id="target" cx="150" cy="150" r="85" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="150" y="256" text-anchor="middle" id="targetLabel"></text>
+<circle cx="520" cy="150" r="85" fill="var(--surface-1)" stroke="#7F77DD" stroke-width="2"/>
+<text class="th" x="520" y="92" text-anchor="middle">NK cell</text>
+
+<!-- ============ balance mode ============ -->
+<g id="vBal">
+<!-- inhibitory pair -->
+<g id="hla" class="mvg"><rect id="hlaR" class="rc" x="235" y="104" width="62" height="12" rx="4" fill="#EF9F27"/></g>
+<rect id="hlaGap" x="235" y="104" width="62" height="12" rx="4" fill="none" stroke="#888780" stroke-width="1.2" stroke-dasharray="3 2"/>
+<text class="ts" x="250" y="96" id="hlaLabel">HLA-I</text>
+<g id="kir" class="mvg"><rect id="kirR" class="rc" x="373" y="104" width="62" height="12" rx="4" fill="#7F77DD"/></g>
+<text class="ts" x="430" y="96" text-anchor="end">KIR / NKG2A</text>
+<!-- activating pair -->
+<g id="lig" class="mvg"><rect id="ligR" class="rc" x="235" y="184" width="62" height="12" rx="4" fill="#E24B4A"/></g>
+<text class="ts" x="236" y="214" id="ligLabel">MICA/B, ULBP</text>
+<g id="nkg" class="mvg"><rect id="nkgR" class="rc" x="373" y="184" width="62" height="12" rx="4" fill="#D85A30"/></g>
+<text class="ts" x="430" y="214" text-anchor="end">NKG2D</text>
+
+<g id="itim" class="stg"><text class="ts" x="452" y="128" style="fill:#3C3489">ITIM → SHP-1/2</text><text class="ts" x="452" y="142" style="fill:#3C3489;font-size:10px">dephosphorylates</text></g>
+<g id="itam" class="stg"><text class="ts" x="452" y="178" style="fill:#B4400A">DAP10/12 (ITAM)</text><text class="ts" x="452" y="192" style="fill:#B4400A;font-size:10px">→ Syk/ZAP-70, PI3K</text></g>
+
+<!-- balance meter -->
+<line x1="240" y1="298" x2="440" y2="298" stroke="var(--t)" stroke-width="2"/>
+<line x1="340" y1="290" x2="340" y2="306" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="236" y="302" text-anchor="end">inhibition</text>
+<text class="ts" x="444" y="302">activation</text>
+<path id="ptr" d="M340 290 L333 278 L347 278 Z" fill="#B91C1C"/>
+</g>
+
+<!-- ============ ADCC mode ============ -->
+<g id="vAdcc" class="hide">
+<g id="abs">
+<path d="M236 112 L250 120 L236 128 M250 120 L292 120" stroke="#378ADD" stroke-width="3" fill="none"/>
+<path d="M236 142 L250 150 L236 158 M250 150 L292 150" stroke="#378ADD" stroke-width="3" fill="none"/>
+<path d="M236 172 L250 180 L236 188 M250 180 L292 180" stroke="#378ADD" stroke-width="3" fill="none"/>
+</g>
+<text class="ts" x="262" y="102" text-anchor="middle">IgG</text>
+<g id="cd16" class="mvg">
+<rect class="rc cd" x="400" y="115" width="35" height="10" rx="3" fill="#C9C4F5" stroke="#7F77DD" stroke-width="1"/>
+<rect class="rc cd" x="400" y="145" width="35" height="10" rx="3" fill="#C9C4F5" stroke="#7F77DD" stroke-width="1"/>
+<rect class="rc cd" x="400" y="175" width="35" height="10" rx="3" fill="#C9C4F5" stroke="#7F77DD" stroke-width="1"/>
+</g>
+<text class="ts" x="430" y="212" text-anchor="end">CD16 (FcγRIIIa)</text>
+<g id="aItam" class="stg"><text class="ts" x="452" y="146" style="fill:#B4400A">CD3ζ / FcRγ ITAM</text><text class="ts" x="452" y="160" style="fill:#B4400A;font-size:10px">→ Syk/ZAP-70</text></g>
+<g id="drugs" class="stg"><text class="th" x="340" y="304" text-anchor="middle">e.g. rituximab (anti-CD20), trastuzumab (anti-HER2)</text></g>
+</g>
+
+<!-- killing (both modes) -->
+<g id="kill" class="stg">
+<circle cx="312" cy="164" r="4" fill="#7F77DD"/><circle cx="328" cy="170" r="4" fill="#7F77DD"/><circle cx="344" cy="162" r="4" fill="#7F77DD"/><circle cx="360" cy="168" r="4" fill="#7F77DD"/>
+<text class="ts" x="150" y="154" text-anchor="middle">apoptosis</text>
+<text class="ts" x="336" y="240" text-anchor="middle">perforin + granzyme B · IFN-γ</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'balance';
+const BAL = {
+  labels: [
+    "Step 0 of 4 — the NK cell contacts a target: inhibitory receptors (KIR, CD94/NKG2A) probe for self HLA class I, activating receptors (NKG2D) probe for stress ligands",
+    "Step 1 of 4 — healthy cell: HLA-I engages KIR/NKG2A → ITIMs recruit SHP-1/SHP-2; with no stress ligands the balance tips to inhibition — no killing",
+    "Step 2 of 4 — stressed cell that still shows HLA-I: NKG2D binds MICA/B or ULBP → DAP10/DAP12 → Syk/ZAP-70 and PI3K, but SHP-1/2 dephosphorylate these signals — the outcome depends on the balance",
+    "Step 3 of 4 — infected or tumour cell that has lost HLA-I to escape CD8 T cells: no ITIM brake, stress ligands present → activation wins",
+    "Step 4 of 4 — killing: granules polarize to the synapse; perforin pores let granzyme B in → caspases → apoptosis (Fas–FasL as a backup); IFN-γ is also released"
+  ],
+  target: ['Target cell', 'Healthy cell', 'Stressed cell (HLA-I kept)', 'Infected / tumour cell (HLA-I lost)', 'Infected / tumour cell (HLA-I lost)'],
+  hla: [true, true, true, false, false],
+  lig: [false, false, true, true, true],
+  ptr: [0, -70, -25, 70, 85]
+};
+const ADCC = [
+  "Step 0 of 4 — a virus-infected or tumour cell is coated with IgG antibodies bound to its surface antigens",
+  "Step 1 of 4 — CD16 (FcγRIIIa) on the NK cell binds the antibodies' Fc regions — the antibody bridges the target and the NK cell",
+  "Step 2 of 4 — CD16 signals through ITAM-bearing CD3ζ/FcRγ chains → Syk/ZAP-70: a strong activating signal, even if the target still shows HLA-I",
+  "Step 3 of 4 — degranulation: perforin + granzyme B → target apoptosis; IFN-γ is released",
+  "Step 4 of 4 — antibody-dependent cellular cytotoxicity (ADCC) is one way therapeutic antibodies such as rituximab and trastuzumab kill target cells"
+];
+function setR(el, x, w) { el.setAttribute('x', x); el.setAttribute('width', w); el.style.x = x + 'px'; el.style.width = w + 'px'; }
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnBal').classList.toggle('active', m === 'balance');
+  document.getElementById('btnAdcc').classList.toggle('active', m === 'adcc');
+  document.getElementById('vBal').classList.toggle('hide', m !== 'balance');
+  document.getElementById('vAdcc').classList.toggle('hide', m !== 'adcc');
+  render();
+}
+function render() {
+  let killing;
+  if (mode === 'balance') {
+    const c = BAL;
+    document.getElementById('stepLabel').textContent = c.labels[step];
+    document.getElementById('targetLabel').textContent = c.target[step];
+    const hla = c.hla[step], lig = c.lig[step], engaged = step >= 1;
+    const hlaEl = document.getElementById('hla');
+    hlaEl.style.opacity = hla ? 1 : 0;
+    document.getElementById('hlaGap').style.opacity = hla ? 0 : 1;
+    document.getElementById('hlaLabel').textContent = hla ? 'HLA-I' : 'HLA-I lost';
+    // engaged receptor pairs slide together and meet in the gap
+    const pair = (tId, nId, on) => {
+      setR(document.getElementById(tId), 235, on ? 100 : 62);
+      setR(document.getElementById(nId), on ? 335 : 373, on ? 100 : 62);
+    };
+    pair('hlaR', 'kirR', engaged && hla);
+    const ligEl = document.getElementById('lig');
+    ligEl.style.opacity = lig ? 1 : 0;
+    document.getElementById('ligLabel').style.opacity = lig ? 1 : 0;
+    pair('ligR', 'nkgR', engaged && lig);
+    document.getElementById('itim').classList.toggle('on', engaged && hla);
+    document.getElementById('itam').classList.toggle('on', engaged && lig);
+    document.getElementById('ptr').style.transform = `translateX(${c.ptr[step]}px)`;
+    killing = step >= 4;
+  } else {
+    document.getElementById('stepLabel').textContent = ADCC[step];
+    document.getElementById('targetLabel').textContent = 'Antibody-coated target';
+    document.querySelectorAll('#cd16 .cd').forEach(r => setR(r, step >= 1 ? 292 : 400, step >= 1 ? 143 : 35));
+    document.getElementById('aItam').classList.toggle('on', step >= 2);
+    document.getElementById('drugs').classList.toggle('on', step >= 4);
+    killing = step >= 3;
+  }
+  document.getElementById('kill').classList.toggle('on', killing);
+  document.getElementById('target').style.opacity = killing ? 0.35 : 1;
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('balance');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # GERMINAL_CENTER_TECHNICAL  (source: germinal_center.html)
 # ---------------------------------------------------------------------------
 GERMINAL_CENTER_TECHNICAL = '''
@@ -9560,6 +9727,15 @@ REGISTRY = {
                 "inhibits killing) and an infected cell (MHC-I lost — "
                 "killing proceeds), the opposite detection strategy from "
                 "cytotoxic T cells."
+            ),
+        },
+        "Technical": {
+            "fragment": NK_CELL_MISSING_SELF_TECHNICAL,
+            "height": 560,
+            "blurb": (
+                "The receptor balance: KIR/NKG2A (ITIM, SHP-1/2) versus NKG2D "
+                "(DAP10/12) for healthy, stressed and HLA-I-lost targets, "
+                "killing by perforin and granzyme B, and ADCC through CD16."
             ),
         },
     },
