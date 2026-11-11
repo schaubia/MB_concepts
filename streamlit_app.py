@@ -8592,6 +8592,9 @@ MEDICATION_MECHANISM_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  #drugShape { transition: x .6s ease, y .6s ease; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 1.6s ease-in-out infinite; }
@@ -8613,13 +8616,22 @@ MEDICATION_MECHANISM_GENERAL = '''
 
 <line x1="30" y1="140" x2="650" y2="140" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
 <rect x="60" y="80" width="140" height="120" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="130" y="70">Presynaptic terminal</text>
+<text class="ts" x="130" y="70" text-anchor="middle">Presynaptic terminal</text>
 <rect x="480" y="80" width="140" height="120" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="550" y="70">Postsynaptic membrane</text>
+<text class="ts" x="550" y="70" text-anchor="middle">Postsynaptic membrane</text>
 
 <circle id="transporter" cx="200" cy="150" r="10" class="c-teal"/>
 <text class="ts" x="200" y="175" text-anchor="middle" id="transporterLabel">SERT transporter</text>
 
+<defs><marker id="medArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g id="reuptake" class="stg"><path d="M290 166 L216 160" stroke="#1D9E75" stroke-width="1.5" fill="none" marker-end="url(#medArrow)"/>
+<text class="ts" x="300" y="190">reuptake</text></g>
+<text class="ts" x="330" y="124" text-anchor="middle" id="ntLabel">serotonin</text>
+<g id="extraNT" class="stg">
+<circle class="drift" cx="315" cy="168" r="5" fill="#7F77DD"/><circle class="drift" cx="345" cy="128" r="5" fill="#7F77DD" style="animation-delay:.4s"/>
+<circle class="drift" cx="380" cy="160" r="5" fill="#7F77DD" style="animation-delay:.2s"/><circle class="drift" cx="410" cy="144" r="5" fill="#7F77DD" style="animation-delay:.5s"/>
+<circle class="drift" cx="440" cy="166" r="5" fill="#7F77DD" style="animation-delay:.7s"/>
+</g>
 <g id="neurotransmitter" class="stg">
 <circle class="drift" cx="300" cy="140" r="5" fill="#7F77DD"/>
 <circle class="drift" cx="330" cy="150" r="5" fill="#7F77DD" style="animation-delay:.3s"/>
@@ -8627,7 +8639,9 @@ MEDICATION_MECHANISM_GENERAL = '''
 </g>
 
 <circle id="receptor" cx="480" cy="150" r="14" class="c-purple"/>
-<text class="ts" x="480" y="180" text-anchor="middle" id="receptorLabel">Receptor</text>
+<text class="ts" x="480" y="222" text-anchor="middle" id="receptorLabel">Receptor</text>
+<g id="chloride" class="stg"><circle cx="502" cy="182" r="4" fill="#378ADD"/><circle cx="516" cy="194" r="4" fill="#378ADD"/><circle cx="530" cy="180" r="4" fill="#378ADD"/>
+<text class="ts" x="540" y="194">Cl− in</text></g>
 
 <g id="drug" class="stg">
 <rect x="185" y="130" width="30" height="14" rx="4" class="c-coral" id="drugShape"/>
@@ -8635,7 +8649,7 @@ MEDICATION_MECHANISM_GENERAL = '''
 </g>
 
 <g id="effect" class="stg">
-<text class="th" x="480" y="240" text-anchor="middle" id="effectLabel"></text>
+<text class="th" x="340" y="256" text-anchor="middle" id="effectLabel"></text>
 </g>
 </svg>
 
@@ -8653,6 +8667,7 @@ const ssri = {
   transporterLabel: 'SERT transporter',
   receptorLabel: 'Serotonin receptor',
   drugLabel: 'SSRI blocks the transporter',
+  nt: 'serotonin', effect: 'more serotonin signalling, for longer', drugXY: [185, 130], labelX: 200, anchor: 'middle',
   labels: [
     'Step 0 of 3 — normally, serotonin is released, binds its receptor, then SERT clears it away',
     'Step 1 of 3 — an SSRI binds and blocks the SERT transporter',
@@ -8664,10 +8679,11 @@ const benzo = {
   transporterLabel: '',
   receptorLabel: 'GABA-A receptor',
   drugLabel: 'Benzodiazepine binds a separate allosteric site',
+  nt: 'GABA', effect: 'more Cl− influx → stronger inhibition', drugXY: [484, 122], labelX: 476, anchor: 'end',
   labels: [
     'Step 0 of 3 — normally, GABA binds its receptor, opening a chloride channel — an inhibitory signal',
     'Step 1 of 3 — a benzodiazepine binds a DIFFERENT site on the same receptor, not where GABA binds',
-    'Step 2 of 3 — this is positive allosteric modulation — it doesn\'t activate the receptor alone, but makes it respond more strongly to GABA',
+    "Step 2 of 3 — this is positive allosteric modulation — it doesn't activate the receptor alone, but makes it respond more strongly to GABA",
     'Step 3 of 3 — the chloride channel opens more often when GABA is present — enhanced inhibitory signaling (calming, anti-anxiety effect)'
   ]
 };
@@ -8680,6 +8696,16 @@ function setMode(m) {
   document.getElementById('receptorLabel').textContent = cfg.receptorLabel;
   document.getElementById('drugLabel').textContent = cfg.drugLabel;
   document.getElementById('transporter').style.opacity = m === 'ssri' ? '1' : '0.12';
+  document.getElementById('ntLabel').textContent = cfg.nt;
+  // SSRI binds SERT on the presynaptic side; a benzodiazepine binds its own site on the GABA-A receptor
+  const d = document.getElementById('drugShape');
+  d.setAttribute('x', cfg.drugXY[0]); d.setAttribute('y', cfg.drugXY[1]); d.style.x = cfg.drugXY[0] + 'px'; d.style.y = cfg.drugXY[1] + 'px';
+  document.getElementById('drugLabel').setAttribute('x', cfg.labelX);
+  document.getElementById('drugLabel').setAttribute('text-anchor', cfg.anchor);
+  document.getElementById('drugLabel').setAttribute('y', m === 'benzo' ? 100 : 115);
+  document.getElementById('reuptake').classList.toggle('hide', m !== 'ssri');
+  document.getElementById('extraNT').classList.toggle('hide', m !== 'ssri');
+  document.getElementById('chloride').classList.toggle('hide', m !== 'benzo');
   render();
 }
 function render() {
@@ -8689,7 +8715,10 @@ function render() {
   document.getElementById('drug').classList.toggle('on', step >= 1);
   document.getElementById('receptor').setAttribute('r', (mode === 'benzo' && step >= 2) ? '18' : '14');
   document.getElementById('effect').classList.toggle('on', step >= 3);
-  document.getElementById('effectLabel').textContent = step >= 3 ? cfg.labels[3].split('— ').slice(1).join('— ') : '';
+  document.getElementById('effectLabel').textContent = step >= 3 ? cfg.effect : '';
+  document.getElementById('reuptake').classList.toggle('on', step === 0);
+  document.getElementById('extraNT').classList.toggle('on', step >= 2);
+  document.getElementById('chloride').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
