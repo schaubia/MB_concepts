@@ -7116,6 +7116,8 @@ NK_CELL_MISSING_SELF_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
@@ -7140,8 +7142,9 @@ NK_CELL_MISSING_SELF_GENERAL = '''
 <text class="ts" x="180" y="225" text-anchor="middle" id="targetLabel">Healthy cell</text>
 
 <g id="mhcMarker" class="stg">
-<rect x="165" y="90" width="30" height="12" rx="3" fill="#EF9F27"/>
-<text class="ts" x="180" y="75" text-anchor="middle" id="mhcLabel">MHC-I present</text>
+<rect id="mhcRect" x="165" y="64" width="30" height="12" rx="3" fill="#EF9F27"/>
+<rect id="mhcGap" x="165" y="64" width="30" height="12" rx="3" fill="none" stroke="#888780" stroke-width="1.2" stroke-dasharray="3 2"/>
+<text class="ts" x="180" y="52" text-anchor="middle" id="mhcLabel">MHC-I present</text>
 </g>
 
 <g id="inhibitorySignal" class="stg">
@@ -7154,6 +7157,10 @@ NK_CELL_MISSING_SELF_GENERAL = '''
 <text class="ts" x="340" y="170" text-anchor="middle">Activating signal (stress ligands)</text>
 </g>
 
+<g id="kill" class="stg">
+<circle cx="300" cy="140" r="4" fill="#7F77DD"/><circle cx="318" cy="134" r="4" fill="#7F77DD"/><circle cx="336" cy="142" r="4" fill="#7F77DD"/>
+<text class="ts" x="318" y="200" text-anchor="middle">perforin + granzymes</text>
+</g>
 <g id="outcome" class="stg">
 <text class="th" x="480" y="220" text-anchor="middle" id="outcomeLabel">No killing</text>
 </g>
@@ -7201,6 +7208,9 @@ function setMode(m) {
   document.getElementById('targetLabel').textContent = cfg.targetLabel;
   document.getElementById('mhcLabel').textContent = cfg.mhcLabel;
   document.getElementById('outcomeLabel').textContent = cfg.outcomeLabel;
+  // an infected cell has lost MHC-I: show the empty spot, not a marker
+  document.getElementById('mhcRect').classList.toggle('hide', m !== 'healthy');
+  document.getElementById('mhcGap').classList.toggle('hide', m === 'healthy');
   render();
 }
 function render() {
@@ -7210,6 +7220,8 @@ function render() {
   document.getElementById('inhibitorySignal').classList.toggle('on', mode === 'healthy' && step >= 1);
   document.getElementById('activatingSignal').classList.toggle('on', step >= 1);
   document.getElementById('outcome').classList.toggle('on', step >= 2);
+  document.getElementById('kill').classList.toggle('hide', mode !== 'infected');
+  document.getElementById('kill').classList.toggle('on', mode === 'infected' && step >= 2);
   document.getElementById('targetCell').style.opacity = (mode === 'infected' && step >= 2) ? '0.25' : '1';
 }
 function stepFwd() { if (step < 2) step++; render(); }
