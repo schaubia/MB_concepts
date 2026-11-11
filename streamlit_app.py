@@ -4403,6 +4403,8 @@ BLOOD_GLUCOSE_HOMEOSTASIS_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  #hDot { transition: cx 1.2s ease, cy 1.2s ease; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
@@ -4420,18 +4422,20 @@ BLOOD_GLUCOSE_HOMEOSTASIS_GENERAL = '''
 <title>Blood glucose homeostasis</title>
 <desc>When blood glucose is high, pancreatic beta cells release insulin, prompting cells to take up glucose via GLUT4 transporters, lowering blood glucose. When blood glucose is low, pancreatic alpha cells release glucagon, prompting the liver to break down glycogen and release glucose, raising blood glucose. Both loops return glucose toward the setpoint.</desc>
 
+<defs><marker id="gluArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
 <rect x="30" y="130" width="620" height="40" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
 <text class="ts" x="42" y="125">Bloodstream</text>
 <text class="ts" x="340" y="155" text-anchor="middle" id="glucoseLabel">Blood glucose: normal</text>
 
 <g id="pancreas">
 <ellipse cx="150" cy="80" rx="55" ry="35" class="c-amber"/>
-<text class="ts" x="150" y="80" text-anchor="middle" dominant-baseline="central" id="pancreasLabel">Pancreas</text>
+<text class="ts" x="150" y="80" text-anchor="middle" dominant-baseline="central">Pancreas</text>
+<text class="ts" x="150" y="32" text-anchor="middle" id="pancreasLabel"></text>
 </g>
 
 <g id="hormone" class="stg">
-<circle cx="220" cy="110" r="8" fill="#7F77DD"/>
-<text class="ts" x="220" y="130" text-anchor="middle" id="hormoneLabel">Insulin</text>
+<circle id="hDot" cx="220" cy="110" r="8" fill="#7F77DD"/>
+<text class="ts" x="230" y="104" id="hormoneLabel">Insulin</text>
 </g>
 
 <g id="targetOrgan" class="stg">
@@ -4440,11 +4444,12 @@ BLOOD_GLUCOSE_HOMEOSTASIS_GENERAL = '''
 </g>
 
 <g id="effect" class="stg">
-<text class="ts" x="530" y="140" text-anchor="middle" id="effectLabel">GLUT4 uptake ↑</text>
+<path id="gluArrow1" d="M530 166 L530 124" stroke="#EF9F27" stroke-width="2.5" fill="none" marker-end="url(#gluArrow)"/>
+<text class="ts" x="530" y="190" text-anchor="middle" id="effectLabel">GLUT4 uptake ↑</text>
 </g>
 
 <g id="resultArrow" class="stg">
-<text class="ts" x="340" y="200" text-anchor="middle" id="resultLabel">Blood glucose falls back to setpoint</text>
+<text class="th" x="340" y="226" text-anchor="middle" id="resultLabel">Blood glucose falls back to setpoint</text>
 </g>
 </svg>
 
@@ -4484,6 +4489,8 @@ function setMode(m) {
   document.getElementById('organLabel').textContent = cfg.organLabel;
   document.getElementById('effectLabel').textContent = cfg.effectLabel;
   document.getElementById('resultLabel').textContent = cfg.resultLabel;
+  // glucose moves from blood into muscle/fat (high) or out of the liver into blood (low)
+  document.getElementById('gluArrow1').setAttribute('d', m === 'high' ? 'M530 160 L530 124' : 'M530 122 L530 158');
   render();
 }
 function render() {
@@ -4492,6 +4499,9 @@ function render() {
   document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 3';
   document.getElementById('hormone').classList.toggle('on', step >= 1);
   document.getElementById('hormone').classList.toggle('pulse', step === 1);
+  // hormone travels in the blood to its target
+  const h = document.getElementById('hDot'), hx = step >= 2 ? 470 : 220, hy = step >= 2 ? 120 : 110;
+  h.setAttribute('cx', hx); h.setAttribute('cy', hy); h.style.cx = hx + 'px'; h.style.cy = hy + 'px';
   document.getElementById('targetOrgan').classList.toggle('on', step >= 2);
   document.getElementById('effect').classList.toggle('on', step >= 2);
   document.getElementById('resultArrow').classList.toggle('on', step >= 3);
