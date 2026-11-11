@@ -8729,6 +8729,205 @@ setMode('ssri');
 
 
 # ---------------------------------------------------------------------------
+# MEDICATION_MECHANISM_TECHNICAL
+# ---------------------------------------------------------------------------
+MEDICATION_MECHANISM_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of two drug mechanisms: SSRIs block SERT, but somatodendritic 5-HT1A autoreceptors initially brake raphe firing until they desensitize over weeks; benzodiazepines bind the alpha/gamma-2 interface of the GABA-A receptor and increase opening frequency, unlike barbiturates, which prolong openings, and flumazenil blocks the benzodiazepine site.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  #auto { transition: opacity .6s ease; }
+  #lvl { transition: width .8s ease; }
+  .nt { transition: opacity .5s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSSRI" onclick="setMode('ssri')">SSRI</button>
+  <button id="btnBenzo" onclick="setMode('benzo')">Benzodiazepine</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Drug mechanisms, technical view: SSRI and benzodiazepine</title>
+<desc>SSRI: blocking SERT raises extracellular serotonin, but serotonin around the raphe cell body activates 5-HT1A autoreceptors, which slow firing; over two to six weeks the autoreceptors desensitize, firing recovers and serotonin release stays high. Benzodiazepine: the GABA-A receptor is a pentamer of two alpha, two beta and one gamma-2 subunit; GABA binds at the beta/alpha interfaces and benzodiazepines at the alpha/gamma-2 interface, increasing how often the chloride channel opens, whereas barbiturates prolong each opening; flumazenil competitively blocks the benzodiazepine site.</desc>
+
+<!-- ================= SSRI ================= -->
+<g id="vSSRI">
+<circle cx="110" cy="140" r="62" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="110" y="66" text-anchor="middle">Raphe 5-HT neuron</text>
+<text class="ts" x="110" y="222" text-anchor="middle">(cell body)</text>
+<rect id="auto" x="150" y="82" width="14" height="22" rx="4" class="c-purple"/>
+<text class="ts" x="172" y="84">5-HT1A autoreceptor</text>
+<text class="ts" x="172" y="100" id="autoState"></text>
+<g id="somaNT" class="stg"><circle cx="180" cy="114" r="4" fill="#7F77DD"/><circle cx="190" cy="124" r="4" fill="#7F77DD"/><circle cx="178" cy="128" r="4" fill="#7F77DD"/></g>
+
+<line x1="172" y1="140" x2="380" y2="140" stroke="var(--t)" stroke-width="2"/>
+<g id="ticks"></g>
+<text class="ts" x="276" y="172" text-anchor="middle" id="fireText"></text>
+
+<rect x="380" y="90" width="100" height="100" rx="12" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="430" y="82" text-anchor="middle">axon terminal</text>
+<circle cx="480" cy="160" r="10" class="c-teal"/>
+<text class="ts" x="480" y="208" text-anchor="middle">SERT</text>
+<g id="ssriDrug" class="stg"><rect x="469" y="144" width="22" height="12" rx="3" class="c-coral"/><text class="ts" x="520" y="132" text-anchor="middle">SSRI</text></g>
+
+<rect x="560" y="80" width="90" height="120" rx="12" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="605" y="72" text-anchor="middle">postsynaptic</text>
+<circle cx="560" cy="120" r="8" class="c-purple"/>
+<circle cx="560" cy="164" r="8" class="c-purple"/>
+<g id="cleftNT">
+<circle class="nt" cx="500" cy="110" r="4" fill="#7F77DD"/><circle class="nt" cx="520" cy="150" r="4" fill="#7F77DD"/>
+<circle class="nt" cx="536" cy="120" r="4" fill="#7F77DD"/><circle class="nt" cx="510" cy="176" r="4" fill="#7F77DD"/>
+<circle class="nt" cx="540" cy="168" r="4" fill="#7F77DD"/><circle class="nt" cx="498" cy="134" r="4" fill="#7F77DD"/>
+<circle class="nt" cx="528" cy="100" r="4" fill="#7F77DD"/><circle class="nt" cx="544" cy="140" r="4" fill="#7F77DD"/>
+</g>
+
+<text class="ts" x="380" y="250">synaptic serotonin</text>
+<rect x="380" y="258" width="270" height="14" rx="3" fill="none" stroke="var(--t)" stroke-width="0.75"/>
+<rect id="lvl" x="380" y="258" width="90" height="14" rx="3" fill="#7F77DD"/>
+<text class="th" x="40" y="300" id="ssriNote"></text>
+</g>
+
+<!-- ================= Benzodiazepine ================= -->
+<g id="vBenzo" class="hide">
+<text class="ts" x="180" y="40" text-anchor="middle">GABA-A receptor (top view)</text>
+<g id="ring"></g>
+<circle cx="180" cy="175" r="13" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="180" y="179" text-anchor="middle" style="font-size:9px">Cl−</text>
+<g id="gabaSites"></g>
+<text class="ts" x="252" y="96">GABA (β/α)</text>
+<text class="ts" x="198" y="282">GABA (β/α)</text>
+<g id="bzSite"><rect x="88" y="190" width="18" height="14" rx="3" fill="none" stroke="#D85A30" stroke-width="1.5" stroke-dasharray="2 2"/></g>
+<text class="ts" x="40" y="230">BZ site (α/γ2)</text>
+<g id="bzDrug" class="stg"><rect x="88" y="190" width="18" height="14" rx="3" class="c-coral"/></g>
+<g id="fluma" class="stg"><rect x="86" y="188" width="22" height="18" rx="3" fill="#888780"/><text x="97" y="201" text-anchor="middle" style="font-size:11px;font-weight:700;fill:#fff">✕</text>
+<text class="ts" x="40" y="248" style="fill:#B91C1C">flumazenil blocks</text></g>
+
+<text class="ts" x="340" y="64" id="tr0Label">GABA alone</text>
+<path id="tr0" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<g id="tr1g" class="stg"><text class="ts" x="340" y="144">+ benzodiazepine: more frequent openings</text>
+<path id="tr1" fill="none" stroke="#D85A30" stroke-width="1.5"/></g>
+<g id="tr2g" class="stg"><text class="ts" x="340" y="224">+ barbiturate: longer openings</text>
+<path id="tr2" fill="none" stroke="#7F77DD" stroke-width="1.5"/></g>
+<text class="ts" x="650" y="300" text-anchor="end" style="font-size:10px">single-channel recording · downward = channel open</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'ssri';
+const NS = 'http://www.w3.org/2000/svg';
+const SSRI = {
+  labels: [
+    "Step 0 of 4 — baseline: raphe neurons fire steadily; serotonin released at the terminal is cleared by SERT, and somatodendritic 5-HT1A autoreceptors act as a brake on firing",
+    "Step 1 of 4 — day 1: the SSRI blocks SERT at the terminals and around the cell body — extracellular serotonin rises",
+    "Step 2 of 4 — the extra serotonin around the cell body activates 5-HT1A autoreceptors (Gi → GIRK K+ channels): the neuron fires less, so release falls and the net gain is small",
+    "Step 3 of 4 — over 2–6 weeks, continuous stimulation desensitizes and downregulates the 5-HT1A autoreceptors — the brake fades",
+    "Step 4 of 4 — firing recovers while SERT stays blocked → sustained higher serotonin release, followed by postsynaptic adaptations (e.g. BDNF) — explaining the delayed benefit and early side effects"
+  ],
+  ticks: [8, 8, 3, 7, 9],
+  fire: ['firing: normal', 'firing: normal', 'firing ↓ (autoreceptor brake)', 'firing recovering', 'firing restored'],
+  level: [0.3, 0.6, 0.45, 0.7, 0.85],
+  auto: ['', '', 'activated → firing ↓', 'desensitizing', 'desensitized'],
+  note: ['', '', 'acute: little net gain', 'weeks…', 'therapeutic effect: weeks, not days']
+};
+const BENZO = {
+  labels: [
+    "Step 0 of 4 — the GABA-A receptor is a pentamer (typically 2α, 2β, 1γ2) around a Cl− pore; GABA binds at the two β/α interfaces and opens the channel briefly",
+    "Step 1 of 4 — a benzodiazepine binds a separate site at the α/γ2 interface: a positive allosteric modulator that does nothing without GABA",
+    "Step 2 of 4 — with the benzodiazepine bound, GABA opens the channel more often → more Cl− influx and hyperpolarization (α1-containing receptors: sedation; α2/α3: anxiolysis)",
+    "Step 3 of 4 — barbiturates (a different site) prolong each opening and at high doses open the channel without GABA — no ceiling, so overdose, especially with alcohol, is far more dangerous",
+    "Step 4 of 4 — flumazenil is a competitive antagonist at the benzodiazepine site: it reverses benzodiazepine sedation or overdose (but can precipitate withdrawal seizures)"
+  ]
+};
+// GABA-A ring: beta, alpha, beta, alpha, gamma2
+(function buildRing() {
+  const names = ['β2', 'α1', 'β2', 'α1', 'γ2'], ang = [-90, -18, 54, 126, 198];
+  const cls = { 'β2': 'c-teal', 'α1': 'c-purple', 'γ2': 'c-amber' };
+  const g = document.getElementById('ring');
+  names.forEach((n, i) => {
+    const a = ang[i] * Math.PI / 180, x = 180 + 54 * Math.cos(a), y = 175 + 54 * Math.sin(a);
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', 26); c.setAttribute('class', cls[n]);
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', x); t.setAttribute('y', y + 4); t.setAttribute('text-anchor', 'middle'); t.setAttribute('class', 'ts'); t.textContent = n;
+    g.appendChild(c); g.appendChild(t);
+  });
+  const gs = document.getElementById('gabaSites');
+  [-54, 90].forEach(d => {
+    const a = d * Math.PI / 180, x = 180 + 86 * Math.cos(a), y = 175 + 86 * Math.sin(a);
+    const r = document.createElementNS(NS, 'rect');
+    r.setAttribute('x', x - 6); r.setAttribute('y', y - 6); r.setAttribute('width', 12); r.setAttribute('height', 12);
+    r.setAttribute('fill', '#7F77DD'); r.setAttribute('transform', `rotate(45 ${x} ${y})`);
+    gs.appendChild(r);
+  });
+})();
+function trace(y, opens) {
+  let d = `M340 ${y}`, x0 = 340;
+  opens.forEach(([s, l]) => { const a = 340 + s, b = a + l; d += ` L${a} ${y} L${a} ${y + 20} L${b} ${y + 20} L${b} ${y}`; });
+  return d + ' L650 ' + y;
+}
+document.getElementById('tr0').setAttribute('d', trace(76, [[30, 8], [120, 8], [220, 8]]));
+document.getElementById('tr1').setAttribute('d', trace(156, [[15, 8], [55, 8], [95, 8], [140, 8], [185, 8], [228, 8], [270, 8]]));
+document.getElementById('tr2').setAttribute('d', trace(236, [[30, 34], [130, 40], [225, 46]]));
+function drawTicks(n) {
+  const g = document.getElementById('ticks'); g.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const x = 190 + (i + 0.5) * (180 / n), l = document.createElementNS(NS, 'line');
+    l.setAttribute('x1', x); l.setAttribute('x2', x); l.setAttribute('y1', 130); l.setAttribute('y2', 150);
+    l.setAttribute('stroke', '#378ADD'); l.setAttribute('stroke-width', 2); g.appendChild(l);
+  }
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnSSRI').classList.toggle('active', m === 'ssri');
+  document.getElementById('btnBenzo').classList.toggle('active', m === 'benzo');
+  document.getElementById('vSSRI').classList.toggle('hide', m !== 'ssri');
+  document.getElementById('vBenzo').classList.toggle('hide', m !== 'benzo');
+  render();
+}
+function render() {
+  if (mode === 'ssri') {
+    const c = SSRI;
+    document.getElementById('stepLabel').textContent = c.labels[step];
+    drawTicks(c.ticks[step]);
+    document.getElementById('fireText').textContent = c.fire[step];
+    document.getElementById('ssriDrug').classList.toggle('on', step >= 1);
+    document.getElementById('somaNT').classList.toggle('on', step >= 1);
+    document.getElementById('autoState').textContent = c.auto[step];
+    document.getElementById('auto').style.opacity = step >= 4 ? 0.3 : step === 3 ? 0.6 : 1;
+    const lv = c.level[step];
+    document.getElementById('lvl').setAttribute('width', Math.round(270 * lv));
+    document.querySelectorAll('#cleftNT .nt').forEach((d, i) => d.style.opacity = i < Math.round(8 * lv) ? 1 : 0);
+    document.getElementById('ssriNote').textContent = c.note[step];
+  } else {
+    document.getElementById('stepLabel').textContent = BENZO.labels[step];
+    document.getElementById('bzDrug').classList.toggle('on', step >= 1 && step <= 3);
+    document.getElementById('tr1g').classList.toggle('on', step >= 2 && step <= 3);
+    document.getElementById('tr2g').classList.toggle('on', step === 3);
+    document.getElementById('fluma').classList.toggle('on', step === 4);
+  }
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('ssri');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
 # SLEEP_WAKE_REGULATION_GENERAL  (source: sleep_wake.html)
 # ---------------------------------------------------------------------------
 SLEEP_WAKE_REGULATION_GENERAL = '''
@@ -9437,6 +9636,16 @@ REGISTRY = {
                 "Compare two receptor pharmacology mechanisms: SSRIs "
                 "block serotonin reuptake, while benzodiazepines act as "
                 "positive allosteric modulators of the GABA-A receptor."
+            ),
+        },
+        "Technical": {
+            "fragment": MEDICATION_MECHANISM_TECHNICAL,
+            "height": 560,
+            "blurb": (
+                "Why SSRIs take weeks (5-HT1A autoreceptor brake and its "
+                "desensitization) and why benzodiazepines are safer than "
+                "barbiturates (alpha/gamma-2 site, more frequent vs longer "
+                "openings, flumazenil reversal)."
             ),
         },
     },
