@@ -4469,7 +4469,13 @@ const configHigh = {
   organLabel: 'Muscle / fat cells',
   effectLabel: 'GLUT4 moves to surface, glucose uptake ↑',
   resultLabel: 'Blood glucose falls back to setpoint',
-  glucoseSteps: ['Blood glucose: high', 'Blood glucose: high, insulin rising', 'Blood glucose: falling', 'Blood glucose: back to setpoint']
+  glucoseSteps: ['Blood glucose: high', 'Blood glucose: high, insulin rising', 'Blood glucose: falling', 'Blood glucose: back to setpoint'],
+  captions: [
+    'after a meal, blood glucose rises and pancreatic β cells sense it',
+    'β cells release insulin into the blood',
+    'insulin reaches muscle and fat cells: GLUT4 moves to the cell surface and glucose enters (the liver also stores glucose as glycogen)',
+    'glucose falls back to its setpoint, and insulin release switches off (negative feedback)'
+  ]
 };
 const configLow = {
   pancreasLabel: 'Alpha cells sense low glucose',
@@ -4477,7 +4483,13 @@ const configLow = {
   organLabel: 'Liver',
   effectLabel: 'Glycogen broken down, glucose released',
   resultLabel: 'Blood glucose rises back to setpoint',
-  glucoseSteps: ['Blood glucose: low', 'Blood glucose: low, glucagon rising', 'Blood glucose: rising', 'Blood glucose: back to setpoint']
+  glucoseSteps: ['Blood glucose: low', 'Blood glucose: low, glucagon rising', 'Blood glucose: rising', 'Blood glucose: back to setpoint'],
+  captions: [
+    'between meals or during exercise, blood glucose falls and pancreatic α cells sense it',
+    'α cells release glucagon into the blood',
+    'glucagon reaches the liver, which breaks down glycogen (glycogenolysis), makes new glucose (gluconeogenesis) and releases it',
+    'glucose rises back to its setpoint, and glucagon release switches off (negative feedback)'
+  ]
 };
 function setMode(m) {
   mode = m; step = 0;
@@ -4496,7 +4508,7 @@ function setMode(m) {
 function render() {
   const cfg = mode === 'high' ? configHigh : configLow;
   document.getElementById('glucoseLabel').textContent = cfg.glucoseSteps[step];
-  document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 3';
+  document.getElementById('stepLabel').textContent = 'Step ' + step + ' of 3 — ' + cfg.captions[step];
   document.getElementById('hormone').classList.toggle('on', step >= 1);
   document.getElementById('hormone').classList.toggle('pulse', step === 1);
   // hormone travels in the blood to its target
@@ -4507,6 +4519,200 @@ function render() {
   document.getElementById('resultArrow').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('high');
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# BLOOD_GLUCOSE_HOMEOSTASIS_TECHNICAL
+# ---------------------------------------------------------------------------
+BLOOD_GLUCOSE_HOMEOSTASIS_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of glucose homeostasis: in high glucose, beta-cell glucose metabolism closes K-ATP channels, depolarization opens Ca2+ channels and insulin is secreted, then the insulin receptor, IRS-1, PI3K and Akt move GLUT4 to the membrane; in low glucose, alpha cells secrete glucagon, which acts through a Gs receptor, cAMP and PKA in hepatocytes to drive glycogenolysis and gluconeogenesis and glucose export.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  .mv { transition: cx 1.1s ease, cy 1.1s ease; }
+  #glycogen { transition: transform .9s ease; transform-box: fill-box; transform-origin: center; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnHigh" onclick="setMode('high')">High blood glucose</button>
+  <button id="btnLow" onclick="setMode('low')">Low blood glucose</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Glucose homeostasis, technical view</title>
+<desc>High glucose: glucose enters the beta cell through GLUT2, glucokinase and metabolism raise ATP, ATP closes K-ATP channels, the cell depolarizes, L-type Ca2+ channels open and insulin granules are released; insulin binds its receptor tyrosine kinase on muscle and fat, signalling through IRS-1, PI3K and Akt to move GLUT4 to the membrane. Low glucose: the insulin brake on alpha cells lifts, alpha cells fire and release glucagon; glucagon acts on a Gs-coupled receptor in hepatocytes, raising cAMP and PKA, which drives glycogen breakdown and gluconeogenesis; glucose-6-phosphatase frees glucose, which leaves through GLUT2.</desc>
+<defs><marker id="gtA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<!-- frames -->
+<rect x="30" y="40" width="270" height="260" rx="20" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1"/>
+<text class="th" x="44" y="64" id="leftName"></text>
+<rect x="310" y="30" width="60" height="280" fill="#FCEBEB"/>
+<text class="ts" x="340" y="24" text-anchor="middle">blood</text>
+<rect x="380" y="40" width="270" height="260" rx="20" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1"/>
+<text class="th" x="394" y="64" id="rightName"></text>
+
+<!-- shared: voltage-gated Ca2+ channel and Ca2+ entry -->
+<rect x="150" y="294" width="26" height="12" rx="3" fill="#D85A30"/>
+<text class="ts" x="163" y="324" text-anchor="middle">voltage-gated Ca2+ channel</text>
+<g id="caIn" class="stg"><circle cx="158" cy="274" r="4" fill="#B91C1C"/><circle cx="172" cy="264" r="4" fill="#B91C1C"/><circle cx="160" cy="254" r="4" fill="#B91C1C"/>
+<text class="ts" x="184" y="268">Ca2+ in</text></g>
+<text class="ts" x="248" y="216" text-anchor="middle" id="granLabel"></text>
+
+<!-- ===== HIGH glucose ===== -->
+<g id="gHigh">
+<rect x="24" y="82" width="12" height="24" rx="3" class="c-teal"/>
+<text class="ts" x="44" y="88">GLUT2</text>
+<g id="h0" class="stg">
+<circle cx="56" cy="104" r="5" fill="#EF9F27"/>
+<text class="ts" x="66" y="108">glucose → glucokinase →</text>
+<text class="ts" x="44" y="126">glycolysis/TCA → ATP/ADP ↑</text>
+</g>
+<rect x="24" y="152" width="12" height="26" rx="3" fill="#EF9F27" stroke="#B45309" stroke-width="1"/>
+<text class="ts" x="44" y="162">K_ATP (Kir6.2/SUR1)</text>
+<text class="ts" x="44" y="178" id="katpState"></text>
+<g id="h1" class="stg">
+<path d="M20 156 L40 176 M40 156 L20 176" stroke="#B91C1C" stroke-width="2.5"/>
+<text class="ts" x="44" y="206" style="fill:#D85A30">+ + + membrane depolarizes</text>
+</g>
+<!-- muscle / fat cell -->
+<rect x="376" y="96" width="10" height="30" rx="3" class="c-purple"/>
+<text class="ts" x="396" y="94">insulin receptor (tyrosine kinase)</text>
+<g id="h3" class="stg"><text class="ts" x="396" y="124">autophosphorylation →</text><text class="ts" x="396" y="140">IRS-1 → PI3K → Akt</text></g>
+<circle id="glut4a" class="mv" cx="530" cy="200" r="9" fill="#1D9E75"/>
+<circle id="glut4b" class="mv" cx="566" cy="232" r="9" fill="#1D9E75"/>
+<text class="ts" x="548" y="262" text-anchor="middle" id="glut4Label">GLUT4 vesicles</text>
+<g id="h4" class="stg">
+<path d="M346 196 L398 200" stroke="#EF9F27" stroke-width="2" fill="none" marker-end="url(#gtA)"/>
+<path d="M346 240 L398 236" stroke="#EF9F27" stroke-width="2" fill="none" marker-end="url(#gtA)"/>
+<text class="ts" x="410" y="220">glucose in</text>
+<text class="ts" x="396" y="286">glycogen synthesis ↑ · lipogenesis ↑</text>
+</g>
+</g>
+
+<!-- ===== LOW glucose ===== -->
+<g id="gLow">
+<g id="l0" class="stg">
+<text class="ts" x="44" y="96">low glucose → β cells cut insulin,</text>
+<text class="ts" x="44" y="112">removing their brake on α cells</text>
+<text class="ts" x="44" y="132">adrenaline, amino acids also stimulate</text>
+</g>
+<g id="l1" class="stg"><text class="ts" x="44" y="180" style="fill:#D85A30">α cell fires action potentials</text></g>
+<!-- hepatocyte -->
+<rect x="376" y="96" width="10" height="30" rx="3" class="c-coral"/>
+<text class="ts" x="396" y="94">glucagon receptor (Gs-coupled)</text>
+<g id="l2" class="stg"><text class="ts" x="396" y="124">Gs → adenylyl cyclase →</text><text class="ts" x="396" y="140">cAMP → PKA</text></g>
+<g id="glycogen">
+<circle cx="560" cy="180" r="7" class="c-gray"/><circle cx="574" cy="172" r="7" class="c-gray"/><circle cx="574" cy="190" r="7" class="c-gray"/>
+<circle cx="546" cy="172" r="7" class="c-gray"/><circle cx="546" cy="190" r="7" class="c-gray"/><circle cx="560" cy="164" r="7" class="c-gray"/><circle cx="560" cy="196" r="7" class="c-gray"/>
+</g>
+<text class="ts" x="560" y="222" text-anchor="middle">glycogen</text>
+<g id="l3" class="stg">
+<text class="ts" x="396" y="164">phosphorylase ↑ · synthase ↓</text>
+<text class="ts" x="396" y="242">gluconeogenesis ↑</text>
+<text class="ts" x="396" y="256" style="font-size:10px">(PEPCK, FBPase-1, G6Pase)</text>
+</g>
+<rect x="376" y="270" width="10" height="22" rx="3" class="c-teal"/>
+<g id="l4" class="stg">
+<path d="M420 282 L350 282" stroke="#EF9F27" stroke-width="2.5" fill="none" marker-end="url(#gtA)"/>
+<text class="ts" x="428" y="286">G6Pase → glucose → GLUT2 out</text>
+</g>
+</g>
+
+<!-- hormone molecules (insulin or glucagon) -->
+<circle class="hd mv" r="6"/>
+<circle class="hd mv" r="6"/>
+<circle class="hd mv" r="6"/>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'high';
+const GRAN = [[236, 160], [256, 180], [236, 196]];
+const BLOOD = [[340, 130], [340, 170], [340, 210]];
+const BOUND = [[366, 111], [340, 170], [340, 210]];
+const M = {
+  high: {
+    left: 'Pancreatic β cell', right: 'Muscle / fat cell', gran: 'insulin granules', color: '#7F77DD',
+    labels: [
+      "Step 0 of 4 — glucose enters the β cell through GLUT2 (mainly GLUT1 in humans) and is phosphorylated by glucokinase, the glucose sensor; its metabolism raises the ATP/ADP ratio",
+      "Step 1 of 4 — the rise in ATP closes K_ATP channels (Kir6.2/SUR1), which sulfonylureas also close, so K+ stops leaking out and the membrane depolarizes",
+      "Step 2 of 4 — depolarization opens voltage-gated (L-type) Ca2+ channels; the Ca2+ influx triggers exocytosis of insulin granules into the blood",
+      "Step 3 of 4 — insulin binds its receptor tyrosine kinase on muscle and fat; autophosphorylation recruits IRS-1, which activates PI3K and then Akt",
+      "Step 4 of 4 — Akt moves GLUT4 vesicles to the membrane so glucose enters; insulin also switches on glycogen synthase and lipogenesis and suppresses hepatic glucose output"
+    ],
+    hormone: ['gran', 'gran', 'blood', 'bound', 'bound'],
+    caOn: s => s >= 2
+  },
+  low: {
+    left: 'Pancreatic α cell', right: 'Hepatocyte (liver)', gran: 'glucagon granules', color: '#D85A30',
+    labels: [
+      "Step 0 of 4 — blood glucose falls (fasting, exercise): β cells cut insulin release, lifting insulin's paracrine brake on α cells; adrenaline and amino acids also stimulate them",
+      "Step 1 of 4 — α cells fire action potentials; Ca2+ entry through voltage-gated channels triggers exocytosis of glucagon granules into the blood",
+      "Step 2 of 4 — glucagon binds its Gs-coupled receptor on hepatocytes → adenylyl cyclase → cAMP → PKA",
+      "Step 3 of 4 — PKA activates glycogen phosphorylase (via phosphorylase kinase) and inactivates glycogen synthase, so glycogen is broken down; it also boosts gluconeogenesis (PEPCK, FBPase-1, G6Pase)",
+      "Step 4 of 4 — glucose-6-phosphatase frees glucose, which leaves through GLUT2 into the blood; muscle lacks G6Pase, so only liver (and kidney) can export glucose"
+    ],
+    hormone: ['gran', 'blood', 'bound', 'bound', 'bound'],
+    caOn: s => s >= 1
+  }
+};
+function place(el, xy) { el.setAttribute('cx', xy[0]); el.setAttribute('cy', xy[1]); el.style.cx = xy[0] + 'px'; el.style.cy = xy[1] + 'px'; }
+function setMode(m) {
+  mode = m; step = 0;
+  const c = M[m];
+  document.getElementById('btnHigh').classList.toggle('active', m === 'high');
+  document.getElementById('btnLow').classList.toggle('active', m === 'low');
+  document.getElementById('gHigh').classList.toggle('hide', m !== 'high');
+  document.getElementById('gLow').classList.toggle('hide', m !== 'low');
+  document.getElementById('leftName').textContent = c.left;
+  document.getElementById('rightName').textContent = c.right;
+  document.getElementById('granLabel').textContent = c.gran;
+  document.querySelectorAll('.hd').forEach(d => d.setAttribute('fill', c.color));
+  render();
+}
+function render() {
+  const c = M[mode];
+  document.getElementById('stepLabel').textContent = c.labels[step];
+  const where = c.hormone[step];
+  document.querySelectorAll('.hd').forEach((d, i) => place(d, (where === 'gran' ? GRAN : where === 'blood' ? BLOOD : BOUND)[i]));
+  document.getElementById('caIn').classList.toggle('on', c.caOn(step));
+  if (mode === 'high') {
+    document.getElementById('h0').classList.toggle('on', step >= 0);
+    document.getElementById('h1').classList.toggle('on', step >= 1);
+    document.getElementById('katpState').textContent = step >= 1 ? 'closed by ATP' : 'open: K+ leaks out';
+    document.getElementById('h3').classList.toggle('on', step >= 3);
+    document.getElementById('h4').classList.toggle('on', step >= 4);
+    const up = step >= 4;
+    place(document.getElementById('glut4a'), up ? [392, 196] : [530, 200]);
+    place(document.getElementById('glut4b'), up ? [392, 238] : [566, 232]);
+    document.getElementById('glut4Label').textContent = up ? '' : 'GLUT4 vesicles';
+  } else {
+    document.getElementById('l0').classList.toggle('on', step >= 0);
+    document.getElementById('l1').classList.toggle('on', step >= 1);
+    document.getElementById('l2').classList.toggle('on', step >= 2);
+    document.getElementById('l3').classList.toggle('on', step >= 3);
+    document.getElementById('l4').classList.toggle('on', step >= 4);
+    document.getElementById('glycogen').style.transform = step >= 3 ? 'scale(0.55)' : 'none';
+  }
+}
+function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 setMode('high');
@@ -5814,6 +6020,7 @@ LABOR_POSITIVE_FEEDBACK_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.1s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #loopArrow { transition: stroke-width 0.5s ease, opacity 0.5s ease; }
@@ -5836,24 +6043,25 @@ LABOR_POSITIVE_FEEDBACK_GENERAL = '''
 
 <g id="loop1" class="stg">
 <path d="M370 260 Q460 220 480 150" stroke="#378ADD" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
-<text class="ts" x="470" y="200" text-anchor="middle">Signal to hypothalamus</text>
+<text class="ts" x="500" y="206">Signal to hypothalamus</text>
 </g>
 
 <ellipse cx="500" cy="120" rx="55" ry="35" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="500" y="120" text-anchor="middle" dominant-baseline="central">Hypothalamus / pituitary</text>
+<text class="ts" x="500" y="116" text-anchor="middle">Hypothalamus /</text>
+<text class="ts" x="500" y="132" text-anchor="middle">pituitary</text>
 
 <g id="oxytocin" class="stg">
-<circle id="oxyDot" cx="440" cy="90" r="7" class="c-purple pulse"/>
-<text class="ts" x="440" y="70" text-anchor="middle">Oxytocin released</text>
+<circle id="oxyDot" cx="460" cy="86" r="7" class="c-purple pulse"/>
+<text class="ts" x="452" y="74" text-anchor="end">Oxytocin released</text>
 </g>
 
 <g id="loop2" class="stg">
-<path d="M460 140 Q380 130 340 195" stroke="#7F77DD" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+<path d="M456 144 Q400 130 372 144" stroke="#7F77DD" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
 </g>
 
 <g id="uterus" class="stg">
-<ellipse cx="340" cy="200" rx="70" ry="55" fill="none" stroke="#D85A30" stroke-width="2" id="uterusOutline"/>
-<text class="ts" x="340" y="200" text-anchor="middle" dominant-baseline="central" id="uterusLabel">Uterine contraction</text>
+<ellipse cx="340" cy="190" rx="70" ry="50" fill="none" stroke="#D85A30" stroke-width="2" id="uterusOutline"/>
+<text class="ts" x="340" y="190" text-anchor="middle" dominant-baseline="central" id="uterusLabel">Uterine contraction</text>
 </g>
 
 <g id="loop3" class="stg">
@@ -5911,6 +6119,7 @@ LABOR_TECHNICAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.1s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #progBar { transition: width 1s ease; }
@@ -5918,7 +6127,7 @@ LABOR_TECHNICAL = '''
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
-<svg width="100%" viewBox="0 0 680 320" role="img">
+<svg width="100%" viewBox="0 0 680 334" role="img">
 <title>Labor initiation and the primed Ferguson reflex, technical view</title>
 <desc>Late in pregnancy progesterone maintains uterine quiescence. Progesterone withdrawal alongside rising placental CRH and cortisol shifts the balance toward contraction readiness. Prostaglandins ripen the cervix and upregulate oxytocin receptors on the myometrium, sensitizing the tissue. Only then does the Ferguson reflex positive feedback loop — cervical stretch triggering oxytocin, which causes contractions that increase stretch — drive labor to completion.</desc>
 
@@ -5935,18 +6144,18 @@ LABOR_TECHNICAL = '''
 <text class="ts" x="340" y="90" text-anchor="middle">Myometrium</text>
 
 <g id="prostaglandin" class="stg">
-<circle cx="260" cy="150" r="5" fill="#B91C1C"/>
-<circle cx="280" cy="170" r="5" fill="#B91C1C"/>
-<text class="ts" x="270" y="130" text-anchor="middle">Prostaglandins ripen cervix</text>
+<circle cx="292" cy="274" r="5" fill="#B91C1C"/>
+<circle cx="388" cy="274" r="5" fill="#B91C1C"/>
+<text class="ts" x="286" y="300" text-anchor="end">Prostaglandins ripen cervix</text>
 </g>
 
 <g id="receptorDots" class="stg">
-<circle cx="300" cy="220" r="4" class="c-teal"/>
-<circle cx="320" cy="230" r="4" class="c-teal"/>
-<circle cx="340" cy="222" r="4" class="c-teal"/>
-<circle cx="360" cy="230" r="4" class="c-teal"/>
-<circle cx="380" cy="220" r="4" class="c-teal"/>
-<text class="ts" x="340" y="250" text-anchor="middle">Oxytocin receptors upregulated</text>
+<circle cx="300" cy="196" r="4" class="c-teal"/>
+<circle cx="320" cy="206" r="4" class="c-teal"/>
+<circle cx="340" cy="198" r="4" class="c-teal"/>
+<circle cx="360" cy="206" r="4" class="c-teal"/>
+<circle cx="380" cy="196" r="4" class="c-teal"/>
+<text class="ts" x="340" y="230" text-anchor="middle">Oxytocin receptors upregulated</text>
 </g>
 
 <ellipse cx="340" cy="270" rx="40" ry="18" fill="none" stroke="#B91C1C" stroke-width="2"/>
@@ -5954,11 +6163,12 @@ LABOR_TECHNICAL = '''
 
 <g id="loop" class="stg">
 <path d="M370 260 Q450 200 400 130" stroke="#378ADD" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
-<text class="th" x="440" y="180" text-anchor="middle">Ferguson reflex loop — now sensitized</text>
+<text class="th" x="472" y="190">Ferguson reflex loop</text>
+<text class="th" x="472" y="208">— now sensitized</text>
 </g>
 
 <g id="birth" class="stg">
-<text class="th" x="340" y="30" text-anchor="middle">Labor completes — loop breaks at birth</text>
+<text class="th" x="640" y="324" text-anchor="end">Labor completes — loop breaks at birth</text>
 </g>
 
 <defs>
@@ -9160,11 +9370,21 @@ REGISTRY = {
     "Blood glucose homeostasis": {
         "General": {
             "fragment": BLOOD_GLUCOSE_HOMEOSTASIS_GENERAL,
-            "height": 440,
+            "height": 480,
             "blurb": (
                 "Switch between the insulin loop (high glucose → uptake) "
                 "and the glucagon loop (low glucose → liver releases "
                 "glucose) — a classic negative feedback pair."
+            ),
+        },
+        "Technical": {
+            "fragment": BLOOD_GLUCOSE_HOMEOSTASIS_TECHNICAL,
+            "height": 560,
+            "blurb": (
+                "Beta-cell stimulus-secretion coupling (GLUT2, glucokinase, "
+                "K-ATP, Ca2+), insulin signalling via IRS-1/PI3K/Akt to GLUT4, "
+                "and glucagon's Gs-cAMP-PKA control of hepatic glycogenolysis "
+                "and gluconeogenesis."
             ),
         },
     },
@@ -9225,7 +9445,7 @@ REGISTRY = {
     "Labor (positive feedback)": {
         "General": {
             "fragment": LABOR_POSITIVE_FEEDBACK_GENERAL,
-            "height": 460,
+            "height": 500,
             "blurb": (
                 "The Ferguson reflex: cervical stretch triggers oxytocin, "
                 "which causes contractions that increase cervical "
@@ -9235,7 +9455,7 @@ REGISTRY = {
         },
         "Technical": {
             "fragment": LABOR_TECHNICAL,
-            "height": 460,
+            "height": 500,
             "blurb": (
                 "What primes the loop: progesterone withdrawal and rising "
                 "CRH shift the uterus out of quiescence, prostaglandins "
