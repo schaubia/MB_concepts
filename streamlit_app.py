@@ -6503,6 +6503,7 @@ CYTOTOXIC_T_CELL_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #tcellGroup { transition: transform 1s ease; }
@@ -6517,8 +6518,8 @@ CYTOTOXIC_T_CELL_GENERAL = '''
 
 <circle cx="180" cy="150" r="70" fill="none" id="targetCell" stroke="var(--t)" stroke-width="1.5"/>
 <text class="ts" x="180" y="235" text-anchor="middle">Infected cell</text>
-<rect x="165" y="90" width="30" height="12" rx="3" fill="#EF9F27"/>
-<text class="ts" x="180" y="75" text-anchor="middle">Viral peptide on MHC-I</text>
+<rect x="244" y="138" width="12" height="24" rx="3" fill="#EF9F27"/>
+<text class="ts" x="180" y="66" text-anchor="middle">Viral peptide on MHC-I (facing the T cell)</text>
 
 <g id="tcellGroup">
 <circle cx="440" cy="150" r="55" class="c-red"/>
@@ -6526,25 +6527,25 @@ CYTOTOXIC_T_CELL_GENERAL = '''
 </g>
 
 <g id="recognition" class="stg">
-<line x1="385" y1="150" x2="255" y2="120" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#arrow)"/>
-<text class="ts" x="320" y="105" text-anchor="middle">TCR recognizes peptide-MHC-I</text>
+<line x1="345" y1="150" x2="260" y2="150" stroke="#7F77DD" stroke-width="2" marker-end="url(#arrow)"/>
+<text class="ts" x="300" y="226" text-anchor="middle">TCR recognizes peptide-MHC-I</text>
 </g>
 
 <g id="perforin" class="stg">
-<circle cx="230" cy="120" r="3" fill="#B91C1C"/>
-<circle cx="230" cy="150" r="3" fill="#B91C1C"/>
-<circle cx="230" cy="180" r="3" fill="#B91C1C"/>
-<text class="ts" x="230" y="200" text-anchor="middle">Perforin punches pores</text>
+<rect x="236" y="104" width="10" height="12" fill="var(--surface-1)" stroke="#B91C1C" stroke-width="1.5"/>
+<rect x="236" y="184" width="10" height="12" fill="var(--surface-1)" stroke="#B91C1C" stroke-width="1.5"/>
+<text class="ts" x="300" y="244" text-anchor="middle">Perforin punches pores</text>
 </g>
 
 <g id="granzyme" class="stg">
-<circle cx="180" cy="150" r="5" class="c-amber"/>
-<text class="ts" x="180" y="170" text-anchor="middle">Granzymes enter</text>
+<circle cx="222" cy="112" r="5" class="c-amber"/>
+<circle cx="222" cy="190" r="5" class="c-amber"/>
+<text class="ts" x="180" y="104" text-anchor="middle">Granzymes enter</text>
 </g>
 
 <g id="apoptosis" class="stg">
-<path d="M155 130 L170 145 M170 130 L155 145" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
-<path d="M190 155 L205 170 M205 155 L190 170" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<path d="M140 136 L155 151 M155 136 L140 151" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<path d="M170 160 L185 175 M185 160 L170 175" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
 <text class="th" x="180" y="260" text-anchor="middle">Apoptosis — infected cell destroyed</text>
 </g>
 
@@ -6582,6 +6583,182 @@ function stepFwd() { if (step < 4) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
 function reset() { step = 0; render(); }
 render();
+</script>
+'''
+
+
+# ---------------------------------------------------------------------------
+# CYTOTOXIC_T_CELL_TECHNICAL
+# ---------------------------------------------------------------------------
+CYTOTOXIC_T_CELL_TECHNICAL = '''
+<h2 class="sr-only">Technical diagram of cytotoxic T cell killing: an immunological synapse with TCR, CD8 and LFA-1/ICAM-1; in the granule pathway the MTOC polarizes, perforin pores admit granzyme B, which cleaves Bid to release cytochrome c and also activates caspase-3; in the Fas pathway FasL engages Fas, FADD recruits caspase-8 and caspase-3 executes apoptosis.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  .hide { display: none; }
+  .rc { transition: x .9s ease, width .9s ease; }
+  .mvg { transition: transform 1s ease; }
+  .pulse { animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+  #tgt { transition: opacity .8s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnGran" onclick="setMode('gran')">Granule pathway (perforin / granzyme)</button>
+  <button id="btnFas" onclick="setMode('fas')">Fas–FasL pathway</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Cytotoxic T cell killing, technical view</title>
+<desc>The CD8 T cell forms an immunological synapse with the target: TCR and CD8 bind peptide-MHC class I in the centre, and LFA-1 binding ICAM-1 forms an adhesion ring. In the granule pathway the MTOC and lytic granules polarize to the synapse; perforin forms pores and granzyme B enters, cleaving Bid so that mitochondria release cytochrome c and activate caspase-9, and cleaving caspase-3 directly. In the Fas pathway, FasL trimerizes Fas, FADD recruits pro-caspase-8 into the death-inducing signalling complex, and caspase-8 activates caspase-3. Caspase-3 executes apoptosis.</desc>
+<defs><marker id="ctA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<!-- target cell and CTL -->
+<ellipse id="tgt" cx="170" cy="165" rx="130" ry="110" fill="var(--surface-1)" stroke="var(--t)" stroke-width="1.5"/>
+<text class="ts" x="170" y="296" text-anchor="middle">Target (infected) cell</text>
+<circle cx="500" cy="165" r="95" fill="#FCEBEB" stroke="#B91C1C" stroke-width="1.5"/>
+<text class="th" x="540" y="92" text-anchor="middle">CD8 T cell (CTL)</text>
+
+<!-- synapse: centre TCR/CD8–pMHC-I, adhesion LFA-1/ICAM-1 -->
+<rect id="mhcR" class="rc" x="288" y="158" width="14" height="14" rx="3" fill="#EF9F27"/>
+<rect id="tcrR" class="rc" x="392" y="158" width="14" height="14" rx="3" fill="#7F77DD"/>
+<text class="ts" x="352" y="190" text-anchor="middle" style="font-size:10px">TCR·CD8 : pMHC-I</text>
+<rect id="icam1" class="rc" x="276" y="114" width="14" height="10" rx="3" fill="#888780"/>
+<rect id="lfa1" class="rc" x="404" y="114" width="14" height="10" rx="3" fill="#5F5E5A"/>
+<text class="ts" x="352" y="104" text-anchor="middle" style="font-size:10px">LFA-1 / ICAM-1</text>
+<g id="adhLow">
+<rect id="icam2" class="rc" x="276" y="206" width="14" height="10" rx="3" fill="#888780"/>
+<rect id="lfa2" class="rc" x="404" y="206" width="14" height="10" rx="3" fill="#5F5E5A"/>
+</g>
+
+<!-- ===== granule pathway ===== -->
+<g id="vGran">
+<g id="mtoc" class="mvg">
+<path d="M548 165 l6 -14 l6 14 l14 6 l-14 6 l-6 14 l-6 -14 l-14 -6 z" fill="#3C3489"/>
+<circle cx="536" cy="140" r="7" class="c-purple"/><circle cx="586" cy="148" r="7" class="c-purple"/><circle cx="540" cy="196" r="7" class="c-purple"/>
+</g>
+<text class="ts" x="500" y="228" text-anchor="middle" id="mtocLabel">MTOC + lytic granules</text>
+<g id="g1" class="stg">
+<circle cx="340" cy="142" r="4" fill="#7F77DD"/><circle cx="356" cy="136" r="4" fill="#7F77DD"/><circle cx="372" cy="144" r="4" fill="#7F77DD"/>
+</g>
+<g id="g2" class="stg">
+<rect x="282" y="134" width="10" height="12" fill="var(--surface-1)" stroke="#B91C1C" stroke-width="1.5"/>
+<rect x="282" y="178" width="10" height="12" fill="var(--surface-1)" stroke="#B91C1C" stroke-width="1.5"/>
+<circle cx="266" cy="140" r="5" class="c-amber"/><circle cx="264" cy="186" r="5" class="c-amber"/>
+<text class="ts" x="230" y="50" text-anchor="middle">perforin pores · granzyme B enters</text>
+</g>
+<g id="g3" class="stg">
+<path d="M258 146 L182 118" stroke="#D85A30" stroke-width="1.5" fill="none" marker-end="url(#ctA)"/>
+<text class="ts" x="228" y="112" text-anchor="middle" style="font-size:10px">Bid → tBid</text>
+<circle cx="112" cy="134" r="3" fill="#B91C1C"/><circle cx="122" cy="140" r="3" fill="#B91C1C"/><circle cx="104" cy="144" r="3" fill="#B91C1C"/>
+<text class="ts" x="60" y="152" text-anchor="middle" style="font-size:10px">cyt c</text>
+<circle cx="96" cy="176" r="12" class="c-purple"/><text class="ts" x="96" y="180" text-anchor="middle" style="font-size:8px">casp-9</text>
+<path d="M108 178 L154 196" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#ctA)"/>
+<path d="M260 190 L186 204" stroke="#D85A30" stroke-width="1.5" fill="none" marker-end="url(#ctA)"/>
+</g>
+</g>
+
+<!-- ===== Fas pathway ===== -->
+<g id="vFas" class="hide">
+<rect id="fasR" class="rc" x="276" y="206" width="14" height="10" rx="3" fill="#E24B4A"/>
+<rect id="faslR" class="rc" x="404" y="206" width="14" height="10" rx="3" fill="#D85A30"/>
+<text class="ts" x="352" y="234" text-anchor="middle" style="font-size:10px">Fas (CD95) : FasL</text>
+<g id="f2" class="stg">
+<circle cx="256" cy="212" r="9" class="c-teal"/><text class="ts" x="256" y="200" text-anchor="middle" style="font-size:9px">FADD</text>
+<circle cx="232" cy="222" r="11" class="c-amber"/><text class="ts" x="232" y="246" text-anchor="middle" style="font-size:9px">pro-casp-8 (DISC)</text>
+</g>
+<g id="f3" class="stg">
+<path d="M220 218 L190 210" stroke="#D85A30" stroke-width="1.5" fill="none" marker-end="url(#ctA)"/>
+<path d="M234 208 L172 122" stroke="#D85A30" stroke-width="1.2" stroke-dasharray="3 3" fill="none" marker-end="url(#ctA)"/>
+<text class="ts" x="216" y="160" style="font-size:10px">tBid (amplifies)</text>
+</g>
+</g>
+
+<!-- shared: mitochondrion and executioner caspase -->
+<ellipse cx="140" cy="110" rx="36" ry="16" class="c-green"/>
+<text class="ts" x="140" y="84" text-anchor="middle">mitochondrion</text>
+
+<g id="casp3" class="stg"><circle cx="170" cy="208" r="14" class="c-coral"/><text class="ts" x="170" y="212" text-anchor="middle" style="font-size:8px">casp-3</text></g>
+<g id="apop" class="stg">
+<circle cx="52" cy="196" r="7" fill="none" stroke="var(--t)"/><circle cx="64" cy="246" r="6" fill="none" stroke="var(--t)"/><circle cx="120" cy="268" r="6" fill="none" stroke="var(--t)"/>
+<text class="th" x="120" y="246" text-anchor="middle">apoptosis</text>
+<text class="ts" x="120" y="262" text-anchor="middle" style="font-size:10px">DNA fragmented · blebbing</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 4</span>
+</div>
+
+<script>
+let step = 0;
+let mode = 'gran';
+const L = {
+  gran: [
+    "Step 0 of 4 — TCR and CD8 bind peptide–MHC-I, and LFA-1 on the CTL grips ICAM-1 on the target: an immunological synapse forms (TCR in the centre, adhesion ring around it)",
+    "Step 1 of 4 — the CTL's centrosome (MTOC) and lytic granules polarize to the synapse; granules fuse and release perforin and granzymes into the narrow cleft",
+    "Step 2 of 4 — perforin polymerizes into pores in the target membrane, and granzyme B enters the target cell",
+    "Step 3 of 4 — granzyme B cleaves Bid → tBid → Bax/Bak open the mitochondria → cytochrome c → apoptosome → caspase-9; granzyme B also cleaves caspase-3 directly",
+    "Step 4 of 4 — executioner caspase-3 dismantles the cell (DNA fragmentation, blebbing) — apoptosis without inflammation; the CTL detaches and kills again (serial killing)"
+  ],
+  fas: [
+    "Step 0 of 4 — the synapse forms as before; the activated CTL also displays Fas ligand (FasL, CD95L)",
+    "Step 1 of 4 — FasL binds and clusters Fas (CD95) on the target cell",
+    "Step 2 of 4 — Fas death domains recruit the adaptor FADD, which recruits pro-caspase-8: the death-inducing signalling complex (DISC)",
+    "Step 3 of 4 — active caspase-8 cleaves caspase-3 directly, and cleaves Bid to amplify the signal through the mitochondria",
+    "Step 4 of 4 — caspase-3 executes apoptosis; the same route removes over-activated lymphocytes (activation-induced cell death) — FAS mutations cause autoimmune lymphoproliferative syndrome"
+  ]
+};
+function setR(el, x, w) { el.setAttribute('x', x); el.setAttribute('width', w); el.style.x = x + 'px'; el.style.width = w + 'px'; }
+function pair(a, b, on, ax, bx) {   // target-side receptor grows right, CTL-side grows left, meeting in the cleft
+  setR(document.getElementById(a), ax, on ? 352 - ax : 14);
+  setR(document.getElementById(b), on ? 352 : bx, on ? bx + 14 - 352 : 14);
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById('btnGran').classList.toggle('active', m === 'gran');
+  document.getElementById('btnFas').classList.toggle('active', m === 'fas');
+  document.getElementById('vGran').classList.toggle('hide', m !== 'gran');
+  document.getElementById('vFas').classList.toggle('hide', m !== 'fas');
+  document.getElementById('adhLow').classList.toggle('hide', m === 'fas');
+  render();
+}
+function render() {
+  document.getElementById('stepLabel').textContent = L[mode][step];
+  // synapse is formed from step 0 in both modes
+  pair('mhcR', 'tcrR', true, 288, 392);
+  pair('icam1', 'lfa1', true, 276, 404);
+  pair('icam2', 'lfa2', true, 276, 404);
+  let execute = false, dead = false;
+  if (mode === 'gran') {
+    document.getElementById('mtoc').style.transform = step >= 1 ? 'translateX(-104px)' : 'none';
+    document.getElementById('mtocLabel').textContent = step >= 1 ? 'granules released' : 'MTOC + lytic granules';
+    document.getElementById('g1').classList.toggle('on', step >= 1);
+    document.getElementById('g2').classList.toggle('on', step >= 2);
+    document.getElementById('g3').classList.toggle('on', step >= 3);
+    execute = step >= 3; dead = step >= 4;
+  } else {
+    pair('fasR', 'faslR', step >= 1, 276, 404);
+    document.getElementById('f2').classList.toggle('on', step >= 2);
+    document.getElementById('f3').classList.toggle('on', step >= 3);
+    execute = step >= 3; dead = step >= 4;
+  }
+  document.getElementById('casp3').classList.toggle('on', execute);
+  document.getElementById('casp3').classList.toggle('pulse', execute && !dead);
+  document.getElementById('apop').classList.toggle('on', dead);
+  document.getElementById('tgt').style.opacity = dead ? 0.45 : 1;
+}
+function stepFwd() { if (step < 4) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode('gran');
 </script>
 '''
 
@@ -9700,6 +9877,16 @@ REGISTRY = {
                 "A CD8 T cell recognizes viral peptide on MHC-I, releases "
                 "perforin to punch pores in the target's membrane, and "
                 "granzymes entering through them trigger apoptosis."
+            ),
+        },
+        "Technical": {
+            "fragment": CYTOTOXIC_T_CELL_TECHNICAL,
+            "height": 560,
+            "blurb": (
+                "The immunological synapse (TCR/CD8, LFA-1/ICAM-1), MTOC and "
+                "granule polarization, perforin and granzyme B (Bid, "
+                "cytochrome c, caspase-9/-3), and the Fas-FasL-FADD-caspase-8 "
+                "pathway."
             ),
         },
     },
