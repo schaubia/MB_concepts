@@ -7802,9 +7802,12 @@ IMMUNOLOGICAL_MEMORY_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  #responseBar { transition: height 1s ease, y 1s ease; }
+  .hide { display: none; }
+  .curve { fill: none; stroke-linecap: round; stroke-linejoin: round; transition: stroke-dashoffset 1.1s ease; }
+  .fade { transition: opacity .5s ease; }
   .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
   .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -7818,20 +7821,41 @@ IMMUNOLOGICAL_MEMORY_GENERAL = '''
 
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Immunological memory — primary vs secondary response</title>
-<desc>On first exposure to an antigen, naive lymphocytes must find, activate, and proliferate, so the antibody response is slow to rise, taking one to two weeks, and moderate in magnitude, dominated initially by IgM. On second exposure, pre-existing memory cells respond within days, producing a faster, much larger, higher-affinity IgG-dominated response.</desc>
+<desc>On first exposure to an antigen, naive lymphocytes must find, activate, and proliferate, so the antibody response is slow to rise, taking one to two weeks, and moderate in magnitude, dominated initially by IgM. On second exposure, pre-existing memory cells respond within one to two days, producing a much higher peak of high-affinity IgG. The secondary curve is drawn against the primary curve for comparison.</desc>
+<defs>
+<marker id="memArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
 
-<line x1="60" y1="240" x2="620" y2="240" stroke="var(--t)" stroke-width="1"/>
-<line x1="60" y1="240" x2="60" y2="40" stroke="var(--t)" stroke-width="1"/>
-<text class="ts" x="340" y="270" text-anchor="middle">Time since exposure</text>
-<text class="ts" x="30" y="140" text-anchor="middle" transform="rotate(-90 30 140)">Antibody level</text>
+<line x1="80" y1="240" x2="640" y2="240" stroke="var(--t)" stroke-width="1"/>
+<line x1="80" y1="240" x2="80" y2="40" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="360" y="292" text-anchor="middle">Time since exposure</text>
+<text class="ts" x="50" y="140" text-anchor="middle" transform="rotate(-90 50 140)">Antibody level</text>
 
-<rect id="responseBar" x="300" y="220" width="80" height="20" fill="#7F77DD"/>
-<text class="ts" x="340" y="255" text-anchor="middle" id="lagLabel">Lag: 1-2 weeks</text>
-<text class="ts" x="500" y="60" text-anchor="middle" id="peakLabel"></text>
+<!-- antigen exposure marker -->
+<line x1="130" y1="196" x2="130" y2="234" stroke="#E24B4A" stroke-width="1.5" marker-end="url(#memArrow)"/>
+<text class="ts" x="130" y="188" text-anchor="middle" id="antigenLabel">Antigen</text>
+
+<!-- primary curve shown dashed for comparison in secondary mode -->
+<g id="compareGroup" class="hide">
+<path d="M130 238 L300 238 C330 238 350 170 390 170 C440 170 490 214 620 224" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text class="ts" x="500" y="200" text-anchor="start">Primary response</text>
+</g>
+
+<path id="responseCurve" class="curve" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" d="M130 238 L300 238 C330 238 350 170 390 170 C440 170 490 214 620 224" stroke="#7F77DD" stroke-width="3"/>
+
+<!-- lag bracket on the time axis -->
+<line id="lagLine" x1="130" y1="256" x2="300" y2="256" stroke="var(--t)" stroke-width="1" marker-start="url(#memArrow)" marker-end="url(#memArrow)"/>
+<text class="ts" x="215" y="272" text-anchor="middle" id="lagLabel">Lag: 1-2 weeks</text>
+
+<!-- peak marker -->
+<g id="peakGroup" class="fade" style="opacity:0">
+<circle id="peakDot" cx="390" cy="170" r="5" fill="#7F77DD"/>
+<text class="ts" x="390" y="156" text-anchor="middle" id="peakLabel"></text>
+</g>
 
 <g id="cellSource" class="stg">
-<circle cx="150" cy="140" r="10" class="c-gray"/>
-<text class="ts" x="150" y="120" text-anchor="middle" id="sourceLabel">Naive lymphocytes</text>
+<circle id="sourceDot" cx="132" cy="20" r="8" class="c-gray"/>
+<text class="ts" x="146" y="20" text-anchor="start" dominant-baseline="central" id="sourceLabel">Naive lymphocytes</text>
 </g>
 </svg>
 
@@ -7847,9 +7871,12 @@ let step = 0;
 let mode = 'primary';
 const configPrimary = {
   source: 'Naive lymphocytes — must be found and activated',
+  antigen: 'Antigen',
   lag: 'Lag: 1-2 weeks',
-  barY: [220, 190, 150],
-  barH: [20, 50, 90],
+  lagEnd: 300,
+  curve: 'M130 238 L300 238 C330 238 350 170 390 170 C440 170 490 214 620 224',
+  dash: [100, 55, 0],
+  peak: [390, 170],
   peakNote: 'Moderate peak, mostly IgM then IgG',
   labels: [
     'Step 0 of 2 — antigen encountered for the first time',
@@ -7859,9 +7886,12 @@ const configPrimary = {
 };
 const configSecondary = {
   source: 'Memory cells — already primed and waiting',
+  antigen: 'Antigen again',
   lag: 'Lag: 1-2 days',
-  barY: [220, 130, 60],
-  barH: [20, 110, 180],
+  lagEnd: 180,
+  curve: 'M130 238 L180 238 C205 238 222 62 265 62 C320 62 395 96 620 110',
+  dash: [100, 72, 0],
+  peak: [265, 62],
   peakNote: 'Much higher peak, high-affinity IgG',
   labels: [
     'Step 0 of 2 — same antigen encountered again',
@@ -7869,22 +7899,38 @@ const configSecondary = {
     'Step 2 of 2 — response peaks fast (1-2 days) and much higher, dominated by high-affinity IgG'
   ]
 };
+function cfgNow() { return mode === 'primary' ? configPrimary : configSecondary; }
 function setMode(m) {
   mode = m; step = 0;
   document.getElementById('btnPrimary').classList.toggle('active', m === 'primary');
   document.getElementById('btnSecondary').classList.toggle('active', m === 'secondary');
-  const cfg = m === 'primary' ? configPrimary : configSecondary;
+  const cfg = cfgNow();
   document.getElementById('sourceLabel').textContent = cfg.source;
+  document.getElementById('antigenLabel').textContent = cfg.antigen;
   document.getElementById('lagLabel').textContent = cfg.lag;
+  document.getElementById('lagLabel').setAttribute('x', (130 + cfg.lagEnd) / 2);
+  document.getElementById('lagLine').setAttribute('x2', cfg.lagEnd);
+  document.getElementById('sourceDot').setAttribute('class', m === 'primary' ? 'c-gray' : 'c-purple');
+  document.getElementById('compareGroup').classList.toggle('hide', m === 'primary');
+  const c = document.getElementById('responseCurve');
+  c.style.transition = 'none';
+  c.setAttribute('d', cfg.curve);
+  c.style.strokeDashoffset = '100';
+  c.getBoundingClientRect();
+  c.style.transition = '';
+  document.getElementById('peakDot').setAttribute('cx', cfg.peak[0]);
+  document.getElementById('peakDot').setAttribute('cy', cfg.peak[1]);
+  document.getElementById('peakLabel').setAttribute('x', cfg.peak[0]);
+  document.getElementById('peakLabel').setAttribute('y', cfg.peak[1] - 16);
+  document.getElementById('peakLabel').textContent = cfg.peakNote;
   render();
 }
 function render() {
-  const cfg = mode === 'primary' ? configPrimary : configSecondary;
+  const cfg = cfgNow();
   document.getElementById('stepLabel').textContent = cfg.labels[step];
   document.getElementById('cellSource').classList.toggle('on', step >= 1);
-  document.getElementById('responseBar').setAttribute('y', cfg.barY[step]);
-  document.getElementById('responseBar').setAttribute('height', cfg.barH[step]);
-  document.getElementById('peakLabel').textContent = step >= 2 ? cfg.peakNote : '';
+  document.getElementById('responseCurve').style.strokeDashoffset = String(cfg.dash[step]);
+  document.getElementById('peakGroup').style.opacity = step >= 2 ? '1' : '0';
 }
 function stepFwd() { if (step < 2) step++; render(); }
 function stepBack() { if (step > 0) step--; render(); }
@@ -7892,6 +7938,218 @@ function reset() { step = 0; render(); }
 setMode('primary');
 </script>
 '''
+
+IMMUNOLOGICAL_MEMORY_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of how immunological memory is built and maintained: a switchable view of memory B cells and long-lived plasma cells, and of central, effector and tissue-resident memory T cells.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .hide { display: none; }
+  .mover { transition: transform 1.1s ease; }
+  .dieable { transition: opacity .8s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnB" onclick="setMode('b')">Memory B cells</button>
+  <button id="btnT" onclick="setMode('t')">Memory T cells</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 320" role="img">
+<title>Immunological memory — memory B and T cell subsets</title>
+<desc>B cell view: after affinity maturation and class switching in the germinal centre, B cells leave as long-lived plasma cells, which settle in bone marrow survival niches and secrete IgG for years, and as memory B cells, which circulate quietly. On re-exposure, high-affinity memory B cells capture antigen and quickly become plasmablasts that secrete IgG within days. T cell view: after an infection most effector T cells die during contraction and about five to ten percent survive as memory. Central memory T cells express CCR7 and CD62L and patrol lymph nodes, effector memory T cells circulate through blood and tissues, and tissue-resident memory T cells express CD69 and CD103 and stay in barrier tissue. Memory T cells are maintained without antigen by IL-7 and IL-15. On re-infection, resident cells act at the site within hours, effector memory cells arrive quickly, and central memory cells proliferate to make new effectors.</desc>
+<defs>
+<marker id="mtArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- ===================== B CELL MODE ===================== -->
+<g id="gB">
+  <circle cx="100" cy="150" r="56" class="c-teal"/>
+  <text class="th" x="100" y="142" text-anchor="middle" dominant-baseline="central">Germinal</text>
+  <text class="th" x="100" y="160" text-anchor="middle" dominant-baseline="central">centre</text>
+  <text class="ts" x="100" y="226" text-anchor="middle">class switch +</text>
+  <text class="ts" x="100" y="241" text-anchor="middle">affinity maturation</text>
+
+  <g id="bFates" class="stg">
+    <path d="M152 128 Q260 80 400 80" fill="none" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#mtArrow)"/>
+    <path d="M150 178 Q200 230 262 236" fill="none" stroke="#EF9F27" stroke-width="1.5" marker-end="url(#mtArrow)"/>
+    <rect x="410" y="30" width="240" height="100" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+    <text class="ts" x="530" y="48" text-anchor="middle">Bone marrow survival niche</text>
+    <circle cx="455" cy="84" r="18" class="c-purple"/>
+    <text class="ts" x="455" y="84" text-anchor="middle" dominant-baseline="central">LLPC</text>
+    <g fill="none" stroke="#7F77DD" stroke-width="2" stroke-linecap="round">
+      <path d="M510 92 V82 M510 82 L503 74 M510 82 L517 74"/>
+      <path d="M550 92 V82 M550 82 L543 74 M550 82 L557 74"/>
+      <path d="M590 92 V82 M590 82 L583 74 M590 82 L597 74"/>
+    </g>
+    <text class="ts" x="550" y="108" text-anchor="middle">IgG secreted for years</text>
+    <text class="ts" x="530" y="124" text-anchor="middle">Survival: CXCL12, IL-6, APRIL</text>
+    <text class="ts" x="290" y="66" text-anchor="middle">Long-lived plasma cell</text>
+  </g>
+
+  <rect x="230" y="210" width="420" height="50" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+  <text class="ts" x="236" y="203">Blood / lymph</text>
+
+  <g id="bMem" class="stg">
+    <g id="bMemMover" class="mover">
+      <circle cx="290" cy="235" r="15" class="c-amber"/>
+      <text class="ts" x="290" y="278" text-anchor="middle">Memory B cell</text>
+      <text class="ts" x="290" y="293" text-anchor="middle">CD27⁺, high-affinity IgG BCR</text>
+    </g>
+  </g>
+
+  <g id="bAntigen" class="stg">
+    <circle cx="470" cy="226" r="5" fill="#E24B4A"/>
+    <circle cx="482" cy="244" r="5" fill="#E24B4A"/>
+    <circle cx="496" cy="230" r="5" fill="#E24B4A"/>
+    <text class="ts" x="483" y="170" text-anchor="middle">Antigen returns (even a low dose)</text>
+    <line x1="483" y1="178" x2="483" y2="210" stroke="#E24B4A" stroke-width="1.2" marker-end="url(#mtArrow)"/>
+  </g>
+
+  <g id="bBurst" class="stg">
+    <circle cx="566" cy="226" r="9" class="c-purple"/>
+    <circle cx="584" cy="244" r="9" class="c-purple"/>
+    <circle cx="602" cy="226" r="9" class="c-purple"/>
+    <g fill="none" stroke="#7F77DD" stroke-width="2" stroke-linecap="round">
+      <path d="M626 244 V236 M626 236 L620 230 M626 236 L632 230"/>
+      <path d="M638 222 V214 M638 214 L632 208 M638 214 L644 208"/>
+    </g>
+    <text class="ts" x="600" y="203" text-anchor="middle">Plasmablasts → IgG in days</text>
+  </g>
+</g>
+
+<!-- ===================== T CELL MODE ===================== -->
+<g id="gT" class="hide">
+  <rect x="20" y="70" width="170" height="130" rx="10" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.5"/>
+  <text class="ts" x="105" y="62" text-anchor="middle">Effector T cells (peak)</text>
+  <g id="tPool">
+  </g>
+  <text id="tContract" class="ts stg" x="105" y="220" text-anchor="middle">~90-95% die (contraction)</text>
+  <text id="tSurvive" class="ts stg" x="105" y="236" text-anchor="middle">~5-10% survive as memory</text>
+
+  <g id="tSubsets" class="stg">
+    <line x1="196" y1="135" x2="236" y2="135" stroke="var(--t)" stroke-width="1.2" marker-end="url(#mtArrow)"/>
+
+    <text class="ts" x="300" y="70" text-anchor="middle">Central memory (TCM)</text>
+    <circle id="tcm" cx="300" cy="115" r="22" class="c-purple"/>
+    <text class="ts" x="300" y="158" text-anchor="middle">CCR7⁺ CD62L⁺</text>
+    <text class="ts" x="300" y="174" text-anchor="middle">Lymph nodes</text>
+
+    <text class="ts" x="450" y="70" text-anchor="middle">Effector memory (TEM)</text>
+    <circle id="tem" cx="450" cy="115" r="22" class="c-teal"/>
+    <text class="ts" x="450" y="158" text-anchor="middle">CCR7⁻ CD62L⁻</text>
+    <text class="ts" x="450" y="174" text-anchor="middle">Blood → tissues</text>
+
+    <text class="ts" x="600" y="70" text-anchor="middle">Tissue-resident (TRM)</text>
+    <circle id="trm" cx="600" cy="115" r="22" class="c-amber"/>
+    <text class="ts" x="600" y="158" text-anchor="middle">CD69⁺ CD103⁺</text>
+    <text class="ts" x="600" y="174" text-anchor="middle">Stays in skin, gut, lung</text>
+  </g>
+
+  <g id="tCyto" class="stg">
+    <rect x="236" y="190" width="428" height="30" rx="8" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.5"/>
+    <text class="ts" x="450" y="205" text-anchor="middle" dominant-baseline="central">IL-7 (via CD127) → survival · IL-15 → slow self-renewal · no antigen needed</text>
+  </g>
+
+  <g id="tRecall" class="stg">
+    <text class="ts" x="300" y="248" text-anchor="middle">Proliferate in node →</text>
+    <text class="ts" x="300" y="263" text-anchor="middle">wave of new effectors</text>
+    <text class="ts" x="450" y="248" text-anchor="middle">Arrive within a day,</text>
+    <text class="ts" x="450" y="263" text-anchor="middle">kill + IFN-γ</text>
+    <text class="ts" x="600" y="248" text-anchor="middle">Act within hours,</text>
+    <text class="ts" x="600" y="263" text-anchor="middle">right at the site</text>
+    <text class="th" x="450" y="298" text-anchor="middle">Faster, larger, less co-stimulation needed</text>
+  </g>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "b";
+const labels = {
+  b: [
+    "Step 0 of 3 — in the germinal centre, B cells class-switch (IgM → IgG) and are selected for high affinity",
+    "Step 1 of 3 — two exits: long-lived plasma cells settle in bone marrow niches and secrete IgG for years; memory B cells circulate quietly",
+    "Step 2 of 3 — on re-exposure, high-affinity memory B cells capture even small amounts of antigen and get rapid T follicular helper help",
+    "Step 3 of 3 — they become plasmablasts within days: a fast, high IgG response on top of the antibody already in serum"
+  ],
+  t: [
+    "Step 0 of 3 — after the pathogen is cleared, most effector T cells die (contraction); only ~5-10% survive",
+    "Step 1 of 3 — survivors split into central memory (lymph nodes), effector memory (circulating) and tissue-resident memory (barrier sites)",
+    "Step 2 of 3 — memory T cells are kept alive without antigen by IL-7 and IL-15, with slow homeostatic division",
+    "Step 3 of 3 — on re-infection: TRM act within hours at the site, TEM arrive fast, TCM expand to supply new effectors"
+  ]
+};
+// build the effector pool (12 cells, 1 survivor)
+(function () {
+  const g = document.getElementById("tPool");
+  g.innerHTML = "";
+  const ns = "http://www.w3.org/2000/svg";
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 4; c++) {
+      const el = document.createElementNS(ns, "circle");
+      el.setAttribute("cx", 50 + c * 37);
+      el.setAttribute("cy", 100 + r * 35);
+      el.setAttribute("r", 11);
+      const survivor = (r === 1 && c === 2);
+      el.setAttribute("class", "dieable " + (survivor ? "c-purple" : "c-coral"));
+      if (survivor) el.id = "tSurvivor";
+      g.appendChild(el);
+    }
+  }
+})();
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnB").classList.toggle("active", m === "b");
+  document.getElementById("btnT").classList.toggle("active", m === "t");
+  document.getElementById("gB").classList.toggle("hide", m !== "b");
+  document.getElementById("gT").classList.toggle("hide", m !== "t");
+  render();
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "b") {
+    document.getElementById("bFates").classList.toggle("on", step >= 1);
+    document.getElementById("bMem").classList.toggle("on", step >= 1);
+    document.getElementById("bAntigen").classList.toggle("on", step >= 2);
+    document.getElementById("bBurst").classList.toggle("on", step >= 3);
+    const mv = document.getElementById("bMemMover");
+    mv.style.transform = step >= 2 ? "translate(150px, 0px)" : "translate(0px, 0px)";
+    mv.classList.toggle("pulse", step === 2);
+  } else {
+    document.querySelectorAll("#tPool circle").forEach(function (c) {
+      if (c.id !== "tSurvivor") c.style.opacity = step >= 0 ? "0.18" : "1";
+    });
+    document.getElementById("tContract").classList.toggle("on", step >= 0);
+    document.getElementById("tSurvive").classList.toggle("on", step >= 1);
+    document.getElementById("tSubsets").classList.toggle("on", step >= 1);
+    document.getElementById("tCyto").classList.toggle("on", step >= 2);
+    ["tcm", "tem", "trm"].forEach(function (id) {
+      document.getElementById(id).classList.toggle("pulse", step === 2);
+    });
+    document.getElementById("tRecall").classList.toggle("on", step >= 3);
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("b");
+</script>
+'''
+
 
 
 # ---------------------------------------------------------------------------
@@ -9961,6 +10219,15 @@ REGISTRY = {
                 "Compare primary exposure (naive cells, slow, moderate) "
                 "against secondary exposure (memory cells, fast, much "
                 "stronger) — why vaccines and boosters work."
+            ),
+        },
+        "Technical": {
+            "fragment": IMMUNOLOGICAL_MEMORY_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "Where memory lives: long-lived plasma cells and class-switched "
+                "memory B cells, and central, effector and tissue-resident "
+                "memory T cells maintained by IL-7 and IL-15."
             ),
         },
     },
