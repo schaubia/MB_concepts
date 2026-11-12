@@ -1745,6 +1745,7 @@ HUMORAL_IMMUNE_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.3s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .drift { animation: drift 2s ease-in-out infinite; }
@@ -1771,8 +1772,8 @@ HUMORAL_IMMUNE_GENERAL = '''
 </g>
 
 <g id="mhcPresent" class="stg">
-<rect x="165" y="150" width="30" height="12" rx="3" fill="#EF9F27"/>
-<text class="ts" x="180" y="140" text-anchor="middle">MHC-II presenting</text>
+<rect x="228" y="174" width="26" height="12" rx="3" fill="#EF9F27"/>
+<text class="ts" x="222" y="238">MHC-II presenting</text>
 </g>
 
 <g id="helperT" class="stg">
@@ -1783,21 +1784,21 @@ HUMORAL_IMMUNE_GENERAL = '''
 </g>
 
 <g id="plasmaCells" class="stg">
-<circle cx="480" cy="120" r="30" class="c-coral"/>
+<circle cx="480" cy="120" r="36" class="c-coral"/>
 <text class="ts" x="480" y="120" text-anchor="middle" dominant-baseline="central">Plasma cell</text>
-<circle cx="480" cy="230" r="30" class="c-coral"/>
+<circle cx="480" cy="230" r="36" class="c-coral"/>
 <text class="ts" x="480" y="230" text-anchor="middle" dominant-baseline="central">Plasma cell</text>
 </g>
 
 <g id="memoryCells" class="stg">
-<circle cx="580" cy="175" r="24" class="c-gray"/>
-<text class="ts" x="580" y="175" text-anchor="middle" dominant-baseline="central">Memory B</text>
+<circle cx="584" cy="175" r="32" class="c-gray"/>
+<text class="ts" x="584" y="175" text-anchor="middle" dominant-baseline="central">Memory B</text>
 </g>
 
 <g id="antibodies" class="stg">
-<path class="drift" d="M540 100 l-6 -6 M540 100 l6 -6 M540 100 l0 8" stroke="#B91C1C" stroke-width="1.5" fill="none"/>
+<path class="drift" d="M540 92 l-6 -6 M540 92 l6 -6 M540 92 l0 8" stroke="#B91C1C" stroke-width="1.5" fill="none"/>
 <path class="drift" d="M560 260 l-6 -6 M560 260 l6 -6 M560 260 l0 8" stroke="#B91C1C" stroke-width="1.5" fill="none" style="animation-delay:.4s"/>
-<path class="drift" d="M600 90 l-6 -6 M600 90 l6 -6 M600 90 l0 8" stroke="#B91C1C" stroke-width="1.5" fill="none" style="animation-delay:.7s"/>
+<path class="drift" d="M620 100 l-6 -6 M620 100 l6 -6 M620 100 l0 8" stroke="#B91C1C" stroke-width="1.5" fill="none" style="animation-delay:.7s"/>
 <text class="ts" x="580" y="290" text-anchor="middle">Antibodies neutralize antigen</text>
 </g>
 </svg>
@@ -7411,6 +7412,8 @@ GERMINAL_CENTER_TECHNICAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
+  #mig { transition: transform 1.1s ease; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
@@ -7420,41 +7423,49 @@ GERMINAL_CENTER_TECHNICAL = '''
 <title>Germinal center reaction, technical view</title>
 <desc>An activated B cell proliferates in the germinal center dark zone. AID enzyme introduces mutations into the antibody variable region genes, somatic hypermutation. Mutated B cells migrate to the light zone and test their affinity for antigen displayed on follicular dendritic cells. T follicular helper cells select only the highest-affinity clones to survive, driving affinity maturation, while low-affinity clones undergo apoptosis. Selected cells undergo cytokine-driven class switching and differentiate into high-affinity plasma cells and memory B cells.</desc>
 
-<ellipse cx="200" cy="160" rx="160" ry="120" fill="none" stroke="var(--t)" stroke-width="1.5"/>
-<line x1="200" y1="40" x2="200" y2="280" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
-<text class="ts" x="110" y="55" text-anchor="middle">Dark zone</text>
-<text class="ts" x="290" y="55" text-anchor="middle">Light zone</text>
+<defs><marker id="gcA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<ellipse cx="250" cy="160" rx="210" ry="120" fill="none" stroke="var(--t)" stroke-width="1.5"/>
+<line x1="250" y1="40" x2="250" y2="280" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="ts" x="150" y="64" text-anchor="middle">Dark zone</text>
+<text class="ts" x="350" y="64" text-anchor="middle">Light zone</text>
 
-<circle cx="110" cy="150" r="14" class="c-teal"/>
-<text class="ts" x="110" y="185" text-anchor="middle">B cell proliferates</text>
+<circle cx="140" cy="150" r="14" class="c-teal"/>
+<text class="ts" x="140" y="186" text-anchor="middle">B cell proliferates</text>
 
 <g id="mutation" class="stg">
-<circle cx="110" cy="150" r="18" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="2 2" class="pulse"/>
-<text class="ts" x="110" y="120" text-anchor="middle">AID mutates BCR gene</text>
+<circle cx="140" cy="150" r="18" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="2 2" class="pulse"/>
+<text class="ts" x="140" y="120" text-anchor="middle">AID mutates BCR gene</text>
 </g>
 
+<!-- a mutated B cell travels from the dark zone to the light zone -->
+<g id="migG" class="stg"><circle id="mig" cx="140" cy="150" r="12" fill="#5DCAA5" stroke="#EF9F27" stroke-width="2"/></g>
+
 <g id="fdc" class="stg">
-<circle cx="290" cy="150" r="12" class="c-amber"/>
-<text class="ts" x="290" y="185" text-anchor="middle">Follicular dendritic cell</text>
-<text class="ts" x="290" y="120" text-anchor="middle">Antigen displayed — affinity tested</text>
+<circle cx="380" cy="150" r="12" class="c-amber"/>
+<text class="ts" x="380" y="186" text-anchor="middle">Follicular dendritic cell</text>
+<text class="ts" x="380" y="112" text-anchor="middle">Antigen displayed —</text>
+<text class="ts" x="380" y="126" text-anchor="middle">affinity tested</text>
 </g>
 
 <g id="selection" class="stg">
-<circle cx="330" cy="110" r="10" class="c-purple"/>
-<text class="ts" x="330" y="95" text-anchor="middle">Tfh selects high-affinity clones</text>
-<path d="M250 190 L270 210 M270 190 L250 210" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
-<text class="ts" x="260" y="230" text-anchor="middle">Low-affinity — apoptosis</text>
+<circle cx="330" cy="214" r="10" class="c-purple"/>
+<text class="ts" x="330" y="238" text-anchor="middle">Tfh selects</text>
+<text class="ts" x="330" y="252" text-anchor="middle">high-affinity clones</text>
+<path d="M494 232 L510 248 M510 232 L494 248" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+<text class="ts" x="502" y="270" text-anchor="middle">Low-affinity — apoptosis</text>
 </g>
 
 <g id="classSwitch" class="stg">
-<text class="th" x="290" y="255" text-anchor="middle">Class switching (cytokine-driven)</text>
+<text class="th" x="250" y="304" text-anchor="middle">Class switching (cytokine-driven)</text>
 </g>
 
 <g id="output" class="stg">
-<circle cx="450" cy="130" r="20" class="c-coral"/>
-<text class="ts" x="450" y="130" text-anchor="middle" dominant-baseline="central">Plasma cell</text>
-<circle cx="450" cy="190" r="16" class="c-gray"/>
-<text class="ts" x="450" y="190" text-anchor="middle" dominant-baseline="central">Memory B</text>
+<path d="M462 150 L536 126" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#gcA)"/>
+<path d="M462 160 L540 196" stroke="var(--t)" stroke-width="1.2" fill="none" marker-end="url(#gcA)"/>
+<circle cx="584" cy="116" r="38" class="c-coral"/>
+<text class="ts" x="584" y="116" text-anchor="middle" dominant-baseline="central">Plasma cell</text>
+<circle cx="584" cy="206" r="34" class="c-gray"/>
+<text class="ts" x="584" y="206" text-anchor="middle" dominant-baseline="central">Memory B</text>
 </g>
 </svg>
 
@@ -7478,6 +7489,8 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('mutation').classList.toggle('on', step >= 1);
   document.getElementById('fdc').classList.toggle('on', step >= 2);
+  document.getElementById('migG').classList.toggle('on', step >= 2);
+  document.getElementById('mig').style.transform = step >= 2 ? 'translate(200px,-10px)' : 'none';   // next to the FDC
   document.getElementById('selection').classList.toggle('on', step === 3);
   document.getElementById('classSwitch').classList.toggle('on', step >= 4);
   document.getElementById('output').classList.toggle('on', step >= 4);
