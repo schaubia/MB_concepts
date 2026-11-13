@@ -9298,6 +9298,240 @@ setMode('absent');
 </script>
 '''
 
+LAC_OPERON_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of lac operon regulation in technical detail: a switchable view of catabolite activation by CAP and cAMP when glucose runs out, and of the LacI repressor, DNA looping and the allolactose inducer feedback loop.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .hide { display: none; }
+  .bar { transition: width 1s ease; }
+  .mv { transition: transform 1s ease, opacity .6s ease; }
+  .mr { transition: stroke-dashoffset 1s ease, opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnCap" onclick="setMode('cap')">Glucose &amp; CAP</button>
+  <button id="btnLoop" onclick="setMode('loop')">Repressor &amp; inducer loop</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 280" role="img">
+<title>Lac operon — CAP–cAMP activation and the LacI inducer loop</title>
+<desc>Glucose and CAP view: with lactose present the repressor is already off, but while glucose is high cAMP stays low, CAP cannot bind and RNA polymerase binds the weak lac promoter poorly, so transcription is low. When glucose runs out, the phosphorylated glucose transporter component EIIA activates adenylyl cyclase and cAMP rises. cAMP binds CAP, which binds the CAP site upstream of the promoter, bends the DNA and recruits RNA polymerase, raising transcription about fifty-fold. Repressor and inducer view: the LacI tetramer binds two operators, O1 and O3, looping the DNA for tight repression, while rare leaky transcription leaves a few LacY permeases and beta-galactosidase molecules. Lactose enters through LacY and beta-galactosidase converts some of it to allolactose. Allolactose binds LacI, which releases the operators. The genes are transcribed, more LacY brings in more lactose in a positive feedback loop, and once lactose is used up the repressor binds again.</desc>
+<defs>
+<marker id="lacArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- ============ shared DNA ============ -->
+<line x1="30" y1="180" x2="650" y2="180" stroke="#378ADD" stroke-width="3" stroke-linecap="round"/>
+<rect x="40" y="170" width="60" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="70" y="180" text-anchor="middle" dominant-baseline="central">lacI</text>
+<rect x="130" y="170" width="40" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="150" y="206" text-anchor="middle">CAP site</text>
+<rect x="174" y="170" width="50" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="199" y="222" text-anchor="middle">Promoter</text>
+<rect x="228" y="170" width="34" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+<text class="ts" x="245" y="206" text-anchor="middle" id="opLabel">Operator</text>
+<rect x="266" y="170" width="174" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.8"/>
+<text class="ts" x="353" y="180" text-anchor="middle" dominant-baseline="central">lacZ</text>
+<rect x="444" y="170" width="96" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.8"/>
+<text class="ts" x="492" y="180" text-anchor="middle" dominant-baseline="central">lacY</text>
+<rect x="544" y="170" width="66" height="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="0.8"/>
+<text class="ts" x="577" y="180" text-anchor="middle" dominant-baseline="central">lacA</text>
+<g id="o3" class="hide">
+  <rect x="104" y="170" width="20" height="20" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="114" y="206" text-anchor="middle">O3</text>
+</g>
+
+<!-- transcripts and products -->
+<path id="mr1" class="mr" d="M266 244 H610" stroke="#1D9E75" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100 100" stroke-dashoffset="0"/>
+<path id="mr2" class="mr" d="M266 254 H610" stroke="#1D9E75" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100 100" stroke-dashoffset="100"/>
+<path id="mr3" class="mr" d="M266 264 H610" stroke="#1D9E75" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="100 100" stroke-dashoffset="100"/>
+<text class="ts" x="258" y="258" text-anchor="end" id="mrNote">mRNA: low</text>
+<g id="products" class="stg">
+  <text class="ts" x="353" y="228" text-anchor="middle">β-galactosidase</text>
+  <text class="ts" x="492" y="228" text-anchor="middle">permease</text>
+  <text class="ts" x="577" y="228" text-anchor="middle">transacetylase</text>
+</g>
+
+<g id="pol" class="mv">
+  <ellipse cx="199" cy="180" rx="22" ry="14" class="c-teal"/>
+  <text class="ts" x="199" y="180" text-anchor="middle" dominant-baseline="central">Pol</text>
+</g>
+
+<!-- ============ CAP MODE ============ -->
+<g id="gCap">
+  <text class="ts" x="40" y="40">Glucose</text>
+  <rect x="100" y="30" width="120" height="12" rx="3" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.5"/>
+  <rect id="glcBar" class="bar" x="100" y="30" width="120" height="12" rx="3" fill="#EF9F27"/>
+  <text class="ts" x="228" y="40" id="glcTxt">high</text>
+  <text class="ts" x="40" y="64">cAMP</text>
+  <rect x="100" y="54" width="120" height="12" rx="3" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.5"/>
+  <rect id="campBar" class="bar" x="100" y="54" width="14" height="12" rx="3" fill="#378ADD"/>
+  <text class="ts" x="228" y="64" id="campTxt">low</text>
+
+  <g id="cyclase" class="stg">
+    <text class="ts" x="290" y="40">EIIA(Glc)–P activates adenylyl cyclase</text>
+    <text class="ts" x="290" y="56">ATP → cAMP</text>
+  </g>
+
+  <g>
+    <circle cx="330" cy="110" r="14" class="c-red" opacity="0.55"/>
+    <circle cx="330" cy="96" r="5" fill="#EF9F27"/>
+    <text class="ts" x="352" y="114" text-anchor="start">Repressor off (allolactose-bound)</text>
+  </g>
+
+  <g id="cap" class="mv">
+    <circle cx="140" cy="158" r="11" class="c-purple"/>
+    <circle cx="160" cy="158" r="11" class="c-purple"/>
+    <text class="ts" x="150" y="134" text-anchor="middle" id="capLabel">CAP</text>
+    <g id="campOn" class="stg">
+      <circle cx="140" cy="158" r="4" fill="#378ADD"/>
+      <circle cx="160" cy="158" r="4" fill="#378ADD"/>
+    </g>
+  </g>
+  <g id="capNote" class="stg">
+    <text class="ts" x="40" y="98">CAP–cAMP bends the DNA,</text>
+    <text class="ts" x="40" y="114">recruits RNA polymerase</text>
+  </g>
+</g>
+
+<!-- ============ LOOP MODE ============ -->
+<g id="gLoop" class="hide">
+  <rect x="360" y="52" width="290" height="10" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.5"/>
+  <text class="ts" x="645" y="46" text-anchor="end">Cell membrane</text>
+  <rect x="470" y="46" width="16" height="22" rx="3" fill="#EF9F27"/>
+  <text class="ts" x="460" y="80" text-anchor="end">LacY</text>
+  <g id="moreLacY" class="stg">
+    <rect x="400" y="46" width="16" height="22" rx="3" fill="#EF9F27"/>
+    <rect x="540" y="46" width="16" height="22" rx="3" fill="#EF9F27"/>
+    <rect x="600" y="46" width="16" height="22" rx="3" fill="#EF9F27"/>
+    <text class="ts" x="40" y="40">More LacY → more lactose enters</text>
+    <text class="ts" x="40" y="56">(positive feedback)</text>
+  </g>
+
+  <circle cx="555" cy="108" r="15" class="c-purple"/>
+  <text class="ts" x="555" y="108" text-anchor="middle" dominant-baseline="central">β-gal</text>
+  <text class="ts" x="555" y="140" text-anchor="middle" id="bgalNote">a few, from leak</text>
+
+  <g id="lactose" class="mv">
+    <circle cx="478" cy="30" r="6" fill="#EF9F27" stroke="#BA7517" stroke-width="1"/>
+  </g>
+  <g id="allo" class="mv" style="opacity:0">
+    <circle cx="536" cy="108" r="6" fill="#1D9E75"/>
+  </g>
+  <text id="alloLabel" class="ts stg" x="600" y="160" text-anchor="middle">lactose → allolactose</text>
+
+  <g id="tetramer" class="mv">
+    <circle cx="106" cy="156" r="10" class="c-red"/>
+    <circle cx="122" cy="156" r="10" class="c-red"/>
+    <circle cx="237" cy="156" r="10" class="c-red"/>
+    <circle cx="253" cy="156" r="10" class="c-red"/>
+    <path d="M114 146 V132 H245 V146" fill="none" stroke="#B91C1C" stroke-width="3"/>
+  </g>
+  <text class="ts" x="180" y="84" text-anchor="middle" id="tetLabel">LacI tetramer holds O1 + O3:</text>
+  <text class="ts" x="180" y="100" text-anchor="middle" id="tetLabel2">DNA between is looped</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "cap";
+const labels = {
+  cap: [
+    "Step 0 of 3 — lactose is present, so the repressor is off — but glucose is high, cAMP is low and CAP is unbound: the weak promoter gives only low transcription",
+    "Step 1 of 3 — glucose runs out: the phosphorylated transporter part EIIA(Glc)–P activates adenylyl cyclase, and cAMP rises",
+    "Step 2 of 3 — cAMP binds CAP (CRP); CAP–cAMP sits on the CAP site, bends the DNA and holds RNA polymerase on the promoter",
+    "Step 3 of 3 — transcription rises ~50-fold: lacZ, lacY, lacA mRNA makes β-galactosidase, permease and transacetylase"
+  ],
+  loop: [
+    "Step 0 of 3 — no lactose: the LacI tetramer grips two operators (O1 and O3), looping the DNA; rare leaks leave a few LacY and β-gal molecules",
+    "Step 1 of 3 — lactose arrives and enters through the few LacY permeases; β-galactosidase turns some of it into allolactose",
+    "Step 2 of 3 — allolactose binds LacI, an allosteric change lowers its grip on the operators, and the loop opens (IPTG does the same in the lab)",
+    "Step 3 of 3 — the genes are transcribed; more LacY brings in more lactose (positive feedback); when lactose is used up, LacI rebinds"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnCap").classList.toggle("active", m === "cap");
+  document.getElementById("btnLoop").classList.toggle("active", m === "loop");
+  document.getElementById("gCap").classList.toggle("hide", m !== "cap");
+  document.getElementById("gLoop").classList.toggle("hide", m !== "loop");
+  document.getElementById("o3").classList.toggle("hide", m !== "loop");
+  document.getElementById("opLabel").textContent = m === "loop" ? "O1" : "Operator";
+  render();
+}
+function setMr(id, shown, dim) {
+  const e = document.getElementById(id);
+  e.style.strokeDashoffset = shown ? "0" : "100";
+  e.style.opacity = shown ? (dim ? "0.35" : "1") : "0";
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  const full = step >= 3;
+  setMr("mr1", true, !full);
+  setMr("mr2", full, false);
+  setMr("mr3", full, false);
+  document.getElementById("products").classList.toggle("on", full);
+  const pol = document.getElementById("pol");
+  pol.style.transform = full ? "translateX(300px)" : "translateX(0px)";
+  if (mode === "cap") {
+    document.getElementById("mrNote").textContent = full ? "mRNA: ~50× up" : "mRNA: low";
+    const lowGlc = step >= 1;
+    document.getElementById("glcBar").style.width = lowGlc ? "14px" : "120px";
+    document.getElementById("glcBar").setAttribute("width", lowGlc ? 14 : 120);
+    document.getElementById("glcTxt").textContent = lowGlc ? "low" : "high";
+    document.getElementById("campBar").style.width = lowGlc ? "120px" : "14px";
+    document.getElementById("campBar").setAttribute("width", lowGlc ? 120 : 14);
+    document.getElementById("campTxt").textContent = lowGlc ? "high" : "low";
+    document.getElementById("cyclase").classList.toggle("on", step >= 1);
+    const bound = step >= 2;
+    document.getElementById("cap").style.transform = bound ? "translateY(0px)" : "translateY(-40px)";
+    document.getElementById("campOn").classList.toggle("on", bound);
+    document.getElementById("capLabel").textContent = bound ? "CAP–cAMP" : "CAP (no cAMP)";
+    document.getElementById("capNote").classList.toggle("on", bound);
+    pol.style.opacity = bound ? "1" : "0.5";
+  } else {
+    document.getElementById("mrNote").textContent = full ? "mRNA: high" : (step >= 2 ? "mRNA: starting" : "mRNA: rare leak");
+    pol.style.opacity = "1";
+    // lactose: outside -> through LacY -> to beta-gal
+    document.getElementById("lactose").style.transform = step >= 1 ? "translate(70px, 78px)" : "translate(0px, 0px)";
+    document.getElementById("lactose").style.opacity = step === 0 ? "0" : (step >= 2 ? "0" : "1");
+    // allolactose: made by beta-gal, then carried to LacI on O1
+    const al = document.getElementById("allo");
+    al.style.opacity = step >= 1 && step <= 2 ? "1" : "0";
+    al.style.transform = step >= 2 ? "translate(-291px, 24px)" : "translate(0px, 0px)";
+    document.getElementById("alloLabel").classList.toggle("on", step >= 1);
+    const tet = document.getElementById("tetramer");
+    tet.style.transform = step >= 2 ? "translateY(-24px)" : "translateY(0px)";
+    tet.style.opacity = step >= 2 ? "0.35" : "1";
+    document.getElementById("tetLabel").textContent = step >= 2 ? "Allolactose-bound LacI" : "LacI tetramer holds O1 + O3:";
+    document.getElementById("tetLabel2").textContent = step >= 2 ? "lets go of both operators" : "DNA between is looped";
+    document.getElementById("bgalNote").textContent = full ? "many more made" : "a few, from leak";
+    document.getElementById("moreLacY").classList.toggle("on", full);
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("cap");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # RNA_INTERFERENCE_GENERAL  (source: rna_interference.html)
@@ -10501,6 +10735,15 @@ REGISTRY = {
                 "The classic gene-regulation example: a repressor blocks "
                 "the lac genes until lactose binds it and releases the "
                 "operator, letting RNA polymerase transcribe them."
+            ),
+        },
+        "Technical": {
+            "fragment": LAC_OPERON_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "The two switches: CAP–cAMP activation when glucose runs out "
+                "(catabolite repression), and the LacI tetramer, DNA looping "
+                "and the allolactose positive-feedback loop."
             ),
         },
     },
