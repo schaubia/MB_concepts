@@ -11261,11 +11261,16 @@ st.write(entry["blurb"])
 wrapped_fragment = (
     '<div style="max-width:680px;margin:0 auto;">' + entry["fragment"] + "</div>"
 )
-st.components.v1.html(
-    COMMON_STYLE + wrapped_fragment,
-    height=entry["height"] + 60,
-    scrolling=True,
-)
+if hasattr(st, "iframe"):
+    # Streamlit >= 1.5x: st.components.v1.html is deprecated in favour of st.iframe
+    st.iframe(COMMON_STYLE + wrapped_fragment, height=entry["height"] + 60)
+else:
+    # older Streamlit versions (requirements allow >= 1.30)
+    st.components.v1.html(
+        COMMON_STYLE + wrapped_fragment,
+        height=entry["height"] + 60,
+        scrolling=True,
+    )
 
 st.divider()
 st.caption(
