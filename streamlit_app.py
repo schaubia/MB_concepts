@@ -8236,48 +8236,52 @@ IMMUNE_CHECKPOINT_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
   #tcellGroup { transition: transform 1s ease; }
-  .docked #tcellGroup { transform: translateX(-30px); }
+  #tcellBody, #tumorCell { transition: opacity .6s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>PD-1 / PD-L1 immune checkpoint, general view</title>
-<desc>An activated T cell expresses PD-1 as a normal negative feedback brake. A tumor cell exploits this by expressing PD-L1, and their binding delivers an inhibitory signal that exhausts the T cell, letting the tumor evade attack. A checkpoint inhibitor drug, an anti-PD-1 or anti-PD-L1 antibody, blocks this interaction, restoring the T cell's ability to kill the tumor cell — the basis of modern cancer immunotherapy.</desc>
+<desc>An activated T cell expresses PD-1 as a normal negative feedback brake. A tumor cell exploits this by expressing PD-L1, and their binding delivers an inhibitory signal that exhausts the T cell, letting the tumor evade attack. A checkpoint inhibitor drug, an anti-PD-1 antibody, sits on PD-1 so PD-L1 can no longer bind, and the T cell regains its ability to kill the tumor cell.</desc>
 
-<circle cx="180" cy="150" r="70" fill="none" stroke="var(--t)" stroke-width="1.5" id="tumorCell"/>
-<text class="ts" x="180" y="235" text-anchor="middle">Tumor cell</text>
+<circle cx="190" cy="140" r="70" fill="none" stroke="var(--t)" stroke-width="1.5" id="tumorCell"/>
+<text class="ts" x="190" y="230" text-anchor="middle">Tumor cell</text>
 
 <g id="pdl1" class="stg">
-<rect x="165" y="95" width="30" height="12" rx="3" fill="#E24B4A"/>
-<text class="ts" x="180" y="80" text-anchor="middle">PD-L1</text>
+<rect x="254" y="128" width="14" height="24" rx="3" fill="#E24B4A"/>
+<text class="ts" x="271" y="112" text-anchor="middle">PD-L1</text>
 </g>
 
 <g id="tcellGroup">
-<circle cx="440" cy="150" r="55" class="c-purple"/>
-<text class="th" x="440" y="150" text-anchor="middle" dominant-baseline="central">T cell</text>
-</g>
-
+<circle id="tcellBody" cx="480" cy="140" r="55" class="c-purple"/>
+<text class="th" x="480" y="140" text-anchor="middle" dominant-baseline="central">T cell</text>
 <g id="pd1" class="stg">
-<rect x="385" y="120" width="26" height="12" rx="3" fill="#7F77DD"/>
-<text class="ts" x="398" y="105" text-anchor="middle">PD-1</text>
+<rect x="411" y="128" width="14" height="24" rx="3" fill="#7F77DD"/>
+<text class="ts" x="418" y="170" text-anchor="middle">PD-1</text>
+</g>
+<g id="drugMol" class="stg">
+<path d="M386 140 H397 M397 140 L408 131 M397 140 L408 149" fill="none" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/>
+</g>
 </g>
 
 <g id="binding" class="stg">
-<line x1="255" y1="115" x2="385" y2="126" stroke="#E24B4A" stroke-width="2"/>
-<text class="ts" x="320" y="105" text-anchor="middle">Inhibitory signal — T cell exhausted</text>
+<circle cx="268" cy="140" r="15" fill="none" stroke="#E24B4A" stroke-width="2" stroke-dasharray="3 3" class="pulse"/>
+<text class="ts" x="300" y="258" text-anchor="middle">Inhibitory signal — T cell exhausted</text>
 </g>
 
 <g id="drug" class="stg">
-<rect x="290" y="140" width="60" height="20" rx="6" class="c-teal"/>
-<text class="ts" x="320" y="150" text-anchor="middle" dominant-baseline="central">Anti-PD-1</text>
-<text class="ts" x="320" y="175" text-anchor="middle">Checkpoint inhibitor blocks binding</text>
+<rect x="250" y="40" width="72" height="22" rx="6" class="c-teal"/>
+<text class="ts" x="286" y="51" text-anchor="middle" dominant-baseline="central">Anti-PD-1</text>
+<line x1="286" y1="62" x2="286" y2="124" stroke="#1D9E75" stroke-width="1" stroke-dasharray="2 3"/>
+<text class="ts" x="286" y="28" text-anchor="middle">Checkpoint inhibitor blocks binding</text>
 </g>
 
 <g id="restored" class="stg">
-<text class="th" x="320" y="250" text-anchor="middle">T cell restored — kills the tumor cell</text>
+<text class="th" x="340" y="284" text-anchor="middle">T cell restored — kills the tumor cell</text>
 </g>
 </svg>
 
@@ -8301,9 +8305,14 @@ function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('pdl1').classList.toggle('on', step >= 1);
   document.getElementById('pd1').classList.toggle('on', step >= 0);
-  document.querySelector('svg').classList.toggle('docked', step >= 1 && step < 3);
-  document.getElementById('binding').classList.toggle('on', step >= 2 && step < 3);
+  // steps 1-2: PD-1 docks onto PD-L1; steps 3-4: the antibody on PD-1 holds them apart
+  const tx = (step >= 1 && step < 3) ? -143 : (step >= 3 ? -115 : 0);
+  document.getElementById('tcellGroup').style.transform = 'translateX(' + tx + 'px)';
+  document.getElementById('binding').classList.toggle('on', step === 2);
+  document.getElementById('tcellBody').style.opacity = step === 2 ? '0.4' : '1';
   document.getElementById('drug').classList.toggle('on', step >= 3);
+  document.getElementById('drugMol').classList.toggle('on', step >= 3);
+  document.getElementById('drugMol').style.visibility = step >= 3 ? 'visible' : 'hidden';
   document.getElementById('restored').classList.toggle('on', step >= 4);
   document.getElementById('tumorCell').style.opacity = step >= 4 ? '0.3' : '1';
 }
@@ -8313,6 +8322,239 @@ function reset() { step = 0; render(); }
 render();
 </script>
 '''
+
+IMMUNE_CHECKPOINT_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of immune checkpoint mechanisms: a switchable view of PD-1 signalling inside the T cell through SHP-2, and a comparison of the CTLA-4 checkpoint in the lymph node with the PD-1 checkpoint in the tumor, including the drugs that block each.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .rise { animation: rise 1.6s ease-in infinite; }
+  @keyframes rise { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(-70px);opacity:0} }
+  .hide { display: none; }
+  .fadeable { transition: opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSig" onclick="setMode('sig')">PD-1 signalling</button>
+  <button id="btnCtla" onclick="setMode('ctla')">CTLA-4 vs PD-1</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 330" role="img">
+<title>Immune checkpoints — PD-1 signalling and CTLA-4 vs PD-1</title>
+<desc>PD-1 signalling view: a T cell recognises peptide on MHC class I of a tumor cell through its T cell receptor; Lck and ZAP-70 drive PI3K-AKT and Ras-ERK signalling, producing IL-2, proliferation and killing. The T cell's IFN-gamma induces PD-L1 on the tumor. When PD-L1 binds PD-1, the PD-1 tail is phosphorylated on its ITSM motif and recruits the phosphatase SHP-2, which dephosphorylates TCR-proximal signals and CD28, so IL-2, proliferation and killing fall; chronic stimulation leads to exhaustion. CTLA-4 versus PD-1 view: in the lymph node, CD28 on a naive T cell binds CD80/86 on a dendritic cell as a go signal; CTLA-4 binds CD80/86 much more tightly, outcompetes CD28 and strips the ligands. In the tumor, PD-L1 engages PD-1 on already-primed effector T cells. Anti-CTLA-4 (ipilimumab) and anti-PD-1 (nivolumab, pembrolizumab) or anti-PD-L1 (atezolizumab) antibodies release these brakes, enabling tumor killing at the risk of immune-related side effects.</desc>
+<defs>
+<marker id="ckArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="ckTee" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M5 0V10" fill="none" stroke="context-stroke" stroke-width="2"/></marker>
+</defs>
+
+<!-- ===================== PD-1 SIGNALLING MODE ===================== -->
+<g id="gSig">
+  <rect x="20" y="20" width="640" height="70" rx="14" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="36" y="40">Tumor cell</text>
+  <rect x="20" y="130" width="640" height="185" rx="18" fill="var(--surface-1)" stroke="#7F77DD" stroke-width="1.5"/>
+  <text class="ts" x="36" y="304">T cell</text>
+
+  <!-- MHC-I + peptide / TCR -->
+  <rect x="163" y="76" width="14" height="26" rx="3" fill="#EF9F27"/>
+  <text class="ts" x="185" y="66" text-anchor="start">MHC-I + peptide</text>
+  <line x1="170" y1="102" x2="170" y2="118" stroke="#639922" stroke-width="3"/>
+  <rect x="163" y="118" width="14" height="26" rx="3" fill="#7F77DD"/>
+  <text class="ts" x="185" y="140" text-anchor="start">TCR</text>
+
+  <!-- activating cascade -->
+  <circle id="lck" cx="236" cy="168" r="13" class="c-teal fadeable"/>
+  <text class="ts" x="236" y="168" text-anchor="middle" dominant-baseline="central">Lck</text>
+  <circle id="zap" cx="170" cy="192" r="23" class="c-teal fadeable"/>
+  <text class="ts" x="170" y="192" text-anchor="middle" dominant-baseline="central">ZAP-70</text>
+  <line x1="170" y1="146" x2="170" y2="167" stroke="var(--t)" stroke-width="1.2" marker-end="url(#ckArrow)"/>
+  <line x1="224" y1="172" x2="194" y2="183" stroke="var(--t)" stroke-width="1.2" marker-end="url(#ckArrow)"/>
+  <line x1="170" y1="215" x2="170" y2="228" stroke="var(--t)" stroke-width="1.2" marker-end="url(#ckArrow)"/>
+  <rect id="cascade" class="fadeable" x="80" y="230" width="200" height="24" rx="6" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.8"/>
+  <text class="ts" x="180" y="242" text-anchor="middle" dominant-baseline="central">PI3K–AKT · Ras–ERK</text>
+  <line x1="180" y1="254" x2="180" y2="268" stroke="var(--t)" stroke-width="1.2" marker-end="url(#ckArrow)"/>
+  <text class="th" x="180" y="285" text-anchor="middle" id="outLabel">IL-2 · proliferation · killing</text>
+
+  <!-- IFN-gamma induces PD-L1 -->
+  <g id="ifn" class="stg">
+    <circle class="rise" cx="590" cy="200" r="5" fill="#EF9F27"/>
+    <circle class="rise" cx="608" cy="210" r="5" fill="#EF9F27" style="animation-delay:.5s"/>
+    <circle class="rise" cx="574" cy="214" r="5" fill="#EF9F27" style="animation-delay:1s"/>
+    <text class="ts" x="592" y="240" text-anchor="middle">IFN-γ secreted</text>
+    <text class="ts" x="560" y="50" text-anchor="middle">IFN-γ → PD-L1 induced</text>
+  </g>
+
+  <!-- PD-L1 / PD-1 -->
+  <g id="pdl1" class="stg">
+    <rect x="463" y="76" width="14" height="26" rx="3" fill="#E24B4A"/>
+    <text class="ts" x="455" y="66" text-anchor="end">PD-L1</text>
+  </g>
+  <line id="pdBond" class="stg" x1="470" y1="102" x2="470" y2="118" stroke="#E24B4A" stroke-width="3"/>
+  <rect x="463" y="118" width="14" height="26" rx="3" fill="#534AB7"/>
+  <text class="ts" x="455" y="140" text-anchor="end">PD-1</text>
+  <line x1="470" y1="144" x2="470" y2="160" stroke="#534AB7" stroke-width="2"/>
+
+  <g id="itsm" class="stg">
+    <circle cx="470" cy="164" r="7" fill="#EF9F27"/>
+    <text class="ts" x="470" y="164" text-anchor="middle" dominant-baseline="central">P</text>
+    <text class="ts" x="484" y="164" text-anchor="start" dominant-baseline="central">ITSM phosphorylated</text>
+  </g>
+  <g id="shp2" class="stg">
+    <circle cx="470" cy="196" r="17" class="c-coral"/>
+    <text class="ts" x="470" y="196" text-anchor="middle" dominant-baseline="central">SHP-2</text>
+  </g>
+  <g id="shpHits" class="stg">
+    <path d="M453 194 Q330 172 196 190" fill="none" stroke="#E24B4A" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ckTee)"/>
+    <path d="M456 207 Q380 244 284 243" fill="none" stroke="#E24B4A" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ckTee)"/>
+    <text class="ts" x="322" y="216" text-anchor="middle">dephosphorylates CD3ζ, ZAP-70, CD28</text>
+    <text class="ts" x="470" y="282" text-anchor="middle">Chronic: exhaustion</text>
+    <text class="ts" x="470" y="298" text-anchor="middle">(TOX, TIM-3, LAG-3 up)</text>
+  </g>
+</g>
+
+<!-- ===================== CTLA-4 vs PD-1 MODE ===================== -->
+<g id="gCtla" class="hide">
+  <text class="th" x="175" y="22" text-anchor="middle">Lymph node — priming</text>
+  <text class="th" x="505" y="22" text-anchor="middle">Tumor — effector phase</text>
+  <line x1="340" y1="10" x2="340" y2="240" stroke="var(--border-strong)" stroke-width="0.8" stroke-dasharray="4 4"/>
+
+  <!-- left: DC + naive T cell -->
+  <rect x="25" y="34" width="300" height="56" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="38" y="52">Dendritic cell</text>
+  <rect x="25" y="128" width="300" height="104" rx="14" fill="var(--surface-1)" stroke="#7F77DD" stroke-width="1.5"/>
+  <text class="ts" x="38" y="224">Naive T cell</text>
+
+  <rect id="lig1" class="fadeable" x="103" y="76" width="14" height="24" rx="3" fill="#EF9F27"/>
+  <text class="ts" x="110" y="70" text-anchor="middle">CD80/86</text>
+  <line id="bondCD28" class="fadeable" x1="110" y1="100" x2="110" y2="116" stroke="#639922" stroke-width="3"/>
+  <rect x="103" y="116" width="14" height="24" rx="3" fill="#639922"/>
+  <text class="ts" x="110" y="158" text-anchor="middle" id="cd28Label">CD28: go</text>
+
+  <g id="ctla4" class="stg">
+    <rect x="233" y="76" width="14" height="24" rx="3" fill="#EF9F27"/>
+    <text class="ts" x="240" y="70" text-anchor="middle">CD80/86</text>
+    <line id="bondCTLA" class="fadeable" x1="240" y1="100" x2="240" y2="116" stroke="#E24B4A" stroke-width="3"/>
+    <rect x="233" y="116" width="14" height="24" rx="3" fill="#E24B4A"/>
+    <text class="ts" x="240" y="158" text-anchor="middle">CTLA-4: brake</text>
+    <text class="ts" x="175" y="186" text-anchor="middle">CTLA-4 binds CD80/86 far more tightly,</text>
+    <text class="ts" x="175" y="202" text-anchor="middle">outcompetes CD28 and strips the ligands</text>
+  </g>
+  <g id="abCTLA" class="stg">
+    <path d="M276 128 H265 M265 128 L254 119 M265 128 L254 137" fill="none" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- right: tumor + effector T cell -->
+  <rect x="355" y="34" width="300" height="56" rx="12" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="368" y="52">Tumor cell</text>
+  <rect x="355" y="128" width="300" height="104" rx="14" fill="var(--surface-1)" stroke="#7F77DD" stroke-width="1.5"/>
+  <text class="ts" x="368" y="224">Effector T cell</text>
+
+  <rect x="433" y="76" width="14" height="24" rx="3" fill="#EF9F27"/>
+  <text class="ts" x="440" y="70" text-anchor="middle">MHC-I</text>
+  <line x1="440" y1="100" x2="440" y2="116" stroke="#639922" stroke-width="3"/>
+  <rect x="433" y="116" width="14" height="24" rx="3" fill="#7F77DD"/>
+  <text class="ts" x="440" y="158" text-anchor="middle">TCR</text>
+
+  <g id="pdPair" class="stg">
+    <rect x="563" y="76" width="14" height="24" rx="3" fill="#E24B4A"/>
+    <text class="ts" x="570" y="70" text-anchor="middle">PD-L1</text>
+    <line id="bondPD" class="fadeable" x1="570" y1="100" x2="570" y2="116" stroke="#E24B4A" stroke-width="3"/>
+    <rect x="563" y="116" width="14" height="24" rx="3" fill="#534AB7"/>
+    <text class="ts" x="570" y="158" text-anchor="middle">PD-1: brake</text>
+    <text class="ts" x="505" y="186" text-anchor="middle">PD-L1 on the tumor switches off</text>
+    <text class="ts" x="505" y="202" text-anchor="middle">T cells that were already primed</text>
+  </g>
+  <g id="abPD" class="stg">
+    <path d="M606 128 H595 M595 128 L584 119 M595 128 L584 137" fill="none" stroke="#1D9E75" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- drugs + consequences -->
+  <g id="drugs" class="stg">
+    <text class="ts" x="175" y="258" text-anchor="middle">Anti-CTLA-4: ipilimumab</text>
+    <text class="ts" x="505" y="258" text-anchor="middle">Anti-PD-1: nivolumab, pembrolizumab</text>
+    <text class="ts" x="505" y="274" text-anchor="middle">Anti-PD-L1: atezolizumab</text>
+    <text class="th" x="340" y="312" text-anchor="middle">Brakes released → tumor killing, but risk of autoimmune side effects</text>
+  </g>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "sig";
+const labels = {
+  sig: [
+    "Step 0 of 3 — the TCR recognises tumor peptide on MHC-I; Lck and ZAP-70 drive PI3K–AKT and Ras–ERK → IL-2, proliferation, killing",
+    "Step 1 of 3 — the activated T cell releases IFN-γ, which induces PD-L1 on the tumor (adaptive resistance)",
+    "Step 2 of 3 — PD-L1 engages PD-1; Lck phosphorylates the PD-1 tail (ITSM), which recruits the phosphatase SHP-2",
+    "Step 3 of 3 — SHP-2 strips phosphates from TCR signals (CD3ζ, ZAP-70) and CD28 → IL-2, proliferation and killing fall; chronic signalling → exhaustion"
+  ],
+  ctla: [
+    "Step 0 of 3 — in the lymph node, CD28 on a naive T cell binds CD80/86 on a dendritic cell: the co-stimulatory go signal for priming",
+    "Step 1 of 3 — CTLA-4 is upregulated and binds CD80/86 much more tightly, outcompeting CD28 and removing ligands — an early brake on priming",
+    "Step 2 of 3 — later, in the tumor, PD-L1 engages PD-1 on effector T cells — a late brake on killing",
+    "Step 3 of 3 — blocking antibodies release each brake: anti-CTLA-4 boosts priming, anti-PD-1/PD-L1 re-arms tumor T cells; more autoimmune side effects follow"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnSig").classList.toggle("active", m === "sig");
+  document.getElementById("btnCtla").classList.toggle("active", m === "ctla");
+  document.getElementById("gSig").classList.toggle("hide", m !== "sig");
+  document.getElementById("gCtla").classList.toggle("hide", m !== "ctla");
+  render();
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "sig") {
+    document.getElementById("ifn").classList.toggle("on", step === 1);
+    document.getElementById("pdl1").classList.toggle("on", step >= 1);
+    document.getElementById("pdBond").classList.toggle("on", step >= 2);
+    document.getElementById("itsm").classList.toggle("on", step >= 2);
+    document.getElementById("shp2").classList.toggle("on", step >= 2);
+    document.getElementById("shp2").classList.toggle("pulse", step === 2);
+    document.getElementById("shpHits").classList.toggle("on", step >= 3);
+    const damp = step >= 3 ? "0.35" : "1";
+    ["zap", "lck", "cascade"].forEach(function (id) { document.getElementById(id).style.opacity = damp; });
+    document.getElementById("outLabel").textContent = step >= 3 ? "IL-2 ↓ · proliferation ↓ · killing ↓" : "IL-2 · proliferation · killing";
+  } else {
+    const ctlaOn = step >= 1;
+    const ctlaBlocked = step >= 3;
+    document.getElementById("ctla4").classList.toggle("on", ctlaOn);
+    // CTLA-4 strips the CD28 ligand until the antibody blocks CTLA-4
+    const cd28Starved = ctlaOn && !ctlaBlocked;
+    document.getElementById("lig1").style.opacity = cd28Starved ? "0.25" : "1";
+    document.getElementById("bondCD28").style.opacity = cd28Starved ? "0" : "1";
+    document.getElementById("cd28Label").textContent = cd28Starved ? "CD28: starved" : "CD28: go";
+    document.getElementById("bondCTLA").style.opacity = ctlaBlocked ? "0" : "1";
+    document.getElementById("pdPair").classList.toggle("on", step >= 2);
+    document.getElementById("bondPD").style.opacity = step >= 3 ? "0" : "1";
+    document.getElementById("abCTLA").classList.toggle("on", step >= 3);
+    document.getElementById("abPD").classList.toggle("on", step >= 3);
+    document.getElementById("abCTLA").style.visibility = step >= 3 ? "visible" : "hidden";
+    document.getElementById("abPD").style.visibility = step >= 3 ? "visible" : "hidden";
+    document.getElementById("drugs").classList.toggle("on", step >= 3);
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("sig");
+</script>
+'''
+
 
 
 # ---------------------------------------------------------------------------
@@ -10250,6 +10492,15 @@ REGISTRY = {
                 "How tumors evade T cells by exploiting a normal immune "
                 "brake, and how checkpoint inhibitor drugs block it — "
                 "the basis of modern cancer immunotherapy."
+            ),
+        },
+        "Technical": {
+            "fragment": IMMUNE_CHECKPOINT_TECHNICAL,
+            "height": 520,
+            "blurb": (
+                "Inside the brake: PD-1 recruits SHP-2 to dephosphorylate TCR "
+                "and CD28 signals; and CTLA-4 (priming, lymph node) vs PD-1 "
+                "(effector, tumor) with the antibodies that block each."
             ),
         },
     },
