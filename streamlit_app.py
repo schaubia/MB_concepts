@@ -8160,41 +8160,52 @@ TYPE1_HYPERSENSITIVITY_GENERAL = '''
 <style>
   .stg { opacity: 0.12; transition: opacity .5s ease; }
   .stg.on { opacity: 1; }
+  .stg:not(.on) text { visibility: hidden; }
   .pulse { animation: pulse 1.2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-  .drift { animation: drift 1.6s ease-in-out infinite; }
-  @keyframes drift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .gran { transition: transform 1.1s ease, opacity 1.1s ease; }
+  #allergenDrop { transition: transform .9s ease; }
   .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
   #stepLabel { font-size:13px; color:var(--text-secondary); }
 </style>
 <svg width="100%" viewBox="0 0 680 300" role="img">
 <title>Type I hypersensitivity, general view</title>
-<desc>On first exposure to an allergen, plasma cells produce IgE, which binds Fc receptors on mast cells, sensitizing them without triggering a reaction. On a second exposure, the allergen cross-links the bound IgE molecules, triggering the mast cell to degranulate, releasing histamine and other mediators that cause vasodilation, increased permeability, and smooth muscle contraction — the symptoms of an allergic reaction.</desc>
+<desc>On first exposure to an allergen, plasma cells produce IgE, which binds Fc receptors on mast cells, sensitizing them without triggering a reaction. On a second exposure, a single allergen bridges two neighbouring IgE molecules, cross-linking them and triggering the mast cell to degranulate, releasing histamine from its granules. Histamine causes vasodilation, swelling and smooth muscle contraction such as bronchoconstriction.</desc>
 
-<ellipse cx="340" cy="170" rx="90" ry="70" class="c-coral"/>
-<text class="th" x="340" y="170" text-anchor="middle" dominant-baseline="central">Mast cell</text>
+<ellipse cx="340" cy="180" rx="110" ry="75" class="c-coral"/>
+<text class="th" x="340" y="160" text-anchor="middle" dominant-baseline="central">Mast cell</text>
+
+<!-- preformed histamine granules (move out on degranulation) -->
+<circle class="gran" id="g1" cx="300" cy="195" r="7" fill="#B91C1C"/>
+<circle class="gran" id="g2" cx="325" cy="218" r="7" fill="#B91C1C"/>
+<circle class="gran" id="g3" cx="355" cy="218" r="7" fill="#B91C1C"/>
+<circle class="gran" id="g4" cx="380" cy="195" r="7" fill="#B91C1C"/>
 
 <g id="ige" class="stg">
-<path d="M263 133 L277 119 M277 133 L263 119" stroke="#7F77DD" stroke-width="2"/>
-<path d="M403 133 L417 119 M417 133 L403 119" stroke="#7F77DD" stroke-width="2"/>
-<text class="ts" x="340" y="58" text-anchor="middle">IgE bound to Fc receptors — sensitized</text>
+  <g fill="none" stroke="#7F77DD" stroke-width="2.5" stroke-linecap="round">
+    <path d="M290 113 V92 M290 92 L282 82 M290 92 L298 82"/>
+    <path d="M330 106 V92 M330 92 L322 82 M330 92 L338 82"/>
+    <path d="M370 108 V92 M370 92 L362 82 M370 92 L378 82"/>
+    <path d="M410 113 V92 M410 92 L402 82 M410 92 L418 82"/>
+  </g>
+  <text class="ts" x="270" y="66" text-anchor="end">IgE bound to Fc receptors</text>
+  <text class="ts" x="270" y="82" text-anchor="end">— sensitized</text>
 </g>
 
 <g id="allergen" class="stg">
-<circle cx="270" cy="112" r="8" fill="#EF9F27"/>
-<circle cx="410" cy="112" r="8" fill="#EF9F27"/>
-<text class="ts" x="340" y="40" text-anchor="middle">Allergen cross-links IgE</text>
+  <g id="allergenDrop">
+    <circle cx="310" cy="74" r="11" fill="#EF9F27"/>
+    <circle cx="390" cy="74" r="11" fill="#EF9F27"/>
+  </g>
+  <text class="ts" x="410" y="50" text-anchor="start">Allergen cross-links IgE</text>
 </g>
 
 <g id="degranulation" class="stg">
-<circle class="drift" cx="300" cy="180" r="6" fill="#B91C1C"/>
-<circle class="drift" cx="340" cy="200" r="6" fill="#B91C1C" style="animation-delay:.3s"/>
-<circle class="drift" cx="380" cy="180" r="6" fill="#B91C1C" style="animation-delay:.6s"/>
-<text class="ts" x="340" y="230" text-anchor="middle">Degranulation — histamine released</text>
+  <text class="ts" x="340" y="272" text-anchor="middle">Degranulation — histamine released</text>
 </g>
 
 <g id="symptoms" class="stg">
-<text class="th" x="340" y="270" text-anchor="middle">Vasodilation, swelling, bronchoconstriction</text>
+  <text class="th" x="340" y="294" text-anchor="middle">Vasodilation, swelling, bronchoconstriction</text>
 </g>
 </svg>
 
@@ -8213,11 +8224,19 @@ const labels = [
   "Step 2 of 3 — cross-linking triggers the mast cell to degranulate, releasing histamine",
   "Step 3 of 3 — histamine causes vasodilation, swelling, and smooth muscle contraction — allergy symptoms"
 ];
+// where each granule ends up once released (dx, dy)
+const out = { g1: [-120, 20], g2: [-150, 40], g3: [150, 40], g4: [120, 20] };
 function render() {
   document.getElementById('stepLabel').textContent = labels[step];
   document.getElementById('ige').classList.toggle('on', step >= 0);
   document.getElementById('allergen').classList.toggle('on', step >= 1);
+  document.getElementById('allergenDrop').style.transform = step >= 1 ? 'translateY(0px)' : 'translateY(-40px)';
   document.getElementById('degranulation').classList.toggle('on', step >= 2);
+  Object.keys(out).forEach(function (id) {
+    const el = document.getElementById(id);
+    el.style.transform = step >= 2 ? 'translate(' + out[id][0] + 'px,' + out[id][1] + 'px)' : 'translate(0px,0px)';
+    el.classList.toggle('pulse', step >= 3);
+  });
   document.getElementById('symptoms').classList.toggle('on', step >= 3);
 }
 function stepFwd() { if (step < 3) step++; render(); }
@@ -8226,6 +8245,235 @@ function reset() { step = 0; render(); }
 render();
 </script>
 '''
+
+TYPE1_HYPERSENSITIVITY_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of type I hypersensitivity in technical detail: a switchable view of sensitization, in which Th2 cells drive B cells to switch to IgE, and of mast cell activation, from FcεRI cross-linking through Lyn, Syk and calcium to degranulation, lipid mediators and late-phase cytokines.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .rise { animation: rise 1.6s ease-in infinite; }
+  @keyframes rise { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(-34px);opacity:0} }
+  .hide { display: none; }
+  .gran { transition: transform 1s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSens" onclick="setMode('sens')">Sensitization</button>
+  <button id="btnAct" onclick="setMode('act')">Mast cell activation</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 340" role="img">
+<title>Type I hypersensitivity — sensitization and mast cell activation</title>
+<desc>Sensitization view: a dendritic cell presents allergen peptide on MHC class II to a naive CD4 T cell; in the presence of IL-4 the T cell becomes a Th2 cell expressing GATA3 and secreting IL-4 and IL-13. Th2 help through CD40 ligand and IL-4 and IL-13 makes an allergen-specific B cell class-switch to IgE. The resulting plasma cell secretes IgE, which binds the high-affinity receptor FcεRI on mast cells, sensitizing them without symptoms. Activation view: on re-exposure an allergen cross-links IgE on FcεRI; Lyn phosphorylates the receptor ITAMs and recruits Syk, which activates PLC-gamma; IP3 releases calcium from the endoplasmic reticulum and granules fuse with the membrane, releasing histamine and tryptase within seconds to minutes. Arachidonic acid is converted to leukotrienes and prostaglandin D2 within minutes. Over hours, transcription of IL-4, IL-5, IL-13 and TNF recruits eosinophils and drives the late-phase reaction.</desc>
+<defs>
+<marker id="hyArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- ===================== SENSITIZATION ===================== -->
+<g id="gSens">
+  <!-- dendritic cell -->
+  <circle cx="90" cy="120" r="38" class="c-teal"/>
+  <text class="ts" x="90" y="120" text-anchor="middle" dominant-baseline="central">DC</text>
+  <circle cx="72" cy="104" r="6" fill="#EF9F27"/>
+  <rect x="124" y="113" width="10" height="14" rx="2" fill="#EF9F27"/>
+  <text class="ts" x="90" y="176" text-anchor="middle">Dendritic cell</text>
+  <text class="ts" x="90" y="192" text-anchor="middle">allergen on MHC-II</text>
+  <line x1="138" y1="120" x2="210" y2="120" stroke="var(--t)" stroke-width="1.2" marker-end="url(#hyArrow)"/>
+
+  <!-- CD4 T cell -> Th2 -->
+  <circle id="tCell" cx="250" cy="120" r="36" class="c-purple"/>
+  <text class="ts" x="250" y="120" text-anchor="middle" dominant-baseline="central" id="tLabel">Naive CD4</text>
+  <g id="th2" class="stg">
+    <text class="ts" x="250" y="176" text-anchor="middle">IL-4 → Th2</text>
+    <text class="ts" x="250" y="192" text-anchor="middle">(GATA3)</text>
+    <circle class="pulse" cx="300" cy="104" r="5" fill="#1D9E75"/>
+    <circle class="pulse" cx="314" cy="128" r="5" fill="#1D9E75" style="animation-delay:.4s"/>
+    <circle class="pulse" cx="328" cy="110" r="5" fill="#1D9E75" style="animation-delay:.8s"/>
+    <text class="ts" x="314" y="88" text-anchor="middle">IL-4, IL-13</text>
+  </g>
+
+  <!-- B cell class switch -->
+  <g id="help" class="stg">
+    <line x1="288" y1="146" x2="368" y2="146" stroke="var(--t)" stroke-width="1.2" marker-end="url(#hyArrow)"/>
+    <text class="ts" x="330" y="166" text-anchor="middle">CD40L</text>
+  </g>
+  <circle cx="410" cy="120" r="36" class="c-amber"/>
+  <text class="ts" x="410" y="120" text-anchor="middle" dominant-baseline="central">B cell</text>
+  <g id="switch" class="stg">
+    <text class="ts" x="410" y="176" text-anchor="middle">class switch</text>
+    <text class="ts" x="410" y="192" text-anchor="middle">IgM → IgE</text>
+  </g>
+
+  <!-- plasma cell -->
+  <g id="plasma" class="stg">
+    <line x1="448" y1="120" x2="518" y2="120" stroke="var(--t)" stroke-width="1.2" marker-end="url(#hyArrow)"/>
+    <circle cx="560" cy="120" r="36" class="c-purple"/>
+    <text class="ts" x="560" y="120" text-anchor="middle" dominant-baseline="central">Plasma cell</text>
+    <text class="ts" x="560" y="176" text-anchor="middle">secretes IgE</text>
+    <g fill="none" stroke="#7F77DD" stroke-width="2" stroke-linecap="round">
+      <path d="M580 214 V204 M580 204 L574 197 M580 204 L586 197"/>
+      <path d="M548 222 V212 M548 212 L542 205 M548 212 L554 205"/>
+      <path d="M514 214 V204 M514 204 L508 197 M514 204 L520 197"/>
+    </g>
+    <path d="M560 194 Q520 214 470 240" fill="none" stroke="#7F77DD" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#hyArrow)"/>
+  </g>
+
+  <!-- mast cell, sensitized -->
+  <g id="mastS" class="stg">
+    <ellipse cx="340" cy="290" rx="150" ry="38" class="c-coral"/>
+    <text class="th" x="340" y="296" text-anchor="middle" dominant-baseline="central">Mast cell</text>
+    <g fill="none" stroke="#7F77DD" stroke-width="2.5" stroke-linecap="round">
+      <path d="M270 256 V244 M270 244 L262 235 M270 244 L278 235"/>
+      <path d="M320 253 V244 M320 244 L312 235 M320 244 L328 235"/>
+      <path d="M370 253 V244 M370 244 L362 235 M370 244 L378 235"/>
+      <path d="M420 257 V244 M420 244 L412 235 M420 244 L428 235"/>
+    </g>
+    <text class="ts" x="30" y="278" text-anchor="start">IgE on FcεRI:</text>
+    <text class="ts" x="30" y="294" text-anchor="start">sensitized,</text>
+    <text class="ts" x="30" y="310" text-anchor="start">no symptoms yet</text>
+  </g>
+</g>
+
+<!-- ===================== MAST CELL ACTIVATION ===================== -->
+<g id="gAct" class="hide">
+  <rect x="30" y="90" width="620" height="205" rx="30" fill="var(--surface-1)" stroke="#D85A30" stroke-width="1.5"/>
+  <text class="ts" x="48" y="282">Mast cell</text>
+
+  <!-- FcεRI + IgE + allergen -->
+  <rect x="114" y="84" width="12" height="14" rx="2" fill="#534AB7"/>
+  <rect x="164" y="84" width="12" height="14" rx="2" fill="#534AB7"/>
+  <g fill="none" stroke="#7F77DD" stroke-width="2.5" stroke-linecap="round">
+    <path d="M120 84 V72 M120 72 L112 62 M120 72 L128 62"/>
+    <path d="M170 84 V72 M170 72 L162 62 M170 72 L178 62"/>
+  </g>
+  <circle cx="145" cy="58" r="13" fill="#EF9F27"/>
+  <text class="ts" x="145" y="20" text-anchor="middle">Allergen cross-links</text>
+  <text class="ts" x="145" y="35" text-anchor="middle">IgE on FcεRI</text>
+
+  <!-- early signalling -->
+  <circle cx="120" cy="124" r="15" class="c-teal"/>
+  <text class="ts" x="120" y="124" text-anchor="middle" dominant-baseline="central">Lyn</text>
+  <circle cx="175" cy="154" r="15" class="c-teal"/>
+  <text class="ts" x="175" y="154" text-anchor="middle" dominant-baseline="central">Syk</text>
+  <line x1="133" y1="132" x2="160" y2="146" stroke="var(--t)" stroke-width="1.2" marker-end="url(#hyArrow)"/>
+  <text class="ts" x="60" y="152" text-anchor="middle">ITAM-P</text>
+
+  <g id="caPath" class="stg">
+    <line x1="189" y1="162" x2="218" y2="178" stroke="var(--t)" stroke-width="1.2" marker-end="url(#hyArrow)"/>
+    <circle cx="238" cy="188" r="19" class="c-purple"/>
+    <text class="ts" x="238" y="188" text-anchor="middle" dominant-baseline="central">PLCγ</text>
+    <line x1="252" y1="202" x2="280" y2="224" stroke="var(--t)" stroke-width="1.2" marker-end="url(#hyArrow)"/>
+    <ellipse cx="310" cy="242" rx="40" ry="20" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="1"/>
+    <text class="ts" x="310" y="242" text-anchor="middle" dominant-baseline="central">ER</text>
+    <text class="ts" x="310" y="278" text-anchor="middle">IP₃ → Ca²⁺ release</text>
+    <circle class="rise" cx="345" cy="215" r="4" fill="#378ADD"/>
+    <circle class="rise" cx="360" cy="222" r="4" fill="#378ADD" style="animation-delay:.5s"/>
+    <circle class="rise" cx="330" cy="212" r="4" fill="#378ADD" style="animation-delay:1s"/>
+    <text class="ts" x="372" y="200" text-anchor="start">Ca²⁺</text>
+  </g>
+
+  <!-- granules -->
+  <circle class="gran" id="hg1" cx="400" cy="140" r="11" fill="#B91C1C"/>
+  <circle class="gran" id="hg2" cx="440" cy="128" r="11" fill="#B91C1C"/>
+  <circle class="gran" id="hg3" cx="480" cy="140" r="11" fill="#B91C1C"/>
+  <g id="histOut" class="stg">
+    <circle class="rise" cx="410" cy="78" r="4" fill="#B91C1C"/>
+    <circle class="rise" cx="440" cy="72" r="4" fill="#B91C1C" style="animation-delay:.4s"/>
+    <circle class="rise" cx="470" cy="78" r="4" fill="#B91C1C" style="animation-delay:.8s"/>
+    <text class="ts" x="440" y="20" text-anchor="middle">Histamine, tryptase</text>
+    <text class="ts" x="440" y="35" text-anchor="middle">seconds–minutes</text>
+  </g>
+
+  <!-- lipid mediators -->
+  <g id="lipids" class="stg">
+    <text class="ts" x="575" y="140" text-anchor="middle">Arachidonic acid</text>
+    <text class="ts" x="575" y="156" text-anchor="middle">→ LTC₄, PGD₂</text>
+    <line x1="575" y1="124" x2="575" y2="70" stroke="#EF9F27" stroke-width="1.5" marker-end="url(#hyArrow)"/>
+    <text class="ts" x="590" y="20" text-anchor="middle">Leukotrienes, PGD₂</text>
+    <text class="ts" x="590" y="35" text-anchor="middle">minutes</text>
+  </g>
+
+  <!-- late phase -->
+  <ellipse cx="560" cy="240" rx="50" ry="30" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="3 3"/>
+  <text class="ts" x="560" y="240" text-anchor="middle" dominant-baseline="central">Nucleus</text>
+  <g id="late" class="stg">
+    <text class="ts" x="440" y="232" text-anchor="middle">IL-4, IL-5, IL-13, TNF</text>
+    <text class="ts" x="440" y="248" text-anchor="middle">hours</text>
+    <line x1="560" y1="270" x2="560" y2="308" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#hyArrow)"/>
+    <text class="th" x="340" y="326" text-anchor="middle">Eosinophils recruited → late-phase reaction (2–24 h)</text>
+  </g>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "sens";
+const labels = {
+  sens: [
+    "Step 0 of 3 — first exposure: a dendritic cell takes up the allergen and presents its peptide on MHC-II to a naive CD4 T cell",
+    "Step 1 of 3 — with IL-4 around, the T cell becomes a Th2 cell (transcription factor GATA3) and secretes IL-4 and IL-13",
+    "Step 2 of 3 — Th2 help (CD40L plus IL-4/IL-13) makes an allergen-specific B cell class-switch from IgM to IgE",
+    "Step 3 of 3 — the plasma cell secretes IgE, which binds high-affinity FcεRI on mast cells — sensitized, but no symptoms yet"
+  ],
+  act: [
+    "Step 0 of 3 — re-exposure: one allergen cross-links IgE on neighbouring FcεRI; Lyn phosphorylates the receptor ITAMs and recruits Syk",
+    "Step 1 of 3 — Syk activates PLCγ; IP₃ releases Ca²⁺ from the ER, and preformed granules fuse with the membrane: histamine, tryptase out in seconds–minutes",
+    "Step 2 of 3 — newly made lipid mediators follow within minutes: leukotrienes (LTC₄) and prostaglandin D₂ — strong bronchoconstriction and mucus",
+    "Step 3 of 3 — over hours, gene transcription makes IL-4, IL-5, IL-13 and TNF, recruiting eosinophils: the late-phase reaction"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnSens").classList.toggle("active", m === "sens");
+  document.getElementById("btnAct").classList.toggle("active", m === "act");
+  document.getElementById("gSens").classList.toggle("hide", m !== "sens");
+  document.getElementById("gAct").classList.toggle("hide", m !== "act");
+  render();
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "sens") {
+    document.getElementById("th2").classList.toggle("on", step >= 1);
+    document.getElementById("tLabel").textContent = step >= 1 ? "Th2" : "Naive CD4";
+    document.getElementById("help").classList.toggle("on", step >= 2);
+    document.getElementById("switch").classList.toggle("on", step >= 2);
+    document.getElementById("plasma").classList.toggle("on", step >= 3);
+    document.getElementById("mastS").classList.toggle("on", step >= 3);
+  } else {
+    document.getElementById("caPath").classList.toggle("on", step >= 1);
+    // granules dock onto the membrane and empty out
+    ["hg1", "hg2", "hg3"].forEach(function (id) {
+      const g = document.getElementById(id);
+      const dy = 101 - parseFloat(g.getAttribute("cy"));
+      g.style.transform = step >= 1 ? "translateY(" + dy + "px)" : "translateY(0px)";
+      g.style.opacity = step >= 1 ? "0.45" : "1";
+    });
+    document.getElementById("histOut").classList.toggle("on", step >= 1);
+    document.getElementById("lipids").classList.toggle("on", step >= 2);
+    document.getElementById("late").classList.toggle("on", step >= 3);
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("sens");
+</script>
+'''
+
 
 
 # ---------------------------------------------------------------------------
@@ -10481,6 +10729,15 @@ REGISTRY = {
                 "The allergy mechanism: first exposure sensitizes mast "
                 "cells with IgE; a second exposure cross-links that IgE, "
                 "triggering degranulation and histamine release."
+            ),
+        },
+        "Technical": {
+            "fragment": TYPE1_HYPERSENSITIVITY_TECHNICAL,
+            "height": 540,
+            "blurb": (
+                "Sensitization (Th2 help drives IgE class switching) and mast "
+                "cell activation: FcεRI cross-linking, Lyn/Syk/Ca²⁺, "
+                "histamine, leukotrienes and the late-phase reaction."
             ),
         },
     },
