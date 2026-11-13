@@ -9633,6 +9633,233 @@ render();
 </script>
 '''
 
+RNA_INTERFERENCE_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of RNA interference in technical detail: a switchable view of the siRNA pathway, in which Argonaute 2 slices a perfectly matched target, and the microRNA pathway, from Drosha processing in the nucleus to seed pairing, translational repression and mRNA decay.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .hide { display: none; }
+  .mv { transition: transform 1s ease, opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSi" onclick="setMode('si')">siRNA (Ago2 slicing)</button>
+  <button id="btnMi" onclick="setMode('mi')">miRNA pathway</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>RNA interference — siRNA slicing and the microRNA pathway</title>
+<desc>siRNA view: Dicer cuts long double-stranded RNA into 21 to 23 nucleotide duplexes with two-nucleotide 3 prime overhangs. The duplex is loaded into Argonaute 2; the strand whose 5 prime end is less stably paired becomes the guide, and Ago2 cleaves and ejects the passenger strand. The guide pairs fully with the target mRNA and Ago2 slices the target between the nucleotides facing guide positions 10 and 11. The fragments are degraded by XRN1 and the exosome, and RISC is released to cut further targets. miRNA view: in the nucleus, the Drosha–DGCR8 microprocessor crops a pri-miRNA hairpin into a roughly 70-nucleotide pre-miRNA. Exportin-5 carries it to the cytoplasm, where Dicer removes the loop to leave a miRNA duplex. Argonaute keeps the guide strand, whose seed region, nucleotides 2 to 8, pairs with sites in the target's 3 prime untranslated region; the rest is mismatched, so there is no slicing. GW182 recruits the CCR4–NOT deadenylase: translation is repressed, the poly(A) tail is shortened and the mRNA decays.</desc>
+
+<!-- ===================== siRNA MODE ===================== -->
+<g id="gSi">
+  <!-- zone 1: Dicer -->
+  <text class="ts" x="115" y="56" text-anchor="middle">Long dsRNA</text>
+  <path d="M40 70 H190" stroke="#378ADD" stroke-width="4"/>
+  <path d="M40 82 H190" stroke="#D85A30" stroke-width="4"/>
+  <g id="dicerCut" class="stg">
+    <path d="M88 62 V90 M138 62 V90" stroke="#7F77DD" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <ellipse cx="115" cy="112" rx="38" ry="14" class="c-purple"/>
+    <text class="ts" x="115" y="112" text-anchor="middle" dominant-baseline="central">Dicer</text>
+    <text class="ts" x="115" y="146" text-anchor="middle">21–23 nt duplexes,</text>
+    <text class="ts" x="115" y="162" text-anchor="middle">2-nt 3′ overhangs</text>
+  </g>
+
+  <!-- target mRNA -->
+  <g id="tL" class="mv">
+    <circle cx="300" cy="240" r="5" fill="var(--t)"/>
+    <path d="M300 240 H490" stroke="var(--t)" stroke-width="3"/>
+  </g>
+  <g id="tR" class="mv">
+    <path d="M490 240 H650" stroke="var(--t)" stroke-width="3"/>
+    <text class="ts" x="650" y="228" text-anchor="end">AAAA</text>
+  </g>
+  <text class="ts" x="310" y="226" text-anchor="start">Target mRNA</text>
+
+  <!-- passenger strand: cut and ejected -->
+  <g id="passenger" class="stg">
+    <path id="pA" class="mv" d="M280 88 H338" stroke="#D85A30" stroke-width="3"/>
+    <path id="pB" class="mv" d="M342 88 H400" stroke="#D85A30" stroke-width="3"/>
+    <path d="M334 82 l12 12 M346 82 l-12 12" stroke="#B91C1C" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Ago2 / RISC -->
+  <g id="ago" class="mv">
+    <rect x="260" y="50" width="160" height="80" rx="20" fill="#5DCAA5" fill-opacity="0.35" stroke="#0F6E56" stroke-width="1.2"/>
+    <text class="ts" x="340" y="68" text-anchor="middle">Ago2 (RISC)</text>
+    <path id="guide" d="M280 100 H400" stroke="#378ADD" stroke-width="3" style="opacity:0;transition:opacity .5s"/>
+    <g id="pairTicks" style="opacity:0;transition:opacity .5s">
+      <path d="M286 102 V108 M298 102 V108 M310 102 V108 M322 102 V108 M334 102 V108 M346 102 V108 M358 102 V108 M370 102 V108 M382 102 V108 M394 102 V108" stroke="#0F6E56" stroke-width="1.2"/>
+    </g>
+  </g>
+  <g id="loadNote" class="stg">
+    <text class="ts" x="340" y="150" text-anchor="middle">guide = strand with less stable 5′ end;</text>
+    <text class="ts" x="340" y="166" text-anchor="middle">passenger sliced and ejected</text>
+  </g>
+  <g id="slice" class="stg">
+    <path d="M484 232 l12 12 M496 232 l-12 12" stroke="#B91C1C" stroke-width="2.5" stroke-linecap="round"/>
+    <text class="ts" x="490" y="284" text-anchor="middle">Ago2 slices opposite guide nt 10–11 (full match)</text>
+  </g>
+  <g id="decay" class="stg">
+    <text class="ts" x="385" y="272" text-anchor="middle">XRN1 degrades 5′→3′</text>
+    <text class="ts" x="580" y="272" text-anchor="middle">exosome 3′→5′</text>
+    <text class="ts" x="580" y="150" text-anchor="middle">RISC released:</text>
+    <text class="ts" x="580" y="166" text-anchor="middle">cuts again (catalytic)</text>
+  </g>
+</g>
+
+<!-- ===================== miRNA MODE ===================== -->
+<g id="gMi" class="hide">
+  <rect x="20" y="24" width="230" height="170" rx="16" fill="none" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="5 4"/>
+  <text class="ts" x="34" y="44">Nucleus</text>
+  <rect x="244" y="92" width="12" height="22" rx="3" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.8"/>
+
+  <text class="ts" x="100" y="84" text-anchor="middle" id="priLabel">pri-miRNA</text>
+  <g id="flanks" class="mv">
+    <path d="M30 100 H64 M30 112 H64" stroke="var(--t)" stroke-width="2.5" stroke-dasharray="4 3"/>
+  </g>
+  <g id="pre" class="mv">
+    <path d="M64 100 H140" stroke="#378ADD" stroke-width="3"/>
+    <path d="M64 112 H140" stroke="#D85A30" stroke-width="3"/>
+    <path id="loop" d="M140 100 A6 6 0 0 1 140 112" fill="none" stroke="#7F77DD" stroke-width="3" style="transition:opacity .6s"/>
+  </g>
+  <g id="drosha">
+    <ellipse cx="88" cy="142" rx="44" ry="13" class="c-coral"/>
+    <text class="ts" x="88" y="142" text-anchor="middle" dominant-baseline="central">Drosha–DGCR8</text>
+    <text class="ts" x="135" y="176" text-anchor="middle">crops → ~70-nt pre-miRNA</text>
+  </g>
+
+  <g id="export" class="stg">
+    <text class="ts" x="250" y="84" text-anchor="middle">Exportin-5</text>
+    <ellipse cx="338" cy="146" rx="34" ry="12" class="c-purple"/>
+    <text class="ts" x="338" y="146" text-anchor="middle" dominant-baseline="central">Dicer</text>
+    <text class="ts" x="338" y="178" text-anchor="middle">loop cut off → miRNA duplex</text>
+  </g>
+
+  <!-- target mRNA -->
+  <path d="M290 250 H660" stroke="var(--t)" stroke-width="3"/>
+  <circle cx="290" cy="250" r="5" fill="var(--t)"/>
+  <rect x="300" y="243" width="130" height="14" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.8"/>
+  <text class="ts" x="365" y="272" text-anchor="middle">coding sequence</text>
+  <text class="ts" x="510" y="272" text-anchor="middle">3′ UTR</text>
+  <text class="ts" x="625" y="272" text-anchor="middle" id="polyA">AAAAAAA</text>
+  <g id="ribo" class="mv">
+    <ellipse cx="365" cy="236" rx="22" ry="12" class="c-amber"/>
+  </g>
+  <text class="ts" x="365" y="214" text-anchor="middle" id="riboLabel">Ribosome</text>
+
+  <!-- Ago / miRISC -->
+  <g id="miAgo" class="stg">
+    <g id="miAgoMv" class="mv">
+      <rect x="420" y="36" width="170" height="64" rx="18" fill="#5DCAA5" fill-opacity="0.35" stroke="#0F6E56" stroke-width="1.2"/>
+      <text class="ts" x="505" y="54" text-anchor="middle">Ago (miRISC)</text>
+      <path d="M440 80 H570" stroke="#378ADD" stroke-width="3"/>
+      <path d="M536 82 V90 M542 82 V90 M548 82 V90 M554 82 V90 M560 82 V90 M566 82 V90" stroke="#0F6E56" stroke-width="1.4"/>
+      <text class="ts" x="551" y="72" text-anchor="middle">seed</text>
+    </g>
+  </g>
+  <text id="seedNote" class="ts stg" x="440" y="294" text-anchor="middle">seed (nt 2–8) pairs; rest mismatched → no slicing</text>
+
+  <g id="silence" class="stg">
+    <rect x="596" y="196" width="54" height="18" rx="5" class="c-purple"/>
+    <text class="ts" x="623" y="205" text-anchor="middle" dominant-baseline="central">GW182</text>
+    <rect x="596" y="218" width="78" height="18" rx="5" class="c-coral"/>
+    <text class="ts" x="635" y="227" text-anchor="middle" dominant-baseline="central">CCR4–NOT</text>
+    <text class="ts" x="520" y="140" text-anchor="middle">GW182 recruits the CCR4–NOT deadenylase:</text>
+    <text class="ts" x="520" y="156" text-anchor="middle">poly(A) shortened → mRNA decays</text>
+  </g>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "si";
+const labels = {
+  si: [
+    "Step 0 of 3 — Dicer (an RNase III enzyme) cuts long dsRNA into 21–23 nt siRNA duplexes with 2-nt 3′ overhangs",
+    "Step 1 of 3 — the duplex loads into Argonaute 2: the strand with the less stably paired 5′ end stays as the guide; Ago2 cleaves and ejects the passenger",
+    "Step 2 of 3 — the guide pairs perfectly with the target mRNA, and Ago2 slices the target between the bases facing guide positions 10 and 11",
+    "Step 3 of 3 — the fragments are degraded (XRN1 5′→3′, exosome 3′→5′) and RISC is freed to cut more copies — one guide silences many mRNAs"
+  ],
+  mi: [
+    "Step 0 of 3 — in the nucleus, the Drosha–DGCR8 microprocessor crops the pri-miRNA hairpin into a ~70-nt pre-miRNA",
+    "Step 1 of 3 — Exportin-5 carries the pre-miRNA to the cytoplasm, where Dicer cuts off the loop, leaving a ~22-nt miRNA duplex",
+    "Step 2 of 3 — Argonaute keeps the guide strand; its seed (nt 2–8) pairs with sites in the target 3′ UTR, but the rest is mismatched, so no slicing",
+    "Step 3 of 3 — GW182 recruits CCR4–NOT: translation is repressed, the poly(A) tail is shortened and the mRNA decays — one miRNA tunes hundreds of mRNAs"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnSi").classList.toggle("active", m === "si");
+  document.getElementById("btnMi").classList.toggle("active", m === "mi");
+  document.getElementById("gSi").classList.toggle("hide", m !== "si");
+  document.getElementById("gMi").classList.toggle("hide", m !== "mi");
+  render();
+}
+function T(id, t, o) {
+  const e = document.getElementById(id);
+  e.style.transform = t;
+  if (o !== undefined) e.style.opacity = o;
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "si") {
+    document.getElementById("dicerCut").classList.toggle("on", step >= 0);
+    // passenger: shown in Ago at step 1, cut in two and drifting out; gone afterwards
+    document.getElementById("passenger").classList.toggle("on", step === 1);
+    document.getElementById("passenger").style.visibility = step === 1 ? "visible" : "hidden";
+    T("pA", step === 1 ? "translate(-62px,0px)" : "translate(0px,0px)");
+    T("pB", step === 1 ? "translate(62px,0px)" : "translate(0px,0px)");
+    document.getElementById("guide").style.opacity = step >= 1 ? "1" : "0";
+    document.getElementById("loadNote").classList.toggle("on", step === 1);
+    const ago = document.getElementById("ago");
+    ago.style.opacity = step >= 1 ? "1" : "0.15";
+    ago.style.transform = step === 2 ? "translate(150px,132px)" : (step >= 3 ? "translate(240px,0px)" : "translate(0px,0px)");
+    document.getElementById("pairTicks").style.opacity = step === 2 ? "1" : "0";
+    document.getElementById("slice").classList.toggle("on", step === 2);
+    document.getElementById("slice").style.visibility = step === 2 ? "visible" : "hidden";
+    T("tL", step >= 3 ? "translateX(-16px)" : "translateX(0px)", step >= 3 ? "0.3" : "1");
+    T("tR", step >= 3 ? "translateX(16px)" : "translateX(0px)", step >= 3 ? "0.3" : "1");
+    document.getElementById("decay").classList.toggle("on", step >= 3);
+  } else {
+    // step 0: flanks cropped off; step 1: pre-miRNA exported and loop removed; step 2+: loaded into Ago
+    T("flanks", "translate(0px,0px)", "0.3");
+    document.getElementById("priLabel").textContent = step === 0 ? "pri-miRNA → pre-miRNA" : "";
+    T("pre", step >= 1 ? "translate(236px,10px)" : "translate(0px,0px)", step >= 2 ? "0" : "1");
+    document.getElementById("loop").style.opacity = step >= 1 ? "0" : "1";
+    document.getElementById("drosha").style.opacity = step === 0 ? "1" : "0.25";
+    document.getElementById("export").classList.toggle("on", step === 1);
+    document.getElementById("miAgo").classList.toggle("on", step >= 2);
+    T("miAgoMv", step >= 2 ? "translate(0px,158px)" : "translate(0px,0px)");
+    document.getElementById("seedNote").classList.toggle("on", step >= 2);
+    document.getElementById("silence").classList.toggle("on", step >= 3);
+    T("ribo", "translate(0px,0px)", step >= 3 ? "0.2" : "1");
+    document.getElementById("riboLabel").textContent = step >= 3 ? "translation ↓" : "Ribosome";
+    document.getElementById("polyA").textContent = step >= 3 ? "AA" : "AAAAAAA";
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("si");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # SYNAPSE_TYPES_TECHNICAL  (source: synapse_types.html)
@@ -10755,6 +10982,15 @@ REGISTRY = {
                 "Dicer cleaves double-stranded RNA into siRNA; the guide "
                 "strand loads into RISC and directs it to cleave a "
                 "complementary target mRNA, silencing that gene."
+            ),
+        },
+        "Technical": {
+            "fragment": RNA_INTERFERENCE_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "siRNA: Dicer products, guide-strand selection and Ago2 "
+                "slicing of a perfect match; miRNA: Drosha, Exportin-5, "
+                "seed pairing in the 3′ UTR, repression and deadenylation."
             ),
         },
     },
