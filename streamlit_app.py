@@ -1570,6 +1570,237 @@ setMode('normal');
 </script>
 '''
 
+ENZYME_KINETICS_TECHNICAL = '''
+<h2 class="sr-only">Interactive enzyme kinetics plots: a switchable view of the Michaelis–Menten curve with Km, Vmax and kcat, the effect of competitive and noncompetitive inhibitors including the Lineweaver–Burk plot, and the sigmoidal curve of an allosteric enzyme shifted by activators and inhibitors.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .crv { fill: none; stroke-linecap: round; transition: opacity .6s ease; }
+  #marker { transition: cx .9s ease, cy .9s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnMM" onclick="setMode('mm')">Michaelis–Menten</button>
+  <button id="btnInh" onclick="setMode('inh')">Inhibitors on the plot</button>
+  <button id="btnAllo" onclick="setMode('allo')">Allosteric (sigmoidal)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Enzyme kinetics — rate curves</title>
+<desc>Michaelis–Menten view: the reaction rate v rises almost linearly with substrate concentration when substrate is scarce, reaches half of the maximum rate Vmax when the substrate concentration equals Km, and levels off at Vmax when the enzyme is saturated; kcat equals Vmax divided by total enzyme and kcat over Km measures catalytic efficiency. Inhibitor view: a competitive inhibitor shifts the curve right, raising the apparent Km while Vmax is unchanged; a noncompetitive inhibitor lowers Vmax while Km is unchanged. On a Lineweaver–Burk double-reciprocal plot, competitive inhibition gives lines meeting on the y-axis and noncompetitive inhibition gives lines meeting on the x-axis. Allosteric view: a cooperative enzyme gives a sigmoidal curve; an allosteric activator shifts it left and an allosteric inhibitor shifts it right, as for phosphofructokinase-1, activated by AMP and inhibited by ATP and citrate.</desc>
+
+<!-- ======== v vs [S] axes (all modes except the Lineweaver–Burk step) ======== -->
+<g id="vsPlot">
+  <line x1="80" y1="250" x2="630" y2="250" stroke="var(--t)" stroke-width="1"/>
+  <line x1="80" y1="250" x2="80" y2="40" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="355" y="288" text-anchor="middle">[Substrate]</text>
+  <text class="ts" x="44" y="150" text-anchor="middle" transform="rotate(-90 44 150)">Reaction rate (v)</text>
+
+  <!-- Michaelis–Menten mode -->
+  <g id="gMM">
+    <path id="mmCurve" class="crv" stroke="#1D9E75" stroke-width="3"/>
+    <line x1="80" y1="60" x2="620" y2="60" stroke="var(--border-strong)" stroke-dasharray="5 4"/>
+    <text class="ts" x="626" y="64">Vmax</text>
+    <path id="lowLine" class="stg" d="M80 250 L210 85" stroke="#EF9F27" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+    <g id="kmLines" class="stg">
+      <path d="M80 155 H161 V250" fill="none" stroke="#7F77DD" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text class="ts" x="161" y="266" text-anchor="middle">Km</text>
+      <text class="ts" x="86" y="148">Vmax/2</text>
+    </g>
+    <circle id="marker" cx="107" cy="200" r="7" fill="#E24B4A"/>
+    <g fill="var(--t)">
+      <text class="ts" x="610" y="180" text-anchor="end" id="mmNote1"></text>
+      <text class="ts" x="610" y="198" text-anchor="end" id="mmNote2"></text>
+    </g>
+    <g id="kcatBox" class="stg">
+      <rect x="360" y="168" width="256" height="70" rx="8" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.6"/>
+      <text class="ts" x="488" y="186" text-anchor="middle">v = Vmax·[S] / (Km + [S])</text>
+      <text class="ts" x="488" y="206" text-anchor="middle">kcat = Vmax / [E]total  (turnover per second)</text>
+      <text class="ts" x="488" y="226" text-anchor="middle">kcat / Km = catalytic efficiency</text>
+    </g>
+  </g>
+
+  <!-- Inhibitor mode (v vs [S]) -->
+  <g id="gInh" class="hide">
+    <path id="inNormal" class="crv" stroke="#1D9E75" stroke-width="3"/>
+    <line x1="80" y1="60" x2="620" y2="60" stroke="var(--border-strong)" stroke-dasharray="5 4"/>
+    <text class="ts" x="626" y="64">Vmax</text>
+    <text class="ts" x="626" y="96" fill="#1D9E75">normal</text>
+    <g id="inComp" class="stg">
+      <path id="inCompCurve" class="crv" stroke="#E24B4A" stroke-width="3" stroke-dasharray="7 4"/>
+      <path d="M80 155 H161 V250 M161 155 H242 V250" fill="none" stroke="#E24B4A" stroke-width="1" stroke-dasharray="3 3"/>
+      <text class="ts" x="161" y="266" text-anchor="middle">Km</text>
+      <text class="ts" x="250" y="266" text-anchor="start">Km(app) ↑</text>
+      <text class="ts" x="610" y="196" text-anchor="end">Competitive: Km ↑, Vmax unchanged</text>
+      <text class="ts" x="610" y="214" text-anchor="end">(enough substrate still reaches Vmax)</text>
+    </g>
+    <g id="inNon" class="stg">
+      <path id="inNonCurve" class="crv" stroke="#7F77DD" stroke-width="3" stroke-dasharray="2 4"/>
+      <line x1="80" y1="155" x2="620" y2="155" stroke="#7F77DD" stroke-width="1" stroke-dasharray="3 3"/>
+      <text class="ts" x="618" y="149" text-anchor="end" fill="#534AB7">Vmax(app)</text>
+      <text class="ts" x="610" y="232" text-anchor="end">Noncompetitive: Vmax ↓, Km unchanged</text>
+    </g>
+  </g>
+
+  <!-- Allosteric mode -->
+  <g id="gAllo" class="hide">
+    <line x1="80" y1="60" x2="620" y2="60" stroke="var(--border-strong)" stroke-dasharray="5 4"/>
+    <text class="ts" x="626" y="64">Vmax</text>
+    <path id="alHyper" class="crv" stroke="var(--border-strong)" stroke-width="2" stroke-dasharray="4 4"/>
+    <path id="alSig" class="crv" stroke="#1D9E75" stroke-width="3"/>
+    <g id="alAct" class="stg">
+      <path id="alActCurve" class="crv" stroke="#378ADD" stroke-width="3" stroke-dasharray="7 4"/>
+      <text class="ts" x="150" y="80" text-anchor="start" fill="#185FA5">+ activator: K0.5 ↓</text>
+    </g>
+    <g id="alInh" class="stg">
+      <path id="alInhCurve" class="crv" stroke="#E24B4A" stroke-width="3" stroke-dasharray="2 4"/>
+      <text class="ts" x="470" y="200" text-anchor="start" fill="#B91C1C">+ inhibitor: K0.5 ↑</text>
+    </g>
+    <text class="ts" x="96" y="56" text-anchor="start" id="alNote1"></text>
+    <text class="ts" x="96" y="72" text-anchor="start" id="alNote0"></text>
+    <g id="pfk" class="stg">
+      <rect x="430" y="214" width="190" height="26" rx="6" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.6"/>
+      <text class="ts" x="525" y="227" text-anchor="middle" dominant-baseline="central">PFK-1: AMP ↑ · ATP, citrate ↓</text>
+    </g>
+  </g>
+</g>
+
+<!-- ======== Lineweaver–Burk (inhibitor mode, last step) ======== -->
+<g id="lbPlot" class="hide">
+  <line x1="160" y1="250" x2="500" y2="250" stroke="var(--t)" stroke-width="1"/>
+  <line x1="300" y1="262" x2="300" y2="40" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="508" y="254" text-anchor="start">1/[S]</text>
+  <text class="ts" x="300" y="32" text-anchor="middle">1/v</text>
+  <path id="lbNormal" fill="none" stroke="#1D9E75" stroke-width="2.5"/>
+  <path id="lbComp" fill="none" stroke="#E24B4A" stroke-width="2.5" stroke-dasharray="7 4"/>
+  <path id="lbNon" fill="none" stroke="#7F77DD" stroke-width="2.5" stroke-dasharray="2 4"/>
+  <line x1="294" y1="222" x2="306" y2="222" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="310" y="242" text-anchor="start">1/Vmax</text>
+  <text class="ts" x="220" y="268" text-anchor="middle">−1/Km</text>
+  <text class="ts" x="490" y="72" text-anchor="start" fill="#534AB7">noncompetitive</text>
+  <text class="ts" x="490" y="100" text-anchor="start" fill="#B91C1C">competitive</text>
+  <text class="ts" x="490" y="163" text-anchor="start" fill="#0F6E56">normal</text>
+  <text class="ts" x="40" y="80" text-anchor="start">Competitive: lines meet</text>
+  <text class="ts" x="40" y="96" text-anchor="start">on the y-axis (same Vmax)</text>
+  <text class="ts" x="40" y="128" text-anchor="start">Noncompetitive: lines meet</text>
+  <text class="ts" x="40" y="144" text-anchor="start">on the x-axis (same Km)</text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "mm";
+const X = function (s) { return 80 + s * 54; };          // [S] 0..10
+const Y = function (v) { return 250 - v * 190; };        // v 0..1 (Vmax = 1)
+function curve(fn) {
+  let d = "";
+  for (let i = 0; i <= 80; i++) {
+    const s = i * 10 / 80;
+    d += (i ? " L" : "M") + X(s).toFixed(1) + " " + Y(fn(s)).toFixed(1);
+  }
+  return d;
+}
+const mm = function (vmax, km) { return function (s) { return vmax * s / (km + s); }; };
+const hill = function (k, n) { return function (s) { return Math.pow(s, n) / (Math.pow(k, n) + Math.pow(s, n)); }; };
+document.getElementById("mmCurve").setAttribute("d", curve(mm(1, 1.5)));
+document.getElementById("inNormal").setAttribute("d", curve(mm(1, 1.5)));
+document.getElementById("inCompCurve").setAttribute("d", curve(mm(1, 3)));
+document.getElementById("inNonCurve").setAttribute("d", curve(mm(0.5, 1.5)));
+document.getElementById("alHyper").setAttribute("d", curve(mm(1, 3)));
+document.getElementById("alSig").setAttribute("d", curve(hill(3, 2.8)));
+document.getElementById("alActCurve").setAttribute("d", curve(hill(1.8, 2.8)));
+document.getElementById("alInhCurve").setAttribute("d", curve(hill(5.2, 2.8)));
+// Lineweaver–Burk: 1/v = (Km/Vmax)(1/S) + 1/Vmax ; x = 300 + 120*(1/S), y = 250 - 28*(1/v)
+function lb(vmax, km) {
+  const x0 = -1 / km, x1 = 1.5;
+  const f = function (u) { return (km / vmax) * u + 1 / vmax; };
+  return "M" + (300 + 120 * x0).toFixed(1) + " " + (250 - 28 * f(x0)).toFixed(1) +
+         " L" + (300 + 120 * x1).toFixed(1) + " " + (250 - 28 * f(x1)).toFixed(1);
+}
+document.getElementById("lbNormal").setAttribute("d", lb(1, 1.5));
+document.getElementById("lbComp").setAttribute("d", lb(1, 3));
+document.getElementById("lbNon").setAttribute("d", lb(0.5, 1.5));
+
+const labels = {
+  mm: [
+    "Step 0 of 3 — at low [S] most enzyme is free, so the rate rises almost linearly with substrate (v ≈ Vmax/Km · [S])",
+    "Step 1 of 3 — Km is the substrate concentration that gives half the maximum rate; a low Km means the enzyme saturates at low [S]",
+    "Step 2 of 3 — at high [S] every enzyme molecule is busy (all ES complex): the rate levels off at Vmax",
+    "Step 3 of 3 — kcat = Vmax / [E]total is the turnover number; kcat/Km measures catalytic efficiency"
+  ],
+  inh: [
+    "Step 0 of 3 — the normal Michaelis–Menten curve, for comparison",
+    "Step 1 of 3 — competitive inhibitor: competes for the active site, so more substrate is needed — Km(app) = Km(1 + [I]/Ki) rises, Vmax unchanged",
+    "Step 2 of 3 — noncompetitive inhibitor: binds elsewhere and disables a fraction of enzyme — Vmax(app) = Vmax/(1 + [I]/Ki) falls, Km unchanged",
+    "Step 3 of 3 — Lineweaver–Burk plot (1/v vs 1/[S]) turns the curves into straight lines: competitive lines meet on the y-axis, noncompetitive on the x-axis"
+  ],
+  allo: [
+    "Step 0 of 3 — a cooperative allosteric enzyme gives an S-shaped curve: binding at one subunit makes the next bind more easily (T → R shift)",
+    "Step 1 of 3 — an allosteric activator stabilizes the active R state: the curve shifts left (K0.5 falls)",
+    "Step 2 of 3 — an allosteric inhibitor stabilizes the inactive T state: the curve shifts right (K0.5 rises)",
+    "Step 3 of 3 — example: phosphofructokinase-1 — AMP activates it, ATP and citrate inhibit it, so glycolysis tracks the cell’s energy needs"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnMM").classList.toggle("active", m === "mm");
+  document.getElementById("btnInh").classList.toggle("active", m === "inh");
+  document.getElementById("btnAllo").classList.toggle("active", m === "allo");
+  document.getElementById("gMM").classList.toggle("hide", m !== "mm");
+  document.getElementById("gInh").classList.toggle("hide", m !== "inh");
+  document.getElementById("gAllo").classList.toggle("hide", m !== "allo");
+  render();
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  const lbStep = mode === "inh" && step >= 3;
+  document.getElementById("vsPlot").classList.toggle("hide", lbStep);
+  document.getElementById("lbPlot").classList.toggle("hide", !lbStep);
+  if (mode === "mm") {
+    const sVals = [0.5, 1.5, 9.5, 9.5];
+    const s = sVals[step], v = s / (1.5 + s);
+    const mk = document.getElementById("marker");
+    mk.setAttribute("cx", X(s)); mk.setAttribute("cy", Y(v));
+    mk.style.cx = X(s) + "px"; mk.style.cy = Y(v) + "px";
+    document.getElementById("lowLine").classList.toggle("on", step === 0);
+    document.getElementById("kmLines").classList.toggle("on", step >= 1);
+    document.getElementById("kcatBox").classList.toggle("on", step >= 3);
+    document.getElementById("kcatBox").style.visibility = step >= 3 ? "visible" : "hidden";
+    document.getElementById("mmNote1").textContent = step === 0 ? "Low [S]: rate ∝ [S]" : step === 1 ? "[S] = Km  →  v = Vmax/2" : step === 2 ? "Saturated: v → Vmax" : "";
+    document.getElementById("mmNote2").textContent = step === 2 ? "adding more substrate barely helps" : "";
+  } else if (mode === "inh") {
+    document.getElementById("inComp").classList.toggle("on", step >= 1);
+    document.getElementById("inNon").classList.toggle("on", step >= 2);
+  } else {
+    document.getElementById("alNote1").textContent = step === 0 ? "S-shaped (cooperative)" : "";
+    document.getElementById("alNote0").textContent = step === 0 ? "vs. dashed hyperbola (no cooperativity)" : "";
+    document.getElementById("alAct").classList.toggle("on", step === 1 || step >= 3);
+    document.getElementById("alInh").classList.toggle("on", step >= 2);
+    document.getElementById("pfk").classList.toggle("on", step >= 3);
+    document.getElementById("pfk").style.visibility = step >= 3 ? "visible" : "hidden";
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("mm");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # MEMBRANE_TRANSPORT_GENERAL  (source: membrane_transport.html)
@@ -11039,6 +11270,16 @@ REGISTRY = {
                 "(same site, beatable by more substrate), allosteric "
                 "inhibition (different site, not beatable), and allosteric "
                 "activation — regulation isn't only inhibition."
+            ),
+        },
+        "Technical": {
+            "fragment": ENZYME_KINETICS_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "The numbers behind it: Michaelis–Menten (Km, Vmax, kcat), "
+                "how competitive vs noncompetitive inhibitors change the "
+                "curve and the Lineweaver–Burk plot, and sigmoidal "
+                "allosteric kinetics."
             ),
         },
     },
