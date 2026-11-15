@@ -1967,6 +1967,236 @@ setMode('simple');
 </script>
 '''
 
+MEMBRANE_TRANSPORT_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of membrane transport in technical detail: a switchable view of the sodium-potassium ATPase cycle and of secondary active transport by the SGLT1 symporter and the sodium-calcium exchanger, including how digoxin works.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .ion { transition: cx 1s ease, cy 1s ease, x 1s ease, y 1s ease, opacity .6s ease; }
+  .sub { transition: d .8s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnPump" onclick="setMode('pump')">Na⁺/K⁺-ATPase cycle</button>
+  <button id="btnSec" onclick="setMode('sec')">Secondary active transport</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Membrane transport — sodium-potassium pump and secondary active transport</title>
+<desc>Pump view: in its E1 state, open to the cytosol, the sodium-potassium ATPase binds three sodium ions. ATP phosphorylates the pump, which switches to the E2 state open to the outside and releases the sodium ions. Two potassium ions bind from outside, the phosphate is released and the potassium ions are occluded. ATP binding returns the pump to E1, releasing potassium into the cytosol. Each cycle moves three sodium out and two potassium in per ATP, so the pump is electrogenic; ouabain and digoxin block it. Secondary transport view: the pump keeps cytosolic sodium low, creating an inward sodium gradient. The SGLT1 symporter uses two sodium ions moving down this gradient to carry one glucose into the cell against its gradient. The sodium-calcium exchanger NCX lets three sodium in while pushing one calcium out. When digoxin blocks the pump, the sodium gradient shrinks, NCX removes less calcium, and cytosolic calcium rises in heart muscle, strengthening contraction.</desc>
+
+<!-- shared membrane -->
+<rect x="300" y="48" width="80" height="210" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.6"/>
+<text class="ts" x="150" y="30" text-anchor="middle" id="outLbl">Outside: Na⁺ high, K⁺ low</text>
+<text class="ts" x="530" y="30" text-anchor="middle" id="inLbl">Cytosol: K⁺ high, Na⁺ low</text>
+
+<!-- ===================== PUMP MODE ===================== -->
+<g id="gPump">
+  <path id="upper" class="sub c-teal" d="M300 100 H380 V120 L300 146 Z"/>
+  <path id="lower" class="sub c-teal" d="M300 200 H380 V180 L300 154 Z"/>
+  <text class="ts" x="340" y="42" text-anchor="middle" id="stateLbl">E1 · open to the cytosol</text>
+
+  <circle id="na1" class="ion" cx="350" cy="138" r="6" fill="#378ADD"/>
+  <circle id="na2" class="ion" cx="364" cy="150" r="6" fill="#378ADD"/>
+  <circle id="na3" class="ion" cx="350" cy="162" r="6" fill="#378ADD"/>
+  <text id="naLbl" class="ts" x="400" y="120" text-anchor="start">3 Na⁺ bind</text>
+
+  <circle id="k1" class="ion" cx="200" cy="214" r="6" fill="#EF9F27"/>
+  <circle id="k2" class="ion" cx="224" cy="228" r="6" fill="#EF9F27"/>
+  <text id="kLbl" class="ts" x="212" y="252" text-anchor="middle">2 K⁺</text>
+
+  <g id="phos" class="stg">
+    <circle id="pCirc" class="ion" cx="372" cy="196" r="8" fill="#E24B4A"/>
+    <text id="pTxt" class="ts ion" x="372" y="196" text-anchor="middle" dominant-baseline="central">P</text>
+  </g>
+  <text id="atpLbl" class="ts" x="450" y="226" text-anchor="middle">ATP</text>
+
+  <g id="netNote" class="stg">
+    <text class="ts" x="340" y="276" text-anchor="middle">Per ATP: 3 Na⁺ out + 2 K⁺ in — electrogenic (net +1 charge out)</text>
+    <text class="ts" x="340" y="292" text-anchor="middle">Blocked by ouabain / digoxin</text>
+  </g>
+</g>
+
+<!-- ===================== SECONDARY MODE ===================== -->
+<g id="gSec" class="hide">
+  <!-- SGLT1 -->
+  <rect x="305" y="68" width="70" height="52" rx="8" class="c-teal"/>
+  <text class="ts" x="340" y="94" text-anchor="middle" dominant-baseline="central">SGLT1</text>
+  <g id="sgltRow" class="stg">
+    <text class="ts" x="40" y="88" text-anchor="start">Symport:</text>
+    <text class="ts" x="40" y="104" text-anchor="start">2 Na⁺ + glucose</text>
+    <text class="ts" x="640" y="88" text-anchor="end">glucose moved</text>
+    <text class="ts" x="640" y="104" text-anchor="end">uphill into cell</text>
+  </g>
+  <circle id="sNa1" class="ion" cx="236" cy="82" r="6" fill="#378ADD"/>
+  <circle id="sNa2" class="ion" cx="236" cy="106" r="6" fill="#378ADD"/>
+  <rect id="glc" class="ion" x="254" y="86" width="16" height="16" rx="3" fill="#EF9F27"/>
+
+  <!-- NCX -->
+  <rect id="ncx" x="305" y="138" width="70" height="50" rx="8" class="c-purple" style="transition:opacity .6s"/>
+  <text class="ts" x="340" y="163" text-anchor="middle" dominant-baseline="central">NCX</text>
+  <g id="ncxRow" class="stg">
+    <text class="ts" x="40" y="158" text-anchor="start">Antiport:</text>
+    <text class="ts" x="40" y="174" text-anchor="start">3 Na⁺ in, 1 Ca²⁺ out</text>
+  </g>
+  <circle id="xNa1" class="ion" cx="236" cy="148" r="6" fill="#378ADD"/>
+  <circle id="xNa2" class="ion" cx="250" cy="163" r="6" fill="#378ADD"/>
+  <circle id="xNa3" class="ion" cx="236" cy="178" r="6" fill="#378ADD"/>
+  <circle id="ca" class="ion" cx="450" cy="163" r="7" fill="#1D9E75"/>
+  <text id="caLbl" class="ts" x="470" y="167" text-anchor="start">Ca²⁺</text>
+
+  <!-- pump -->
+  <rect id="pumpBox" x="305" y="204" width="70" height="44" rx="8" class="c-amber" style="transition:opacity .6s"/>
+  <text class="ts" x="340" y="219" text-anchor="middle" dominant-baseline="central">Na⁺/K⁺</text>
+  <text class="ts" x="340" y="234" text-anchor="middle" dominant-baseline="central">ATPase</text>
+  <g id="pumpRow" class="stg">
+    <line x1="296" y1="214" x2="252" y2="214" stroke="#378ADD" stroke-width="1.8" marker-end="url(#mtArrowT)"/>
+    <line x1="384" y1="238" x2="428" y2="238" stroke="#EF9F27" stroke-width="1.8" marker-end="url(#mtArrowT)"/>
+    <text class="ts" x="246" y="218" text-anchor="end">3 Na⁺ out</text>
+    <text class="ts" x="434" y="242" text-anchor="start">2 K⁺ in (ATP)</text>
+  </g>
+  <g id="digoxin" class="stg">
+    <path d="M314 210 L366 244 M366 210 L314 244" stroke="#B91C1C" stroke-width="3" stroke-linecap="round"/>
+    <text class="ts" x="340" y="272" text-anchor="middle" fill="#B91C1C">digoxin blocks the pump</text>
+    <circle cx="470" cy="196" r="6" fill="#1D9E75"/>
+    <circle cx="492" cy="186" r="6" fill="#1D9E75"/>
+    <circle cx="514" cy="198" r="6" fill="#1D9E75"/>
+    <text class="ts" x="600" y="210" text-anchor="middle">Ca²⁺ builds up</text>
+    <text class="ts" x="340" y="292" text-anchor="middle">→ stronger heart muscle contraction</text>
+  </g>
+</g>
+
+<defs>
+<marker id="mtArrowT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "pump";
+const labels = {
+  pump: [
+    "Step 0 of 3 — E1 state, open to the cytosol: three Na⁺ bind to high-affinity sites",
+    "Step 1 of 3 — ATP phosphorylates the pump (E1-P → E2-P): it flips to face outside, Na⁺ affinity drops and 3 Na⁺ are released",
+    "Step 2 of 3 — two K⁺ bind from outside; the phosphate is released and the K⁺ ions are occluded inside the pump",
+    "Step 3 of 3 — ATP binds, the pump returns to E1 and releases 2 K⁺ into the cytosol — net 3 Na⁺ out, 2 K⁺ in per ATP"
+  ],
+  sec: [
+    "Step 0 of 3 — the Na⁺/K⁺-ATPase keeps cytosolic Na⁺ low (~12 vs 145 mM outside): the inward Na⁺ gradient is stored energy",
+    "Step 1 of 3 — symport (SGLT1, gut and kidney): 2 Na⁺ flowing down their gradient carry 1 glucose into the cell against its gradient",
+    "Step 2 of 3 — antiport (NCX): 3 Na⁺ flow in while 1 Ca²⁺ is pushed out, keeping cytosolic Ca²⁺ very low",
+    "Step 3 of 3 — digoxin blocks the pump: the Na⁺ gradient shrinks, NCX removes less Ca²⁺, and the heart muscle cell contracts more strongly"
+  ]
+};
+// pump subunit shapes: E1 = cavity opens to the cytosol (right), E2 = opens outside (left), occluded = closed
+const SH = {
+  E1:  ["M300 100 H380 V120 L300 146 Z", "M300 200 H380 V180 L300 154 Z"],
+  E2:  ["M300 100 H380 V146 L300 120 Z", "M300 200 H380 V154 L300 180 Z"],
+  OCC: ["M300 100 H380 V140 L300 140 Z", "M300 200 H380 V160 L300 160 Z"]
+};
+function shape(k) {
+  ["upper", "lower"].forEach(function (id, i) {
+    const e = document.getElementById(id);
+    e.setAttribute("d", SH[k][i]); e.style.d = 'path("' + SH[k][i] + '")';
+  });
+}
+function mv(id, x, y, o) {
+  const e = document.getElementById(id);
+  if (e.tagName === "circle") {
+    e.setAttribute("cx", x); e.setAttribute("cy", y); e.style.cx = x + "px"; e.style.cy = y + "px";
+  } else {
+    e.setAttribute("x", x); e.setAttribute("y", y); e.style.x = x + "px"; e.style.y = y + "px";
+  }
+  if (o !== undefined) e.style.opacity = o;
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnPump").classList.toggle("active", m === "pump");
+  document.getElementById("btnSec").classList.toggle("active", m === "sec");
+  document.getElementById("gPump").classList.toggle("hide", m !== "pump");
+  document.getElementById("gSec").classList.toggle("hide", m !== "sec");
+  document.getElementById("outLbl").textContent = m === "pump" ? "Outside: Na⁺ high, K⁺ low" : "Outside: Na⁺ 145 mM";
+  document.getElementById("inLbl").textContent = m === "pump" ? "Cytosol: K⁺ high, Na⁺ low" : "Cytosol: Na⁺ ~12 mM";
+  render();
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "pump") {
+    shape(step === 1 ? "E2" : step === 2 ? "OCC" : "E1");
+    document.getElementById("stateLbl").textContent =
+      ["E1 · open to the cytosol", "E2-P · open to the outside", "E2 · K⁺ occluded", "E1 · open to the cytosol"][step];
+    // Na+: bound inside (0), released outside (1+)
+    const naOut = step >= 1;
+    mv("na1", naOut ? 252 : 350, naOut ? 122 : 138);
+    mv("na2", naOut ? 232 : 364, naOut ? 150 : 150);
+    mv("na3", naOut ? 252 : 350, naOut ? 178 : 162);
+    const nl = document.getElementById("naLbl");
+    nl.setAttribute("x", naOut ? 200 : 400); nl.setAttribute("y", naOut ? 108 : 120);
+    nl.setAttribute("text-anchor", naOut ? "end" : "start");
+    nl.textContent = naOut ? "3 Na⁺ out" : "3 Na⁺ bind";
+    // K+: waiting outside (0-1), occluded (2), released inside (3)
+    if (step <= 1) { mv("k1", 200, 214); mv("k2", 224, 228); }
+    else if (step === 2) { mv("k1", 328, 150); mv("k2", 352, 150); }
+    else { mv("k1", 452, 136); mv("k2", 474, 162); }
+    const kl = document.getElementById("kLbl");
+    kl.setAttribute("x", step <= 1 ? 212 : step === 2 ? 340 : 500);
+    kl.setAttribute("y", step <= 1 ? 252 : step === 2 ? 220 : 152);
+    kl.setAttribute("text-anchor", step === 3 ? "start" : "middle");
+    kl.textContent = step === 3 ? "2 K⁺ in" : (step === 2 ? "2 K⁺ occluded" : "2 K⁺");
+    // phosphate: on the pump at step 1, released as Pi at step 2
+    document.getElementById("phos").classList.toggle("on", step === 1 || step === 2);
+    document.getElementById("phos").style.visibility = (step === 1 || step === 2) ? "visible" : "hidden";
+    mv("pCirc", step === 2 ? 440 : 372, step === 2 ? 236 : 196, step === 2 ? "0.5" : "1");
+    mv("pTxt", step === 2 ? 440 : 372, step === 2 ? 236 : 196);
+    document.getElementById("pTxt").textContent = step === 2 ? "Pi" : "P";
+    const al = document.getElementById("atpLbl");
+    al.textContent = ["ATP", "ADP released", "", "ATP binds"][step];
+    al.setAttribute("x", step === 3 ? 410 : 450);
+    al.setAttribute("y", step === 3 ? 218 : 226);
+    document.getElementById("netNote").classList.toggle("on", step >= 3);
+  } else {
+    document.getElementById("pumpRow").classList.toggle("on", step === 0 || step === 1 || step === 2);
+    // symport
+    const sIn = step >= 1;
+    document.getElementById("sgltRow").classList.toggle("on", step === 1);
+    mv("sNa1", sIn ? 430 : 236, 82); mv("sNa2", sIn ? 430 : 236, 106); mv("glc", sIn ? 448 : 254, 86);
+    // antiport
+    const xIn = step >= 2;
+    document.getElementById("ncxRow").classList.toggle("on", step === 2);
+    mv("xNa1", xIn ? 430 : 236, 148); mv("xNa2", xIn ? 444 : 250, 163); mv("xNa3", xIn ? 430 : 236, 178);
+    const caOut = xIn && step < 3;
+    mv("ca", caOut ? 250 : (step >= 3 ? 492 : 450), step >= 3 ? 150 : 163);
+    const cl = document.getElementById("caLbl");
+    cl.setAttribute("x", caOut ? 190 : (step >= 3 ? 506 : 470));
+    cl.setAttribute("y", caOut ? 142 : (step >= 3 ? 154 : 167));
+    // digoxin
+    document.getElementById("digoxin").classList.toggle("on", step >= 3);
+    document.getElementById("digoxin").style.visibility = step >= 3 ? "visible" : "hidden";
+    document.getElementById("pumpBox").style.opacity = step >= 3 ? "0.4" : "1";
+    document.getElementById("ncx").style.opacity = step >= 3 ? "0.55" : "1";
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("pump");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # HUMORAL_IMMUNE_GENERAL  (source: humoral.html)
@@ -11293,6 +11523,15 @@ REGISTRY = {
                 "always-open channel (facilitated), pumped uphill with ATP "
                 "(active), or through a channel that only opens once a "
                 "ligand binds its receptor site (ligand-gated)."
+            ),
+        },
+        "Technical": {
+            "fragment": MEMBRANE_TRANSPORT_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "The Na⁺/K⁺-ATPase cycle (E1/E2, phosphorylation, 3 Na⁺ out "
+                "and 2 K⁺ in per ATP) and secondary active transport: SGLT1 "
+                "symport, NCX antiport, and how digoxin works."
             ),
         },
     },
