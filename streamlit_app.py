@@ -1060,6 +1060,260 @@ render();
 </script>
 '''
 
+MEIOSIS_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of meiosis in technical detail: a switchable view of the molecular events that make homologs separate before sister chromatids (Spo11 breaks, synaptonemal complex, chiasmata, cohesin, shugoshin and separase), and of nondisjunction in meiosis I or II leading to aneuploid gametes and trisomy.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .mv { transition: transform 1s cubic-bezier(.3,0,.2,1), opacity .6s ease; }
+  .fd { transition: opacity .6s ease, stroke .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnMol" onclick="setMode('mol')">Why homologs separate first</button>
+  <button id="btnNdj" onclick="setMode('ndj')">Nondisjunction</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Meiosis — molecular control of chromosome separation and nondisjunction</title>
+<desc>Molecular view: one pair of duplicated homologous chromosomes, maternal in blue and paternal in orange. Spo11 makes double-strand breaks and the synaptonemal complex zips the homologs together. One break is repaired as a crossover, leaving a chiasma that, with cohesin along the arms, holds the pair together. In meiosis I the two sister kinetochores of each homolog face the same pole; separase cuts arm cohesin while shugoshin with PP2A protects cohesin at the centromeres, so homologs separate but sisters stay joined. In meiosis II shugoshin is gone, separase cuts centromeric cohesin and the sisters separate. Nondisjunction view: normally each of four gametes gets one copy. If homologs fail to separate in meiosis I, two gametes carry an extra copy and two carry none; if sisters fail to separate in meiosis II, one gamete has an extra copy, one has none and two are normal. Fertilization of a gamete with an extra copy gives a trisomic zygote, as in Down syndrome, mostly from maternal meiosis I errors that become more frequent with maternal age.</desc>
+
+<!-- ===================== MOLECULAR MODE ===================== -->
+<g id="gMol">
+  <circle cx="50" cy="150" r="9" fill="var(--border-strong)" id="poleL" class="fd" style="opacity:0"/>
+  <circle cx="630" cy="150" r="9" fill="var(--border-strong)" id="poleR" class="fd" style="opacity:0"/>
+  <path id="spL" class="fd" d="M59 150 L290 150" stroke="var(--border-strong)" stroke-width="1.2" style="opacity:0"/>
+  <path id="spR" class="fd" d="M621 150 L370 150" stroke="var(--border-strong)" stroke-width="1.2" style="opacity:0"/>
+
+  <!-- synaptonemal complex -->
+  <g id="sc" class="stg">
+    <path d="M318 84 V216 M342 84 V216" stroke="#7F77DD" stroke-width="2"/>
+    <path d="M318 92 H342 M318 104 H342 M318 116 H342 M318 128 H342 M318 140 H342 M318 160 H342 M318 172 H342 M318 184 H342 M318 196 H342 M318 208 H342" stroke="#7F77DD" stroke-width="1.2"/>
+  </g>
+
+  <g id="hM" class="mv">
+    <g id="mA" class="mv">
+      <path d="M300 80 V220" stroke="#378ADD" stroke-width="7" stroke-linecap="round"/>
+    </g>
+    <g id="mB" class="mv">
+      <path d="M312 80 V175" stroke="#378ADD" stroke-width="7" stroke-linecap="round"/>
+      <path id="mBlow" class="fd" d="M312 175 V220" stroke="#378ADD" stroke-width="7" stroke-linecap="round"/>
+    </g>
+    <g id="armM" class="fd">
+      <ellipse cx="306" cy="100" rx="10" ry="3" fill="none" stroke="#1D9E75" stroke-width="2"/>
+      <ellipse cx="306" cy="122" rx="10" ry="3" fill="none" stroke="#1D9E75" stroke-width="2"/>
+      <ellipse cx="306" cy="190" rx="10" ry="3" fill="none" stroke="#1D9E75" stroke-width="2"/>
+      <ellipse cx="306" cy="208" rx="10" ry="3" fill="none" stroke="#1D9E75" stroke-width="2"/>
+    </g>
+    <ellipse id="cenM" class="fd" cx="306" cy="150" rx="11" ry="4" fill="none" stroke="#0F6E56" stroke-width="3"/>
+    <circle id="sgoM" class="fd" cx="306" cy="141" r="4" fill="#EF9F27" style="opacity:0"/>
+    <rect id="kM" class="fd" x="288" y="143" width="6" height="14" rx="2" fill="var(--t)" style="opacity:0"/>
+  </g>
+
+  <g id="hP" class="mv">
+    <g id="pA" class="mv">
+      <path d="M348 80 V175" stroke="#D85A30" stroke-width="7" stroke-linecap="round"/>
+      <path id="pAlow" class="fd" d="M348 175 V220" stroke="#D85A30" stroke-width="7" stroke-linecap="round"/>
+    </g>
+    <g id="pB" class="mv">
+      <path d="M360 80 V220" stroke="#D85A30" stroke-width="7" stroke-linecap="round"/>
+    </g>
+    <g id="armP" class="fd">
+      <ellipse cx="354" cy="100" rx="10" ry="3" fill="none" stroke="#1D9E75" stroke-width="2"/>
+      <ellipse cx="354" cy="122" rx="10" ry="3" fill="none" stroke="#1D9E75" stroke-width="2"/>
+      <ellipse cx="354" cy="190" rx="10" ry="3" fill="none" stroke="#1D9E75" stroke-width="2"/>
+      <ellipse cx="354" cy="208" rx="10" ry="3" fill="none" stroke="#1D9E75" stroke-width="2"/>
+    </g>
+    <ellipse id="cenP" class="fd" cx="354" cy="150" rx="11" ry="4" fill="none" stroke="#0F6E56" stroke-width="3"/>
+    <circle id="sgoP" class="fd" cx="354" cy="141" r="4" fill="#EF9F27" style="opacity:0"/>
+    <rect id="kP" class="fd" x="366" y="143" width="6" height="14" rx="2" fill="var(--t)" style="opacity:0"/>
+  </g>
+
+  <g id="dsb" class="stg">
+    <path d="M294 98 l12 12 M306 98 l-12 12 M354 98 l12 12 M366 98 l-12 12" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round"/>
+    <text class="ts" x="282" y="108" text-anchor="end">Spo11 double-strand breaks</text>
+    <text class="ts" x="330" y="64" text-anchor="middle">synaptonemal complex zips the homologs</text>
+  </g>
+  <g id="chi" class="stg">
+    <path d="M314 168 L346 182 M314 182 L346 168" stroke="var(--t)" stroke-width="1.5"/>
+    <text class="ts" x="374" y="180" text-anchor="start">chiasma (crossover)</text>
+    <text class="ts" x="374" y="208" text-anchor="start" style="fill:#0F6E56">cohesin (Rec8) rings</text>
+    <text class="ts" x="374" y="224" text-anchor="start">hold the bivalent together</text>
+  </g>
+  <g id="mi" class="stg">
+    <text class="ts" x="340" y="250" text-anchor="middle">monopolin: both sister kinetochores face the same pole</text>
+    <text class="ts" x="340" y="268" text-anchor="middle">separase cuts arm cohesin; shugoshin–PP2A (yellow) guards centromeric cohesin</text>
+  </g>
+  <g id="mii" class="stg">
+    <text class="ts" x="340" y="250" text-anchor="middle">meiosis II: shugoshin is gone</text>
+    <text class="ts" x="340" y="268" text-anchor="middle">separase cuts centromeric cohesin → sister chromatids separate</text>
+  </g>
+  <text class="ts" x="40" y="292" text-anchor="start" style="fill:#185FA5">maternal</text>
+  <text class="ts" x="110" y="292" text-anchor="start" style="fill:#993C1D">paternal</text>
+</g>
+
+<!-- ===================== NONDISJUNCTION MODE ===================== -->
+<g id="gNdj" class="hide">
+  <text class="ts" x="180" y="22" text-anchor="middle">Meiosis I</text>
+  <text class="ts" x="370" y="22" text-anchor="middle">Meiosis II</text>
+  <circle cx="90" cy="150" r="52" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <g id="cell0"></g>
+  <path d="M142 130 L228 98 M142 170 L228 202" stroke="var(--border-strong)" stroke-width="1.2" marker-end="url(#meArrow)" fill="none"/>
+  <circle cx="270" cy="92" r="40" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <circle cx="270" cy="208" r="40" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <g id="cellA"></g><g id="cellB"></g>
+  <path d="M310 80 L428 44 M310 102 L428 112 M310 198 L428 188 M310 220 L428 256" stroke="var(--border-strong)" stroke-width="1.2" marker-end="url(#meArrow)" fill="none"/>
+  <circle cx="460" cy="40" r="28" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <circle cx="460" cy="114" r="28" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <circle cx="460" cy="188" r="28" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <circle cx="460" cy="260" r="28" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <g id="g1"></g><g id="g2"></g><g id="g3"></g><g id="g4"></g>
+  <text class="ts" x="502" y="44" id="n1">n</text>
+  <text class="ts" x="502" y="118" id="n2">n</text>
+  <text class="ts" x="502" y="192" id="n3">n</text>
+  <text class="ts" x="502" y="264" id="n4">n</text>
+  <rect id="errBox" class="fd" x="226" y="48" width="88" height="88" rx="10" fill="none" stroke="#E24B4A" stroke-width="2" stroke-dasharray="5 3" style="opacity:0"/>
+
+  <g id="fert" class="stg">
+    <path d="M532 122 L570 140" stroke="var(--border-strong)" stroke-width="1.2" marker-end="url(#meArrow)" fill="none"/>
+    <circle cx="612" cy="64" r="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+    <path d="M612 56 V72" stroke="#1D9E75" stroke-width="5" stroke-linecap="round"/>
+    <path d="M612 80 L612 104" stroke="var(--border-strong)" stroke-width="1.2" marker-end="url(#meArrow)"/>
+    <text class="ts" x="634" y="68" text-anchor="start">sperm</text>
+    <circle cx="612" cy="152" r="40" fill="var(--surface-1)" stroke="#E24B4A" stroke-width="2"/>
+    <path d="M596 140 V164 M612 140 V164 M628 140 V164" stroke-width="5" stroke-linecap="round" fill="none" stroke="#378ADD"/>
+    <path d="M612 140 V164" stroke="#D85A30" stroke-width="5" stroke-linecap="round"/>
+    <path d="M628 140 V164" stroke="#1D9E75" stroke-width="5" stroke-linecap="round"/>
+    <text class="ts" x="612" y="208" text-anchor="middle">trisomy</text>
+    <text class="ts" x="612" y="224" text-anchor="middle">(e.g. 21)</text>
+  </g>
+</g>
+
+<defs>
+<marker id="meArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "mol";
+const labels = {
+  mol: [
+    "Step 0 of 3 — prophase I: Spo11 cuts DNA (double-strand breaks), homologs find each other and the synaptonemal complex zips them together",
+    "Step 1 of 3 — one break is repaired as a crossover: the chiasma plus cohesin along the arms holds the two homologs together as a bivalent",
+    "Step 2 of 3 — anaphase I: sister kinetochores face the same pole; separase cuts arm cohesin but shugoshin–PP2A protects centromeric cohesin — homologs part, sisters stay joined",
+    "Step 3 of 3 — anaphase II: shugoshin is gone, separase cuts the centromeric cohesin and the sister chromatids finally separate"
+  ],
+  ndj: [
+    "Step 0 of 3 — normal meiosis: homologs separate in meiosis I, sisters in meiosis II — every gamete gets exactly one copy (n)",
+    "Step 1 of 3 — nondisjunction in meiosis I: the homologs fail to separate — two gametes get both copies (n+1), two get none (n−1)",
+    "Step 2 of 3 — nondisjunction in meiosis II: one pair of sisters fails to separate — one gamete is n+1, one n−1 and two are normal",
+    "Step 3 of 3 — an n+1 egg fertilized by a normal sperm gives a trisomic zygote; Down syndrome is mostly maternal meiosis I error, rising with maternal age"
+  ]
+};
+const COL = { M: "#378ADD", P: "#D85A30" };
+// draw chromosomes in a cell: list of {c: "M"/"P", d: duplicated?}
+function draw(id, cx, cy, list) {
+  const g = document.getElementById(id);
+  let h = "";
+  const n = list.length, gap = 16;
+  list.forEach(function (ch, i) {
+    const x = cx + (i - (n - 1) / 2) * gap;
+    if (ch.d) {
+      h += '<path d="M' + (x - 5) + " " + (cy - 12) + " L" + (x + 5) + " " + (cy + 12) + " M" + (x + 5) + " " + (cy - 12) + " L" + (x - 5) + " " + (cy + 12) +
+           '" stroke="' + COL[ch.c] + '" stroke-width="4" stroke-linecap="round"/>';
+    } else {
+      h += '<path d="M' + x + " " + (cy - 11) + " V" + (cy + 11) + '" stroke="' + COL[ch.c] + '" stroke-width="4" stroke-linecap="round"/>';
+    }
+  });
+  g.innerHTML = h;
+}
+const M2 = { c: "M", d: true }, P2 = { c: "P", d: true }, M1 = { c: "M", d: false }, P1 = { c: "P", d: false };
+const SCEN = {
+  normal: { A: [M2], B: [P2], g: [[M1], [M1], [P1], [P1]], n: ["n", "n", "n", "n"] },
+  mi:     { A: [M2, P2], B: [], g: [[M1, P1], [M1, P1], [], []], n: ["n+1", "n+1", "n−1", "n−1"] },
+  mii:    { A: [M2], B: [P2], g: [[M1, M1], [], [P1], [P1]], n: ["n+1", "n−1", "n", "n"] }
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnMol").classList.toggle("active", m === "mol");
+  document.getElementById("btnNdj").classList.toggle("active", m === "ndj");
+  document.getElementById("gMol").classList.toggle("hide", m !== "mol");
+  document.getElementById("gNdj").classList.toggle("hide", m !== "ndj");
+  render();
+}
+function op(id, v) { document.getElementById(id).style.opacity = v; }
+function tr(id, x) { document.getElementById(id).style.transform = "translateX(" + x + "px)"; }
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "mol") {
+    document.getElementById("sc").classList.toggle("on", step === 0);
+    document.getElementById("sc").style.visibility = step === 0 ? "visible" : "hidden";
+    document.getElementById("dsb").classList.toggle("on", step === 0);
+    document.getElementById("dsb").style.visibility = step === 0 ? "visible" : "hidden";
+    const xo = step >= 1;
+    document.getElementById("mBlow").style.stroke = xo ? "#D85A30" : "#378ADD";
+    document.getElementById("pAlow").style.stroke = xo ? "#378ADD" : "#D85A30";
+    document.getElementById("chi").classList.toggle("on", step === 1);
+    document.getElementById("chi").style.visibility = step === 1 ? "visible" : "hidden";
+    // separation
+    const sep = step >= 2 ? 150 : 0;
+    tr("hM", -sep); tr("hP", sep);
+    tr("mA", step >= 3 ? -60 : 0); tr("mB", step >= 3 ? 60 : 0);
+    tr("pA", step >= 3 ? -60 : 0); tr("pB", step >= 3 ? 60 : 0);
+    op("armM", step >= 2 ? "0" : "1"); op("armP", step >= 2 ? "0" : "1");
+    op("cenM", step >= 3 ? "0" : "1"); op("cenP", step >= 3 ? "0" : "1");
+    op("sgoM", step === 2 ? "1" : "0"); op("sgoP", step === 2 ? "1" : "0");
+    op("kM", step === 2 ? "1" : "0"); op("kP", step === 2 ? "1" : "0");
+    const sp = step === 2 ? "1" : "0";
+    ["poleL", "poleR", "spL", "spR"].forEach(function (id) { op(id, sp); });
+    const sl = document.getElementById("spL"), sr = document.getElementById("spR");
+    sl.setAttribute("d", "M59 150 L" + (288 - sep) + " 150");
+    sr.setAttribute("d", "M621 150 L" + (372 + sep) + " 150");
+    document.getElementById("mi").classList.toggle("on", step === 2);
+    document.getElementById("mi").style.visibility = step === 2 ? "visible" : "hidden";
+    document.getElementById("mii").classList.toggle("on", step === 3);
+    document.getElementById("mii").style.visibility = step === 3 ? "visible" : "hidden";
+  } else {
+    const sc = step === 1 || step === 3 ? SCEN.mi : step === 2 ? SCEN.mii : SCEN.normal;
+    draw("cell0", 90, 150, [M2, P2]);
+    draw("cellA", 270, 92, sc.A);
+    draw("cellB", 270, 208, sc.B);
+    [[40], [114], [188], [260]].forEach(function (y, i) { draw("g" + (i + 1), 460, y[0], sc.g[i]); });
+    sc.n.forEach(function (t, i) {
+      const e = document.getElementById("n" + (i + 1));
+      e.textContent = t;
+      e.style.fill = t === "n" ? "" : "#B91C1C";
+    });
+    const eb = document.getElementById("errBox");
+    eb.style.opacity = step === 1 || step === 2 ? "1" : "0";
+    if (step === 1) { eb.setAttribute("x", 226); eb.setAttribute("y", 48); eb.setAttribute("width", 88); eb.setAttribute("height", 88); }
+    if (step === 2) { eb.setAttribute("x", 424); eb.setAttribute("y", 6); eb.setAttribute("width", 68); eb.setAttribute("height", 144); }
+    document.getElementById("fert").classList.toggle("on", step === 3);
+    document.getElementById("fert").style.visibility = step === 3 ? "visible" : "hidden";
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("mol");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # APOPTOSIS_GENERAL  (source: apoptosis.html)
@@ -1261,6 +1515,210 @@ setMode('extrinsic');
 </script>
 '''
 
+APOPTOSIS_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of apoptosis in technical detail: a switchable view of the caspase machinery from the Fas death-inducing signalling complex to caspase-3 substrates, and of the Bcl-2 family balance at the mitochondrion, including how cancers overexpressing Bcl-2 evade death and how the drug venetoclax restores it.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .mv { transition: transform 1s ease, opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnCas" onclick="setMode('cas')">Caspase machinery</button>
+  <button id="btnBcl" onclick="setMode('bcl')">Bcl-2 balance &amp; cancer drugs</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Apoptosis — caspase machinery and the Bcl-2 balance</title>
+<desc>Caspase view: the trimeric Fas ligand clusters Fas receptors; their death domains recruit the adaptor FADD, which gathers procaspase-8 molecules close together so they activate each other. Caspase-8 activates executioner caspase-3 directly and cleaves Bid to tBid, which amplifies the signal through the mitochondria. XIAP holds caspases in check until Smac, released from mitochondria, removes it. Active caspase-3 frees the nuclease CAD from its inhibitor ICAD, cutting DNA between nucleosomes into a ladder, and causes phosphatidylserine to appear on the outer surface as an eat-me signal. Bcl-2 view: anti-apoptotic Bcl-2 holds pro-apoptotic Bax in check. Under stress, BH3-only proteins bind Bcl-2 and activate Bax and Bak, which form pores in the outer mitochondrial membrane and release cytochrome c. Cancers that overexpress Bcl-2 soak up the BH3-only proteins and survive. Venetoclax, a BH3 mimetic, fills the Bcl-2 groove, freeing the BH3-only proteins so Bax pores form and the cancer cell dies.</desc>
+<defs>
+<marker id="apArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- ===================== CASPASE MODE ===================== -->
+<g id="gCas">
+  <path d="M20 70 H660" stroke="var(--border-strong)" stroke-width="6" stroke-linecap="round"/>
+  <text class="ts" x="30" y="40">Outside</text>
+  <text class="ts" x="30" y="292">Cytosol</text>
+
+  <!-- DISC -->
+  <circle cx="138" cy="34" r="7" class="c-coral"/><circle cx="150" cy="24" r="7" class="c-coral"/><circle cx="162" cy="34" r="7" class="c-coral"/>
+  <text class="ts" x="176" y="30" text-anchor="start">FasL (trimer)</text>
+  <path d="M140 44 V100 M150 44 V100 M160 44 V100" stroke="#7F77DD" stroke-width="4"/>
+  <text class="ts" x="128" y="96" text-anchor="end">Fas</text>
+  <circle cx="140" cy="112" r="6" class="c-teal"/><circle cx="150" cy="117" r="6" class="c-teal"/><circle cx="160" cy="112" r="6" class="c-teal"/>
+  <text class="ts" x="128" y="120" text-anchor="end">FADD</text>
+  <ellipse cx="141" cy="140" rx="11" ry="8" class="c-amber"/><ellipse cx="159" cy="140" rx="11" ry="8" class="c-amber"/>
+  <text class="ts" x="128" y="146" text-anchor="end">caspase-8</text>
+  <text id="discLbl" class="ts stg" x="176" y="114" text-anchor="start">FADD brings procaspase-8 close → self-activation</text>
+
+  <!-- caspase-3 + Bid -->
+  <g id="c8out" class="stg">
+    <path d="M172 142 L322 148" stroke="var(--t)" stroke-width="1.4" marker-end="url(#apArrow)" fill="none"/>
+    <path d="M150 152 L176 194" stroke="var(--t)" stroke-width="1.4" marker-end="url(#apArrow)" fill="none"/>
+    <text class="ts" x="190" y="206" text-anchor="start">Bid → tBid</text>
+    <path d="M204 214 L248 238" stroke="var(--t)" stroke-width="1.4" marker-end="url(#apArrow)" fill="none"/>
+    <text class="ts" x="40" y="256" text-anchor="start">mitochondrial amplification</text>
+  </g>
+  <ellipse cx="290" cy="250" rx="46" ry="20" fill="none" stroke="#D85A30" stroke-width="2"/>
+  <text class="ts" x="290" y="254" text-anchor="middle">mitochondrion</text>
+  <circle id="c3" cx="340" cy="150" r="17" class="c-purple"/>
+  <text class="ts" x="340" y="150" text-anchor="middle" dominant-baseline="central">C3</text>
+  <text class="ts" x="340" y="186" text-anchor="middle">caspase-3</text>
+
+  <!-- XIAP brake + Smac -->
+  <g id="xiap" class="mv" style="opacity:0">
+    <rect x="356" y="138" width="44" height="24" rx="6" fill="#E24B4A"/>
+    <text class="ts" x="378" y="150" text-anchor="middle" dominant-baseline="central" style="fill:#fff">XIAP</text>
+  </g>
+  <g id="smac" class="stg">
+    <path d="M326 238 Q380 220 384 170" stroke="#1D9E75" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#apArrow)" fill="none"/>
+    <text class="ts" x="396" y="214" text-anchor="start">Smac/DIABLO pulls XIAP off</text>
+  </g>
+
+  <!-- substrates -->
+  <g id="subs" class="stg">
+    <path d="M358 150 L470 150" stroke="var(--t)" stroke-width="1.4" marker-end="url(#apArrow)" fill="none"/>
+    <g stroke="#378ADD" stroke-width="5" stroke-linecap="round">
+      <path d="M500 120 H600"/><path d="M500 134 H566"/><path d="M500 148 H532"/><path d="M500 162 H600"/><path d="M500 176 H566"/>
+    </g>
+    <text class="ts" x="550" y="204" text-anchor="middle">CAD freed from ICAD:</text>
+    <text class="ts" x="550" y="220" text-anchor="middle">DNA cut into a "ladder"</text>
+    <circle cx="470" cy="62" r="5" fill="#EF9F27"/><circle cx="500" cy="62" r="5" fill="#EF9F27"/>
+    <circle cx="530" cy="62" r="5" fill="#EF9F27"/><circle cx="560" cy="62" r="5" fill="#EF9F27"/><circle cx="590" cy="62" r="5" fill="#EF9F27"/>
+    <text class="ts" x="530" y="40" text-anchor="middle">phosphatidylserine flipped out: "eat me"</text>
+  </g>
+</g>
+
+<!-- ===================== BCL-2 MODE ===================== -->
+<g id="gBcl" class="hide">
+  <ellipse cx="340" cy="218" rx="230" ry="54" fill="var(--surface-1)" stroke="#D85A30" stroke-width="3"/>
+  <text class="ts" x="340" y="258" text-anchor="middle">mitochondrion (outer membrane on top)</text>
+  <text class="ts" x="30" y="40">Cytosol</text>
+
+  <g id="cyt" class="mv">
+    <circle cx="310" cy="222" r="5" fill="#E24B4A"/><circle cx="340" cy="230" r="5" fill="#E24B4A"/><circle cx="370" cy="222" r="5" fill="#E24B4A"/>
+  </g>
+  <text id="cytLbl" class="ts" x="408" y="230" text-anchor="start">cytochrome c</text>
+
+  <g id="bcl1" class="mv"><rect x="-20" y="-11" width="40" height="22" rx="6" class="c-teal"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">Bcl-2</text></g>
+  <g id="bcl2" class="mv"><rect x="-20" y="-11" width="40" height="22" rx="6" class="c-teal"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">Bcl-2</text></g>
+  <g id="bcl3" class="mv"><rect x="-20" y="-11" width="40" height="22" rx="6" class="c-teal"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">Bcl-2</text></g>
+  <g id="bax1" class="mv"><rect x="-17" y="-10" width="34" height="20" rx="5" class="c-purple"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">Bax</text></g>
+  <g id="bax2" class="mv"><rect x="-17" y="-10" width="34" height="20" rx="5" class="c-purple"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">Bax</text></g>
+  <g id="bax3" class="mv"><rect x="-17" y="-10" width="34" height="20" rx="5" class="c-purple"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">Bax</text></g>
+  <g id="bh1" class="mv"><circle r="12" class="c-amber"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">BH3</text></g>
+  <g id="bh2" class="mv"><circle r="12" class="c-amber"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">BH3</text></g>
+  <g id="bh3" class="mv"><circle r="12" class="c-amber"/><text class="ts" x="0" y="0" text-anchor="middle" dominant-baseline="central">BH3</text></g>
+  <g id="ven1" class="mv"><path d="M0 -9 L9 0 L0 9 L-9 0 Z" fill="#B91C1C"/></g>
+  <g id="ven2" class="mv"><path d="M0 -9 L9 0 L0 9 L-9 0 Z" fill="#B91C1C"/></g>
+  <g id="ven3" class="mv"><path d="M0 -9 L9 0 L0 9 L-9 0 Z" fill="#B91C1C"/></g>
+  <text id="venLbl" class="ts stg" x="30" y="62" text-anchor="start" style="fill:#B91C1C">◆ venetoclax</text>
+  <text id="bNote" class="th" x="340" y="292" text-anchor="middle"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "cas";
+const labels = {
+  cas: [
+    "Step 0 of 3 — trimeric FasL clusters Fas; their death domains recruit FADD, which packs procaspase-8 molecules together so they cleave and activate each other (the DISC)",
+    "Step 1 of 3 — caspase-8 activates executioner caspase-3 directly, and cuts Bid to tBid, which amplifies the signal through the mitochondria",
+    "Step 2 of 3 — XIAP is a brake that binds and blocks active caspases; Smac/DIABLO released from mitochondria pulls XIAP off",
+    "Step 3 of 3 — caspase-3 cuts hundreds of targets: it frees the nuclease CAD from ICAD (DNA ladder) and exposes phosphatidylserine as an “eat me” signal"
+  ],
+  bcl: [
+    "Step 0 of 3 — healthy cell: anti-apoptotic Bcl-2 binds and restrains pro-apoptotic Bax",
+    "Step 1 of 3 — stress raises BH3-only proteins: they tie up Bcl-2 and activate Bax/Bak, which form pores in the outer membrane (MOMP) — cytochrome c escapes",
+    "Step 2 of 3 — cancer: too much Bcl-2 (e.g. the t(14;18) translocation in follicular lymphoma) soaks up every BH3-only protein — no pores, the cell survives",
+    "Step 3 of 3 — venetoclax, a BH3 mimetic, fills the Bcl-2 groove: BH3-only proteins are freed, Bax pores form and the cancer cell dies (used in CLL, AML)"
+  ]
+};
+// Bcl-2 mode positions per step: [x, y, opacity]
+const POS = {
+  bcl1: [[200, 96, 1], [200, 96, 1], [200, 96, 1], [200, 96, 1]],
+  bcl2: [[310, 76, 0], [310, 76, 0], [310, 76, 1], [310, 76, 1]],
+  bcl3: [[420, 96, 0], [420, 96, 0], [420, 96, 1], [420, 96, 1]],
+  bax1: [[163, 96, 1], [300, 152, 1], [530, 76, 1], [300, 152, 1]],
+  bax2: [[540, 80, 1], [340, 150, 1], [570, 100, 1], [340, 150, 1]],
+  bax3: [[590, 100, 1], [380, 152, 1], [610, 76, 1], [380, 152, 1]],
+  bh1:  [[620, 30, 0], [233, 96, 1], [233, 96, 1], [250, 132, 1]],
+  bh2:  [[620, 30, 0], [420, 112, 1], [343, 76, 1], [430, 130, 1]],
+  bh3:  [[620, 30, 0], [470, 120, 1], [453, 96, 1], [470, 120, 1]],
+  ven1: [[600, 40, 0], [600, 40, 0], [600, 40, 0], [229, 96, 1]],
+  ven2: [[600, 40, 0], [600, 40, 0], [600, 40, 0], [339, 76, 1]],
+  ven3: [[600, 40, 0], [600, 40, 0], [600, 40, 0], [449, 96, 1]]
+};
+const NOTES = [
+  "Bcl-2 holds Bax in check — no pores",
+  "BH3-only tie up Bcl-2 and activate Bax → pores → cytochrome c out",
+  "Excess Bcl-2 soaks up all BH3-only → no pores → cancer cell survives",
+  "Venetoclax frees BH3-only → Bax pores → apoptosis restored"
+];
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnCas").classList.toggle("active", m === "cas");
+  document.getElementById("btnBcl").classList.toggle("active", m === "bcl");
+  document.getElementById("gCas").classList.toggle("hide", m !== "cas");
+  document.getElementById("gBcl").classList.toggle("hide", m !== "bcl");
+  render();
+}
+function vis(id, on) {
+  const e = document.getElementById(id);
+  e.classList.toggle("on", on);
+  e.style.visibility = on ? "visible" : "hidden";
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "cas") {
+    document.getElementById("discLbl").classList.toggle("on", step === 0);
+    vis("c8out", step >= 1);
+    const x = document.getElementById("xiap");
+    x.style.opacity = step === 2 ? "1" : "0";
+    x.style.transform = step === 2 ? "translate(0px,0px)" : "translate(40px,-20px)";
+    vis("smac", step === 2);
+    vis("subs", step >= 3);
+    document.getElementById("c3").classList.toggle("pulse", step >= 3);
+  } else {
+    Object.keys(POS).forEach(function (id) {
+      const p = POS[id][step], e = document.getElementById(id);
+      e.style.transform = "translate(" + p[0] + "px," + p[1] + "px)";
+      e.style.opacity = p[2];
+    });
+    const out = step === 1 || step === 3;
+    const c = document.getElementById("cyt");
+    c.style.transform = out ? "translate(190px,-168px)" : "translate(0px,0px)";
+    const cl = document.getElementById("cytLbl");
+    cl.setAttribute("y", out ? 62 : 230);
+    cl.setAttribute("x", out ? 576 : 408);
+    cl.setAttribute("text-anchor", "start");
+    cl.textContent = out ? "cytochrome c out" : "cytochrome c";
+    document.getElementById("venLbl").classList.toggle("on", step === 3);
+    document.getElementById("bNote").textContent = NOTES[step];
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("cas");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # ENDO_EXOCYTOSIS_GENERAL  (source: endo_exocytosis.html)
@@ -1396,6 +1854,246 @@ function reset() { step = 0; render(); }
 setMode('endo');
 </script>
 '''
+
+ENDO_EXOCYTOSIS_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of vesicle traffic in technical detail: a switchable view of receptor-mediated endocytosis of LDL through clathrin, AP2 and dynamin to the endosome, and of regulated exocytosis at a synapse driven by SNARE proteins and calcium sensing by synaptotagmin.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .mem { fill: none; transition: d .9s ease, opacity .5s ease; }
+  .mv { transition: transform 1s ease, opacity .6s ease; }
+  .dot { transition: cx 1s ease, cy 1s ease, opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnRme" onclick="setMode('rme')">Receptor-mediated endocytosis</button>
+  <button id="btnSyn" onclick="setMode('syn')">Regulated exocytosis (synapse)</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Endocytosis and exocytosis — molecular machinery</title>
+<desc>Endocytosis view: LDL particles bind LDL receptors gathered in a coated pit, where the AP2 adaptor links the receptor tails to clathrin. Clathrin polymerizes into a lattice and the pit deepens. Dynamin wraps the neck and, using GTP, pinches off a coated vesicle, which then loses its coat. In the acidic early endosome LDL detaches; receptors return to the surface and LDL goes on to the lysosome, freeing cholesterol. Exocytosis view: a synaptic vesicle is docked by SNARE proteins, synaptobrevin on the vesicle and syntaxin with SNAP-25 on the membrane, held by complexin. An action potential opens calcium channels; calcium binds synaptotagmin, the SNAREs zip fully, a fusion pore opens and neurotransmitter is released within a millisecond. NSF and alpha-SNAP use ATP to pull the SNARE complex apart and the vesicle membrane is retrieved by endocytosis; botulinum and tetanus toxins block release by cleaving SNAREs.</desc>
+
+<text class="ts" x="40" y="40" id="outTxt">Outside</text>
+<text class="ts" x="40" y="292" id="inTxt">Cytosol</text>
+<path id="membrane" class="mem" d="M30 110 H140 C160 110 160 150 200 150 C240 150 240 110 260 110 H650" stroke="var(--border-strong)" stroke-width="6" stroke-linecap="round"/>
+
+<!-- ===================== RECEPTOR-MEDIATED ENDOCYTOSIS ===================== -->
+<g id="gRme">
+  <path id="coat" class="mem" d="M140 120 C160 120 160 160 200 160 C240 160 240 120 260 120" stroke="#E24B4A" stroke-width="5" stroke-dasharray="2 5" stroke-linecap="round"/>
+  <g id="ap2" class="mv">
+    <circle cx="186" cy="157" r="4" fill="#D85A30"/>
+    <circle cx="200" cy="159" r="4" fill="#D85A30"/>
+    <circle cx="214" cy="157" r="4" fill="#D85A30"/>
+  </g>
+  <g id="cargo" class="mv">
+    <path d="M186 140 V147 M200 136 V147 M214 140 V147" stroke="#534AB7" stroke-width="2.5"/>
+    <circle cx="186" cy="134" r="6" fill="#EF9F27"/>
+    <circle cx="200" cy="130" r="6" fill="#EF9F27"/>
+    <circle cx="214" cy="134" r="6" fill="#EF9F27"/>
+  </g>
+  <text id="ldlLbl" class="ts" x="250" y="98" text-anchor="start">LDL bound to LDL receptors</text>
+  <text id="ap2Lbl" class="ts stg" x="40" y="194" text-anchor="start">AP2 links receptor tails to clathrin</text>
+  <text id="clLbl" class="ts stg" x="140" y="214" text-anchor="end">clathrin lattice</text>
+
+  <g id="vesicle" class="mv" style="opacity:0">
+    <circle cx="200" cy="215" r="34" fill="none" stroke="#E24B4A" stroke-width="5" stroke-dasharray="2 5" id="vesCoat" style="transition:opacity .6s"/>
+    <circle cx="200" cy="215" r="26" fill="none" stroke="var(--border-strong)" stroke-width="5"/>
+  </g>
+  <g id="dynamin" class="stg">
+    <ellipse cx="200" cy="120" rx="16" ry="6" fill="none" stroke="#7F77DD" stroke-width="4"/>
+    <text class="ts" x="226" y="140" text-anchor="start">dynamin + GTP pinches the neck</text>
+  </g>
+
+  <g id="endosome" class="stg">
+    <ellipse cx="440" cy="222" rx="72" ry="40" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="2"/>
+    <circle cx="420" cy="228" r="6" fill="#EF9F27"/>
+    <circle cx="444" cy="236" r="6" fill="#EF9F27"/>
+    <circle cx="466" cy="222" r="6" fill="#EF9F27"/>
+    <text class="ts" x="400" y="174" text-anchor="middle">early endosome, pH ~6</text>
+    <text class="ts" x="440" y="278" text-anchor="middle">LDL lets go of its receptor</text>
+    <path d="M490 192 Q520 160 530 124" fill="none" stroke="#534AB7" stroke-width="1.8" marker-end="url(#enArrow)"/>
+    <text class="ts" x="538" y="150" text-anchor="start">receptors recycled</text>
+    <text class="ts" x="538" y="166" text-anchor="start">to the surface</text>
+    <path d="M512 236 L560 250" fill="none" stroke="#EF9F27" stroke-width="1.8" marker-end="url(#enArrow)"/>
+    <text class="ts" x="566" y="246" text-anchor="start">LDL → lysosome:</text>
+    <text class="ts" x="566" y="262" text-anchor="start">cholesterol freed</text>
+  </g>
+</g>
+
+<!-- ===================== SYNAPTIC EXOCYTOSIS ===================== -->
+<g id="gSyn" class="hide">
+  <!-- Ca channel -->
+  <rect x="460" y="98" width="22" height="24" rx="4" class="c-teal"/>
+  <text class="ts" x="471" y="88" text-anchor="middle">Ca²⁺ channel</text>
+
+  <g id="synVes" class="mv">
+    <circle cx="300" cy="160" r="34" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="5"/>
+    <path d="M334 150 h12 M334 162 h12" stroke="#7F77DD" stroke-width="3"/>
+  </g>
+  <text id="sytLbl" class="ts" x="352" y="190" text-anchor="start">synaptotagmin (Ca²⁺ sensor)</text>
+
+  <!-- neurotransmitter -->
+  <circle id="nt1" class="dot" cx="290" cy="150" r="4" fill="#1D9E75"/>
+  <circle id="nt2" class="dot" cx="306" cy="148" r="4" fill="#1D9E75"/>
+  <circle id="nt3" class="dot" cx="296" cy="164" r="4" fill="#1D9E75"/>
+  <circle id="nt4" class="dot" cx="312" cy="166" r="4" fill="#1D9E75"/>
+  <circle id="nt5" class="dot" cx="288" cy="176" r="4" fill="#1D9E75"/>
+  <circle id="nt6" class="dot" cx="304" cy="180" r="4" fill="#1D9E75"/>
+  <text id="ntLbl" class="ts stg" x="300" y="36" text-anchor="middle">neurotransmitter released (&lt;1 ms)</text>
+
+  <!-- SNAREs -->
+  <g id="snares">
+    <path id="vSnare" class="mem" d="M290 126 L290 112" stroke="#378ADD" stroke-width="3"/>
+    <path id="tSnare" class="mem" d="M310 113 L310 126" stroke="#D85A30" stroke-width="3"/>
+  </g>
+  <g id="snareLbls" class="stg">
+    <text class="ts" x="258" y="136" text-anchor="end">synaptobrevin (v-SNARE)</text>
+    <text class="ts" x="300" y="84" text-anchor="middle">syntaxin + SNAP-25 (t-SNAREs)</text>
+    <text class="ts" x="258" y="152" text-anchor="end">complexin clamp: primed</text>
+  </g>
+
+  <!-- Ca2+ -->
+  <circle id="ca1" class="dot" cx="455" cy="62" r="5" fill="#E24B4A"/>
+  <circle id="ca2" class="dot" cx="471" cy="56" r="5" fill="#E24B4A"/>
+  <circle id="ca3" class="dot" cx="487" cy="62" r="5" fill="#E24B4A"/>
+  <text id="caLbl" class="ts" x="510" y="64" text-anchor="start">Ca²⁺</text>
+
+  <g id="nsf" class="stg">
+    <circle cx="300" cy="140" r="16" fill="none" stroke="#EF9F27" stroke-width="5" stroke-dasharray="6 3"/>
+    <text class="ts" x="300" y="184" text-anchor="middle">NSF + α-SNAP use ATP to pull SNAREs apart;</text>
+    <text class="ts" x="300" y="200" text-anchor="middle">vesicle membrane retrieved by endocytosis</text>
+    <text class="ts" x="300" y="250" text-anchor="middle" fill="#B91C1C">botulinum and tetanus toxins cleave SNAREs → no release</text>
+  </g>
+</g>
+
+<defs>
+<marker id="enArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "rme";
+const labels = {
+  rme: [
+    "Step 0 of 3 — LDL particles bind LDL receptors gathered in a coated pit; the AP2 adaptor links the receptor tails to clathrin",
+    "Step 1 of 3 — clathrin triskelions assemble into a curved lattice, pulling the pit deeper into the cell",
+    "Step 2 of 3 — dynamin wraps the neck and uses GTP to pinch off a coated vesicle; the clathrin coat is then removed",
+    "Step 3 of 3 — in the acidic early endosome LDL detaches; receptors recycle to the surface and LDL goes to the lysosome (faulty receptors → familial hypercholesterolemia)"
+  ],
+  syn: [
+    "Step 0 of 3 — a synaptic vesicle is docked and primed: v-SNARE (synaptobrevin) and t-SNAREs (syntaxin, SNAP-25) are partly zipped, held by complexin",
+    "Step 1 of 3 — an action potential opens voltage-gated Ca²⁺ channels and Ca²⁺ rushes into the terminal",
+    "Step 2 of 3 — Ca²⁺ binds synaptotagmin, the SNAREs zip fully, a fusion pore opens and neurotransmitter is released in under a millisecond",
+    "Step 3 of 3 — NSF and α-SNAP use ATP to pull the SNARE complex apart, and the vesicle membrane is retrieved by endocytosis for reuse"
+  ]
+};
+const MEM = {
+  flat:    "M30 110 H140 C160 110 160 110 200 110 C240 110 240 110 260 110 H650",
+  shallow: "M30 110 H140 C160 110 160 150 200 150 C240 150 240 110 260 110 H650",
+  deep:    "M30 110 H140 C175 110 150 200 200 200 C250 200 225 110 260 110 H650",
+  fused:   "M30 110 H260 C275 110 266 156 300 156 C334 156 325 110 340 110 H650",
+  synFlat: "M30 110 H260 C275 110 285 110 300 110 C315 110 325 110 340 110 H650"
+};
+const COAT = {
+  shallow: "M140 120 C160 120 160 160 200 160 C240 160 240 120 260 120",
+  deep:    "M140 120 C175 120 150 210 200 210 C250 210 225 120 260 120"
+};
+function setD(id, d) { const e = document.getElementById(id); e.setAttribute("d", d); e.style.d = 'path("' + d + '")'; }
+function mvDot(id, x, y, o) {
+  const e = document.getElementById(id);
+  e.setAttribute("cx", x); e.setAttribute("cy", y); e.style.cx = x + "px"; e.style.cy = y + "px";
+  if (o !== undefined) e.style.opacity = o;
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnRme").classList.toggle("active", m === "rme");
+  document.getElementById("btnSyn").classList.toggle("active", m === "syn");
+  document.getElementById("gRme").classList.toggle("hide", m !== "rme");
+  document.getElementById("gSyn").classList.toggle("hide", m !== "syn");
+  document.getElementById("outTxt").textContent = m === "rme" ? "Outside" : "Synaptic cleft";
+  document.getElementById("inTxt").textContent = m === "rme" ? "Cytosol" : "Nerve terminal";
+  const mem = document.getElementById("membrane");
+  mem.style.transition = "none";
+  setD("membrane", m === "rme" ? MEM.shallow : MEM.synFlat);
+  mem.getBoundingClientRect(); mem.style.transition = "";
+  render();
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "rme") {
+    setD("membrane", step === 0 ? MEM.shallow : step === 1 ? MEM.deep : MEM.flat);
+    const coat = document.getElementById("coat");
+    if (step <= 1) setD("coat", step === 0 ? COAT.shallow : COAT.deep);
+    coat.style.opacity = step <= 1 ? "1" : "0";
+    const dy = [0, 46, 80, 80][step];
+    const cg = document.getElementById("cargo");
+    cg.style.transform = "translate(0px," + dy + "px)";
+    cg.style.opacity = step >= 3 ? "0" : "1";
+    const ap = document.getElementById("ap2");
+    ap.style.transform = "translate(0px," + (step === 1 ? 46 : 0) + "px)";
+    ap.style.opacity = step <= 1 ? "1" : "0";
+    document.getElementById("ldlLbl").style.visibility = step === 0 ? "visible" : "hidden";
+    document.getElementById("ap2Lbl").classList.toggle("on", step === 0);
+    document.getElementById("clLbl").classList.toggle("on", step === 1);
+    const v = document.getElementById("vesicle");
+    v.style.opacity = step === 2 ? "1" : "0";
+    document.getElementById("dynamin").classList.toggle("on", step === 2);
+    document.getElementById("dynamin").style.visibility = step === 2 ? "visible" : "hidden";
+    document.getElementById("endosome").classList.toggle("on", step >= 3);
+    document.getElementById("endosome").style.visibility = step >= 3 ? "visible" : "hidden";
+  } else {
+    // membrane: flat while docked, opens into an omega at fusion, flat again after retrieval
+    setD("membrane", step === 2 ? MEM.fused : MEM.synFlat);
+    const ves = document.getElementById("synVes");
+    ves.style.opacity = step >= 2 ? "0" : "1";
+    document.getElementById("sytLbl").style.visibility = step === 1 || step === 2 ? "visible" : "hidden";
+    document.getElementById("snareLbls").classList.toggle("on", step === 0);
+    document.getElementById("snares").style.opacity = step === 3 ? "0" : "1";
+    // SNAREs zip shorter when fusion happens
+    setD("vSnare", step === 2 ? "M294 156 L294 140" : "M290 126 L290 112");
+    setD("tSnare", step === 2 ? "M306 140 L306 156" : "M310 113 L310 126");
+    // neurotransmitter: inside vesicle until fusion, then out into the cleft
+    const inside = [[290,150],[306,148],[296,164],[312,166],[288,176],[304,180]];
+    const outside = [[262,74],[286,62],[310,70],[334,60],[298,86],[324,84]];
+    inside.forEach(function (p, i) {
+      const o = step >= 2 ? outside[i] : p;
+      mvDot("nt" + (i + 1), o[0], o[1], step >= 3 ? "0.35" : "1");
+    });
+    document.getElementById("ntLbl").classList.toggle("on", step === 2);
+    // Ca2+: outside (0), entering (1), on synaptotagmin (2), gone (3)
+    const caPos = step === 0 ? [[455,62],[471,56],[487,62]]
+                : step === 1 ? [[452,146],[471,156],[490,146]]
+                : [[352,148],[358,162],[352,176]];
+    caPos.forEach(function (p, i) { mvDot("ca" + (i + 1), p[0], p[1], step >= 3 ? "0" : "1"); });
+    const cl = document.getElementById("caLbl");
+    cl.setAttribute("x", step === 1 ? 504 : 510); cl.setAttribute("y", step === 1 ? 150 : 64);
+    cl.style.visibility = step <= 1 ? "visible" : "hidden";
+    document.getElementById("nsf").classList.toggle("on", step >= 3);
+    document.getElementById("nsf").style.visibility = step >= 3 ? "visible" : "hidden";
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("rme");
+</script>
+'''
+
 
 
 # ---------------------------------------------------------------------------
@@ -3875,6 +4573,209 @@ setMode('neuronal');
 </script>
 '''
 
+ACTION_POTENTIAL_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of the neuronal action potential in technical detail: a switchable view of voltage-gated channel gating (sodium activation and inactivation gates, potassium gates, equilibrium potentials and refractory periods) and of conduction along unmyelinated versus myelinated axons, including saltatory conduction and demyelination.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .mv { transition: transform .9s ease, opacity .6s ease; }
+  .dot { transition: cx .9s ease, cy .9s ease, opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnGate" onclick="setMode('gate')">Channel gating</button>
+  <button id="btnCond" onclick="setMode('cond')">Conduction &amp; myelin</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Action potential — channel gating and conduction</title>
+<desc>Gating view: at rest the voltage-gated sodium channel has its activation gate m closed and inactivation gate h open, and the potassium channel is closed. At threshold the m gates open, sodium rushes in and the membrane races toward the sodium equilibrium potential of about +60 millivolts. At the peak the h gate plugs the sodium channel (inactivation) while the slower potassium gates open, so potassium leaves and the membrane repolarizes toward the potassium equilibrium potential of about −90 millivolts, undershooting. While sodium channels are inactivated no new spike can fire (absolute refractory period); while they recover a stronger stimulus is needed (relative refractory period). Conduction view: in an unmyelinated axon the action potential regenerates at every patch of membrane and creeps along at about one metre per second. Myelin insulates internodes and sodium channels cluster at nodes of Ranvier, so the spike jumps from node to node (saltatory conduction) at up to about 120 metres per second. Loss of myelin, as in multiple sclerosis, lets current leak away and slows or blocks conduction.</desc>
+<defs>
+<marker id="aptArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- ===================== GATING MODE ===================== -->
+<g id="gGate">
+  <!-- voltage trace -->
+  <line x1="60" y1="40" x2="60" y2="250" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="40" y="146" text-anchor="middle" transform="rotate(-90 40 146)">mV</text>
+  <line x1="60" y1="58" x2="330" y2="58" stroke="#E24B4A" stroke-width="1" stroke-dasharray="4 3"/>
+  <text class="ts" x="330" y="52" text-anchor="end" style="fill:#B91C1C">E_Na ≈ +60</text>
+  <line x1="60" y1="238" x2="330" y2="238" stroke="#378ADD" stroke-width="1" stroke-dasharray="4 3"/>
+  <text class="ts" x="330" y="254" text-anchor="end" style="fill:#185FA5">E_K ≈ −90</text>
+  <line x1="60" y1="196" x2="330" y2="196" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="2 3"/>
+  <text class="ts" x="330" y="190" text-anchor="end">threshold −55</text>
+  <g id="refr" class="stg">
+    <rect x="120" y="62" width="55" height="174" fill="#E24B4A" fill-opacity="0.12"/>
+    <rect x="175" y="62" width="70" height="174" fill="#EF9F27" fill-opacity="0.14"/>
+    <text class="ts" x="147" y="80" text-anchor="middle">absolute</text>
+    <text class="ts" x="210" y="80" text-anchor="middle">relative</text>
+  </g>
+  <path d="M60 214 L110 214 C116 214 118 196 122 196 C128 196 132 94 140 94 C148 94 160 200 175 214 C182 226 188 228 196 228 C220 228 240 214 260 214 L330 214" fill="none" stroke="#7F77DD" stroke-width="3"/>
+  <circle id="vDot" class="dot" cx="90" cy="214" r="7" fill="#E24B4A"/>
+
+  <!-- channels -->
+  <rect x="380" y="130" width="280" height="40" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.6"/>
+  <text class="ts" x="390" y="120">Outside</text>
+  <text class="ts" x="390" y="292">Cytosol</text>
+  <!-- Na channel -->
+  <rect x="430" y="122" width="14" height="56" rx="4" class="c-coral"/>
+  <rect x="456" y="122" width="14" height="56" rx="4" class="c-coral"/>
+  <rect id="mGate" class="mv" x="444" y="172" width="12" height="6" fill="#B91C1C" style="transform-box:fill-box;transform-origin:left center"/>
+  <path id="hChain" d="M450 182 V200" stroke="var(--border-strong)" stroke-width="1.5" class="mv"/>
+  <circle id="hBall" class="dot" cx="450" cy="204" r="7" fill="#E24B4A"/>
+  <text class="ts" x="424" y="178" text-anchor="end">m</text>
+  <text class="ts" x="424" y="208" text-anchor="end">h</text>
+  <text class="ts" x="450" y="236" text-anchor="middle">Na⁺ channel</text>
+  <!-- K channel -->
+  <rect x="570" y="122" width="14" height="56" rx="4" class="c-teal"/>
+  <rect x="596" y="122" width="14" height="56" rx="4" class="c-teal"/>
+  <rect id="nGate" class="mv" x="584" y="172" width="12" height="6" fill="#0F6E56" style="transform-box:fill-box;transform-origin:left center"/>
+  <text class="ts" x="618" y="178" text-anchor="start">n</text>
+  <text class="ts" x="590" y="236" text-anchor="middle">K⁺ channel</text>
+  <!-- ions -->
+  <circle id="na1" class="dot" cx="440" cy="96" r="5" fill="#EF9F27"/>
+  <circle id="na2" class="dot" cx="460" cy="88" r="5" fill="#EF9F27"/>
+  <text id="naTxt" class="ts" x="478" y="96" text-anchor="start">Na⁺</text>
+  <circle id="k1" class="dot" cx="582" cy="206" r="5" fill="#1D9E75"/>
+  <circle id="k2" class="dot" cx="600" cy="214" r="5" fill="#1D9E75"/>
+  <text id="kTxt" class="ts" x="616" y="216" text-anchor="start">K⁺</text>
+  <text id="gateState" class="ts" x="520" y="40" text-anchor="middle"></text>
+  <text id="gateState2" class="ts" x="520" y="58" text-anchor="middle"></text>
+</g>
+
+<!-- ===================== CONDUCTION MODE ===================== -->
+<g id="gCond" class="hide">
+  <text class="ts" x="60" y="56" text-anchor="start">Unmyelinated axon</text>
+  <text class="ts" x="640" y="56" text-anchor="end">~0.5–2 m/s</text>
+  <rect x="60" y="68" width="580" height="24" rx="12" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1"/>
+  <rect id="trail" x="60" y="68" width="40" height="24" rx="12" fill="#E24B4A" fill-opacity="0.18" style="transition:width .9s ease"/>
+  <circle id="uDot" class="dot" cx="90" cy="80" r="9" fill="#E24B4A"/>
+
+  <text class="ts" x="640" y="256" text-anchor="end">Myelinated axon · up to ~120 m/s</text>
+  <rect x="60" y="196" width="580" height="24" rx="12" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1"/>
+  <g id="myelin" class="stg">
+    <rect x="66" y="188" width="78" height="40" rx="14" class="c-amber"/>
+    <rect x="156" y="188" width="128" height="40" rx="14" class="c-amber"/>
+    <rect id="mSeg" x="296" y="188" width="128" height="40" rx="14" class="c-amber" style="transition:opacity .6s"/>
+    <rect x="436" y="188" width="128" height="40" rx="14" class="c-amber"/>
+    <rect x="576" y="188" width="60" height="40" rx="14" class="c-amber"/>
+    <text class="ts" x="220" y="208" text-anchor="middle" dominant-baseline="central">myelin</text>
+    <path d="M150 192 V224 M290 192 V224 M430 192 V224 M570 192 V224" stroke="#E24B4A" stroke-width="4"/>
+    <text class="ts" x="150" y="244" text-anchor="middle">node of Ranvier (Na⁺ channels)</text>
+  </g>
+  <g id="jumps" class="stg">
+    <path d="M150 182 Q220 140 290 182" fill="none" stroke="#E24B4A" stroke-width="1.6" marker-end="url(#aptArrow)"/>
+    <path d="M290 182 Q360 140 430 182" fill="none" stroke="#E24B4A" stroke-width="1.6" marker-end="url(#aptArrow)"/>
+    <path id="jump3" d="M430 182 Q500 140 570 182" fill="none" stroke="#E24B4A" stroke-width="1.6" marker-end="url(#aptArrow)"/>
+    <text id="jumpTxt" class="ts" x="360" y="140" text-anchor="middle">saltatory: the spike jumps node to node</text>
+  </g>
+  <circle id="mDot" class="dot" cx="150" cy="208" r="9" fill="#E24B4A" style="opacity:0"/>
+  <g id="block" class="stg">
+    <path d="M352 196 l16 24 M368 196 l-16 24" stroke="#B91C1C" stroke-width="3" stroke-linecap="round"/>
+    <text class="ts" x="360" y="282" text-anchor="middle" style="fill:#B91C1C">demyelinated segment: current leaks out → slowed or blocked (MS)</text>
+  </g>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "gate";
+const labels = {
+  gate: [
+    "Step 0 of 3 — rest (−70 mV): the Na⁺ channel's activation gate (m) is shut, its inactivation gate (h) is open; K⁺ channels are closed",
+    "Step 1 of 3 — threshold: m gates snap open, Na⁺ rushes in and the membrane races toward E_Na (≈ +60 mV) — positive feedback",
+    "Step 2 of 3 — peak: the h gate plugs the Na⁺ channel (inactivation) while the slower K⁺ (n) gates open — K⁺ leaves and the cell repolarizes",
+    "Step 3 of 3 — undershoot toward E_K (≈ −90 mV); while Na⁺ channels are inactivated no spike can fire (absolute refractory), then a stronger stimulus is needed (relative)"
+  ],
+  cond: [
+    "Step 0 of 3 — unmyelinated axon: the spike must regenerate at every patch of membrane, so it creeps along (~0.5–2 m/s)",
+    "Step 1 of 3 — myelin (Schwann cells, oligodendrocytes in the CNS) insulates the internodes; Na⁺ channels cluster at the nodes of Ranvier",
+    "Step 2 of 3 — current flows quickly under the myelin and the spike fires only at nodes — saltatory conduction, up to ~120 m/s",
+    "Step 3 of 3 — demyelination (e.g. multiple sclerosis) lets current leak out of the bare segment: conduction slows or fails"
+  ]
+};
+const VDOT = [[90, 214], [130, 150], [140, 94], [196, 228]];
+const STATE = [
+  ["Na⁺: closed (m shut, h open)", "K⁺: closed"],
+  ["Na⁺: OPEN — Na⁺ rushes in", "K⁺: still closed (slow gates)"],
+  ["Na⁺: INACTIVATED (h plugs the pore)", "K⁺: open — K⁺ flows out"],
+  ["Na⁺: recovering from inactivation", "K⁺: still open → undershoot"]
+];
+function dot(id, x, y, o) {
+  const e = document.getElementById(id);
+  e.setAttribute("cx", x); e.setAttribute("cy", y); e.style.cx = x + "px"; e.style.cy = y + "px";
+  if (o !== undefined) e.style.opacity = o;
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnGate").classList.toggle("active", m === "gate");
+  document.getElementById("btnCond").classList.toggle("active", m === "cond");
+  document.getElementById("gGate").classList.toggle("hide", m !== "gate");
+  document.getElementById("gCond").classList.toggle("hide", m !== "cond");
+  render();
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "gate") {
+    dot("vDot", VDOT[step][0], VDOT[step][1]);
+    document.getElementById("refr").classList.toggle("on", step === 3);
+    document.getElementById("refr").style.visibility = step === 3 ? "visible" : "hidden";
+    const mOpen = step >= 1, hShut = step >= 2, kOpen = step >= 2;
+    document.getElementById("mGate").style.transform = mOpen ? "rotate(80deg)" : "rotate(0deg)";
+    dot("hBall", 450, hShut && step === 2 ? 176 : 204);
+    document.getElementById("nGate").style.transform = kOpen ? "rotate(80deg)" : "rotate(0deg)";
+    // Na+ in during the upstroke
+    const nIn = step >= 1;
+    dot("na1", nIn ? 442 : 440, nIn ? 256 : 96);
+    dot("na2", nIn ? 458 : 460, nIn ? 266 : 88);
+    const nt = document.getElementById("naTxt");
+    nt.setAttribute("y", nIn ? 268 : 96); nt.setAttribute("x", nIn ? 472 : 478);
+    // K+ out during repolarization
+    const kout = step >= 2;
+    dot("k1", kout ? 584 : 582, kout ? 96 : 206);
+    dot("k2", kout ? 600 : 600, kout ? 86 : 214);
+    const kt = document.getElementById("kTxt");
+    kt.setAttribute("y", kout ? 96 : 216);
+    document.getElementById("gateState").textContent = STATE[step][0];
+    document.getElementById("gateState2").textContent = STATE[step][1];
+  } else {
+    const ux = [100, 150, 200, 250][step];
+    dot("uDot", ux, 80);
+    const tr = document.getElementById("trail");
+    tr.setAttribute("width", ux - 60 + 10); tr.style.width = (ux - 60 + 10) + "px";
+    document.getElementById("myelin").classList.toggle("on", step >= 1);
+    document.getElementById("mSeg").style.opacity = step >= 3 ? "0" : "1";
+    document.getElementById("jumps").classList.toggle("on", step >= 2);
+    document.getElementById("jump3").style.opacity = step >= 3 ? "0" : "1";
+    document.getElementById("jumpTxt").textContent = step >= 3 ? "jumps stop at the bare segment" : "saltatory: the spike jumps node to node";
+    const mx = [150, 150, 570, 290][step];
+    dot("mDot", mx, 208, step === 0 ? "0" : "1");
+    document.getElementById("block").classList.toggle("on", step >= 3);
+    document.getElementById("block").style.visibility = step >= 3 ? "visible" : "hidden";
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("gate");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # MUSCLE_CONTRACTION_GENERAL  (source: muscle_contraction.html)
@@ -4048,6 +4949,182 @@ function reset() { step = 0; render(); }
 render();
 </script>
 '''
+
+CARDIAC_CONDUCTION_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of cardiac conduction in technical detail: a switchable view linking each conduction event to the ECG waves and intervals, and of how sympathetic and parasympathetic nerves change heart rate by altering the SA node pacemaker potential.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .fd { transition: opacity .6s ease, fill .6s ease; }
+  #ecgClip rect { transition: width 1s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnEcg" onclick="setMode('ecg')">Conduction → ECG</button>
+  <button id="btnAns" onclick="setMode('ans')">Autonomic rate control</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Cardiac conduction — ECG and autonomic control of heart rate</title>
+<desc>ECG view: atrial depolarization spreading from the SA node gives the P wave. The slow AV node delays the impulse, giving the flat PR segment; the PR interval is normally 0.12 to 0.20 seconds. Rapid spread through the bundle of His and Purkinje fibres depolarizes the ventricles, giving the QRS complex, normally under 0.12 seconds; atrial repolarization is hidden within it. Ventricular repolarization gives the T wave, and the QT interval spans ventricular depolarization and repolarization. Autonomic view: the SA node pacemaker potential drifts up to threshold. Sympathetic noradrenaline acting on beta-1 receptors raises cAMP, increases the funny current and calcium current, steepens the drift and speeds the heart. Vagal acetylcholine acting on M2 receptors opens potassium channels and reduces the funny current, starting each cycle more negative with a flatter drift, slowing the heart. Without nerve input, as in a transplanted heart, the SA node fires at about 100 beats per minute, so resting rate reflects ongoing vagal tone.</desc>
+<defs>
+<clipPath id="ecgClip"><rect id="ecgClipR" x="50" y="40" width="84" height="240"/></clipPath>
+</defs>
+
+<!-- ===================== ECG MODE ===================== -->
+<g id="gEcg">
+  <g id="grid"></g>
+  <path clip-path="url(#ecgClip)" d="M60 200 H80 C90 200 95 180 105 180 C115 180 120 200 130 200 H175 L181 208 L192 80 L205 214 L214 200 H260 C275 200 285 166 300 166 C315 166 322 200 336 200 H440" fill="none" stroke="#E24B4A" stroke-width="2.5" stroke-linejoin="round"/>
+  <g id="lP" class="stg"><text class="ts" x="105" y="170" text-anchor="middle">P</text></g>
+  <g id="lPR" class="stg">
+    <path d="M80 236 H175 M80 230 V242 M175 230 V242" stroke="var(--t)" stroke-width="1.2" fill="none"/>
+    <text class="ts" x="128" y="256" text-anchor="middle">PR 0.12–0.20 s</text>
+  </g>
+  <g id="lQRS" class="stg"><text class="ts" x="192" y="70" text-anchor="middle">QRS &lt; 0.12 s</text></g>
+  <g id="lT" class="stg">
+    <text class="ts" x="300" y="156" text-anchor="middle">T</text>
+    <path d="M175 272 H336 M175 266 V278 M336 266 V278" stroke="var(--t)" stroke-width="1.2" fill="none"/>
+    <text class="ts" x="256" y="292" text-anchor="middle">QT ≈ 0.35–0.45 s (varies with rate)</text>
+  </g>
+  <text class="ts" x="60" y="30" text-anchor="start">ECG (lead II), 40 ms per small square</text>
+
+  <!-- heart schematic -->
+  <ellipse id="hRA" class="fd" cx="522" cy="96" rx="38" ry="28" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <ellipse id="hLA" class="fd" cx="600" cy="96" rx="38" ry="28" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <path id="hV" class="fd" d="M496 130 Q561 120 626 130 Q648 200 561 258 Q474 200 496 130 Z" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <circle cx="500" cy="80" r="6" fill="#EF9F27"/>
+  <text class="ts" x="490" y="66" text-anchor="end">SA</text>
+  <circle id="hAV" cx="561" cy="128" r="6" fill="#EF9F27"/>
+  <text class="ts" x="570" y="150" text-anchor="start">AV</text>
+  <path d="M561 134 V168 M561 168 L532 222 M561 168 L590 222" fill="none" stroke="#7F77DD" stroke-width="2.5"/>
+  <text id="hNote" class="ts" x="561" y="282" text-anchor="middle"></text>
+  <text id="hSpeed" class="ts" x="561" y="40" text-anchor="middle"></text>
+</g>
+
+<!-- ===================== AUTONOMIC MODE ===================== -->
+<g id="gAns" class="hide">
+  <line x1="70" y1="270" x2="630" y2="270" stroke="var(--t)" stroke-width="1"/>
+  <line x1="70" y1="270" x2="70" y2="80" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="630" y="288" text-anchor="end">time (2 s shown)</text>
+  <text class="ts" x="40" y="180" text-anchor="middle" transform="rotate(-90 40 180)">SA node mV</text>
+  <line x1="70" y1="200" x2="630" y2="200" stroke="var(--border-strong)" stroke-dasharray="3 3"/>
+  <text class="ts" x="76" y="194" text-anchor="start">threshold</text>
+  <path id="baseTrace" fill="none" stroke="var(--border-strong)" stroke-width="2"/>
+  <path id="curTrace" fill="none" stroke="#7F77DD" stroke-width="2.8"/>
+  <text id="bpm" class="th" x="630" y="40" text-anchor="end" style="font-size:22px"></text>
+  <text id="ans1" class="ts" x="76" y="40" text-anchor="start"></text>
+  <text id="ans2" class="ts" x="76" y="58" text-anchor="start"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "ecg";
+const labels = {
+  ecg: [
+    "Step 0 of 3 — the SA node fires and depolarization spreads across both atria: the P wave",
+    "Step 1 of 3 — the AV node conducts slowly (~0.05 m/s), giving the ventricles time to fill: the flat PR segment",
+    "Step 2 of 3 — His bundle and Purkinje fibres (~2–4 m/s) depolarize the ventricles almost at once: the QRS complex (atrial repolarization hides inside it)",
+    "Step 3 of 3 — ventricular repolarization gives the T wave; the QT interval covers the whole ventricular action potential"
+  ],
+  ans: [
+    "Step 0 of 3 — resting SA node: the pacemaker potential drifts up to threshold about 75 times a minute",
+    "Step 1 of 3 — sympathetic: noradrenaline → β1 receptors → cAMP ↑ → more funny current (If) and Ca²⁺ current — steeper drift, faster rate",
+    "Step 2 of 3 — parasympathetic (vagus): acetylcholine → M2 receptors → K⁺ channels open, If falls — starts lower, drifts slower, slower rate",
+    "Step 3 of 3 — with no nerve input (e.g. a transplanted heart) the SA node fires ~100/min — so a resting rate of ~70 means vagal tone dominates"
+  ]
+};
+// ---- ECG grid ----
+(function () {
+  let h = "";
+  for (let x = 60; x <= 440; x += 20) h += '<path d="M' + x + ' 60 V220" stroke="#E24B4A" stroke-opacity="0.12"/>';
+  for (let y = 60; y <= 220; y += 20) h += '<path d="M60 ' + y + ' H440" stroke="#E24B4A" stroke-opacity="0.12"/>';
+  document.getElementById("grid").innerHTML = h;
+})();
+const CLIP = [84, 128, 172, 392];
+const HNOTE = ["atria depolarize", "AV node: deliberate delay", "ventricles depolarize", "ventricles repolarize"];
+const HSPEED = ["", "AV node ~0.05 m/s", "Purkinje ~2–4 m/s", ""];
+// ---- pacemaker traces ----
+const X = function (t) { return 70 + t * 280; };
+const Y = function (v) { return 120 - v * 2; };
+function trace(mdp, slope) {
+  let t = 0, d = "M" + X(0) + " " + Y(mdp), v = mdp;
+  while (t < 2) {
+    const t4 = (-40 - v) / slope;               // phase 4 drift to threshold
+    t += t4; v = -40; d += " L" + X(Math.min(t, 2)).toFixed(1) + " " + Y(t > 2 ? mdp + slope * (2 - (t - t4)) : v).toFixed(1);
+    if (t >= 2) break;
+    t += 0.04; d += " L" + X(Math.min(t, 2)).toFixed(1) + " " + Y(10);   // Ca2+ upstroke
+    if (t >= 2) break;
+    t += 0.15; d += " L" + X(Math.min(t, 2)).toFixed(1) + " " + Y(mdp); // repolarization
+    v = mdp;
+  }
+  return d;
+}
+const ANS = [
+  { mdp: -60, slope: 32, bpm: "~75 bpm", a: "baseline", b: "", col: "#7F77DD" },
+  { mdp: -60, slope: 75, bpm: "~125 bpm", a: "noradrenaline → β1 → cAMP ↑", b: "If and Ca²⁺ current ↑ → steeper drift", col: "#E24B4A" },
+  { mdp: -68, slope: 26, bpm: "~48 bpm", a: "acetylcholine → M2 → K⁺ channels open", b: "more negative start, If ↓ → flatter drift", col: "#378ADD" },
+  { mdp: -60, slope: 46, bpm: "~100 bpm", a: "intrinsic rate (no nerves)", b: "normal resting rate = intrinsic − vagal brake", col: "#1D9E75" }
+];
+document.getElementById("baseTrace").setAttribute("d", trace(-60, 32));
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnEcg").classList.toggle("active", m === "ecg");
+  document.getElementById("btnAns").classList.toggle("active", m === "ans");
+  document.getElementById("gEcg").classList.toggle("hide", m !== "ecg");
+  document.getElementById("gAns").classList.toggle("hide", m !== "ans");
+  render();
+}
+function vis(id, on) {
+  const e = document.getElementById(id);
+  e.classList.toggle("on", on);
+  e.style.visibility = on ? "visible" : "hidden";
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "ecg") {
+    const r = document.getElementById("ecgClipR");
+    r.setAttribute("width", CLIP[step]); r.style.width = CLIP[step] + "px";
+    vis("lP", step >= 0); vis("lPR", step >= 1); vis("lQRS", step >= 2); vis("lT", step >= 3);
+    const amber = "#FAC775", blue = "#B5D4F4";
+    document.getElementById("hRA").style.fill = step === 0 ? amber : "";
+    document.getElementById("hLA").style.fill = step === 0 ? amber : "";
+    document.getElementById("hV").style.fill = step === 2 ? amber : step === 3 ? blue : "";
+    document.getElementById("hAV").classList.toggle("pulse", step === 1);
+    document.getElementById("hNote").textContent = HNOTE[step];
+    document.getElementById("hSpeed").textContent = HSPEED[step];
+  } else {
+    const a = ANS[step];
+    const c = document.getElementById("curTrace");
+    c.setAttribute("d", trace(a.mdp, a.slope));
+    c.style.stroke = a.col;
+    document.getElementById("baseTrace").style.opacity = step === 0 ? "0" : "1";
+    document.getElementById("bpm").textContent = a.bpm;
+    document.getElementById("bpm").style.fill = a.col;
+    document.getElementById("ans1").textContent = a.a;
+    document.getElementById("ans2").textContent = a.b + (step ? "   (grey = baseline)" : "");
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("ecg");
+</script>
+'''
+
 
 
 # ---------------------------------------------------------------------------
@@ -4859,6 +5936,204 @@ function reset() { step = 0; render(); }
 render();
 </script>
 '''
+
+BLOOD_CLOTTING_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of blood clotting in technical detail: a switchable view of the cell-based coagulation cascade (initiation by tissue factor, amplification and propagation to a thrombin burst, fibrin cross-linking, and the PT and aPTT tests), and of the natural brakes, fibrinolysis and the anticoagulant drugs that act on them.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnCas" onclick="setMode('cas')">Coagulation cascade</button>
+  <button id="btnReg" onclick="setMode('reg')">Brakes, clot breakdown &amp; drugs</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Blood clotting — coagulation cascade, regulation and anticoagulants</title>
+<desc>Cascade view: at the injury, tissue factor binds factor VIIa and activates factor X, producing a trickle of thrombin (initiation). That thrombin activates factors V, VIII and XI and switches on platelets (amplification). On the platelet surface the tenase complex IXa–VIIIa makes large amounts of Xa, and the prothrombinase complex Xa–Va produces a burst of thrombin (propagation). Thrombin converts fibrinogen to fibrin, which factor XIIIa cross-links into a stable mesh. The PT test measures the tissue factor and common pathway and monitors warfarin; the aPTT measures factors XII, XI, IX and VIII and is prolonged by heparin and in haemophilia A and B. Brakes view: antithrombin, boosted about a thousandfold by heparin, inactivates thrombin and Xa; thrombomodulin turns thrombin into an activator of protein C, which with protein S cuts Va and VIIIa. Tissue plasminogen activator turns plasminogen into plasmin, which breaks fibrin down and releases D-dimer. Anticoagulants act on these steps: warfarin blocks vitamin K-dependent synthesis of factors II, VII, IX and X; heparin boosts antithrombin; direct oral anticoagulants block Xa or thrombin; and alteplase, a tPA drug, dissolves clots.</desc>
+<defs>
+<marker id="bcArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="bcTee" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M5 0V10" fill="none" stroke="context-stroke" stroke-width="2"/></marker>
+</defs>
+
+<!-- ===================== CASCADE MODE ===================== -->
+<g id="gCas">
+  <text class="ts" x="110" y="24" text-anchor="middle">1 · initiation</text>
+  <text class="ts" x="290" y="24" text-anchor="middle">2 · amplification</text>
+  <text class="ts" x="470" y="24" text-anchor="middle">3 · propagation</text>
+  <text class="ts" x="610" y="24" text-anchor="middle">4 · clot</text>
+
+  <g id="pInit" class="stg">
+    <rect x="60" y="44" width="100" height="26" rx="8" class="c-amber"/>
+    <text class="ts" x="110" y="57" text-anchor="middle" dominant-baseline="central">TF–VIIa</text>
+    <path d="M110 72 V96" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+    <rect x="80" y="100" width="60" height="26" rx="8" class="c-teal"/>
+    <text class="ts" x="110" y="113" text-anchor="middle" dominant-baseline="central">Xa</text>
+    <path d="M110 128 V152" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+    <rect x="62" y="156" width="96" height="26" rx="8" class="c-coral"/>
+    <text class="ts" x="110" y="169" text-anchor="middle" dominant-baseline="central">thrombin</text>
+    <text class="ts" x="110" y="198" text-anchor="middle">a small trickle</text>
+    <text class="ts" x="110" y="232" text-anchor="middle">TF exposed at</text>
+    <text class="ts" x="110" y="248" text-anchor="middle">the injury</text>
+  </g>
+
+  <g id="pAmp" class="stg">
+    <path d="M160 169 L222 66 M160 169 L222 110 M160 169 L222 154 M160 169 L222 198" stroke="var(--t)" stroke-width="1.1" fill="none" marker-end="url(#bcArrow)"/>
+    <rect x="226" y="54" width="128" height="24" rx="8" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.8"/>
+    <text class="ts" x="290" y="66" text-anchor="middle" dominant-baseline="central">V → Va</text>
+    <rect x="226" y="98" width="128" height="24" rx="8" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.8"/>
+    <text class="ts" x="290" y="110" text-anchor="middle" dominant-baseline="central">VIII → VIIIa</text>
+    <rect x="226" y="142" width="128" height="24" rx="8" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.8"/>
+    <text class="ts" x="290" y="154" text-anchor="middle" dominant-baseline="central">XI → XIa</text>
+    <rect x="226" y="186" width="128" height="24" rx="8" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.8"/>
+    <text class="ts" x="290" y="198" text-anchor="middle" dominant-baseline="central">platelets activated</text>
+  </g>
+
+  <g id="pProp" class="stg">
+    <path d="M356 110 L404 84 M356 154 L404 92" stroke="var(--t)" stroke-width="1.1" fill="none" marker-end="url(#bcArrow)"/>
+    <rect x="406" y="70" width="128" height="26" rx="8" class="c-purple"/>
+    <text class="ts" x="470" y="83" text-anchor="middle" dominant-baseline="central">IXa–VIIIa (tenase)</text>
+    <path d="M470 98 V118" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+    <rect x="406" y="122" width="128" height="26" rx="8" class="c-purple"/>
+    <text class="ts" x="470" y="135" text-anchor="middle" dominant-baseline="central">Xa–Va (prothrombinase)</text>
+    <path d="M356 66 L404 128" stroke="var(--t)" stroke-width="1.1" fill="none" marker-end="url(#bcArrow)"/>
+    <path d="M470 150 V170" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+    <rect x="406" y="174" width="128" height="30" rx="8" fill="#E24B4A"/>
+    <text class="th" x="470" y="189" text-anchor="middle" dominant-baseline="central" style="fill:#fff">thrombin BURST</text>
+    <text class="ts" x="470" y="222" text-anchor="middle">on the activated</text>
+    <text class="ts" x="470" y="238" text-anchor="middle">platelet surface</text>
+  </g>
+
+  <g id="pClot" class="stg">
+    <path d="M536 189 L560 189 L566 108" stroke="var(--t)" stroke-width="1.1" fill="none" marker-end="url(#bcArrow)"/>
+    <text class="ts" x="610" y="70" text-anchor="middle">fibrinogen</text>
+    <path d="M610 76 V96" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+    <text class="ts" x="610" y="112" text-anchor="middle">fibrin</text>
+    <path d="M580 130 L640 160 M580 160 L640 130 M584 145 H636 M610 124 V166" stroke="#7F77DD" stroke-width="2"/>
+    <text class="ts" x="610" y="186" text-anchor="middle">XIIIa</text>
+    <text class="ts" x="610" y="202" text-anchor="middle">cross-links</text>
+    <text class="ts" x="20" y="276" text-anchor="start" style="fill:#185FA5">PT/INR: TF–VII + common path (V, X, II, fibrinogen) — monitors warfarin</text>
+    <text class="ts" x="20" y="294" text-anchor="start" style="fill:#185FA5">aPTT: XII, XI, IX, VIII + common path — heparin; long in haemophilia A (VIII) / B (IX)</text>
+  </g>
+</g>
+
+<!-- ===================== REGULATION MODE ===================== -->
+<g id="gReg" class="hide">
+  <rect x="190" y="60" width="96" height="28" rx="8" class="c-coral"/>
+  <text class="ts" x="238" y="74" text-anchor="middle" dominant-baseline="central">thrombin</text>
+  <rect x="190" y="130" width="96" height="28" rx="8" class="c-teal"/>
+  <text class="ts" x="238" y="144" text-anchor="middle" dominant-baseline="central">Xa</text>
+  <path d="M238 128 V92" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+  <rect x="190" y="200" width="96" height="28" rx="8" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.8"/>
+  <text class="ts" x="238" y="214" text-anchor="middle" dominant-baseline="central">Va, VIIIa</text>
+  <path d="M238 198 V162" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+  <path d="M288 74 Q340 74 370 120" fill="none" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+  <!-- clot -->
+  <g id="clot">
+    <circle cx="410" cy="150" r="40" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+    <path d="M380 130 L440 170 M380 170 L440 130 M374 150 H446 M410 112 V188 M388 120 L432 180" stroke="#7F77DD" stroke-width="2"/>
+    <text class="ts" x="410" y="206" text-anchor="middle">fibrin clot</text>
+  </g>
+
+  <g id="rAT" class="stg">
+    <rect x="20" y="96" width="118" height="28" rx="8" class="c-purple"/>
+    <text class="ts" x="79" y="110" text-anchor="middle" dominant-baseline="central">antithrombin</text>
+    <text class="ts" x="79" y="140" text-anchor="middle">heparin boosts it</text>
+    <text class="ts" x="79" y="156" text-anchor="middle">~1000-fold</text>
+    <path d="M138 104 L186 78 M138 116 L186 140" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#bcTee)"/>
+  </g>
+  <g id="rPC" class="stg">
+    <rect x="20" y="236" width="140" height="28" rx="8" class="c-purple"/>
+    <text class="ts" x="90" y="250" text-anchor="middle" dominant-baseline="central">protein C + S</text>
+    <text class="ts" x="90" y="282" text-anchor="middle">activated via thrombomodulin</text>
+    <path d="M160 246 L186 220" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#bcTee)"/>
+  </g>
+  <g id="rFib" class="stg">
+    <text class="ts" x="560" y="56" text-anchor="middle">tPA</text>
+    <path d="M560 62 V80" stroke="var(--t)" stroke-width="1.3" marker-end="url(#bcArrow)"/>
+    <text class="ts" x="560" y="96" text-anchor="middle">plasminogen → plasmin</text>
+    <path d="M520 104 L454 136" stroke="#B91C1C" stroke-width="2" fill="none" marker-end="url(#bcArrow)"/>
+    <text class="ts" x="490" y="232" text-anchor="start">fibrin fragments</text>
+    <text class="ts" x="490" y="248" text-anchor="start">(D-dimer in blood)</text>
+    <path d="M462 216 l6 4 M474 222 l8 2 M470 236 l6 6" stroke="#7F77DD" stroke-width="2"/>
+  </g>
+  <g id="rDrug" class="stg">
+    <rect x="456" y="124" width="218" height="96" rx="10" fill="var(--surface-2)" stroke="#B91C1C" stroke-width="1.2"/>
+    <text class="ts" x="466" y="142" text-anchor="start">warfarin: vit K block → II, VII, IX, X ↓</text>
+    <text class="ts" x="466" y="160" text-anchor="start">heparin: boosts antithrombin</text>
+    <text class="ts" x="466" y="178" text-anchor="start">rivaroxaban, apixaban: block Xa</text>
+    <text class="ts" x="466" y="196" text-anchor="start">dabigatran: blocks thrombin</text>
+    <text class="ts" x="466" y="212" text-anchor="start">alteplase (tPA): dissolves clots</text>
+  </g>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "cas";
+const labels = {
+  cas: [
+    "Step 0 of 3 — initiation: injury exposes tissue factor (TF), which binds factor VIIa and activates factor X — making a small trickle of thrombin",
+    "Step 1 of 3 — amplification: that thrombin activates factors V, VIII and XI and switches on platelets",
+    "Step 2 of 3 — propagation: on the platelet surface, tenase (IXa–VIIIa) makes lots of Xa, and prothrombinase (Xa–Va) releases a burst of thrombin",
+    "Step 3 of 3 — thrombin turns fibrinogen into fibrin, which factor XIIIa cross-links; PT and aPTT test different parts of this cascade"
+  ],
+  reg: [
+    "Step 0 of 3 — antithrombin inactivates thrombin and Xa; heparin speeds this up about a thousandfold",
+    "Step 1 of 3 — thrombin bound to thrombomodulin on healthy endothelium activates protein C, which with protein S cuts Va and VIIIa — clotting stays local",
+    "Step 2 of 3 — fibrinolysis: tPA turns plasminogen into plasmin, which digests fibrin; the fragments (D-dimer) show up in blood tests",
+    "Step 3 of 3 — anticoagulant and clot-busting drugs act on exactly these steps"
+  ]
+};
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnCas").classList.toggle("active", m === "cas");
+  document.getElementById("btnReg").classList.toggle("active", m === "reg");
+  document.getElementById("gCas").classList.toggle("hide", m !== "cas");
+  document.getElementById("gReg").classList.toggle("hide", m !== "reg");
+  render();
+}
+function vis(id, on) {
+  const e = document.getElementById(id);
+  e.classList.toggle("on", on);
+  e.style.visibility = on ? "visible" : "hidden";
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "cas") {
+    document.getElementById("pInit").classList.toggle("on", step >= 0);
+    vis("pAmp", step >= 1);
+    vis("pProp", step >= 2);
+    vis("pClot", step >= 3);
+  } else {
+    vis("rAT", step === 0 || step === 3);
+    vis("rPC", step === 1 || step === 3);
+    vis("rFib", step === 2);
+    vis("rDrug", step === 3);
+    document.getElementById("clot").style.opacity = step === 2 ? "0.4" : "1";
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("cas");
+</script>
+'''
+
 
 
 # ---------------------------------------------------------------------------
@@ -5842,6 +7117,188 @@ function reset() { step = 0; render(); }
 render();
 </script>
 '''
+
+REFLEX_ARC_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of the stretch reflex in technical detail: a switchable view of the muscle spindle (Ia afferent firing, alpha-gamma co-activation) and the Golgi tendon organ, and of how the reflex is used clinically to tell upper from lower motor neuron lesions.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  #musc { transition: transform 1s ease; transform-origin: 340px 150px; }
+  .fd { transition: opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnSp" onclick="setMode('sp')">Spindle &amp; tendon organ</button>
+  <button id="btnCl" onclick="setMode('cl')">Clinical: UMN vs LMN</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Stretch reflex — muscle spindle, Golgi tendon organ and clinical testing</title>
+<desc>Spindle view: muscle spindles lie in parallel with the ordinary extrafusal fibres; group Ia sensory endings wrap the centre of the intrafusal fibres and fire faster when the muscle is stretched. When alpha motor neurons shorten the muscle, gamma motor neurons contract the ends of the intrafusal fibres so the spindle stays taut and keeps reporting (alpha-gamma co-activation). The Golgi tendon organ in the tendon senses tension through group Ib fibres, which excite an inhibitory interneuron that relaxes the same muscle (autogenic inhibition). Clinical view: the patellar reflex runs through spinal segments L3 to L4 under descending inhibition from the brain. A lower motor neuron lesion breaks the arc, so the reflex is reduced or absent with weakness, wasting and fasciculations. An upper motor neuron lesion removes descending inhibition, so reflexes are brisk with clonus, spasticity and a Babinski sign. The Jendrassik manoeuvre raises gamma drive to reinforce a weak reflex.</desc>
+<defs>
+<marker id="rxArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- ===================== SPINDLE MODE ===================== -->
+<g id="gSp">
+  <text class="ts" x="644" y="270" text-anchor="middle">tendon</text>
+  <g id="musc">
+    <path d="M620 82 L668 126 L668 206 L620 248 Z" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="1"/>
+    <g id="gtoShape" class="fd" style="opacity:0">
+      <path d="M630 160 q4 -8 8 0 q4 8 8 0 q4 -8 8 0 q4 8 8 0" fill="none" stroke="#EF9F27" stroke-width="2.5"/>
+      <path d="M644 152 V20" stroke="#EF9F27" stroke-width="2"/>
+    </g>
+    <rect x="60" y="82" width="560" height="20" rx="8" class="c-coral"/>
+    <rect x="60" y="228" width="560" height="20" rx="8" class="c-coral"/>
+    <ellipse cx="340" cy="160" rx="180" ry="32" fill="none" stroke="var(--border-strong)" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <path d="M180 160 H500" stroke="#7F77DD" stroke-width="3"/>
+    <path id="endL" class="fd" d="M180 160 H250" stroke="#534AB7" stroke-width="9" stroke-linecap="round"/>
+    <path id="endR" class="fd" d="M430 160 H500" stroke="#534AB7" stroke-width="9" stroke-linecap="round"/>
+    <path d="M290 160 q6 -10 12 0 q6 10 12 0 q6 -10 12 0 q6 10 12 0 q6 -10 12 0 q6 10 12 0 q6 -10 12 0 q6 10 12 0" fill="none" stroke="#1D9E75" stroke-width="2.5"/>
+    <path d="M120 296 V248" stroke="#B91C1C" stroke-width="2"/>
+    <g id="gam" class="stg">
+      <path d="M190 296 V170 M470 296 V170" stroke="#378ADD" stroke-width="2"/>
+    </g>
+  </g>
+  <path d="M340 152 V22" stroke="#1D9E75" stroke-width="2"/>
+  <text class="ts" x="332" y="40" text-anchor="end">Ia afferent</text>
+  <text class="ts" x="60" y="74" text-anchor="start">extrafusal fibres (do the work)</text>
+  <text class="ts" x="340" y="212" text-anchor="middle">muscle spindle: intrafusal fibres, Ia ending in the middle</text>
+  <text class="ts" x="112" y="290" text-anchor="end">α</text>
+  <text id="gamLbl" class="ts stg" x="480" y="290" text-anchor="start">γ: tighten spindle ends</text>
+  <g id="spikes"></g>
+  <text id="spikeLbl" class="ts" x="352" y="56" text-anchor="start">Ia firing</text>
+
+  <g id="gto" class="stg">
+    <text class="ts" x="672" y="290" text-anchor="end" style="fill:#BA7517">Ib: Golgi tendon organ</text>
+    <text class="ts" x="226" y="290" text-anchor="start" style="fill:#B91C1C">Ib → inhibitory interneuron → α relaxes</text>
+  </g>
+</g>
+
+<!-- ===================== CLINICAL MODE ===================== -->
+<g id="gCl" class="hide">
+  <rect x="270" y="18" width="140" height="40" rx="10" fill="var(--surface-2)" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="340" y="38" text-anchor="middle" dominant-baseline="central">Brain (UMN)</text>
+  <path d="M340 58 V100" stroke="#7F77DD" stroke-width="3" stroke-dasharray="6 3"/>
+  <text class="ts" x="350" y="84" text-anchor="start">descending inhibition</text>
+  <rect x="290" y="100" width="100" height="80" rx="14" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.2"/>
+  <text class="ts" x="340" y="136" text-anchor="middle">spinal cord</text>
+  <text class="ts" x="340" y="152" text-anchor="middle">L3–L4</text>
+  <path d="M250 234 C220 190 250 150 290 146" fill="none" stroke="#1D9E75" stroke-width="2.5" marker-end="url(#rxArrow)"/>
+  <text class="ts" x="214" y="196" text-anchor="end">sensory (Ia)</text>
+  <path d="M390 150 C430 150 460 190 430 234" fill="none" stroke="#B91C1C" stroke-width="2.5" marker-end="url(#rxArrow)"/>
+  <text class="ts" x="460" y="196" text-anchor="start">motor (α, LMN)</text>
+  <rect x="230" y="238" width="220" height="24" rx="10" class="c-coral"/>
+  <text class="ts" x="340" y="250" text-anchor="middle" dominant-baseline="central">quadriceps</text>
+
+  <g id="xLmn" class="stg"><path d="M432 168 l16 16 M448 168 l-16 16" stroke="#B91C1C" stroke-width="3.5" stroke-linecap="round"/></g>
+  <g id="xUmn" class="stg"><path d="M332 70 l16 16 M348 70 l-16 16" stroke="#B91C1C" stroke-width="3.5" stroke-linecap="round"/></g>
+  <g id="jend" class="stg">
+    <text class="ts" x="40" y="40" text-anchor="start">clench hands and pull</text>
+    <text class="ts" x="40" y="56" text-anchor="start">(Jendrassik manoeuvre)</text>
+    <path d="M140 66 Q220 110 286 130" fill="none" stroke="#378ADD" stroke-width="1.8" marker-end="url(#rxArrow)"/>
+    <text class="ts" x="170" y="120" text-anchor="end">↑ γ drive</text>
+  </g>
+
+  <text class="ts" x="570" y="40" text-anchor="middle">reflex grade</text>
+  <text id="grade" class="th" x="570" y="78" text-anchor="middle" style="font-size:26px">2+</text>
+  <text id="gradeTxt" class="ts" x="570" y="100" text-anchor="middle">normal</text>
+  <text id="sg1" class="ts" x="570" y="130" text-anchor="middle"></text>
+  <text id="sg2" class="ts" x="570" y="148" text-anchor="middle"></text>
+  <text id="sg3" class="ts" x="570" y="166" text-anchor="middle"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "sp";
+const labels = {
+  sp: [
+    "Step 0 of 3 — spindles lie in parallel with the working (extrafusal) fibres; Ia endings wrap the middle of the intrafusal fibres and fire steadily at rest",
+    "Step 1 of 3 — the tendon tap stretches the muscle and the spindle: Ia firing jumps, signalling both how far and how fast it was stretched",
+    "Step 2 of 3 — as α motor neurons shorten the muscle, γ motor neurons tighten the spindle ends (α–γ co-activation) so the spindle stays taut and keeps reporting",
+    "Step 3 of 3 — the Golgi tendon organ senses tension; Ib fibres drive an inhibitory interneuron that relaxes the same muscle (autogenic inhibition — protection)"
+  ],
+  cl: [
+    "Step 0 of 3 — the patellar reflex tests the L3–L4 arc; descending pathways from the brain normally keep it in check — grade 2+",
+    "Step 1 of 3 — lower motor neuron lesion (nerve root, peripheral nerve, anterior horn): the arc is broken — reflex reduced or absent",
+    "Step 2 of 3 — upper motor neuron lesion (stroke, spinal cord injury): descending inhibition is lost — brisk reflexes, clonus, Babinski sign",
+    "Step 3 of 3 — Jendrassik manoeuvre: clenching the hands raises γ drive and reinforces a weak reflex — helps tell 'weak' from truly absent"
+  ]
+};
+const SCALE = [1, 1.04, 0.94, 0.94];
+const SPIKES = [4, 12, 8, 8];
+const GRADE = [
+  ["2+", "normal", "intact arc", "descending control", ""],
+  ["0–1+", "reduced / absent", "weakness, wasting", "fasciculations", "flaccid tone"],
+  ["3–4+", "brisk", "spasticity, clonus", "Babinski sign", "(big toe goes up)"],
+  ["↑", "weak reflex reinforced", "spindles more sensitive", "", ""]
+];
+function drawSpikes(n) {
+  let h = "";
+  for (let i = 0; i < n; i++) {
+    const x = 492 + i * 13;
+    h += '<path d="M' + x + ' 60 V40" stroke="#1D9E75" stroke-width="2"/>';
+  }
+  document.getElementById("spikes").innerHTML = h;
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnSp").classList.toggle("active", m === "sp");
+  document.getElementById("btnCl").classList.toggle("active", m === "cl");
+  document.getElementById("gSp").classList.toggle("hide", m !== "sp");
+  document.getElementById("gCl").classList.toggle("hide", m !== "cl");
+  render();
+}
+function vis(id, on) {
+  const e = document.getElementById(id);
+  e.classList.toggle("on", on);
+  e.style.visibility = on ? "visible" : "hidden";
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "sp") {
+    document.getElementById("musc").style.transform = "scaleX(" + SCALE[step] + ")";
+    drawSpikes(SPIKES[step]);
+    document.getElementById("spikeLbl").textContent = step === 1 ? "Ia firing ↑↑" : (step >= 2 ? "Ia firing kept up by γ" : "Ia firing (rest)");
+    vis("gam", step >= 2);
+    document.getElementById("gamLbl").classList.toggle("on", step === 2);
+    ["endL", "endR"].forEach(function (id) { document.getElementById(id).style.opacity = step >= 2 ? "1" : "0.35"; });
+    vis("gto", step >= 3);
+    document.getElementById("gtoShape").style.opacity = step >= 3 ? "1" : "0";
+  } else {
+    vis("xLmn", step === 1);
+    vis("xUmn", step === 2);
+    vis("jend", step === 3);
+    const g = GRADE[step];
+    document.getElementById("grade").textContent = g[0];
+    document.getElementById("grade").style.fill = step === 0 ? "" : (step === 3 ? "#185FA5" : "#B91C1C");
+    document.getElementById("gradeTxt").textContent = g[1];
+    document.getElementById("sg1").textContent = g[2];
+    document.getElementById("sg2").textContent = g[3];
+    document.getElementById("sg3").textContent = g[4];
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("sp");
+</script>
+'''
+
 
 
 # ---------------------------------------------------------------------------
@@ -10834,6 +12291,203 @@ render();
 </script>
 '''
 
+DOPAMINE_REWARD_PATHWAY_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of dopamine signalling in technical detail: a switchable view of reward prediction error coding by midbrain dopamine neurons, and of the dopamine synapse from synthesis and vesicle packaging to D1 and D2 receptors and clearance, with the main drug targets.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .mv { transition: transform 1s ease, opacity .6s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnRpe" onclick="setMode('rpe')">Reward prediction error</button>
+  <button id="btnSyn" onclick="setMode('syn')">Dopamine synapse</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Dopamine — prediction error coding and the dopamine synapse</title>
+<desc>Prediction error view: midbrain dopamine neurons fire steadily at rest. An unexpected reward produces a burst. After learning, the burst moves to the cue that predicts the reward, and the fully predicted reward itself no longer changes firing. If the predicted reward is omitted, firing pauses at the time it was expected. Dopamine therefore signals the difference between the reward received and the reward expected. Synapse view: tyrosine hydroxylase converts tyrosine to L-DOPA, the rate-limiting step, and aromatic amino acid decarboxylase makes dopamine, which VMAT2 loads into vesicles for release. D1 receptors couple to Gs and raise cAMP, D2 receptors couple to Gi and lower it, and presynaptic D2 autoreceptors act as a brake. The dopamine transporter DAT takes dopamine back up and MAO and COMT break it down. Drug targets include L-DOPA in Parkinson's disease, D2-blocking antipsychotics, and stimulants that block or reverse DAT.</desc>
+<defs>
+<marker id="daArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- ===================== RPE MODE ===================== -->
+<g id="gRpe">
+  <text class="ts" x="80" y="124" text-anchor="start">VTA neuron firing</text>
+  <line x1="80" y1="190" x2="620" y2="190" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="620" y="208" text-anchor="end">time →</text>
+  <g id="raster"></g>
+  <g id="cue" class="stg">
+    <path d="M220 96 V190" stroke="#378ADD" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="200" y="70" width="40" height="22" rx="6" fill="#378ADD"/>
+    <text class="ts" x="220" y="81" text-anchor="middle" dominant-baseline="central" style="fill:#fff">cue</text>
+  </g>
+  <g id="rew" class="stg">
+    <path id="rewLine" d="M420 96 V190" stroke="#1D9E75" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect id="rewBox" x="390" y="70" width="60" height="22" rx="6" fill="#1D9E75"/>
+    <text id="rewTxt" class="ts" x="420" y="81" text-anchor="middle" dominant-baseline="central" style="fill:#fff">reward</text>
+  </g>
+  <text id="ev1" class="ts" x="235" y="232" text-anchor="middle"></text>
+  <text id="ev2" class="ts" x="435" y="232" text-anchor="middle"></text>
+  <rect x="160" y="250" width="360" height="30" rx="8" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="0.6"/>
+  <text class="ts" x="340" y="265" text-anchor="middle" dominant-baseline="central">dopamine ≈ reward received − reward expected</text>
+</g>
+
+<!-- ===================== SYNAPSE MODE ===================== -->
+<g id="gSyn" class="hide">
+  <rect x="110" y="18" width="460" height="104" rx="26" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <text class="ts" x="560" y="38" text-anchor="end">presynaptic terminal (VTA axon)</text>
+  <rect x="110" y="182" width="460" height="86" rx="20" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <text class="ts" x="560" y="262" text-anchor="end">nucleus accumbens neuron</text>
+
+  <g id="synth" class="stg">
+    <text class="ts" x="130" y="58" text-anchor="start">tyrosine</text>
+    <path d="M182 54 H212" stroke="var(--t)" stroke-width="1.2" marker-end="url(#daArrow)"/>
+    <text class="ts" x="197" y="46" text-anchor="middle" style="fill:#B91C1C">TH</text>
+    <text class="ts" x="218" y="58" text-anchor="start">L-DOPA</text>
+    <path d="M266 54 H296" stroke="var(--t)" stroke-width="1.2" marker-end="url(#daArrow)"/>
+    <text class="ts" x="281" y="46" text-anchor="middle">AADC</text>
+    <text class="ts" x="302" y="58" text-anchor="start">dopamine</text>
+  </g>
+
+  <!-- vesicles -->
+  <g id="ves">
+    <circle cx="380" cy="80" r="15" fill="none" stroke="var(--border-strong)" stroke-width="2"/>
+    <circle cx="420" cy="74" r="15" fill="none" stroke="var(--border-strong)" stroke-width="2"/>
+    <circle cx="376" cy="78" r="3" fill="#7F77DD"/><circle cx="384" cy="84" r="3" fill="#7F77DD"/>
+    <circle cx="416" cy="72" r="3" fill="#7F77DD"/><circle cx="424" cy="78" r="3" fill="#7F77DD"/>
+    <rect x="392" y="74" width="6" height="8" fill="#EF9F27"/>
+    <text class="ts" x="446" y="68" text-anchor="start">VMAT2 loads vesicles</text>
+  </g>
+  <path id="fusion" d="M320 122 C320 104 350 104 350 122" fill="none" stroke="var(--border-strong)" stroke-width="2" style="opacity:0;transition:opacity .5s"/>
+  <g id="cleftDA" class="stg">
+    <circle cx="300" cy="148" r="4" fill="#7F77DD"/><circle cx="326" cy="140" r="4" fill="#7F77DD"/>
+    <circle cx="352" cy="152" r="4" fill="#7F77DD"/><circle cx="380" cy="142" r="4" fill="#7F77DD"/>
+    <circle cx="410" cy="156" r="4" fill="#7F77DD"/><circle cx="270" cy="156" r="4" fill="#7F77DD"/>
+  </g>
+
+  <!-- receptors -->
+  <g id="recs" class="stg">
+    <rect x="226" y="176" width="24" height="16" rx="3" class="c-teal"/>
+    <text class="ts" x="238" y="212" text-anchor="middle">D1 → Gs → cAMP ↑</text>
+    <text class="ts" x="238" y="228" text-anchor="middle">("go")</text>
+    <rect x="430" y="176" width="24" height="16" rx="3" class="c-coral"/>
+    <text class="ts" x="442" y="212" text-anchor="middle">D2 → Gi → cAMP ↓</text>
+    <text class="ts" x="442" y="228" text-anchor="middle">("no-go")</text>
+    <rect x="500" y="114" width="20" height="14" rx="3" class="c-coral"/>
+    <text class="ts" x="528" y="140" text-anchor="start">D2 autoreceptor</text>
+    <text class="ts" x="528" y="154" text-anchor="start">(brake)</text>
+  </g>
+
+  <!-- clearance -->
+  <g id="clear" class="stg">
+    <rect x="160" y="114" width="20" height="14" rx="3" class="c-amber"/>
+    <text class="ts" x="150" y="146" text-anchor="end">DAT</text>
+    <path d="M190 150 Q176 140 172 128" fill="none" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#daArrow)"/>
+    <text class="ts" x="150" y="100" text-anchor="end">MAO</text>
+    <text class="ts" x="150" y="170" text-anchor="end">COMT</text>
+  </g>
+  <text id="drug" class="ts" x="340" y="292" text-anchor="middle" style="fill:#B91C1C"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "rpe";
+const labels = {
+  rpe: [
+    "Step 0 of 3 — at rest, dopamine neurons fire slowly and steadily (tonic firing)",
+    "Step 1 of 3 — an unexpected reward produces a burst: better than expected (positive prediction error)",
+    "Step 2 of 3 — after learning, the burst moves to the cue that predicts reward; the fully predicted reward itself causes no change",
+    "Step 3 of 3 — cue, but the expected reward is withheld: firing pauses exactly when reward was due (negative prediction error)"
+  ],
+  syn: [
+    "Step 0 of 3 — synthesis: tyrosine hydroxylase (TH, the rate-limiting step) makes L-DOPA, which AADC turns into dopamine",
+    "Step 1 of 3 — VMAT2 packs dopamine into vesicles; an action potential triggers release into the synaptic cleft",
+    "Step 2 of 3 — D1 receptors (Gs, cAMP ↑) and D2 receptors (Gi, cAMP ↓) on the target neuron; presynaptic D2 autoreceptors brake further release",
+    "Step 3 of 3 — the dopamine transporter (DAT) takes dopamine back up; MAO and COMT break it down"
+  ]
+};
+const DRUG = [
+  "L-DOPA bypasses TH to replace dopamine in Parkinson's disease",
+  "",
+  "antipsychotics block D2 receptors",
+  "cocaine blocks DAT; amphetamines make DAT run in reverse"
+];
+// raster: baseline ticks plus per-step bursts/pauses
+function raster() {
+  let xs = [];
+  for (let x = 92; x <= 610; x += 30) xs.push(x + ((x * 7) % 9) - 4);
+  const burst = function (at) { [2, 8, 14, 20, 26, 32].forEach(function (d) { xs.push(at + d); }); };
+  const pause = function (a, b) { xs = xs.filter(function (x) { return x < a || x > b; }); };
+  if (step === 1) burst(420);
+  if (step === 2 || step === 3) burst(220);
+  if (step === 3) pause(412, 492);
+  let h = "";
+  xs.forEach(function (x) { h += '<path d="M' + x + ' 140 V180" stroke="#7F77DD" stroke-width="2"/>'; });
+  if (step === 3) h += '<rect x="414" y="136" width="76" height="48" rx="6" fill="none" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="4 3"/>';
+  document.getElementById("raster").innerHTML = h;
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnRpe").classList.toggle("active", m === "rpe");
+  document.getElementById("btnSyn").classList.toggle("active", m === "syn");
+  document.getElementById("gRpe").classList.toggle("hide", m !== "rpe");
+  document.getElementById("gSyn").classList.toggle("hide", m !== "syn");
+  render();
+}
+function vis(id, on) {
+  const e = document.getElementById(id);
+  e.classList.toggle("on", on);
+  e.style.visibility = on ? "visible" : "hidden";
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "rpe") {
+    raster();
+    vis("cue", step >= 2);
+    vis("rew", step >= 1);
+    const omitted = step === 3;
+    document.getElementById("rewBox").setAttribute("fill", omitted ? "none" : "#1D9E75");
+    document.getElementById("rewBox").setAttribute("stroke", omitted ? "#1D9E75" : "none");
+    document.getElementById("rewBox").setAttribute("stroke-dasharray", omitted ? "4 3" : "");
+    const rt = document.getElementById("rewTxt");
+    rt.textContent = omitted ? "no reward" : "reward";
+    rt.style.fill = omitted ? "#0F6E56" : "#fff";
+    document.getElementById("ev1").textContent = step >= 2 ? "burst at the cue" : "";
+    document.getElementById("ev2").textContent = ["", "burst: unexpected reward", "no change: reward expected", "pause: reward missing"][step];
+    document.getElementById("ev2").style.fill = step === 3 ? "#B91C1C" : "";
+  } else {
+    vis("synth", step === 0);
+    document.getElementById("ves").style.opacity = step >= 1 ? "1" : "0.25";
+    document.getElementById("fusion").style.opacity = step === 1 ? "1" : "0";
+    vis("cleftDA", step >= 1);
+    vis("recs", step === 2);
+    vis("clear", step === 3);
+    document.getElementById("drug").textContent = DRUG[step];
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("rpe");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # MEDICATION_MECHANISM_GENERAL  (source: medication_mechanism.html)
@@ -11273,6 +12927,216 @@ render();
 </script>
 '''
 
+SLEEP_WAKE_REGULATION_TECHNICAL = '''
+<h2 class="sr-only">Interactive diagram of sleep-wake regulation in technical detail: a switchable view of the two-process model, in which homeostatic sleep pressure interacts with circadian thresholds to time sleep, and of the molecular circadian clock, a transcription-translation feedback loop reset by light.</h2>
+<style>
+  .stg { opacity: 0.12; transition: opacity .5s ease; }
+  .stg.on { opacity: 1; }
+  .stg:not(.on) text, text.stg:not(.on) { visibility: hidden; }
+  .hide { display: none; }
+  .fd { transition: opacity .6s ease; }
+  .dot { transition: cx 1s ease, cy 1s ease, opacity .6s ease; }
+  #clipR { transition: width 1.2s ease; }
+  .rowbtns { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .rowbtns button.active { border-color: var(--border-accent); color: var(--text-accent); }
+  .btnrow { display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  #stepLabel { font-size:13px; color:var(--text-secondary); }
+</style>
+
+<div class="rowbtns">
+  <button id="btnTwo" onclick="setMode('two')">Two-process model</button>
+  <button id="btnClk" onclick="setMode('clk')">Molecular clock</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+<title>Sleep-wake regulation — two-process model and the molecular clock</title>
+<desc>Two-process view: over 48 hours, homeostatic sleep pressure, process S, linked to adenosine, rises during waking and falls during sleep. The circadian process C sets an upper threshold, at which sleep begins, and a lower threshold, at which waking occurs; both are highest in the evening. Sleep starts when S meets the upper threshold and ends when it falls to the lower one. After a night of sleep deprivation S climbs higher, recovery sleep is deeper, but it is shortened by the circadian rhythm; caffeine blocks adenosine receptors and masks S without lowering it. Molecular clock view: CLOCK and BMAL1 bind E-box sequences and switch on the Per and Cry genes. PER and CRY proteins build up in the cytoplasm over hours, enter the nucleus and shut down CLOCK–BMAL1, turning off their own production. As PER and CRY are degraded, repression lifts and a new cycle begins, about every 24 hours. Light acting through melanopsin retinal cells resets the master clock in the suprachiasmatic nucleus, which lets the pineal gland release melatonin at night.</desc>
+<defs>
+<marker id="swArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<clipPath id="swClip"><rect id="clipR" x="60" y="20" width="200" height="260"/></clipPath>
+</defs>
+
+<!-- ===================== TWO-PROCESS MODE ===================== -->
+<g id="gTwo">
+  <g id="bands"></g>
+  <line x1="70" y1="250" x2="630" y2="250" stroke="var(--t)" stroke-width="1"/>
+  <line x1="70" y1="250" x2="70" y2="36" stroke="var(--t)" stroke-width="1"/>
+  <text class="ts" x="40" y="146" text-anchor="middle" transform="rotate(-90 40 146)">sleep pressure</text>
+  <g id="ticks"></g>
+  <g id="thr" class="stg">
+    <path id="hPath" fill="none" stroke="#378ADD" stroke-width="2" stroke-dasharray="6 4"/>
+    <path id="lPath" fill="none" stroke="#378ADD" stroke-width="2" stroke-dasharray="2 4"/>
+    <text class="ts" x="632" y="72" text-anchor="end" style="fill:#185FA5">C (dashed): upper threshold (fall asleep)</text>
+    <text class="ts" x="632" y="290" text-anchor="end" style="fill:#185FA5">C (dotted): lower threshold (wake up)</text>
+  </g>
+  <path id="sPath" fill="none" stroke="#7F77DD" stroke-width="3" clip-path="url(#swClip)"/>
+  <path id="dPath" class="fd" fill="none" stroke="#E24B4A" stroke-width="2.5" stroke-dasharray="7 4" style="opacity:0"/>
+  <text id="sLbl" class="ts" x="150" y="112" text-anchor="start" style="fill:#534AB7">S: sleep pressure (adenosine) rises while awake</text>
+  <g id="depNote" class="stg">
+    <text class="ts" x="300" y="34" text-anchor="middle" style="fill:#B91C1C">all-nighter: S climbs higher → deeper recovery sleep</text>
+    <text class="ts" x="300" y="50" text-anchor="middle">caffeine blocks adenosine receptors — masks S, doesn't lower it</text>
+  </g>
+</g>
+
+<!-- ===================== CLOCK MODE ===================== -->
+<g id="gClk" class="hide">
+  <rect x="30" y="26" width="620" height="240" rx="30" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <ellipse cx="190" cy="150" rx="150" ry="100" fill="var(--surface-2)" stroke="var(--border-strong)" stroke-width="1.5"/>
+  <text class="ts" x="190" y="68" text-anchor="middle">nucleus</text>
+  <text class="ts" x="560" y="48" text-anchor="middle">cytoplasm</text>
+  <path d="M60 172 H320" stroke="#378ADD" stroke-width="3"/>
+  <rect x="100" y="166" width="40" height="12" rx="2" fill="#EF9F27"/>
+  <text class="ts" x="120" y="196" text-anchor="middle">E-box</text>
+  <rect x="160" y="166" width="130" height="12" rx="2" fill="var(--surface-1)" stroke="var(--border-strong)" stroke-width="1"/>
+  <text class="ts" x="225" y="196" text-anchor="middle">Per / Cry genes</text>
+  <circle cx="111" cy="153" r="10" class="c-teal"/><circle cx="130" cy="153" r="10" class="c-purple"/>
+  <text class="ts" x="64" y="132" text-anchor="start">CLOCK–BMAL1</text>
+
+  <g id="mrna" class="fd">
+    <path d="M230 160 C280 110 360 100 430 112" fill="none" stroke="#1D9E75" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#swArrow)"/>
+    <text class="ts" x="350" y="94" text-anchor="middle">Per / Cry mRNA</text>
+  </g>
+  <g id="repress" class="stg">
+    <path d="M168 118 L130 138" stroke="#B91C1C" stroke-width="2.5"/>
+    <path d="M122 132 L138 144" stroke="#B91C1C" stroke-width="3"/>
+    <path d="M276 120 l14 14 M290 120 l-14 14" stroke="#B91C1C" stroke-width="3" stroke-linecap="round"/>
+    <text class="ts" x="200" y="236" text-anchor="middle" style="fill:#B91C1C">own genes switched off</text>
+  </g>
+  <g id="prots"></g>
+  <text id="protLbl" class="ts" x="520" y="236" text-anchor="middle"></text>
+  <text id="clkNote" class="ts" x="340" y="290" text-anchor="middle"></text>
+</g>
+</svg>
+
+<div class="btnrow">
+  <button onclick="stepFwd()">Next step ↗</button>
+  <button onclick="stepBack()">Back</button>
+  <button onclick="reset()">Reset</button>
+  <span id="stepLabel">Step 0 of 3</span>
+</div>
+
+<script>
+let step = 0;
+let mode = "two";
+const labels = {
+  two: [
+    "Step 0 of 3 — process S: sleep pressure (tracked by adenosine) rises steadily the longer you stay awake",
+    "Step 1 of 3 — process C: the circadian clock sets an upper threshold (fall asleep) and a lower one (wake up), both highest in the evening",
+    "Step 2 of 3 — sleep starts when S meets the upper threshold, and S drains during sleep until it reaches the lower threshold — you wake",
+    "Step 3 of 3 — an all-nighter pushes S far higher; recovery sleep is deeper, but the circadian rhythm keeps it short — caffeine only masks S"
+  ],
+  clk: [
+    "Step 0 of 3 — CLOCK–BMAL1 binds E-box DNA and switches on the Per and Cry genes",
+    "Step 1 of 3 — PER and CRY proteins slowly build up in the cytoplasm over many hours",
+    "Step 2 of 3 — PER–CRY enters the nucleus and blocks CLOCK–BMAL1, shutting down its own production (negative feedback)",
+    "Step 3 of 3 — PER and CRY are degraded (CK1ε marks them), repression lifts and the loop restarts — one turn ≈ 24 h"
+  ]
+};
+// ---- two-process model ----
+const TX = function (t) { return 70 + t * 11.67; };
+const SY = function (s) { return 250 - s * 200; };
+const H = function (t) { return 0.62 + 0.10 * Math.sin(2 * Math.PI * (t - 7) / 24); };
+const L = function (t) { return 0.17 + 0.10 * Math.sin(2 * Math.PI * (t - 7) / 24); };
+function sim(deprive) {
+  let S = 0.22, awake = true, d = "", ev = [];
+  for (let i = 0; i <= 480; i++) {
+    const t = i / 10;
+    d += (i ? " L" : "M") + TX(t).toFixed(1) + " " + SY(S).toFixed(1);
+    if (awake) {
+      S = 1 - (1 - S) * Math.exp(-0.1 / 18.2);
+      if (S >= H(t) && !(deprive && t < 30)) { awake = false; ev.push(t); }
+    } else {
+      S = S * Math.exp(-0.1 / 4.2);
+      if (S <= L(t)) { awake = true; ev.push(t); }
+    }
+  }
+  return { d: d, ev: ev };
+}
+const NORM = sim(false), DEP = sim(true);
+document.getElementById("sPath").setAttribute("d", NORM.d);
+document.getElementById("dPath").setAttribute("d", DEP.d);
+(function () {
+  let h = "", l = "";
+  for (let i = 0; i <= 96; i++) {
+    const t = i / 2;
+    h += (i ? " L" : "M") + TX(t).toFixed(1) + " " + SY(H(t)).toFixed(1);
+    l += (i ? " L" : "M") + TX(t).toFixed(1) + " " + SY(L(t)).toFixed(1);
+  }
+  document.getElementById("hPath").setAttribute("d", h);
+  document.getElementById("lPath").setAttribute("d", l);
+  let tk = "";
+  ["7 am", "7 pm", "7 am", "7 pm", "7 am"].forEach(function (lab, i) {
+    const x = TX(i * 12);
+    tk += '<path d="M' + x + ' 250 V255" stroke="var(--t)"/><text class="ts" x="' + x + '" y="270" text-anchor="middle">' + lab + "</text>";
+  });
+  document.getElementById("ticks").innerHTML = tk;
+})();
+function bands(ev) {
+  let h = "";
+  for (let i = 0; i < ev.length; i += 2) {
+    const a = ev[i], b = ev[i + 1] !== undefined ? ev[i + 1] : 48;
+    h += '<rect x="' + TX(a) + '" y="36" width="' + (TX(b) - TX(a)) + '" height="214" fill="#7F77DD" fill-opacity="0.10"/>' +
+         '<text class="ts" x="' + ((TX(a) + TX(b)) / 2) + '" y="246" text-anchor="middle">sleep</text>';
+  }
+  return h;
+}
+// ---- molecular clock ----
+const CYTO = [[460,130],[490,160],[520,120],[550,170],[580,140],[610,190],[470,200],[540,210]];
+function prots() {
+  let n = [2, 8, 8, 8][step], h = "";
+  for (let i = 0; i < n; i++) {
+    let p = CYTO[i];
+    if (step === 2) p = [160 + (i % 4) * 12, 100 + Math.floor(i / 4) * 12];
+    const col = i % 2 ? "#D85A30" : "#7F77DD";
+    const op = step === 3 ? 0.25 : 1;
+    h += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="7" fill="' + col + '" opacity="' + op + '"/>';
+  }
+  document.getElementById("prots").innerHTML = h;
+  document.getElementById("protLbl").textContent =
+    ["PER (purple), CRY (orange)", "PER and CRY build up", "", "degraded → cycle restarts"][step];
+}
+function setMode(m) {
+  mode = m; step = 0;
+  document.getElementById("btnTwo").classList.toggle("active", m === "two");
+  document.getElementById("btnClk").classList.toggle("active", m === "clk");
+  document.getElementById("gTwo").classList.toggle("hide", m !== "two");
+  document.getElementById("gClk").classList.toggle("hide", m !== "clk");
+  render();
+}
+function vis(id, on) {
+  const e = document.getElementById(id);
+  e.classList.toggle("on", on);
+  e.style.visibility = on ? "visible" : "hidden";
+}
+function render() {
+  document.getElementById("stepLabel").textContent = labels[mode][step];
+  if (mode === "two") {
+    const w = step <= 1 ? TX(NORM.ev[0]) - 60 : 580;
+    const cr = document.getElementById("clipR");
+    cr.setAttribute("width", w); cr.style.width = w + "px";
+    vis("thr", step >= 1);
+    document.getElementById("bands").innerHTML = step === 2 ? bands(NORM.ev) : step === 3 ? bands(DEP.ev) : "";
+    document.getElementById("sPath").style.opacity = step === 3 ? "0.3" : "1";
+    document.getElementById("dPath").style.opacity = step === 3 ? "1" : "0";
+    document.getElementById("sLbl").style.visibility = step === 0 ? "visible" : "hidden";
+    vis("depNote", step === 3);
+  } else {
+    prots();
+    document.getElementById("mrna").style.opacity = step >= 2 && step < 3 ? "0.2" : "1";
+    vis("repress", step === 2);
+    document.getElementById("clkNote").textContent = step === 3
+      ? "light → melanopsin retinal cells → SCN resets the clock; at night the SCN lets the pineal release melatonin"
+      : "";
+  }
+}
+function stepFwd() { if (step < 3) step++; render(); }
+function stepBack() { if (step > 0) step--; render(); }
+function reset() { step = 0; render(); }
+setMode("two");
+</script>
+'''
+
+
 
 # ---------------------------------------------------------------------------
 # Registry: add a new mechanism by (1) defining a new FRAGMENT_NAME = '''...'''
@@ -11466,6 +13330,16 @@ REGISTRY = {
                 "cells, each a different parental combination."
             ),
         },
+        "Technical": {
+            "fragment": MEIOSIS_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "How the cell makes homologs separate before sisters "
+                "(Spo11, synaptonemal complex, chiasmata, cohesin, "
+                "shugoshin, separase), and how nondisjunction produces "
+                "aneuploid gametes and trisomy."
+            ),
+        },
     },
     "Apoptosis": {
         "General": {
@@ -11479,6 +13353,16 @@ REGISTRY = {
                 "caspase-3."
             ),
         },
+        "Technical": {
+            "fragment": APOPTOSIS_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "One level down: the caspase machinery (DISC, Bid, XIAP and "
+                "Smac, what caspase-3 cuts) and the Bcl-2 family balance at "
+                "the mitochondrion — including how cancers escape and how "
+                "venetoclax works."
+            ),
+        },
     },
     "Endocytosis / exocytosis": {
         "General": {
@@ -11488,6 +13372,15 @@ REGISTRY = {
                 "Switch between the two directions: endocytosis pinches a "
                 "clathrin-coated vesicle in from the membrane; exocytosis "
                 "docks and fuses a vesicle to release cargo outward."
+            ),
+        },
+        "Technical": {
+            "fragment": ENDO_EXOCYTOSIS_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "The molecular machinery: clathrin, AP2 and dynamin in "
+                "receptor-mediated LDL uptake, and SNAREs, synaptotagmin "
+                "and Ca²⁺ in regulated exocytosis at a synapse."
             ),
         },
     },
@@ -11840,6 +13733,16 @@ REGISTRY = {
                 "potential (Ca2+-driven, no fast Na+ channels at all)."
             ),
         },
+        "Technical": {
+            "fragment": ACTION_POTENTIAL_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "The neuron at channel level: Na⁺ activation and "
+                "inactivation gates, K⁺ gates, equilibrium potentials and "
+                "refractory periods — plus conduction speed, myelin, "
+                "saltatory conduction and demyelination."
+            ),
+        },
     },
     "Muscle contraction (skeletal)": {
         "General": {
@@ -11893,6 +13796,16 @@ REGISTRY = {
                 "The SA node fires, depolarizing the atria; the signal "
                 "delays at the AV node, then races through the Bundle of "
                 "His and Purkinje fibers to trigger ventricular contraction."
+            ),
+        },
+        "Technical": {
+            "fragment": CARDIAC_CONDUCTION_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "How each conduction step writes the ECG (P wave, PR "
+                "interval, QRS, T wave, QT) and how sympathetic and vagal "
+                "nerves change heart rate by reshaping the SA node "
+                "pacemaker potential."
             ),
         },
     },
@@ -11971,6 +13884,16 @@ REGISTRY = {
                 "reuptake or triggering extra release."
             ),
         },
+        "Technical": {
+            "fragment": DOPAMINE_REWARD_PATHWAY_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "What dopamine actually signals — reward prediction error "
+                "(bursts, no change, pauses) — and the dopamine synapse: "
+                "synthesis, VMAT2, D1 vs D2 receptors, DAT, MAO/COMT and "
+                "the main drug targets."
+            ),
+        },
     },
     "Medication mechanism of action": {
         "General": {
@@ -12004,6 +13927,16 @@ REGISTRY = {
                 "muscle atonia, dreaming) roughly every 90 minutes."
             ),
         },
+        "Technical": {
+            "fragment": SLEEP_WAKE_REGULATION_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "The two-process model (adenosine-linked sleep pressure "
+                "meeting circadian thresholds, and what an all-nighter "
+                "does) and the molecular clock: the CLOCK–BMAL1 / PER–CRY "
+                "feedback loop reset by light."
+            ),
+        },
     },
     "Electron transport chain & ATP synthase": {
         "General": {
@@ -12034,6 +13967,16 @@ REGISTRY = {
                 "Platelets form a fast temporary plug at the injury; the "
                 "slower coagulation cascade converges on thrombin, which "
                 "converts fibrinogen into a fibrin mesh that stabilizes it."
+            ),
+        },
+        "Technical": {
+            "fragment": BLOOD_CLOTTING_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "The cell-based cascade (initiation, amplification, "
+                "propagation to a thrombin burst, fibrin cross-linking, PT "
+                "vs aPTT) and the brakes: antithrombin, protein C, "
+                "fibrinolysis and the drugs that act on them."
             ),
         },
     },
@@ -12088,6 +14031,16 @@ REGISTRY = {
                 "synapses directly onto a motor neuron in the spinal "
                 "cord — no brain involved — contracting the quadriceps "
                 "while an interneuron relaxes the hamstring."
+            ),
+        },
+        "Technical": {
+            "fragment": REFLEX_ARC_TECHNICAL,
+            "height": 500,
+            "blurb": (
+                "Inside the reflex: muscle spindle Ia firing, α–γ "
+                "co-activation and the Golgi tendon organ — and how the "
+                "reflex separates upper from lower motor neuron lesions at "
+                "the bedside."
             ),
         },
     },
